@@ -94,7 +94,7 @@ export const useAccessibility = (options: AccessibilityOptions = {}) => {
     const mainContent = document.getElementById(skipToContentId);
     if (mainContent) {
       mainContent.focus();
-      mainContent.scrollIntoView({ behavior: 'smooth' });
+      mainContent.scrollIntoView({ behavior: 'auto' });
     }
   }, [skipToContentId]);
 

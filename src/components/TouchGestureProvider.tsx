@@ -23,7 +23,7 @@ export const TouchGestureProvider: React.FC<TouchGestureProviderProps> = ({
   // Gestos de navegación
   const navigationGestures = useNavigationGestures(navigate);
 
-  // Gestos globales adicionales
+  // Gestos globales adicionales (SIN SCROLL AUTOMÁTICO)
   const globalGestures = useTouchGestures({
     onSwipeLeft: () => {
       // Navegar a la página anterior
@@ -37,17 +37,8 @@ export const TouchGestureProvider: React.FC<TouchGestureProviderProps> = ({
         window.history.forward();
       }
     },
-    onSwipeUp: () => {
-      // Scroll hacia arriba
-      window.scrollTo({ top: 0, behavior: 'smooth' });
-    },
-    onSwipeDown: () => {
-      // Scroll hacia abajo
-      window.scrollTo({ 
-        top: document.documentElement.scrollHeight, 
-        behavior: 'smooth' 
-      });
-    },
+    // ELIMINADO: Gestos de scroll automático que causan problemas
+    // onSwipeUp y onSwipeDown removidos para permitir scroll libre
     onDoubleTap: () => {
       // Volver al dashboard
       navigate('/');

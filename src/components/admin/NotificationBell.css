@@ -24,9 +24,9 @@
   scrollbar-color: #cbd5e1 #f1f5f9;
 }
 
-/* Animación suave para el scroll */
+/* Scroll sin animación para móviles */
 .notification-scroll {
-  scroll-behavior: smooth;
+  scroll-behavior: auto;
 }
 
 /* Estilos para el indicador de carga */

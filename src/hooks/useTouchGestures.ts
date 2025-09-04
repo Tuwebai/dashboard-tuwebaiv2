@@ -172,17 +172,8 @@ export const useNavigationGestures = (navigate: (path: string) => void) => {
         window.history.forward();
       }
     },
-    onSwipeUp: () => {
-      // Scroll hacia arriba
-      window.scrollTo({ top: 0, behavior: 'smooth' });
-    },
-    onSwipeDown: () => {
-      // Scroll hacia abajo
-      window.scrollTo({ 
-        top: document.documentElement.scrollHeight, 
-        behavior: 'smooth' 
-      });
-    },
+    // ELIMINADO: Gestos de scroll automático que interfieren con scroll libre
+    // onSwipeUp y onSwipeDown removidos para permitir scroll natural del usuario
     onDoubleTap: () => {
       // Volver al dashboard
       navigate('/');

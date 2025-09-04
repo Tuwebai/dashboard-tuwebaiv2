@@ -16,7 +16,7 @@ export const SkipLink: React.FC<SkipLinkProps> = ({
     const target = document.getElementById(targetId);
     if (target) {
       target.focus();
-      target.scrollIntoView({ behavior: 'smooth' });
+      target.scrollIntoView({ behavior: 'auto' });
     }
   };
 
@@ -26,7 +26,7 @@ export const SkipLink: React.FC<SkipLinkProps> = ({
       const target = document.getElementById(targetId);
       if (target) {
         target.focus();
-        target.scrollIntoView({ behavior: 'smooth' });
+        target.scrollIntoView({ behavior: 'auto' });
       }
     }
   };

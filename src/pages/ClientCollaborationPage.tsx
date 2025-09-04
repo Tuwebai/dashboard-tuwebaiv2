@@ -207,7 +207,7 @@ export default function ClientCollaborationPage() {
     if (messages.length > 0) {
       // Usar setTimeout para asegurar que el DOM se haya actualizado
       setTimeout(() => {
-        messagesEndRef.current?.scrollIntoView({ behavior: 'smooth' });
+        messagesEndRef.current?.scrollIntoView({ behavior: 'auto' });
       }, 100);
     }
   }, [messages]);

@@ -847,17 +847,22 @@ h1, h2, h3, h4, h5, h6 {
     overflow-y: auto;
     -webkit-overflow-scrolling: touch;
     overscroll-behavior: auto;
-    scroll-behavior: auto;
+    scroll-behavior: auto !important;
   }
   
-  /* Evitar scroll automático en contenedores */
+  /* FORZAR scroll automático DESHABILITADO en móviles */
   * {
+    scroll-behavior: auto !important;
+  }
+  
+  /* Deshabilitar scroll automático en todos los elementos */
+  html, body, div, section, article, main, aside, nav, header, footer {
     scroll-behavior: auto !important;
   }
   
   /* Mejorar scroll en secciones */
   section {
-    scroll-behavior: auto;
+    scroll-behavior: auto !important;
     overscroll-behavior: auto;
   }
   
@@ -865,18 +870,28 @@ h1, h2, h3, h4, h5, h6 {
   .overflow-auto, .overflow-y-auto, .overflow-x-auto {
     -webkit-overflow-scrolling: touch;
     overscroll-behavior: auto;
-    scroll-behavior: auto;
+    scroll-behavior: auto !important;
   }
   
   /* Evitar scroll automático en modales */
   .modal-content {
-    scroll-behavior: auto;
+    scroll-behavior: auto !important;
     overscroll-behavior: auto;
   }
   
   /* Mejorar scroll en cards y contenedores */
   .card, .card-content {
-    scroll-behavior: auto;
+    scroll-behavior: auto !important;
     overscroll-behavior: auto;
+  }
+  
+  /* Deshabilitar scroll automático en gestos táctiles */
+  .touch-gesture-provider {
+    scroll-behavior: auto !important;
+  }
+  
+  /* Forzar scroll manual en todos los elementos */
+  [style*="scroll-behavior"] {
+    scroll-behavior: auto !important;
   }
 }

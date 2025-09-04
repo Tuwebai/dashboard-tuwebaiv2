@@ -321,7 +321,7 @@ export default function TutorialOverlay() {
         break;
       case 'scroll':
         if (targetElement) {
-          targetElement.scrollIntoView({ behavior: 'smooth', block: 'center' });
+          targetElement.scrollIntoView({ behavior: 'auto', block: 'center' });
         }
         break;
       case 'navigate':

@@ -397,9 +397,9 @@ export default function CollaborationPage() {
     loadCollaborationData();
   }, [project, user, projectId]);
 
-  // Auto-scroll to bottom of chat
+  // Auto-scroll to bottom of chat (SIN SMOOTH PARA MÓVILES)
   useEffect(() => {
-    messagesEndRef.current?.scrollIntoView({ behavior: 'smooth' });
+    messagesEndRef.current?.scrollIntoView({ behavior: 'auto' });
   }, [messages]);
 
   // Send message
