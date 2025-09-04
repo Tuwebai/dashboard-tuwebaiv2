@@ -26,7 +26,8 @@ import {
   ChevronRight,
   Play,
   Pause,
-  RefreshCw
+  RefreshCw,
+  X
 } from 'lucide-react';
 
 export default function LandingPage() {
@@ -37,6 +38,7 @@ export default function LandingPage() {
   const [activeDemo, setActiveDemo] = useState<string | null>(null);
   const [isPlaying, setIsPlaying] = useState(false);
   const [isDarkMode, setIsDarkMode] = useState(false);
+  const [previewImage, setPreviewImage] = useState<string | null>(null);
   const { login, loginWithGoogle, loginWithGithub } = useApp();
   const navigate = useNavigate();
 
@@ -74,6 +76,25 @@ export default function LandingPage() {
       document.head.removeChild(style);
     };
   }, []);
+
+  // Manejar tecla ESC para cerrar modal
+  React.useEffect(() => {
+    const handleKeyDown = (event: KeyboardEvent) => {
+      if (event.key === 'Escape' && previewImage) {
+        closeImagePreview();
+      }
+    };
+
+    if (previewImage) {
+      document.addEventListener('keydown', handleKeyDown);
+      document.body.style.overflow = 'hidden';
+    }
+
+    return () => {
+      document.removeEventListener('keydown', handleKeyDown);
+      document.body.style.overflow = 'unset';
+    };
+  }, [previewImage]);
 
   // Auto-play demo
   useEffect(() => {
@@ -138,6 +159,14 @@ export default function LandingPage() {
 
   const handleDemoAction = (action: string) => {
     setActiveDemo(action);
+  };
+
+  const handleImagePreview = (imageSrc: string) => {
+    setPreviewImage(imageSrc);
+  };
+
+  const closeImagePreview = () => {
+    setPreviewImage(null);
   };
 
   const demoCards = [
@@ -389,11 +418,11 @@ export default function LandingPage() {
               <div className="relative group">
                 <div className="absolute -inset-4 bg-gradient-to-r from-blue-500/20 to-purple-500/20 rounded-3xl blur-2xl group-hover:blur-3xl transition-all duration-500"></div>
                 <div className="relative transform -rotate-1 hover:rotate-0 transition-all duration-700 ease-out">
-                  <div className="bg-white rounded-2xl p-2 shadow-2xl">
+                  <div className="bg-white rounded-2xl p-2 shadow-2xl cursor-pointer" onClick={() => handleImagePreview('/dashboardadmin.png')}>
                     <img 
                       src="/dashboardadmin.png" 
                       alt="Dashboard Admin mostrando gestión de proyectos" 
-                      className="w-full h-auto rounded-xl shadow-lg"
+                      className="w-full h-auto rounded-xl shadow-lg hover:scale-105 transition-transform duration-300"
                     />
                   </div>
                 </div>
@@ -542,11 +571,11 @@ export default function LandingPage() {
               <div className="relative group">
                 <div className="absolute -inset-4 bg-gradient-to-r from-green-500/20 to-cyan-500/20 rounded-3xl blur-2xl group-hover:blur-3xl transition-all duration-500"></div>
                 <div className="relative transform rotate-1 hover:rotate-0 transition-all duration-700 ease-out">
-                  <div className="bg-white rounded-2xl p-2 shadow-2xl">
+                  <div className="bg-white rounded-2xl p-2 shadow-2xl cursor-pointer" onClick={() => handleImagePreview('/analisislandingpage.png')}>
                     <img 
                       src="/analisislandingpage.png" 
                       alt="Dashboard Cliente mostrando análisis y métricas" 
-                      className="w-full h-auto rounded-xl shadow-lg"
+                      className="w-full h-auto rounded-xl shadow-lg hover:scale-105 transition-transform duration-300"
                     />
                   </div>
                 </div>
@@ -1360,6 +1389,37 @@ export default function LandingPage() {
         </div>
       </footer>
 
+      {/* Modal de vista previa de imagen */}
+      {previewImage && (
+        <div 
+          className="fixed inset-0 z-50 flex items-center justify-center bg-black bg-opacity-75 p-4"
+          onClick={closeImagePreview}
+        >
+          <div 
+            className="relative max-w-6xl max-h-full"
+            onClick={(e) => e.stopPropagation()}
+          >
+            <button
+              onClick={closeImagePreview}
+              className="absolute -top-4 -right-4 z-10 bg-white rounded-full p-2 shadow-lg hover:bg-gray-100 transition-colors duration-200"
+            >
+              <X className="h-6 w-6 text-gray-600" />
+            </button>
+            <div className="bg-white rounded-2xl p-4 shadow-2xl">
+              <img
+                src={previewImage}
+                alt="Vista previa del dashboard"
+                className="max-w-full max-h-[80vh] rounded-xl"
+              />
+            </div>
+            <div className="mt-4 text-center">
+              <p className="text-white text-sm">
+                Haz click fuera de la imagen o presiona ESC para cerrar
+              </p>
+            </div>
+          </div>
+        </div>
+      )}
 
     </div>
   );
