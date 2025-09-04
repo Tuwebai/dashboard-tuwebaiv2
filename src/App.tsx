@@ -18,46 +18,103 @@ import { TooltipProvider } from '@/components/ui/tooltip';
 import { serviceWorkerManager } from './utils/serviceWorker';
 import TouchGestureProvider from './components/TouchGestureProvider';
 
-// Lazy loading de todas las páginas
-const Index = lazy(() => import('./pages/Index'));
-const Login = lazy(() => import('./pages/Login'));
-const Register = lazy(() => import('./pages/Register'));
-const PoliticaPrivacidad = lazy(() => import('./pages/PoliticaPrivacidad'));
-const TerminosCondiciones = lazy(() => import('./pages/TerminosCondiciones'));
-const Dashboard = lazy(() => import('./pages/Dashboard'));
-const Admin = lazy(() => import('./pages/Admin'));
-const ProjectsPage = lazy(() => import('./pages/ProjectsPage'));
-const ProyectosNuevo = lazy(() => import('./pages/ProyectosNuevo'));
+// Función helper para manejar errores en imports dinámicos
+const createLazyComponent = (importFn: () => Promise<any>) => {
+  return lazy(() => 
+    importFn().catch((error) => {
+      console.error('Error loading component:', error);
+      // Retornar un componente de error como fallback
+      return {
+        default: () => (
+          <div className="min-h-screen flex items-center justify-center bg-gradient-to-br from-red-50 to-red-100">
+            <div className="text-center">
+              <div className="text-red-500 text-6xl mb-4">⚠️</div>
+              <h2 className="text-2xl font-bold text-red-800 mb-2">Error de Carga</h2>
+              <p className="text-red-600 mb-4">No se pudo cargar el componente</p>
+              <button 
+                onClick={() => window.location.reload()} 
+                className="bg-red-500 text-white px-4 py-2 rounded hover:bg-red-600"
+              >
+                Recargar Página
+              </button>
+            </div>
+          </div>
+        )
+      };
+    })
+  );
+};
 
-const CollaborationPage = lazy(() => import('./pages/CollaborationPage'));
-const ClientCollaborationPage = lazy(() => import('./pages/ClientCollaborationPage'));
-const AdminCollaborationPage = lazy(() => import('./pages/AdminCollaborationPage'));
+// Lazy loading de todas las páginas con manejo de errores
+const Index = createLazyComponent(() => import('./pages/Index'));
+const Login = createLazyComponent(() => import('./pages/Login'));
+const Register = createLazyComponent(() => import('./pages/Register'));
+const PoliticaPrivacidad = createLazyComponent(() => import('./pages/PoliticaPrivacidad'));
+const TerminosCondiciones = createLazyComponent(() => import('./pages/TerminosCondiciones'));
+const Dashboard = createLazyComponent(() => import('./pages/Dashboard'));
+const Admin = createLazyComponent(() => import('./pages/Admin'));
+const ProjectsPage = createLazyComponent(() => import('./pages/ProjectsPage'));
+const ProyectosNuevo = createLazyComponent(() => import('./pages/ProyectosNuevo'));
 
-const WorkspacePage = lazy(() => import('./pages/WorkspacePage'));
-const Perfil = lazy(() => import('./pages/Perfil'));
-const UserProfileView = lazy(() => import('./pages/UserProfileView'));
-const Configuracion = lazy(() => import('./pages/Configuracion'));
-const Facturacion = lazy(() => import('./pages/Facturacion'));
-const Soporte = lazy(() => import('./pages/Soporte'));
-const Team = lazy(() => import('./pages/Team'));
-const NotFound = lazy(() => import('./pages/NotFound'));
-const AdvancedAnalytics = lazy(() => import('./components/AdvancedAnalytics'));
-const RealTimeCharts = lazy(() => import('./components/AdvancedCharts/RealTimeCharts'));
-const CustomizableDashboard = lazy(() => import('./components/CustomizableDashboard'));
-const AdvancedUserManagement = lazy(() => import('./components/AdvancedUserManagement'));
-const InvitationPage = lazy(() => import('./pages/InvitationPage'));
-const AuthCallback = lazy(() => import('./pages/AuthCallback'));
-const EnvironmentVariables = lazy(() => import('./pages/EnvironmentVariables'));
+const CollaborationPage = createLazyComponent(() => import('./pages/CollaborationPage'));
+const ClientCollaborationPage = createLazyComponent(() => import('./pages/ClientCollaborationPage'));
+const AdminCollaborationPage = createLazyComponent(() => import('./pages/AdminCollaborationPage'));
 
-// Componente de carga optimizado
-const PageLoader = () => (
-  <div className="min-h-screen flex items-center justify-center bg-gradient-to-br from-blue-50 to-indigo-100">
-    <div className="text-center">
-      <LoadingSpinner size="lg" />
-      <p className="mt-4 text-gray-600">Cargando...</p>
+const WorkspacePage = createLazyComponent(() => import('./pages/WorkspacePage'));
+const Perfil = createLazyComponent(() => import('./pages/Perfil'));
+const UserProfileView = createLazyComponent(() => import('./pages/UserProfileView'));
+const Configuracion = createLazyComponent(() => import('./pages/Configuracion'));
+const Facturacion = createLazyComponent(() => import('./pages/Facturacion'));
+const Soporte = createLazyComponent(() => import('./pages/Soporte'));
+const Team = createLazyComponent(() => import('./pages/Team'));
+const NotFound = createLazyComponent(() => import('./pages/NotFound'));
+const AdvancedAnalytics = createLazyComponent(() => import('./components/AdvancedAnalytics'));
+const RealTimeCharts = createLazyComponent(() => import('./components/AdvancedCharts/RealTimeCharts'));
+const CustomizableDashboard = createLazyComponent(() => import('./components/CustomizableDashboard'));
+const AdvancedUserManagement = createLazyComponent(() => import('./components/AdvancedUserManagement'));
+const InvitationPage = createLazyComponent(() => import('./pages/InvitationPage'));
+const AuthCallback = createLazyComponent(() => import('./pages/AuthCallback'));
+const EnvironmentVariables = createLazyComponent(() => import('./pages/EnvironmentVariables'));
+
+// Componente de carga optimizado con retry
+const PageLoader = () => {
+  const [retryCount, setRetryCount] = React.useState(0);
+  const [showRetry, setShowRetry] = React.useState(false);
+
+  React.useEffect(() => {
+    const timer = setTimeout(() => {
+      setShowRetry(true);
+    }, 10000); // Mostrar retry después de 10 segundos
+
+    return () => clearTimeout(timer);
+  }, []);
+
+  const handleRetry = () => {
+    setRetryCount(prev => prev + 1);
+    setShowRetry(false);
+    window.location.reload();
+  };
+
+  return (
+    <div className="min-h-screen flex items-center justify-center bg-gradient-to-br from-blue-50 to-indigo-100">
+      <div className="text-center">
+        <LoadingSpinner size="lg" />
+        <p className="mt-4 text-gray-600">Cargando...</p>
+        {showRetry && (
+          <div className="mt-4">
+            <p className="text-sm text-gray-500 mb-2">¿Tarda mucho en cargar?</p>
+            <button 
+              onClick={handleRetry}
+              className="bg-blue-500 text-white px-4 py-2 rounded hover:bg-blue-600 text-sm"
+            >
+              Reintentar
+            </button>
+          </div>
+        )}
+      </div>
     </div>
-  </div>
-);
+  );
+};
 
 // QueryClient con configuración optimizada
 const queryClient = new QueryClient({

@@ -1,0 +1,28 @@
+# Headers para archivos JavaScript
+/*.js
+  Content-Type: application/javascript; charset=utf-8
+  Cache-Control: public, max-age=31536000, immutable
+
+# Headers para archivos CSS
+/*.css
+  Content-Type: text/css; charset=utf-8
+  Cache-Control: public, max-age=31536000, immutable
+
+# Headers para archivos de assets
+/assets/*
+  Cache-Control: public, max-age=31536000, immutable
+
+# Headers para archivos de módulos ES6
+/assets/*.js
+  Content-Type: application/javascript; charset=utf-8
+  Cache-Control: public, max-age=31536000, immutable
+
+# Headers para archivos de módulos dinámicos
+/assets/Index-*.js
+  Content-Type: application/javascript; charset=utf-8
+  Cache-Control: public, max-age=31536000, immutable
+
+# Headers para archivos de chunks
+/assets/index-*.js
+  Content-Type: application/javascript; charset=utf-8
+  Cache-Control: public, max-age=31536000, immutable
