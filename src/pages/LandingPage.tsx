@@ -132,7 +132,7 @@ export default function LandingPage() {
   ];
 
   return (
-    <div className="min-h-screen bg-white">
+    <div className="min-h-screen bg-white overflow-x-hidden">
       {/* Header fijo */}
       <header className="fixed top-0 left-0 right-0 z-50 bg-white/95 backdrop-blur-md border-b border-gray-200">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
@@ -162,9 +162,9 @@ export default function LandingPage() {
       </header>
 
       {/* Hero Section */}
-      <section className="pt-20 pb-16 bg-gradient-to-br from-gray-50 to-white">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-          <div className="grid lg:grid-cols-2 gap-12 items-center">
+      <section className="pt-20 pb-20 bg-gradient-to-br from-gray-50 to-white min-h-screen flex items-center">
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 w-full">
+          <div className="grid lg:grid-cols-2 gap-12 items-center w-full">
             {/* Contenido del hero */}
             <div className="space-y-8">
               <div className="space-y-4">
@@ -270,8 +270,8 @@ export default function LandingPage() {
             </div>
 
             {/* Mockup 3D del dashboard */}
-            <div className="relative">
-              <div className="relative transform rotate-3 hover:rotate-0 transition-transform duration-700 ease-out">
+            <div className="relative w-full">
+              <div className="relative transform rotate-3 hover:rotate-0 transition-transform duration-700 ease-out max-w-md mx-auto">
                 <div className="bg-gradient-to-br from-gray-900 to-gray-800 rounded-2xl p-6 shadow-2xl">
                   <div className="bg-white rounded-xl p-4 shadow-lg">
                     <div className="flex items-center justify-between mb-4">
@@ -330,7 +330,7 @@ export default function LandingPage() {
       </section>
 
       {/* Secciones alternadas */}
-      <section className="py-20 bg-white">
+      <section className="py-24 bg-white">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="grid lg:grid-cols-2 gap-16 items-center">
             <div className="space-y-6">
@@ -360,7 +360,7 @@ export default function LandingPage() {
                 <img 
                   src="/dashboardadmin.png" 
                   alt="Dashboard Admin" 
-                  className="rounded-2xl shadow-2xl"
+                  className="w-full h-auto max-w-lg mx-auto rounded-2xl shadow-2xl object-contain"
                 />
               </div>
               <div className="absolute -inset-4 bg-gradient-to-r from-blue-500/20 to-purple-500/20 rounded-3xl blur-xl -z-10"></div>
@@ -369,7 +369,7 @@ export default function LandingPage() {
         </div>
       </section>
 
-      <section className="py-20 bg-gray-50">
+      <section className="py-24 bg-gray-50">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="grid lg:grid-cols-2 gap-16 items-center">
             <div className="relative order-2 lg:order-1">
@@ -377,7 +377,7 @@ export default function LandingPage() {
                 <img 
                   src="/macbookcliente.jpg" 
                   alt="Dashboard Cliente en MacBook" 
-                  className="rounded-2xl shadow-2xl"
+                  className="w-full h-auto max-w-lg mx-auto rounded-2xl shadow-2xl object-contain"
                 />
               </div>
               <div className="absolute -inset-4 bg-gradient-to-r from-green-500/20 to-cyan-500/20 rounded-3xl blur-xl -z-10"></div>
@@ -408,7 +408,7 @@ export default function LandingPage() {
         </div>
       </section>
 
-      <section className="py-20 bg-white">
+      <section className="py-24 bg-white">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="grid lg:grid-cols-2 gap-16 items-center">
             <div className="space-y-6">
@@ -477,7 +477,7 @@ export default function LandingPage() {
       </section>
 
       {/* Mini demo interactiva */}
-      <section className="py-20 bg-gradient-to-br from-gray-50 to-white">
+      <section className="py-24 bg-gradient-to-br from-gray-50 to-white">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="text-center mb-16">
             <h2 className="text-4xl font-bold text-gray-900 mb-4">
