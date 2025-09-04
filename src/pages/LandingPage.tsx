@@ -816,19 +816,174 @@ export default function LandingPage() {
 
                     {/* Interactive Demo Panel */}
                     {activeDemo && (
-                      <div className="bg-gray-50 rounded-lg p-6 border border-gray-200">
+                      <div className={`rounded-lg p-6 border transition-colors duration-300 ${isDarkMode ? 'bg-gray-800 border-gray-700' : 'bg-gray-50 border-gray-200'}`}>
                         <div className="flex items-center justify-between mb-4">
-                          <h3 className="text-lg font-semibold text-gray-900">
+                          <h3 className={`text-lg font-semibold transition-colors duration-300 ${isDarkMode ? 'text-white' : 'text-gray-900'}`}>
                             {demoCards.find(card => card.id === activeDemo)?.title} - Demo Interactivo
                           </h3>
                           <button 
                             onClick={() => setActiveDemo(null)}
-                            className="text-gray-400 hover:text-gray-600"
+                            className={`transition-colors duration-300 ${isDarkMode ? 'text-gray-400 hover:text-gray-200' : 'text-gray-400 hover:text-gray-600'}`}
                           >
                             ✕
                           </button>
                         </div>
                         
+                        {activeDemo === 'dashboard' && (
+                          <div className="space-y-6">
+                            {/* Widgets del Dashboard */}
+                            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+                              {/* Widget de Actividad Reciente */}
+                              <div className={`rounded-lg p-4 shadow-sm transition-colors duration-300 ${isDarkMode ? 'bg-gray-700' : 'bg-white'}`}>
+                                <div className="flex items-center justify-between mb-3">
+                                  <h4 className={`font-semibold transition-colors duration-300 ${isDarkMode ? 'text-white' : 'text-gray-900'}`}>Actividad Reciente</h4>
+                                  <div className="w-2 h-2 bg-green-500 rounded-full animate-pulse"></div>
+                                </div>
+                                <div className="space-y-2">
+                                  <div className="flex items-center space-x-2 text-sm">
+                                    <div className="w-2 h-2 bg-blue-500 rounded-full"></div>
+                                    <span className={`transition-colors duration-300 ${isDarkMode ? 'text-gray-300' : 'text-gray-600'}`}>Nuevo proyecto "E-commerce" creado</span>
+                                  </div>
+                                  <div className="flex items-center space-x-2 text-sm">
+                                    <div className="w-2 h-2 bg-green-500 rounded-full"></div>
+                                    <span className={`transition-colors duration-300 ${isDarkMode ? 'text-gray-300' : 'text-gray-600'}`}>Tarea completada por Ana García</span>
+                                  </div>
+                                  <div className="flex items-center space-x-2 text-sm">
+                                    <div className="w-2 h-2 bg-orange-500 rounded-full"></div>
+                                    <span className={`transition-colors duration-300 ${isDarkMode ? 'text-gray-300' : 'text-gray-600'}`}>Comentario en "Landing Page"</span>
+                                  </div>
+                                </div>
+                              </div>
+
+                              {/* Widget de Progreso de Proyectos */}
+                              <div className={`rounded-lg p-4 shadow-sm transition-colors duration-300 ${isDarkMode ? 'bg-gray-700' : 'bg-white'}`}>
+                                <div className="flex items-center justify-between mb-3">
+                                  <h4 className={`font-semibold transition-colors duration-300 ${isDarkMode ? 'text-white' : 'text-gray-900'}`}>Progreso de Proyectos</h4>
+                                  <span className="text-xs text-green-600 font-medium">+15%</span>
+                                </div>
+                                <div className="space-y-3">
+                                  <div>
+                                    <div className="flex justify-between text-sm mb-1">
+                                      <span className={`transition-colors duration-300 ${isDarkMode ? 'text-gray-300' : 'text-gray-600'}`}>E-commerce App</span>
+                                      <span className={`transition-colors duration-300 ${isDarkMode ? 'text-white' : 'text-gray-900'}`}>75%</span>
+                                    </div>
+                                    <div className="w-full bg-gray-200 rounded-full h-2">
+                                      <div className="bg-blue-500 h-2 rounded-full" style={{width: '75%'}}></div>
+                                    </div>
+                                  </div>
+                                  <div>
+                                    <div className="flex justify-between text-sm mb-1">
+                                      <span className={`transition-colors duration-300 ${isDarkMode ? 'text-gray-300' : 'text-gray-600'}`}>Landing Page</span>
+                                      <span className={`transition-colors duration-300 ${isDarkMode ? 'text-white' : 'text-gray-900'}`}>90%</span>
+                                    </div>
+                                    <div className="w-full bg-gray-200 rounded-full h-2">
+                                      <div className="bg-green-500 h-2 rounded-full" style={{width: '90%'}}></div>
+                                    </div>
+                                  </div>
+                                  <div>
+                                    <div className="flex justify-between text-sm mb-1">
+                                      <span className={`transition-colors duration-300 ${isDarkMode ? 'text-gray-300' : 'text-gray-600'}`}>Dashboard Admin</span>
+                                      <span className={`transition-colors duration-300 ${isDarkMode ? 'text-white' : 'text-gray-900'}`}>45%</span>
+                                    </div>
+                                    <div className="w-full bg-gray-200 rounded-full h-2">
+                                      <div className="bg-orange-500 h-2 rounded-full" style={{width: '45%'}}></div>
+                                    </div>
+                                  </div>
+                                </div>
+                              </div>
+
+                              {/* Widget de Equipo */}
+                              <div className={`rounded-lg p-4 shadow-sm transition-colors duration-300 ${isDarkMode ? 'bg-gray-700' : 'bg-white'}`}>
+                                <div className="flex items-center justify-between mb-3">
+                                  <h4 className={`font-semibold transition-colors duration-300 ${isDarkMode ? 'text-white' : 'text-gray-900'}`}>Equipo Activo</h4>
+                                  <span className="text-xs text-green-600 font-medium">3 en línea</span>
+                                </div>
+                                <div className="space-y-2">
+                                  <div className="flex items-center space-x-2">
+                                    <div className="w-6 h-6 bg-blue-500 rounded-full flex items-center justify-center">
+                                      <span className="text-white text-xs font-bold">A</span>
+                                    </div>
+                                    <div className="flex-1">
+                                      <div className={`text-sm font-medium transition-colors duration-300 ${isDarkMode ? 'text-white' : 'text-gray-900'}`}>Ana García</div>
+                                      <div className="text-xs text-green-600">En línea</div>
+                                    </div>
+                                  </div>
+                                  <div className="flex items-center space-x-2">
+                                    <div className="w-6 h-6 bg-green-500 rounded-full flex items-center justify-center">
+                                      <span className="text-white text-xs font-bold">C</span>
+                                    </div>
+                                    <div className="flex-1">
+                                      <div className={`text-sm font-medium transition-colors duration-300 ${isDarkMode ? 'text-white' : 'text-gray-900'}`}>Carlos López</div>
+                                      <div className="text-xs text-green-600">En línea</div>
+                                    </div>
+                                  </div>
+                                  <div className="flex items-center space-x-2">
+                                    <div className="w-6 h-6 bg-purple-500 rounded-full flex items-center justify-center">
+                                      <span className="text-white text-xs font-bold">M</span>
+                                    </div>
+                                    <div className="flex-1">
+                                      <div className={`text-sm font-medium transition-colors duration-300 ${isDarkMode ? 'text-white' : 'text-gray-900'}`}>María Rodríguez</div>
+                                      <div className="text-xs text-gray-500">Ausente</div>
+                                    </div>
+                                  </div>
+                                </div>
+                              </div>
+                            </div>
+
+                            {/* Gráfico de Rendimiento */}
+                            <div className={`rounded-lg p-4 shadow-sm transition-colors duration-300 ${isDarkMode ? 'bg-gray-700' : 'bg-white'}`}>
+                              <h4 className={`font-semibold mb-4 transition-colors duration-300 ${isDarkMode ? 'text-white' : 'text-gray-900'}`}>Rendimiento del Mes</h4>
+                              <div className="h-48 bg-gradient-to-br from-blue-50 to-green-50 rounded-lg flex items-center justify-center relative overflow-hidden">
+                                <div className="absolute inset-0 bg-gradient-to-r from-blue-500/10 to-green-500/10"></div>
+                                <div className="text-center z-10">
+                                  <div className="text-4xl mb-2">📊</div>
+                                  <div className={`text-lg font-semibold transition-colors duration-300 ${isDarkMode ? 'text-white' : 'text-gray-900'}`}>Gráfico Interactivo</div>
+                                  <div className={`text-sm transition-colors duration-300 ${isDarkMode ? 'text-gray-300' : 'text-gray-600'}`}>Visualización de datos en tiempo real</div>
+                                </div>
+                                {/* Barras de ejemplo */}
+                                <div className="absolute bottom-4 left-4 right-4 flex items-end space-x-2 h-20">
+                                  <div className="bg-blue-500 w-8 rounded-t" style={{height: '60%'}}></div>
+                                  <div className="bg-green-500 w-8 rounded-t" style={{height: '80%'}}></div>
+                                  <div className="bg-orange-500 w-8 rounded-t" style={{height: '45%'}}></div>
+                                  <div className="bg-purple-500 w-8 rounded-t" style={{height: '70%'}}></div>
+                                  <div className="bg-cyan-500 w-8 rounded-t" style={{height: '90%'}}></div>
+                                </div>
+                              </div>
+                            </div>
+
+                            {/* Tareas Pendientes */}
+                            <div className={`rounded-lg p-4 shadow-sm transition-colors duration-300 ${isDarkMode ? 'bg-gray-700' : 'bg-white'}`}>
+                              <h4 className={`font-semibold mb-4 transition-colors duration-300 ${isDarkMode ? 'text-white' : 'text-gray-900'}`}>Tareas Pendientes</h4>
+                              <div className="space-y-3">
+                                <div className="flex items-center space-x-3">
+                                  <input type="checkbox" className="w-4 h-4 text-blue-600 rounded focus:ring-blue-500" />
+                                  <div className="flex-1">
+                                    <div className={`text-sm font-medium transition-colors duration-300 ${isDarkMode ? 'text-white' : 'text-gray-900'}`}>Revisar diseño de la landing page</div>
+                                    <div className={`text-xs transition-colors duration-300 ${isDarkMode ? 'text-gray-400' : 'text-gray-500'}`}>Vence en 2 días</div>
+                                  </div>
+                                  <span className="text-xs bg-red-100 text-red-800 px-2 py-1 rounded">Urgente</span>
+                                </div>
+                                <div className="flex items-center space-x-3">
+                                  <input type="checkbox" className="w-4 h-4 text-blue-600 rounded focus:ring-blue-500" />
+                                  <div className="flex-1">
+                                    <div className={`text-sm font-medium transition-colors duration-300 ${isDarkMode ? 'text-white' : 'text-gray-900'}`}>Implementar autenticación</div>
+                                    <div className={`text-xs transition-colors duration-300 ${isDarkMode ? 'text-gray-400' : 'text-gray-500'}`}>Vence en 5 días</div>
+                                  </div>
+                                  <span className="text-xs bg-yellow-100 text-yellow-800 px-2 py-1 rounded">Media</span>
+                                </div>
+                                <div className="flex items-center space-x-3">
+                                  <input type="checkbox" className="w-4 h-4 text-blue-600 rounded focus:ring-blue-500" />
+                                  <div className="flex-1">
+                                    <div className={`text-sm font-medium transition-colors duration-300 ${isDarkMode ? 'text-white' : 'text-gray-900'}`}>Optimizar rendimiento</div>
+                                    <div className={`text-xs transition-colors duration-300 ${isDarkMode ? 'text-gray-400' : 'text-gray-500'}`}>Vence en 1 semana</div>
+                                  </div>
+                                  <span className="text-xs bg-green-100 text-green-800 px-2 py-1 rounded">Baja</span>
+                                </div>
+                              </div>
+                            </div>
+                          </div>
+                        )}
+
                         {activeDemo === 'projects' && (
                           <div className="space-y-4">
                             <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
