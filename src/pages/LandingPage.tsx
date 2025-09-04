@@ -332,145 +332,326 @@ export default function LandingPage() {
       {/* Secciones alternadas */}
       <section className="py-24 bg-white">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-          <div className="grid lg:grid-cols-2 gap-16 items-center">
-            <div className="space-y-6">
-              <h2 className="text-4xl font-bold text-gray-900">
-                Gestión de proyectos simplificada
-              </h2>
-              <p className="text-xl text-gray-600">
-                Organiza, supervisa y completa tus proyectos web con herramientas intuitivas diseñadas para equipos modernos.
-              </p>
+          <div className="grid lg:grid-cols-2 gap-20 items-center">
+            <div className="space-y-8">
               <div className="space-y-4">
-                <div className="flex items-center space-x-3">
-                  <CheckCircle className="h-6 w-6 text-green-500" />
-                  <span className="text-gray-700">Vista general en tiempo real</span>
+                <div className="inline-flex items-center px-4 py-2 rounded-full bg-blue-100 text-blue-800 text-sm font-medium">
+                  <Target className="h-4 w-4 mr-2" />
+                  Gestión de Proyectos
                 </div>
-                <div className="flex items-center space-x-3">
-                  <CheckCircle className="h-6 w-6 text-green-500" />
-                  <span className="text-gray-700">Colaboración en equipo</span>
-                </div>
-                <div className="flex items-center space-x-3">
-                  <CheckCircle className="h-6 w-6 text-green-500" />
-                  <span className="text-gray-700">Automatización inteligente</span>
-                </div>
+                <h2 className="text-5xl font-bold text-gray-900 leading-tight">
+                  Gestión de proyectos 
+                  <span className="bg-gradient-to-r from-blue-600 to-purple-600 bg-clip-text text-transparent"> simplificada</span>
+                </h2>
+                <p className="text-xl text-gray-600 leading-relaxed">
+                  Organiza, supervisa y completa tus proyectos web con herramientas intuitivas diseñadas para equipos modernos. Todo en un solo lugar.
+                </p>
               </div>
-            </div>
-            <div className="relative">
-              <div className="transform -rotate-2 hover:rotate-0 transition-transform duration-700 ease-out">
-                <img 
-                  src="/dashboardadmin.png" 
-                  alt="Dashboard Admin" 
-                  className="w-full h-auto max-w-lg mx-auto rounded-2xl shadow-2xl object-contain"
-                />
-              </div>
-              <div className="absolute -inset-4 bg-gradient-to-r from-blue-500/20 to-purple-500/20 rounded-3xl blur-xl -z-10"></div>
-            </div>
-          </div>
-        </div>
-      </section>
-
-      <section className="py-24 bg-gray-50">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-          <div className="grid lg:grid-cols-2 gap-16 items-center">
-            <div className="relative order-2 lg:order-1">
-              <div className="transform rotate-2 hover:rotate-0 transition-transform duration-700 ease-out">
-                <img 
-                  src="/macbookcliente.jpg" 
-                  alt="Dashboard Cliente en MacBook" 
-                  className="w-full h-auto max-w-lg mx-auto rounded-2xl shadow-2xl object-contain"
-                />
-              </div>
-              <div className="absolute -inset-4 bg-gradient-to-r from-green-500/20 to-cyan-500/20 rounded-3xl blur-xl -z-10"></div>
-            </div>
-            <div className="space-y-6 order-1 lg:order-2">
-              <h2 className="text-4xl font-bold text-gray-900">
-                Análisis y métricas claras
-              </h2>
-              <p className="text-xl text-gray-600">
-                Obtén insights profundos sobre el rendimiento de tus proyectos con reportes detallados y visualizaciones interactivas.
-              </p>
-              <div className="space-y-4">
-                <div className="flex items-center space-x-3">
-                  <CheckCircle className="h-6 w-6 text-green-500" />
-                  <span className="text-gray-700">Reportes en tiempo real</span>
-                </div>
-                <div className="flex items-center space-x-3">
-                  <CheckCircle className="h-6 w-6 text-green-500" />
-                  <span className="text-gray-700">Gráficos interactivos</span>
-                </div>
-                <div className="flex items-center space-x-3">
-                  <CheckCircle className="h-6 w-6 text-green-500" />
-                  <span className="text-gray-700">Exportación de datos</span>
-                </div>
-              </div>
-            </div>
-          </div>
-        </div>
-      </section>
-
-      <section className="py-24 bg-white">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-          <div className="grid lg:grid-cols-2 gap-16 items-center">
-            <div className="space-y-6">
-              <h2 className="text-4xl font-bold text-gray-900">
-                Seguridad y confiabilidad empresarial
-              </h2>
-              <p className="text-xl text-gray-600">
-                Protege tus datos con las mejores prácticas de seguridad y disfruta de una plataforma estable y confiable.
-              </p>
-              <div className="space-y-4">
-                <div className="flex items-center space-x-3">
-                  <CheckCircle className="h-6 w-6 text-green-500" />
-                  <span className="text-gray-700">Encriptación de extremo a extremo</span>
-                </div>
-                <div className="flex items-center space-x-3">
-                  <CheckCircle className="h-6 w-6 text-green-500" />
-                  <span className="text-gray-700">Backup automático</span>
-                </div>
-                <div className="flex items-center space-x-3">
-                  <CheckCircle className="h-6 w-6 text-green-500" />
-                  <span className="text-gray-700">Soporte 24/7</span>
-                </div>
-              </div>
-            </div>
-            <div className="relative">
-              <div className="transform -rotate-1 hover:rotate-0 transition-transform duration-700 ease-out">
-                <div className="bg-gradient-to-br from-gray-900 to-gray-800 rounded-2xl p-8 shadow-2xl">
-                  <div className="space-y-6">
-                    <div className="flex items-center space-x-3">
-                      <Shield className="h-8 w-8 text-green-500" />
-                      <span className="text-white text-xl font-semibold">Seguridad</span>
+              
+              <div className="grid sm:grid-cols-2 gap-6">
+                <div className="space-y-4">
+                  <div className="flex items-start space-x-3">
+                    <div className="flex-shrink-0 w-8 h-8 bg-blue-100 rounded-lg flex items-center justify-center">
+                      <Activity className="h-5 w-5 text-blue-600" />
                     </div>
-                    <div className="space-y-4">
-                      <div className="flex items-center justify-between">
-                        <span className="text-gray-300">Encriptación</span>
-                        <div className="flex space-x-1">
-                          {[...Array(5)].map((_, i) => (
-                            <div key={i} className="w-2 h-2 bg-green-500 rounded-full"></div>
-                          ))}
+                    <div>
+                      <h3 className="font-semibold text-gray-900">Vista general en tiempo real</h3>
+                      <p className="text-sm text-gray-600">Monitorea el progreso al instante</p>
+                    </div>
+                  </div>
+                  <div className="flex items-start space-x-3">
+                    <div className="flex-shrink-0 w-8 h-8 bg-purple-100 rounded-lg flex items-center justify-center">
+                      <Users className="h-5 w-5 text-purple-600" />
+                    </div>
+                    <div>
+                      <h3 className="font-semibold text-gray-900">Colaboración en equipo</h3>
+                      <p className="text-sm text-gray-600">Trabajo conjunto eficiente</p>
+                    </div>
+                  </div>
+                </div>
+                <div className="space-y-4">
+                  <div className="flex items-start space-x-3">
+                    <div className="flex-shrink-0 w-8 h-8 bg-green-100 rounded-lg flex items-center justify-center">
+                      <Zap className="h-5 w-5 text-green-600" />
+                    </div>
+                    <div>
+                      <h3 className="font-semibold text-gray-900">Automatización inteligente</h3>
+                      <p className="text-sm text-gray-600">Flujos de trabajo optimizados</p>
+                    </div>
+                  </div>
+                  <div className="flex items-start space-x-3">
+                    <div className="flex-shrink-0 w-8 h-8 bg-orange-100 rounded-lg flex items-center justify-center">
+                      <Settings className="h-5 w-5 text-orange-600" />
+                    </div>
+                    <div>
+                      <h3 className="font-semibold text-gray-900">Personalización total</h3>
+                      <p className="text-sm text-gray-600">Adapta la herramienta a tu flujo</p>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+            
+            <div className="relative order-2 lg:order-2">
+              <div className="relative group">
+                <div className="absolute -inset-4 bg-gradient-to-r from-blue-500/20 to-purple-500/20 rounded-3xl blur-2xl group-hover:blur-3xl transition-all duration-500"></div>
+                <div className="relative transform -rotate-1 hover:rotate-0 transition-all duration-700 ease-out">
+                  <div className="bg-white rounded-2xl p-2 shadow-2xl">
+                    <img 
+                      src="/dashboardadmin.png" 
+                      alt="Dashboard Admin mostrando gestión de proyectos" 
+                      className="w-full h-auto rounded-xl shadow-lg"
+                    />
+                  </div>
+                </div>
+                {/* Elementos flotantes que complementan la imagen */}
+                <div className="absolute -top-4 -right-4 bg-white rounded-xl p-3 shadow-lg border border-gray-200">
+                  <div className="flex items-center space-x-2">
+                    <div className="w-3 h-3 bg-blue-500 rounded-full animate-pulse"></div>
+                    <span className="text-sm font-medium text-gray-700">5 Proyectos activos</span>
+                  </div>
+                </div>
+                <div className="absolute -bottom-4 -left-4 bg-white rounded-xl p-3 shadow-lg border border-gray-200">
+                  <div className="flex items-center space-x-2">
+                    <Users className="h-4 w-4 text-purple-600" />
+                    <span className="text-sm font-medium text-gray-700">6 Usuarios</span>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <section className="py-24 bg-gradient-to-br from-slate-50 to-gray-100">
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+          <div className="grid lg:grid-cols-2 gap-20 items-center">
+            <div className="space-y-8 order-1 lg:order-1">
+              <div className="space-y-4">
+                <div className="inline-flex items-center px-4 py-2 rounded-full bg-green-100 text-green-800 text-sm font-medium">
+                  <BarChart3 className="h-4 w-4 mr-2" />
+                  Analytics Avanzado
+                </div>
+                <h2 className="text-5xl font-bold text-gray-900 leading-tight">
+                  Análisis y métricas 
+                  <span className="bg-gradient-to-r from-green-600 to-cyan-600 bg-clip-text text-transparent"> claras</span>
+                </h2>
+                <p className="text-xl text-gray-600 leading-relaxed">
+                  Obtén insights profundos sobre el rendimiento de tus proyectos con reportes detallados y visualizaciones interactivas que te ayudan a tomar decisiones informadas.
+                </p>
+              </div>
+              
+              <div className="grid sm:grid-cols-2 gap-6">
+                <div className="space-y-4">
+                  <div className="flex items-start space-x-3">
+                    <div className="flex-shrink-0 w-8 h-8 bg-green-100 rounded-lg flex items-center justify-center">
+                      <CheckCircle className="h-5 w-5 text-green-600" />
+                    </div>
+                    <div>
+                      <h3 className="font-semibold text-gray-900">Reportes en tiempo real</h3>
+                      <p className="text-sm text-gray-600">Datos actualizados al instante</p>
+                    </div>
+                  </div>
+                  <div className="flex items-start space-x-3">
+                    <div className="flex-shrink-0 w-8 h-8 bg-blue-100 rounded-lg flex items-center justify-center">
+                      <TrendingUp className="h-5 w-5 text-blue-600" />
+                    </div>
+                    <div>
+                      <h3 className="font-semibold text-gray-900">Gráficos interactivos</h3>
+                      <p className="text-sm text-gray-600">Visualizaciones dinámicas</p>
+                    </div>
+                  </div>
+                </div>
+                <div className="space-y-4">
+                  <div className="flex items-start space-x-3">
+                    <div className="flex-shrink-0 w-8 h-8 bg-purple-100 rounded-lg flex items-center justify-center">
+                      <Activity className="h-5 w-5 text-purple-600" />
+                    </div>
+                    <div>
+                      <h3 className="font-semibold text-gray-900">Exportación de datos</h3>
+                      <p className="text-sm text-gray-600">Descarga en múltiples formatos</p>
+                    </div>
+                  </div>
+                  <div className="flex items-start space-x-3">
+                    <div className="flex-shrink-0 w-8 h-8 bg-orange-100 rounded-lg flex items-center justify-center">
+                      <Shield className="h-5 w-5 text-orange-600" />
+                    </div>
+                    <div>
+                      <h3 className="font-semibold text-gray-900">Datos seguros</h3>
+                      <p className="text-sm text-gray-600">Encriptación de extremo a extremo</p>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+            
+            <div className="relative order-2 lg:order-2">
+              <div className="relative group">
+                <div className="absolute -inset-4 bg-gradient-to-r from-green-500/20 to-cyan-500/20 rounded-3xl blur-2xl group-hover:blur-3xl transition-all duration-500"></div>
+                <div className="relative transform rotate-1 hover:rotate-0 transition-all duration-700 ease-out">
+                  <div className="bg-white rounded-2xl p-2 shadow-2xl">
+                    <img 
+                      src="/dashboardcliente.png" 
+                      alt="Dashboard Cliente mostrando análisis y métricas" 
+                      className="w-full h-auto rounded-xl shadow-lg"
+                    />
+                  </div>
+                </div>
+                {/* Elementos flotantes que complementan la imagen */}
+                <div className="absolute -top-4 -right-4 bg-white rounded-xl p-3 shadow-lg border border-gray-200">
+                  <div className="flex items-center space-x-2">
+                    <div className="w-3 h-3 bg-green-500 rounded-full animate-pulse"></div>
+                    <span className="text-sm font-medium text-gray-700">Datos en vivo</span>
+                  </div>
+                </div>
+                <div className="absolute -bottom-4 -left-4 bg-white rounded-xl p-3 shadow-lg border border-gray-200">
+                  <div className="flex items-center space-x-2">
+                    <BarChart3 className="h-4 w-4 text-blue-600" />
+                    <span className="text-sm font-medium text-gray-700">+24% este mes</span>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <section className="py-24 bg-gradient-to-br from-gray-900 to-slate-900 text-white">
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+          <div className="grid lg:grid-cols-2 gap-20 items-center">
+            <div className="space-y-8">
+              <div className="space-y-4">
+                <div className="inline-flex items-center px-4 py-2 rounded-full bg-green-100 text-green-800 text-sm font-medium">
+                  <Shield className="h-4 w-4 mr-2" />
+                  Seguridad Empresarial
+                </div>
+                <h2 className="text-5xl font-bold text-white leading-tight">
+                  Seguridad y confiabilidad 
+                  <span className="bg-gradient-to-r from-green-400 to-blue-400 bg-clip-text text-transparent"> empresarial</span>
+                </h2>
+                <p className="text-xl text-gray-300 leading-relaxed">
+                  Protege tus datos con las mejores prácticas de seguridad y disfruta de una plataforma estable y confiable diseñada para empresas.
+                </p>
+              </div>
+              
+              <div className="grid sm:grid-cols-2 gap-6">
+                <div className="space-y-4">
+                  <div className="flex items-start space-x-3">
+                    <div className="flex-shrink-0 w-8 h-8 bg-green-100 rounded-lg flex items-center justify-center">
+                      <Shield className="h-5 w-5 text-green-600" />
+                    </div>
+                    <div>
+                      <h3 className="font-semibold text-white">Encriptación de extremo a extremo</h3>
+                      <p className="text-sm text-gray-300">Protección máxima de datos</p>
+                    </div>
+                  </div>
+                  <div className="flex items-start space-x-3">
+                    <div className="flex-shrink-0 w-8 h-8 bg-blue-100 rounded-lg flex items-center justify-center">
+                      <Activity className="h-5 w-5 text-blue-600" />
+                    </div>
+                    <div>
+                      <h3 className="font-semibold text-white">Backup automático</h3>
+                      <p className="text-sm text-gray-300">Respaldo continuo de información</p>
+                    </div>
+                  </div>
+                </div>
+                <div className="space-y-4">
+                  <div className="flex items-start space-x-3">
+                    <div className="flex-shrink-0 w-8 h-8 bg-purple-100 rounded-lg flex items-center justify-center">
+                      <Clock className="h-5 w-5 text-purple-600" />
+                    </div>
+                    <div>
+                      <h3 className="font-semibold text-white">Soporte 24/7</h3>
+                      <p className="text-sm text-gray-300">Asistencia siempre disponible</p>
+                    </div>
+                  </div>
+                  <div className="flex items-start space-x-3">
+                    <div className="flex-shrink-0 w-8 h-8 bg-orange-100 rounded-lg flex items-center justify-center">
+                      <Star className="h-5 w-5 text-orange-600" />
+                    </div>
+                    <div>
+                      <h3 className="font-semibold text-white">Certificaciones ISO</h3>
+                      <p className="text-sm text-gray-300">Estándares internacionales</p>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+            
+            <div className="relative order-2 lg:order-2">
+              <div className="relative group">
+                <div className="absolute -inset-4 bg-gradient-to-r from-green-500/20 to-blue-500/20 rounded-3xl blur-2xl group-hover:blur-3xl transition-all duration-500"></div>
+                <div className="relative transform -rotate-1 hover:rotate-0 transition-all duration-700 ease-out">
+                  <div className="bg-gradient-to-br from-gray-800 to-gray-900 rounded-2xl p-8 shadow-2xl border border-gray-700">
+                    <div className="space-y-6">
+                      <div className="flex items-center space-x-3">
+                        <Shield className="h-8 w-8 text-green-400" />
+                        <span className="text-white text-xl font-semibold">Panel de Seguridad</span>
+                      </div>
+                      <div className="space-y-6">
+                        <div className="space-y-2">
+                          <div className="flex items-center justify-between">
+                            <span className="text-gray-300 text-sm">Encriptación SSL/TLS</span>
+                            <div className="flex space-x-1">
+                              {[...Array(5)].map((_, i) => (
+                                <div key={i} className="w-2 h-2 bg-green-500 rounded-full"></div>
+                              ))}
+                            </div>
+                          </div>
+                          <div className="w-full bg-gray-700 rounded-full h-2">
+                            <div className="bg-green-500 h-2 rounded-full w-full"></div>
+                          </div>
+                        </div>
+                        <div className="space-y-2">
+                          <div className="flex items-center justify-between">
+                            <span className="text-gray-300 text-sm">Backup Automático</span>
+                            <div className="flex space-x-1">
+                              {[...Array(5)].map((_, i) => (
+                                <div key={i} className="w-2 h-2 bg-green-500 rounded-full"></div>
+                              ))}
+                            </div>
+                          </div>
+                          <div className="w-full bg-gray-700 rounded-full h-2">
+                            <div className="bg-green-500 h-2 rounded-full w-full"></div>
+                          </div>
+                        </div>
+                        <div className="space-y-2">
+                          <div className="flex items-center justify-between">
+                            <span className="text-gray-300 text-sm">Monitoreo 24/7</span>
+                            <div className="flex space-x-1">
+                              {[...Array(5)].map((_, i) => (
+                                <div key={i} className="w-2 h-2 bg-green-500 rounded-full"></div>
+                              ))}
+                            </div>
+                          </div>
+                          <div className="w-full bg-gray-700 rounded-full h-2">
+                            <div className="bg-green-500 h-2 rounded-full w-full"></div>
+                          </div>
                         </div>
                       </div>
-                      <div className="flex items-center justify-between">
-                        <span className="text-gray-300">Backup</span>
-                        <div className="flex space-x-1">
-                          {[...Array(5)].map((_, i) => (
-                            <div key={i} className="w-2 h-2 bg-green-500 rounded-full"></div>
-                          ))}
-                        </div>
-                      </div>
-                      <div className="flex items-center justify-between">
-                        <span className="text-gray-300">Monitoreo</span>
-                        <div className="flex space-x-1">
-                          {[...Array(5)].map((_, i) => (
-                            <div key={i} className="w-2 h-2 bg-green-500 rounded-full"></div>
-                          ))}
+                      <div className="pt-4 border-t border-gray-700">
+                        <div className="flex items-center space-x-2">
+                          <div className="w-3 h-3 bg-green-500 rounded-full animate-pulse"></div>
+                          <span className="text-green-400 text-sm font-medium">Sistema Seguro</span>
                         </div>
                       </div>
                     </div>
                   </div>
                 </div>
+                {/* Elementos flotantes que complementan la imagen */}
+                <div className="absolute -top-4 -right-4 bg-white rounded-xl p-3 shadow-lg border border-gray-200">
+                  <div className="flex items-center space-x-2">
+                    <Shield className="h-4 w-4 text-green-600" />
+                    <span className="text-sm font-medium text-gray-700">100% Seguro</span>
+                  </div>
+                </div>
+                <div className="absolute -bottom-4 -left-4 bg-white rounded-xl p-3 shadow-lg border border-gray-200">
+                  <div className="flex items-center space-x-2">
+                    <Clock className="h-4 w-4 text-blue-600" />
+                    <span className="text-sm font-medium text-gray-700">24/7 Monitoreo</span>
+                  </div>
+                </div>
               </div>
-              <div className="absolute -inset-4 bg-gradient-to-r from-green-500/20 to-blue-500/20 rounded-3xl blur-xl -z-10"></div>
             </div>
           </div>
         </div>
