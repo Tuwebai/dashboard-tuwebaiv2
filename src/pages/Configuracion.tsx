@@ -309,7 +309,7 @@ export default function Configuracion() {
       <div className="min-h-screen bg-gradient-to-br from-slate-50 via-blue-50/30 to-indigo-50/30 flex items-center justify-center">
         <div className="text-center">
           <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-blue-500 mx-auto"></div>
-          <p className="mt-4 text-gray-600">Cargando configuración...</p>
+          <p className="mt-4 text-muted-foreground">Cargando configuración...</p>
         </div>
       </div>
     );
@@ -327,7 +327,7 @@ export default function Configuracion() {
             transition={{ duration: 0.6, ease: "easeOut" }}
             className="relative group"
           >
-            <div className="bg-white rounded-2xl p-6 shadow-lg hover:shadow-2xl transition-all duration-500 transform hover:-translate-y-1 border border-slate-200/50 backdrop-blur-sm overflow-hidden bg-gradient-to-br from-white via-blue-25 to-indigo-25">
+            <div className="bg-card rounded-2xl p-6 shadow-lg hover:shadow-2xl transition-all duration-500 transform hover:-translate-y-1 border border-border/50 backdrop-blur-sm overflow-hidden bg-gradient-to-br from-white via-blue-25 to-indigo-25">
               <div className="flex flex-col lg:flex-row lg:items-center justify-between gap-4">
                 <div>
                   <motion.h1 
@@ -339,7 +339,7 @@ export default function Configuracion() {
                     Configuración
                   </motion.h1>
                   <motion.p 
-                    className="text-slate-600 mt-2 text-lg"
+                    className="text-muted-foreground mt-2 text-lg"
                     initial={{ opacity: 0, x: -20 }}
                     animate={{ opacity: 1, x: 0 }}
                     transition={{ duration: 0.8, delay: 0.4 }}
@@ -353,7 +353,7 @@ export default function Configuracion() {
                   animate={{ opacity: 1, x: 0 }}
                   transition={{ duration: 0.8, delay: 0.6 }}
                 >
-                  <div className="flex items-center gap-2 text-sm text-slate-600 bg-slate-100 px-4 py-2 rounded-xl">
+                  <div className="flex items-center gap-2 text-sm text-muted-foreground bg-muted/50 px-4 py-2 rounded-xl">
                     <FileText className="h-4 w-4 text-blue-600" />
                     <span className="font-semibold">Proyectos: {getUserProjects().length}</span>
                   </div>
@@ -370,7 +370,7 @@ export default function Configuracion() {
             transition={{ duration: 0.6, delay: 0.3 }}
           >
             <Tabs value={activeTab} onValueChange={setActiveTab} className="w-full">
-              <TabsList className={`grid w-full ${user?.role === 'admin' ? 'grid-cols-5' : 'grid-cols-4'} bg-white rounded-2xl shadow-lg hover:shadow-xl transition-all duration-300 border border-slate-200/50 p-1 backdrop-blur-sm`}>
+              <TabsList className={`grid w-full ${user?.role === 'admin' ? 'grid-cols-5' : 'grid-cols-4'} bg-card rounded-2xl shadow-lg hover:shadow-xl transition-all duration-300 border border-border/50 p-1 backdrop-blur-sm`}>
                 <TabsTrigger 
                   value="general" 
                   className="data-[state=active]:bg-gradient-to-r data-[state=active]:from-blue-500 data-[state=active]:to-blue-600 data-[state=active]:text-white rounded-xl transition-all duration-300 hover:scale-105 data-[state=active]:shadow-lg text-slate-700 font-medium"
@@ -448,7 +448,7 @@ export default function Configuracion() {
                   transition={{ duration: 0.6, delay: 0.4 }}
                   className="relative group"
                 >
-                  <Card className="bg-white rounded-2xl shadow-lg hover:shadow-2xl transition-all duration-500 transform hover:-translate-y-1 border border-slate-200/50 backdrop-blur-sm overflow-hidden bg-gradient-to-br from-white via-blue-25 to-indigo-25">
+                  <Card className="bg-card rounded-2xl shadow-lg hover:shadow-2xl transition-all duration-500 transform hover:-translate-y-1 border border-border/50 backdrop-blur-sm overflow-hidden bg-gradient-to-br from-white via-blue-25 to-indigo-25">
                     <CardHeader>
                       <CardTitle className="text-xl text-slate-800 flex items-center gap-2">
                         <motion.div
@@ -572,7 +572,7 @@ export default function Configuracion() {
 
               {/* Configuración de Privacidad */}
               <TabsContent value="privacidad" className="space-y-6">
-                <Card className="bg-white rounded-2xl shadow-lg border border-slate-200/50">
+                <Card className="bg-card rounded-2xl shadow-lg border border-border/50">
                   <CardHeader>
                     <CardTitle className="text-xl text-slate-800 flex items-center gap-2">
                       <Shield className="h-5 w-5 text-green-600" />
@@ -686,7 +686,7 @@ export default function Configuracion() {
 
               {/* Configuración de Rendimiento */}
               <TabsContent value="rendimiento" className="space-y-6">
-                <Card className="bg-white rounded-2xl shadow-lg border border-slate-200/50">
+                <Card className="bg-card rounded-2xl shadow-lg border border-border/50">
                   <CardHeader>
                     <CardTitle className="text-xl text-slate-800 flex items-center gap-2">
                       <Monitor className="h-5 w-5 text-purple-600" />
@@ -816,7 +816,7 @@ export default function Configuracion() {
 
               {/* Configuración de Seguridad */}
               <TabsContent value="seguridad" className="space-y-6">
-                <Card className="bg-white rounded-2xl shadow-lg border border-slate-200/50">
+                <Card className="bg-card rounded-2xl shadow-lg border border-border/50">
                   <CardHeader>
                     <CardTitle className="text-xl text-slate-800 flex items-center gap-2">
                       <Lock className="h-5 w-5 text-red-600" />
@@ -942,13 +942,13 @@ export default function Configuracion() {
               {/* Configuración de Administración del Sistema (Solo para Admins) */}
               {user?.role === 'admin' && (
                 <TabsContent value="admin" className="space-y-6">
-                  <Card className="bg-white rounded-2xl shadow-lg border border-slate-200/50">
+                  <Card className="bg-card rounded-2xl shadow-lg border border-border/50">
                     <CardHeader>
                       <CardTitle className="text-xl text-slate-800 flex items-center gap-2">
                         <Cog className="h-5 w-5 text-orange-600" />
                         Administración del Sistema
                       </CardTitle>
-                      <CardDescription className="text-slate-600">
+                      <CardDescription className="text-muted-foreground">
                         Configuraciones avanzadas del sistema (solo para administradores)
                       </CardDescription>
                     </CardHeader>

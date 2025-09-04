@@ -316,7 +316,7 @@ export default function ProjectsPage() {
     <div className="min-h-screen bg-gradient-to-br from-slate-50 via-blue-50/30 to-indigo-50/30">
       <div className="p-6 space-y-6">
         {/* Header con diseño claro */}
-        <div className="bg-white rounded-2xl p-6 shadow-lg border border-slate-200/50">
+        <div className="bg-card rounded-2xl p-6 shadow-lg border border-border/50">
           <div className="flex flex-col lg:flex-row lg:items-center justify-between gap-4">
             <div>
               <h1 className="text-3xl font-bold text-slate-800">
@@ -334,7 +334,7 @@ export default function ProjectsPage() {
                 <Button
                   variant="outline"
                   onClick={() => navigate(-1)}
-                  className="border-slate-300 text-slate-700 hover:bg-slate-50"
+                  className="border-border text-foreground hover:bg-muted/50"
                 >
                   ← Volver
                 </Button>
@@ -342,7 +342,7 @@ export default function ProjectsPage() {
               <Button
                 variant="outline"
                 onClick={handleExportReport}
-                className="border-slate-300 text-slate-700 hover:bg-slate-50"
+                className="border-border text-foreground hover:bg-muted/50"
               >
                 <Download className="h-4 w-4 mr-2" />
                 Exportar Reporte
@@ -363,7 +363,7 @@ export default function ProjectsPage() {
 
 
         {/* Búsqueda y filtros */}
-        <div className="bg-white rounded-2xl shadow-lg border border-slate-200/50">
+        <div className="bg-card rounded-2xl shadow-lg border border-border/50">
           <SearchAndFilters
             projects={visibleProjects}
             onFilteredProjects={handleFilteredProjects}
@@ -373,14 +373,14 @@ export default function ProjectsPage() {
         </div>
 
         {/* Controles de vista */}
-        <div className="bg-white rounded-2xl p-4 shadow-lg border border-slate-200/50">
+        <div className="bg-card rounded-2xl p-4 shadow-lg border border-border/50">
           <div className="flex items-center justify-between">
             <div className="flex items-center gap-2">
               <Button
                 variant={viewMode === 'grid' ? 'default' : 'outline'}
                 size="sm"
                 onClick={handleViewModeGrid}
-                className={viewMode === 'grid' ? 'bg-blue-500 hover:bg-blue-600' : 'border-slate-300 text-slate-700 hover:bg-slate-50'}
+                className={viewMode === 'grid' ? 'bg-blue-500 hover:bg-blue-600' : 'border-border text-foreground hover:bg-muted/50'}
               >
                 <Grid className="h-4 w-4" />
               </Button>
@@ -388,7 +388,7 @@ export default function ProjectsPage() {
                 variant={viewMode === 'list' ? 'default' : 'outline'}
                 size="sm"
                 onClick={handleViewModeList}
-                className={viewMode === 'list' ? 'bg-blue-500 hover:bg-blue-600' : 'border-slate-300 text-slate-700 hover:bg-slate-50'}
+                className={viewMode === 'list' ? 'bg-blue-500 hover:bg-blue-600' : 'border-border text-foreground hover:bg-muted/50'}
               >
                 <List className="h-4 w-4" />
               </Button>
@@ -401,8 +401,8 @@ export default function ProjectsPage() {
 
         {/* Lista de proyectos */}
         {filteredProjects.length === 0 ? (
-          <div className="bg-white rounded-2xl p-12 text-center shadow-lg border border-slate-200/50">
-            <div className="w-16 h-16 bg-slate-100 rounded-full flex items-center justify-center mx-auto mb-4">
+          <div className="bg-card rounded-2xl p-12 text-center shadow-lg border border-border/50">
+            <div className="w-16 h-16 bg-muted rounded-full flex items-center justify-center mx-auto mb-4">
               <FileText className="h-8 w-8 text-slate-400" />
             </div>
             <h3 className="text-lg font-semibold mb-2 text-slate-800">No hay proyectos</h3>
