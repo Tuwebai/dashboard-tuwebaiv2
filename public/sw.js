@@ -115,7 +115,13 @@ self.addEventListener('fetch', (event) => {
     return;
   }
   
-  // Estrategia: Network First para API calls
+  // Estrategia: Network Only para peticiones POST, PATCH, DELETE
+  if (isNonCacheableRequest(request)) {
+    event.respondWith(networkOnly(request));
+    return;
+  }
+  
+  // Estrategia: Network First para API calls GET
   if (isApiRequest(request)) {
     event.respondWith(networkFirst(request));
     return;
@@ -128,6 +134,16 @@ self.addEventListener('fetch', (event) => {
 // =====================================================
 // ESTRATEGIAS DE CACHE
 // =====================================================
+
+// Network Only: Para peticiones que no deben ser cacheadas
+async function networkOnly(request) {
+  try {
+    return await fetch(request);
+  } catch (error) {
+    console.error('❌ Network Only Error:', error);
+    return new Response('Error de red', { status: 503 });
+  }
+}
 
 // Cache First: Para recursos estáticos que raramente cambian
 async function cacheFirst(request) {
@@ -154,10 +170,13 @@ async function cacheFirst(request) {
 async function networkFirst(request) {
   try {
     const networkResponse = await fetch(request);
-    if (networkResponse.ok) {
+    
+    // Solo cachear peticiones GET exitosas
+    if (networkResponse.ok && request.method === 'GET') {
       const cache = await caches.open(DYNAMIC_CACHE_NAME);
       cache.put(request, networkResponse.clone());
     }
+    
     return networkResponse;
   } catch (error) {
     console.log('🌐 Network First: Fallback a cache');
@@ -175,7 +194,8 @@ async function staleWhileRevalidate(request) {
   const cachedResponse = await cache.match(request);
   
   const fetchPromise = fetch(request).then((networkResponse) => {
-    if (networkResponse.ok) {
+    // Solo cachear peticiones GET exitosas y respuestas completas
+    if (networkResponse.ok && request.method === 'GET' && networkResponse.status !== 206) {
       cache.put(request, networkResponse.clone());
     }
     return networkResponse;
@@ -215,15 +235,22 @@ function isStaticAsset(request) {
 function isApiRequest(request) {
   const url = new URL(request.url);
   
-  // Supabase API
-  if (url.hostname.includes('supabase.co')) {
+  // Supabase API - solo para peticiones GET
+  if (url.hostname.includes('supabase.co') && request.method === 'GET') {
     return true;
   }
   
-  // Otras APIs
-  return url.pathname.startsWith('/api/') ||
-         url.pathname.startsWith('/auth/') ||
-         request.method !== 'GET';
+  // Otras APIs GET
+  return (url.pathname.startsWith('/api/') || url.pathname.startsWith('/auth/')) && 
+         request.method === 'GET';
+}
+
+function isNonCacheableRequest(request) {
+  // Peticiones que no deben ser cacheadas
+  return request.method === 'POST' || 
+         request.method === 'PATCH' || 
+         request.method === 'DELETE' || 
+         request.method === 'PUT';
 }
 
 // =====================================================
