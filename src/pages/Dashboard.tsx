@@ -710,7 +710,7 @@ export default function Dashboard() {
   return (
     <>
       <style>{customStyles}</style>
-      <div className="min-h-screen bg-gradient-to-br from-slate-50 via-blue-50/30 to-indigo-50/30">
+      <div className="min-h-screen bg-gradient-to-br from-background via-background/95 to-background/90">
         <div className="flex-1 overflow-hidden">
           <div className="h-full overflow-y-auto">
           
@@ -725,7 +725,7 @@ export default function Dashboard() {
               whileHover={{ scale: 1.02 }}
               transition={{ duration: 0.3, ease: "easeOut" }}
             >
-              <div className="bg-white rounded-2xl p-4 sm:p-6 shadow-xl hover:shadow-2xl transition-all duration-500 transform hover:-translate-y-2 border border-slate-200/50 backdrop-blur-sm overflow-hidden bg-gradient-to-br from-sky-50 via-blue-50 to-indigo-100 relative">
+              <div className="bg-card rounded-2xl p-4 sm:p-6 shadow-xl hover:shadow-2xl transition-all duration-500 transform hover:-translate-y-2 border border-border/50 backdrop-blur-sm overflow-hidden bg-gradient-to-br from-primary/5 via-primary/10 to-primary/15 relative">
                 {/* Efecto de brillo sutil */}
                 <div className="absolute inset-0 bg-gradient-to-br from-transparent via-white/20 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-500"></div>
                 
@@ -736,12 +736,12 @@ export default function Dashboard() {
                 </div>
                 
                 {/* Valor con animación mejorada */}
-                <div className="text-3xl sm:text-4xl lg:text-5xl font-bold text-slate-800 mb-3 group-hover:scale-105 transition-transform duration-300 metric-value-animation bg-gradient-to-r from-sky-600 to-indigo-700 bg-clip-text text-transparent">
+                <div className="text-3xl sm:text-4xl lg:text-5xl font-bold text-card-foreground mb-3 group-hover:scale-105 transition-transform duration-300 metric-value-animation bg-gradient-to-r from-primary to-primary/80 bg-clip-text text-transparent">
                   {dashboardStats.totalProjects}
                 </div>
                 
                 {/* Título con mejor tipografía */}
-                <div className="text-lg sm:text-xl font-bold text-slate-700 mb-2 flex items-center gap-2">
+                <div className="text-lg sm:text-xl font-bold text-card-foreground mb-2 flex items-center gap-2">
                   Proyectos Activos
                   <ContextualHelp 
                     context="proyectos" 
@@ -751,7 +751,7 @@ export default function Dashboard() {
                 </div>
                 
                 {/* Subtítulo con icono */}
-                <div className="text-sm text-slate-600 flex items-center gap-2">
+                <div className="text-sm text-muted-foreground flex items-center gap-2">
                   <div className="w-2 h-2 bg-gradient-to-r from-emerald-400 to-teal-500 rounded-full animate-pulse"></div>
                   <span className="text-emerald-600 font-semibold">
                     {dashboardStats.inProgressProjects}
@@ -773,7 +773,7 @@ export default function Dashboard() {
               whileHover={{ scale: 1.02 }}
               transition={{ duration: 0.3, ease: "easeOut" }}
             >
-              <div className="bg-white rounded-2xl p-4 sm:p-6 shadow-xl hover:shadow-2xl transition-all duration-500 transform hover:-translate-y-2 border border-slate-200/50 backdrop-blur-sm overflow-hidden bg-gradient-to-br from-emerald-50 via-green-50 to-teal-100 relative">
+              <div className="bg-card rounded-2xl p-4 sm:p-6 shadow-xl hover:shadow-2xl transition-all duration-500 transform hover:-translate-y-2 border border-border/50 backdrop-blur-sm overflow-hidden bg-gradient-to-br from-emerald-500/5 via-green-500/10 to-teal-500/15 relative">
                 {/* Efecto de brillo sutil */}
                 <div className="absolute inset-0 bg-gradient-to-br from-transparent via-white/20 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-500"></div>
                 
@@ -784,17 +784,17 @@ export default function Dashboard() {
                 </div>
                 
                 {/* Valor con animación mejorada */}
-                <div className="text-3xl sm:text-4xl lg:text-5xl font-bold text-slate-800 mb-3 group-hover:scale-105 transition-transform duration-300 metric-value-animation bg-gradient-to-r from-emerald-600 to-teal-700 bg-clip-text text-transparent">
+                <div className="text-3xl sm:text-4xl lg:text-5xl font-bold text-card-foreground mb-3 group-hover:scale-105 transition-transform duration-300 metric-value-animation bg-gradient-to-r from-emerald-600 to-teal-700 bg-clip-text text-transparent">
                   {dashboardStats.inProgressProjects}
                 </div>
                 
                 {/* Título con mejor tipografía */}
-                <div className="text-lg sm:text-xl font-bold text-slate-700 mb-2">
+                <div className="text-lg sm:text-xl font-bold text-card-foreground mb-2">
                   En Progreso
                 </div>
                 
                 {/* Subtítulo con icono */}
-                <div className="text-sm text-slate-600 flex items-center gap-2">
+                <div className="text-sm text-muted-foreground flex items-center gap-2">
                   <div className="w-2 h-2 bg-gradient-to-r from-blue-400 to-indigo-500 rounded-full animate-pulse"></div>
                   <span className="text-blue-600 font-semibold">
                     {dashboardStats.pendingProjects}
@@ -817,7 +817,7 @@ export default function Dashboard() {
               whileHover={{ scale: 1.02 }}
               transition={{ duration: 0.3, ease: "easeOut" }}
             >
-              <div className="bg-white rounded-2xl p-4 sm:p-6 shadow-xl hover:shadow-2xl transition-all duration-500 transform hover:-translate-y-2 border border-slate-200/50 backdrop-blur-sm overflow-hidden bg-gradient-to-br from-amber-50 via-yellow-50 to-orange-100 relative">
+              <div className="bg-card rounded-2xl p-4 sm:p-6 shadow-xl hover:shadow-2xl transition-all duration-500 transform hover:-translate-y-2 border border-border/50 backdrop-blur-sm overflow-hidden bg-gradient-to-br from-amber-500/5 via-yellow-500/10 to-orange-500/15 relative">
                 {/* Efecto de brillo sutil */}
                 <div className="absolute inset-0 bg-gradient-to-br from-transparent via-white/20 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-500"></div>
                 
@@ -831,17 +831,17 @@ export default function Dashboard() {
                 </div>
                 
                 {/* Valor con animación mejorada */}
-                <div className="text-3xl sm:text-4xl lg:text-5xl font-bold text-slate-800 mb-3 group-hover:scale-105 transition-transform duration-300 metric-value-animation bg-gradient-to-r from-amber-600 to-orange-700 bg-clip-text text-transparent">
+                <div className="text-3xl sm:text-4xl lg:text-5xl font-bold text-card-foreground mb-3 group-hover:scale-105 transition-transform duration-300 metric-value-animation bg-gradient-to-r from-amber-600 to-orange-700 bg-clip-text text-transparent">
                   {dashboardStats.totalComments}
                 </div>
                 
                 {/* Título con mejor tipografía */}
-                <div className="text-lg sm:text-xl font-bold text-slate-700 mb-2">
+                <div className="text-lg sm:text-xl font-bold text-card-foreground mb-2">
                   Comentarios
                 </div>
                 
                 {/* Subtítulo con icono */}
-                <div className="text-sm text-slate-600 flex items-center gap-2">
+                <div className="text-sm text-muted-foreground flex items-center gap-2">
                   <div className="w-2 h-2 bg-gradient-to-r from-green-400 to-emerald-500 rounded-full animate-pulse"></div>
                   <span className="text-green-600 font-semibold">
                     {dashboardStats.completedProjects}
@@ -864,7 +864,7 @@ export default function Dashboard() {
               whileHover={{ scale: 1.02 }}
               transition={{ duration: 0.3, ease: "easeOut" }}
             >
-              <div className="bg-white rounded-2xl p-4 sm:p-6 shadow-xl hover:shadow-2xl transition-all duration-500 transform hover:-translate-y-2 border border-slate-200/50 backdrop-blur-sm overflow-hidden bg-gradient-to-br from-violet-50 via-purple-50 to-fuchsia-100 relative">
+              <div className="bg-card rounded-2xl p-4 sm:p-6 shadow-xl hover:shadow-2xl transition-all duration-500 transform hover:-translate-y-2 border border-border/50 backdrop-blur-sm overflow-hidden bg-gradient-to-br from-violet-500/5 via-purple-500/10 to-fuchsia-500/15 relative">
                 {/* Efecto de brillo sutil */}
                 <div className="absolute inset-0 bg-gradient-to-br from-transparent via-white/20 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-500"></div>
                 
@@ -883,17 +883,17 @@ export default function Dashboard() {
                 </div>
                 
                 {/* Valor con animación mejorada */}
-                <div className="text-3xl sm:text-4xl lg:text-5xl font-bold text-slate-800 mb-3 group-hover:scale-105 transition-transform duration-300 metric-value-animation bg-gradient-to-r from-violet-600 to-fuchsia-700 bg-clip-text text-transparent">
+                <div className="text-3xl sm:text-4xl lg:text-5xl font-bold text-card-foreground mb-3 group-hover:scale-105 transition-transform duration-300 metric-value-animation bg-gradient-to-r from-violet-600 to-fuchsia-700 bg-clip-text text-transparent">
                   {dashboardStats.averageProgress}%
                 </div>
                 
                 {/* Título con mejor tipografía */}
-                <div className="text-lg sm:text-xl font-bold text-slate-700 mb-2">
+                <div className="text-lg sm:text-xl font-bold text-card-foreground mb-2">
                   Progreso General
                 </div>
                 
                 {/* Subtítulo con icono */}
-                <div className="text-sm text-slate-600 flex items-center gap-2">
+                <div className="text-sm text-muted-foreground flex items-center gap-2">
                   <div className="w-2 h-2 bg-gradient-to-r from-green-400 to-emerald-500 rounded-full animate-pulse"></div>
                   <span className="text-green-600 font-semibold">
                     {dashboardStats.completedProjects}
@@ -917,13 +917,13 @@ export default function Dashboard() {
             
             {/* Filtros y Controles */}
             <motion.div 
-              className="bg-white rounded-2xl p-6 sm:p-8 shadow-xl border border-slate-200/50 relative overflow-hidden"
+              className="bg-card rounded-2xl p-6 sm:p-8 shadow-xl border border-border/50 relative overflow-hidden"
               initial={{ opacity: 0, y: 20 }}
               animate={{ opacity: 1, y: 0 }}
               transition={{ duration: 0.5 }}
             >
               {/* Fondo con gradiente sutil */}
-              <div className="absolute inset-0 bg-gradient-to-br from-slate-50 via-blue-50/20 to-indigo-50/20"></div>
+              <div className="absolute inset-0 bg-gradient-to-br from-muted/20 via-primary/5 to-primary/10"></div>
               
               <div className="relative z-10 flex flex-col lg:flex-row items-start lg:items-center justify-between gap-6">
                 <div className="flex flex-col sm:flex-row items-start sm:items-center gap-4 sm:gap-6">
@@ -931,7 +931,7 @@ export default function Dashboard() {
                     <div className="w-10 h-10 bg-gradient-to-br from-blue-500 to-indigo-600 rounded-xl flex items-center justify-center shadow-lg">
                       <Filter className="h-5 w-5 text-white" />
                     </div>
-                    <h2 className="text-xl sm:text-2xl font-bold text-slate-800 bg-gradient-to-r from-blue-600 to-indigo-700 bg-clip-text text-transparent">
+                    <h2 className="text-xl sm:text-2xl font-bold text-card-foreground bg-gradient-to-r from-primary to-primary/80 bg-clip-text text-transparent">
                       Filtros y Controles
                     </h2>
                   </div>
@@ -939,7 +939,7 @@ export default function Dashboard() {
                     variant="outline"
                     size="sm"
                     onClick={clearFilters}
-                    className="border-slate-300 text-slate-700 hover:bg-slate-50 hover:border-blue-300 hover:text-blue-700 transition-all duration-300 hover:scale-105 shadow-sm hover:shadow-md"
+                    className="border-border text-foreground hover:bg-muted hover:border-primary hover:text-primary transition-all duration-300 hover:scale-105 shadow-sm hover:shadow-md"
                   >
                     <RefreshCw className="h-4 w-4 mr-2" />
                     Limpiar
@@ -949,14 +949,14 @@ export default function Dashboard() {
                 {/* Barra de búsqueda */}
                 <div className="flex items-center gap-3 w-full lg:w-auto">
                   <div className="relative flex-1 lg:flex-none lg:w-80">
-                    <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 h-4 w-4 text-slate-400" />
+                    <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 h-4 w-4 text-muted-foreground" />
                     <Input
                       ref={searchInputRef}
                       type="text"
                       placeholder="Buscar proyectos... (Ctrl+F)"
                       value={searchTerm}
                       onChange={(e) => setSearchTerm(e.target.value)}
-                      className="pl-10 pr-4 py-2 bg-white border-slate-200 text-slate-800 placeholder-slate-500 focus:border-blue-400 focus:ring-blue-400 transition-all duration-300 shadow-sm hover:shadow-md"
+                      className="pl-10 pr-4 py-2 bg-popover border-border text-slate-800 placeholder-slate-500 focus:border-blue-400 focus:ring-blue-400 transition-all duration-300 shadow-sm hover:shadow-md"
                     />
                   </div>
                 </div>
@@ -964,15 +964,15 @@ export default function Dashboard() {
                 <div className="flex flex-col sm:flex-row items-start sm:items-center gap-4 w-full lg:w-auto">
                   {/* Filtro por estado */}
                   <div className="flex flex-col sm:flex-row items-start sm:items-center gap-3 w-full sm:w-auto">
-                    <Label className="text-sm font-semibold text-slate-700 flex items-center gap-2">
+                    <Label className="text-sm font-semibold text-card-foreground flex items-center gap-2">
                       <div className="w-2 h-2 bg-emerald-500 rounded-full"></div>
                       Estado:
                     </Label>
                     <Select value={statusFilter} onValueChange={setStatusFilter}>
-                      <SelectTrigger className="w-full sm:w-36 bg-white border-slate-200 text-slate-800 hover:border-emerald-400 hover:ring-emerald-400 transition-all duration-300 shadow-sm hover:shadow-md">
+                      <SelectTrigger className="w-full sm:w-36 bg-input border-border text-foreground hover:border-emerald-400 hover:ring-emerald-400 transition-all duration-300 shadow-sm hover:shadow-md">
                         <SelectValue />
                       </SelectTrigger>
-                      <SelectContent className="bg-white border-slate-200">
+                      <SelectContent className="bg-popover border-border">
                         <SelectItem value="all">Todos</SelectItem>
                         <SelectItem value="Sin iniciar">Sin iniciar</SelectItem>
                         <SelectItem value="En progreso">En progreso</SelectItem>
@@ -984,16 +984,16 @@ export default function Dashboard() {
 
                   {/* Ordenamiento */}
                   <div className="flex flex-col sm:flex-row items-start sm:items-center gap-3 w-full sm:w-auto">
-                    <Label className="text-sm font-semibold text-slate-700 flex items-center gap-2">
+                    <Label className="text-sm font-semibold text-card-foreground flex items-center gap-2">
                       <div className="w-2 h-2 bg-violet-500 rounded-full"></div>
                       Ordenar por:
                     </Label>
                     <div className="flex items-center gap-3">
                       <Select value={sortBy} onValueChange={setSortBy}>
-                        <SelectTrigger className="w-full sm:w-36 bg-white border-slate-200 text-slate-800 hover:border-violet-400 hover:ring-violet-400 transition-all duration-300 shadow-sm hover:shadow-md">
+                        <SelectTrigger className="w-full sm:w-36 bg-input border-border text-foreground hover:border-violet-400 hover:ring-violet-400 transition-all duration-300 shadow-sm hover:shadow-md">
                           <SelectValue />
                         </SelectTrigger>
-                        <SelectContent className="bg-white border-slate-200">
+                        <SelectContent className="bg-popover border-border">
                           <SelectItem value="recent">Más Recientes</SelectItem>
                           <SelectItem value="name">Nombre</SelectItem>
                           <SelectItem value="progress">Progreso</SelectItem>
@@ -1005,7 +1005,7 @@ export default function Dashboard() {
                         variant="outline"
                         size="sm"
                         onClick={() => setSortOrder(prev => prev === 'asc' ? 'desc' : 'asc')}
-                        className="border-slate-300 text-slate-700 hover:bg-slate-50 hover:border-violet-400 hover:text-violet-700 transition-all duration-300 shadow-sm hover:shadow-md hover:scale-105"
+                        className="border-slate-300 text-card-foreground hover:bg-slate-50 hover:border-violet-400 hover:text-violet-700 transition-all duration-300 shadow-sm hover:shadow-md hover:scale-105"
                       >
                         {sortOrder === 'asc' ? <SortAsc className="h-4 w-4" /> : <SortDesc className="h-4 w-4" />}
                       </Button>
@@ -1017,7 +1017,7 @@ export default function Dashboard() {
                     variant="outline"
                     size="sm"
                     onClick={refreshProjects}
-                    className="border-slate-300 text-slate-700 hover:bg-slate-50 hover:border-blue-400 hover:text-blue-700 transition-all duration-300 shadow-sm hover:shadow-md hover:scale-105 w-full sm:w-auto"
+                    className="border-border text-foreground hover:bg-muted hover:border-primary hover:text-primary transition-all duration-300 shadow-sm hover:shadow-md hover:scale-105 w-full sm:w-auto"
                   >
                     <RefreshCw className="h-4 w-4 mr-2" />
                     Actualizar
@@ -1028,7 +1028,7 @@ export default function Dashboard() {
                     variant="outline"
                     size="sm"
                     onClick={exportDashboardData}
-                    className="border-slate-300 text-slate-700 hover:bg-slate-50 hover:border-orange-400 hover:text-orange-700 transition-all duration-300 shadow-sm hover:shadow-md hover:scale-105 w-full sm:w-auto"
+                    className="border-border text-foreground hover:bg-muted hover:border-orange-400 hover:text-orange-700 transition-all duration-300 shadow-sm hover:shadow-md hover:scale-105 w-full sm:w-auto"
                   >
                     <Download className="h-4 w-4 mr-2" />
                     Exportar
@@ -1037,19 +1037,19 @@ export default function Dashboard() {
               </div>
               
               {/* Información de filtros aplicados */}
-              <div className="mt-6 flex flex-wrap items-center gap-3 text-sm text-slate-600">
-                <div className="flex items-center gap-2 px-3 py-2 bg-slate-100 rounded-lg border border-slate-200">
-                  <div className="w-2 h-2 bg-blue-500 rounded-full animate-pulse"></div>
+              <div className="mt-6 flex flex-wrap items-center gap-3 text-sm text-muted-foreground">
+                <div className="flex items-center gap-2 px-3 py-2 bg-muted/50 rounded-lg border border-border">
+                  <div className="w-2 h-2 bg-primary rounded-full animate-pulse"></div>
                   <span className="font-medium">Mostrando {filteredAndSortedProjects.length} de {userProjects.length} proyectos</span>
                 </div>
                 
-                <div className="flex items-center gap-2 px-3 py-2 bg-green-50 rounded-lg border border-green-200">
+                <div className="flex items-center gap-2 px-3 py-2 bg-green-500/10 rounded-lg border border-green-500/20">
                   <div className="w-2 h-2 bg-green-500 rounded-full animate-pulse"></div>
-                  <span className="font-medium text-green-700">Actualizaciones en tiempo real activas</span>
+                  <span className="font-medium text-green-600">Actualizaciones en tiempo real activas</span>
                 </div>
                 
                 {searchTerm && (
-                  <Badge variant="outline" className="bg-gradient-to-r from-blue-50 to-indigo-50 text-blue-700 border-blue-300 px-3 py-1.5 shadow-sm hover:shadow-md transition-all duration-300 hover:scale-105">
+                  <Badge variant="outline" className="bg-gradient-to-r from-primary/10 to-primary/20 text-primary border-primary/30 px-3 py-1.5 shadow-sm hover:shadow-md transition-all duration-300 hover:scale-105">
                     <Search className="h-3 w-3 mr-1" />
                     Búsqueda: "{searchTerm}"
                   </Badge>
@@ -1161,10 +1161,10 @@ export default function Dashboard() {
                   
                   {/* Texto principal */}
                   <div className="space-y-4">
-                    <h3 className="text-2xl sm:text-3xl font-bold text-slate-800 bg-gradient-to-r from-blue-600 to-indigo-700 bg-clip-text text-transparent">
+                    <h3 className="text-2xl sm:text-3xl font-bold text-foreground bg-gradient-to-r from-primary to-primary/80 bg-clip-text text-transparent">
                       {t('No tienes proyectos aún')}
                     </h3>
-                    <p className="text-slate-600 text-base sm:text-lg max-w-md mx-auto leading-relaxed">
+                    <p className="text-muted-foreground text-base sm:text-lg max-w-md mx-auto leading-relaxed">
                       {t('Comienza creando tu primer proyecto web y verás el progreso en tiempo real.')}
                     </p>
                   </div>
@@ -1448,7 +1448,7 @@ export default function Dashboard() {
                                     className={`text-xs ${
                                       comment.tipo === 'admin' 
                                         ? 'bg-blue-50 text-blue-700 border-blue-200' 
-                                        : 'bg-slate-50 text-slate-700 border-slate-200'
+                                        : 'bg-slate-50 text-card-foreground border-slate-200'
                                     }`}
                                   >
                                     {comment.tipo === 'admin' ? 'Admin' : 'Cliente'}
@@ -1458,7 +1458,7 @@ export default function Dashboard() {
                                     {formatDateSafe(comment.fecha)}
                                   </div>
                                 </div>
-                                <p className="text-slate-700 text-sm leading-relaxed group-hover:text-slate-800 transition-colors duration-300">
+                                <p className="text-card-foreground text-sm leading-relaxed group-hover:text-slate-800 transition-colors duration-300">
                                   {comment.texto}
                                 </p>
                               </div>

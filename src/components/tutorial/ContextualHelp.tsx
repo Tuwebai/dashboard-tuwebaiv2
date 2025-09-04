@@ -314,17 +314,17 @@ export function FloatingHelpButton() {
       exit="hidden"
       className="fixed bottom-6 right-6 z-50"
     >
-      <Card className="shadow-2xl border-slate-200 bg-white max-w-sm">
+      <Card className="shadow-2xl border-border bg-card max-w-sm">
         <CardContent className="p-4">
           <div className="flex items-start gap-3">
-            <div className="flex items-center justify-center w-10 h-10 bg-gradient-to-br from-blue-500 to-purple-600 rounded-xl text-white">
+            <div className="flex items-center justify-center w-10 h-10 bg-gradient-to-br from-primary to-primary/80 rounded-xl text-white">
               <HelpCircle className="w-5 h-5" />
             </div>
             <div className="flex-1">
-              <h4 className="font-medium text-slate-800 mb-1">
+              <h4 className="font-medium text-card-foreground mb-1">
                 ¿Necesitas ayuda?
               </h4>
-              <p className="text-sm text-slate-600 mb-3">
+              <p className="text-sm text-muted-foreground mb-3">
                 Estamos aquí para ayudarte. Accede a tutoriales, documentación y soporte.
               </p>
               <div className="flex gap-2">
