@@ -115,8 +115,8 @@ const getStatusColor = (status: string) => {
     case 'Completado': return 'bg-green-500/10 text-green-600 border-green-500/20';
     case 'En progreso avanzado': return 'bg-blue-500/10 text-blue-600 border-blue-500/20';
     case 'En progreso': return 'bg-yellow-500/10 text-yellow-600 border-yellow-500/20';
-    case 'Sin iniciar': return 'bg-slate-500/10 text-slate-600 border-slate-500/20';
-    default: return 'bg-slate-500/10 text-slate-600 border-slate-500/20';
+    case 'Sin iniciar': return 'bg-muted/50 text-muted-foreground border-border/50';
+    default: return 'bg-muted/50 text-muted-foreground border-border/50';
   }
 };
 
@@ -218,7 +218,7 @@ const getProjectTypeColor = (type: string) => {
       case 'development': return 'bg-emerald-500/10 text-emerald-600 border-emerald-500/20';
       case 'database': return 'bg-amber-500/10 text-amber-600 border-amber-500/20';
       case 'api': return 'bg-violet-500/10 text-violet-600 border-violet-500/20';
-      default: return 'bg-slate-500/10 text-slate-600 border-slate-500/20';
+      default: return 'bg-muted/50 text-muted-foreground border-border/50';
     }
   }
   
@@ -257,7 +257,7 @@ const getProjectTypeColor = (type: string) => {
     case 'backend':
       return 'bg-violet-500/10 text-violet-600 border-violet-500/20';
     default:
-      return 'bg-slate-500/10 text-slate-600 border-slate-500/20';
+      return 'bg-muted/50 text-muted-foreground border-border/50';
   }
 };
 
@@ -320,7 +320,7 @@ export default function ProjectCard({
       className="w-full max-w-xs"
     >
       <div 
-        className={`bg-white rounded-2xl shadow-lg border border-slate-200/50 hover:shadow-2xl hover:border-slate-300/50 hover:shadow-blue-500/10 transition-all duration-500 ease-out overflow-hidden relative w-full h-[420px] flex flex-col group ${
+        className={`bg-card rounded-2xl shadow-lg border border-border/50 hover:shadow-2xl hover:border-border hover:shadow-primary/10 transition-all duration-500 ease-out overflow-hidden relative w-full h-[420px] flex flex-col group ${
           isPendingApproval || isRejected ? 'cursor-default opacity-75' : 'cursor-pointer'
         } ${dragMode ? 'ring-2 ring-blue-500 ring-opacity-50' : ''}`}
         onClick={() => !isPendingApproval && !isRejected && !dragMode && onViewProject(project)}
@@ -351,7 +351,7 @@ export default function ProjectCard({
             <div className="flex-1 min-w-0">
               <div className="flex items-center gap-2 mb-1">
                 {dragMode && (
-                  <div className="flex items-center justify-center w-5 h-5 text-slate-400 hover:text-slate-600 cursor-grab active:cursor-grabbing transition-colors duration-200">
+                  <div className="flex items-center justify-center w-5 h-5 text-muted-foreground hover:text-foreground cursor-grab active:cursor-grabbing transition-colors duration-200">
                     <GripVertical className="h-3 w-3" />
                   </div>
                 )}
@@ -385,7 +385,7 @@ export default function ProjectCard({
                   </Badge>
                 )}
               </div>
-              <p className="text-slate-600 text-sm line-clamp-1 leading-tight font-medium">
+              <p className="text-muted-foreground text-sm line-clamp-1 leading-tight font-medium">
                 {project.description || 'Sin descripción'}
               </p>
             </div>
@@ -408,7 +408,7 @@ export default function ProjectCard({
                       e.stopPropagation();
                       onToggleFavorite(project.id);
                     }}
-                    className="h-8 w-8 p-0 text-slate-400 hover:text-yellow-500 hover:bg-yellow-50 hover:shadow-md hover:scale-110 transition-all duration-300 ease-out rounded-full focus-visible"
+                    className="h-8 w-8 p-0 text-muted-foreground hover:text-yellow-500 hover:bg-yellow-500/10 hover:shadow-md hover:scale-110 transition-all duration-300 ease-out rounded-full focus-visible"
                     aria-label={project.isFavorite ? "Quitar de favoritos" : "Marcar como favorito"}
                     aria-pressed={project.isFavorite}
                   >
@@ -430,7 +430,7 @@ export default function ProjectCard({
                       e.stopPropagation();
                       setShowDeleteDialog(true);
                     }}
-                    className="h-8 w-8 p-0 text-slate-400 hover:text-red-500 hover:bg-red-50 hover:shadow-md hover:scale-110 transition-all duration-300 ease-out rounded-full focus-visible"
+                    className="h-8 w-8 p-0 text-muted-foreground hover:text-red-500 hover:bg-red-500/10 hover:shadow-md hover:scale-110 transition-all duration-300 ease-out rounded-full focus-visible"
                     aria-label="Eliminar proyecto rechazado"
                   >
                     <Trash2 className="h-4 w-4" />
@@ -448,7 +448,7 @@ export default function ProjectCard({
                         e.stopPropagation();
                         onDuplicateProject(project);
                       }}
-                      className="h-8 w-8 p-0 text-slate-400 hover:text-blue-500 hover:bg-blue-50 hover:shadow-md hover:scale-110 transition-all duration-300 ease-out rounded-full"
+                      className="h-8 w-8 p-0 text-muted-foreground hover:text-blue-500 hover:bg-blue-500/10 hover:shadow-md hover:scale-110 transition-all duration-300 ease-out rounded-full"
                     >
                       <Copy className="h-4 w-4" />
                     </Button>
@@ -461,7 +461,7 @@ export default function ProjectCard({
                         e.stopPropagation();
                         onArchiveProject(project.id);
                       }}
-                      className="h-8 w-8 p-0 text-slate-400 hover:text-orange-500 hover:bg-orange-50 hover:shadow-md hover:scale-110 transition-all duration-300 ease-out rounded-full"
+                      className="h-8 w-8 p-0 text-muted-foreground hover:text-orange-500 hover:bg-orange-500/10 hover:shadow-md hover:scale-110 transition-all duration-300 ease-out rounded-full"
                     >
                       <Archive className="h-4 w-4" />
                     </Button>
@@ -475,13 +475,13 @@ export default function ProjectCard({
         <div className="p-4 flex-1 flex flex-col">
           {/* Información del creador del proyecto - Solo visible para admin */}
           {user?.role === 'admin' && project.created_by && projectCreators[project.created_by] && (
-            <div className="flex items-center gap-2 p-2 bg-slate-50 rounded-lg border border-slate-200/50 mb-3">
-              <User className="h-3 w-3 text-slate-500" />
+            <div className="flex items-center gap-2 p-2 bg-muted/50 rounded-lg border border-border/50 mb-3">
+              <User className="h-3 w-3 text-muted-foreground" />
               <div className="flex flex-col">
-                <span className="text-xs font-medium text-slate-700">
+                <span className="text-xs font-medium text-foreground">
                   Creado por: {projectCreators[project.created_by].full_name}
                 </span>
-                <span className="text-xs text-slate-500">
+                <span className="text-xs text-muted-foreground">
                   {projectCreators[project.created_by].email}
                 </span>
               </div>
@@ -522,8 +522,8 @@ export default function ProjectCard({
             
             {!isPendingApproval && !isRejected && (
               <div className="flex items-center gap-1">
-                <div className="text-sm font-bold text-slate-800">{progress}%</div>
-                <div className="w-2 h-2 rounded-full bg-slate-300"></div>
+                <div className="text-sm font-bold text-foreground">{progress}%</div>
+                <div className="w-2 h-2 rounded-full bg-muted-foreground/30"></div>
               </div>
             )}
           </div>
@@ -534,7 +534,7 @@ export default function ProjectCard({
                   <div className="relative">
                     {/* Fondo de la barra con efecto de brillo */}
                     <div 
-                      className="w-full bg-slate-200/50 rounded-full h-3 overflow-hidden relative"
+                      className="w-full bg-muted/50 rounded-full h-3 overflow-hidden relative"
                       role="progressbar"
                       aria-valuenow={progress}
                       aria-valuemin={0}
@@ -564,7 +564,7 @@ export default function ProjectCard({
                         
                         {/* Punto de progreso animado */}
                         {progress > 0 && (
-                          <div className="absolute top-0 right-0 w-2 h-3 bg-white rounded-full shadow-lg animate-pulse-glow"></div>
+                          <div className="absolute top-0 right-0 w-2 h-3 bg-card rounded-full shadow-lg animate-pulse-glow"></div>
                         )}
                       </div>
                     </div>
@@ -574,7 +574,7 @@ export default function ProjectCard({
                       content={`${progress}% completado`}
                       position="top"
                     >
-                      <div className="absolute -top-8 right-0 bg-slate-800 text-white text-xs px-2 py-1 rounded-md shadow-lg opacity-0 group-hover:opacity-100 transition-opacity duration-300">
+                      <div className="absolute -top-8 right-0 bg-popover text-popover-foreground text-xs px-2 py-1 rounded-md shadow-lg opacity-0 group-hover:opacity-100 transition-opacity duration-300">
                         {progress}%
                       </div>
                     </AccessibleTooltip>
@@ -630,7 +630,7 @@ export default function ProjectCard({
             </div>
           ) : (
             <div className="mb-3 flex-1 flex items-center justify-center">
-              <div className="text-center text-slate-500">
+              <div className="text-center text-muted-foreground">
                 {isPendingApproval ? (
                   <div className="space-y-2">
                     <Clock className="h-8 w-8 mx-auto text-amber-500" />
@@ -649,13 +649,13 @@ export default function ProjectCard({
           )}
 
           {/* Fechas mejor organizadas */}
-          <div className="flex items-center justify-between text-xs mb-3 p-2 bg-slate-50 rounded-lg border border-slate-200">
-            <div className="flex items-center gap-1.5 text-slate-600">
-              <Calendar className="h-3 w-3 text-slate-500" />
+          <div className="flex items-center justify-between text-xs mb-3 p-2 bg-muted/50 rounded-lg border border-border">
+            <div className="flex items-center gap-1.5 text-muted-foreground">
+              <Calendar className="h-3 w-3 text-muted-foreground" />
               <span className="truncate font-medium">{formatDateSafe(project.created_at || project.createdAt)}</span>
             </div>
-            <div className="flex items-center gap-1.5 text-slate-600">
-              <Clock className="h-3 w-3 text-slate-500" />
+            <div className="flex items-center gap-1.5 text-muted-foreground">
+              <Clock className="h-3 w-3 text-muted-foreground" />
               <span className="truncate font-medium">{formatDateSafe(project.updated_at)}</span>
             </div>
           </div>
@@ -668,7 +668,7 @@ export default function ProjectCard({
                   <Button
                     variant="outline"
                     size="sm"
-                    className="flex-1 border-slate-200 text-slate-700 hover:bg-slate-50 hover:border-slate-300 hover:shadow-md hover:scale-105 text-xs font-medium transition-all duration-300 ease-out"
+                    className="flex-1 border-border text-foreground hover:bg-muted hover:border-border hover:shadow-md hover:scale-105 text-xs font-medium transition-all duration-300 ease-out"
                     onClick={(e) => {
                       e.stopPropagation();
                       onNavigateToCollaboration(project.id);
@@ -685,7 +685,7 @@ export default function ProjectCard({
                       <Button
                         variant="outline"
                         size="sm"
-                        className="border-slate-200 text-slate-700 hover:bg-slate-50 hover:border-slate-300 hover:shadow-md hover:scale-105 text-xs font-medium transition-all duration-300 ease-out"
+                        className="border-border text-foreground hover:bg-muted hover:border-border hover:shadow-md hover:scale-105 text-xs font-medium transition-all duration-300 ease-out"
                         onClick={(e) => {
                           e.stopPropagation();
                           onNavigateToEdit(project.id);
@@ -775,7 +775,7 @@ export default function ProjectCard({
               <Trash2 className="h-5 w-5" />
               Eliminar proyecto
             </DialogTitle>
-            <DialogDescription className="text-slate-600">
+            <DialogDescription className="text-muted-foreground">
               {user?.role === 'admin' ? (
                 <>
                   ¿Estás seguro de que quieres eliminar el proyecto <strong>"{project.name}"</strong>?
@@ -797,7 +797,7 @@ export default function ProjectCard({
             <Button
               variant="outline"
               onClick={() => setShowDeleteDialog(false)}
-              className="border-slate-300 text-slate-600 hover:bg-slate-50"
+              className="border-border text-muted-foreground hover:bg-muted"
             >
               Cancelar
             </Button>

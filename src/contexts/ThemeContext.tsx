@@ -16,28 +16,45 @@ interface ThemeProviderProps {
 }
 
 export const ThemeProvider: React.FC<ThemeProviderProps> = ({ children }) => {
-  // SIEMPRE FORZAR MODO CLARO - NO DETECTAR MODO DEL SISTEMA
   const [theme, setThemeState] = useState<'light' | 'dark'>('light');
   const [loading, setLoading] = useState(true);
   const { user, isAuthenticated } = useApp();
 
-  // SIEMPRE MODO CLARO - IGNORAR PREFERENCIAS DEL SISTEMA
+  // Cargar tema del usuario o detectar preferencia del sistema
   useEffect(() => {
     const loadUserTheme = async () => {
-      // FORZAR SIEMPRE MODO CLARO
-      setThemeState('light');
-      
-      if (isAuthenticated && user) {
-        try {
-          // Guardar tema claro en la base de datos
-          await userPreferencesService.saveUserTheme(user.id, 'light');
-          await userPreferencesService.saveUserPreference(user.id, 'theme', 'hasSetTheme', true);
-        } catch (error) {
-          // console.error('Error saving user theme:', error);
+      try {
+        let userTheme: 'light' | 'dark' = 'light';
+        
+        if (isAuthenticated && user) {
+          // Cargar tema del usuario desde la base de datos
+          const savedTheme = await userPreferencesService.getUserTheme(user.id);
+          userTheme = savedTheme || 'light';
+        } else {
+          // Usuario no autenticado - cargar desde localStorage o detectar sistema
+          const savedTheme = localStorage.getItem('theme') as 'light' | 'dark';
+          if (savedTheme) {
+            userTheme = savedTheme;
+          } else {
+            // Detectar preferencia del sistema
+            userTheme = window.matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light';
+          }
         }
-      } else {
-        // Usuario no autenticado - forzar tema claro en localStorage
-        localStorage.setItem('theme', 'light');
+        
+        setThemeState(userTheme);
+        
+        if (isAuthenticated && user) {
+          // Guardar tema en la base de datos
+          await userPreferencesService.saveUserTheme(user.id, userTheme);
+          await userPreferencesService.saveUserPreference(user.id, 'theme', 'hasSetTheme', true);
+        } else {
+          // Guardar en localStorage
+          localStorage.setItem('theme', userTheme);
+        }
+      } catch (error) {
+        console.error('Error loading user theme:', error);
+        // Fallback a modo claro
+        setThemeState('light');
       }
       setLoading(false);
     };
@@ -62,13 +79,11 @@ export const ThemeProvider: React.FC<ThemeProviderProps> = ({ children }) => {
   }, [theme, isAuthenticated, user, loading]);
 
   const toggleTheme = () => {
-    // DESHABILITADO - SIEMPRE MODO CLARO
-    // setThemeState(prev => prev === 'light' ? 'dark' : 'light');
+    setThemeState(prev => prev === 'light' ? 'dark' : 'light');
   };
 
   const setTheme = (newTheme: 'light' | 'dark') => {
-    // FORZAR SIEMPRE MODO CLARO - IGNORAR PARÁMETRO
-    setThemeState('light');
+    setThemeState(newTheme);
   };
 
   return (

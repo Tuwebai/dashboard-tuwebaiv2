@@ -91,13 +91,13 @@ export default function PasswordValidator({
           onFocus={() => setFocused(true)}
           onBlur={() => setFocused(false)}
           placeholder="Ingresa tu contraseña"
-          className="w-full px-3 py-2 pr-10 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+          className="w-full px-3 py-2 pr-10 border border-border rounded-md focus:outline-none focus:ring-2 focus:ring-primary focus:border-transparent bg-input text-foreground"
         />
         {onToggleShowPassword && (
           <button
             type="button"
             onClick={onToggleShowPassword}
-            className="absolute right-3 top-1/2 transform -translate-y-1/2 text-gray-400 hover:text-gray-600"
+            className="absolute right-3 top-1/2 transform -translate-y-1/2 text-muted-foreground hover:text-foreground"
           >
             {showPassword ? <EyeOff className="w-4 h-4" /> : <Eye className="w-4 h-4" />}
           </button>
@@ -113,7 +113,7 @@ export default function PasswordValidator({
               {getStrengthText()}
             </span>
           </div>
-          <div className="w-full bg-gray-200 rounded-full h-2">
+          <div className="w-full bg-muted rounded-full h-2">
             <div
               className={`h-2 rounded-full ${getStrengthColor()} transition-all duration-300`}
               style={{ width: `${strength}%` }}

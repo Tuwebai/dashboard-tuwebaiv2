@@ -318,7 +318,7 @@ h1, h2, h3, h4, h5, h6 {
 
 @layer base {
   :root {
-    /* TuWebAI Theme - Sistema de Colores Empresarial */
+    /* TuWebAI Theme - Sistema de Colores Empresarial - MODO CLARO */
     --background: 0 0% 100%; /* #ffffff - Fondo blanco */
     --foreground: 0 0% 10%; /* #1a1a1a - Texto negro */
 
@@ -396,6 +396,89 @@ h1, h2, h3, h4, h5, h6 {
     --sidebar-ring: 195 100% 50%;
     
     /* Accents TuWebAI */
+    --accent-electric: #00ccff;
+    --accent-violet: #a259ff;
+    --accent-neon: #39ff14;
+    --accent-gold: #ffd700;
+  }
+
+  .dark {
+    /* TuWebAI Theme - Sistema de Colores Empresarial - MODO OSCURO */
+    --background: 222 84% 5%; /* #0a0a0a - Fondo negro */
+    --foreground: 0 0% 95%; /* #f2f2f2 - Texto blanco */
+
+    --card: 222 84% 8%; /* #0f0f0f - Tarjetas oscuras */
+    --card-foreground: 0 0% 95%;
+
+    --popover: 222 84% 8%;
+    --popover-foreground: 0 0% 95%;
+
+    /* Colores Primarios TuWebAI - Modo Oscuro */
+    --primary: 195 100% 60%; /* #00CCFF más brillante */
+    --primary-foreground: 222 84% 5%;
+    --primary-glow: 195 100% 70%;
+
+    --secondary: 270 100% 70%; /* #9933FF más brillante */
+    --secondary-foreground: 222 84% 5%;
+
+    /* Colores Neutros Profesionales - Modo Oscuro */
+    --neutral-50: 222 84% 5%; /* #0a0a0a */
+    --neutral-100: 222 84% 8%; /* #0f0f0f */
+    --neutral-200: 222 84% 12%; /* #1a1a1a */
+    --neutral-300: 222 84% 18%; /* #2a2a2a */
+    --neutral-400: 222 84% 30%; /* #4a4a4a */
+    --neutral-500: 222 84% 45%; /* #6a6a6a */
+    --neutral-600: 222 84% 60%; /* #8a8a8a */
+    --neutral-700: 222 84% 75%; /* #aaaaaa */
+    --neutral-800: 222 84% 85%; /* #cccccc */
+    --neutral-900: 222 84% 95%; /* #eeeeee */
+
+    --muted: 222 84% 8%; /* #0f0f0f - Gris muy oscuro */
+    --muted-foreground: 222 84% 60%; /* #8a8a8a - Texto gris */
+
+    --accent: 270 100% 70%; /* Purple accent más brillante */
+    --accent-foreground: 222 84% 5%;
+
+    /* Colores Semánticos - Modo Oscuro */
+    --success: 142 76% 50%; /* #10B981 más brillante */
+    --success-foreground: 222 84% 5%;
+    --warning: 38 92% 60%; /* #F59E0B más brillante */
+    --warning-foreground: 222 84% 5%;
+    --error: 0 84% 70%; /* #EF4444 más brillante */
+    --error-foreground: 222 84% 5%;
+    --info: 217 91% 70%; /* #3B82F6 más brillante */
+    --info-foreground: 222 84% 5%;
+
+    --destructive: 0 84% 70%;
+    --destructive-foreground: 222 84% 5%;
+
+    --border: 222 84% 15%; /* #2a2a2a - Bordes grises oscuros */
+    --input: 222 84% 8%; /* #0f0f0f - Inputs oscuros */
+    --ring: 195 100% 60%;
+
+    /* Gradientes Empresariales - Modo Oscuro */
+    --gradient-primary: linear-gradient(135deg, #00CCFF 0%, #9933FF 100%);
+    --gradient-secondary: linear-gradient(135deg, #FF6B6B 0%, #4ECDC4 100%);
+    --gradient-accent: linear-gradient(135deg, #FFD93D 0%, #6BCF7F 100%);
+    --gradient-card: linear-gradient(145deg, hsl(222 84% 8%), hsl(222 84% 12%));
+    
+    /* Sombras Profesionales - Modo Oscuro */
+    --shadow-glow: 0 0 40px hsl(195 100% 50% / 0.2);
+    --shadow-card: 0 10px 30px -10px hsl(0 0% 0% / 0.3);
+    --shadow-elevated: 0 20px 40px -10px hsl(0 0% 0% / 0.4);
+    --shadow-floating: 0 25px 50px -12px hsl(0 0% 0% / 0.5);
+    
+    /* Sidebar - Modo Oscuro */
+    --sidebar-background: 222 84% 8%; /* #0f0f0f - Sidebar oscuro */
+    --sidebar-foreground: 0 0% 95%;
+    --sidebar-primary: 195 100% 60%;
+    --sidebar-primary-foreground: 222 84% 5%;
+    --sidebar-accent: 222 84% 12%; /* #1a1a1a */
+    --sidebar-accent-foreground: 0 0% 95%;
+    --sidebar-border: 222 84% 15%; /* #2a2a2a */
+    --sidebar-ring: 195 100% 60%;
+    
+    /* Accents TuWebAI - Modo Oscuro */
     --accent-electric: #00ccff;
     --accent-violet: #a259ff;
     --accent-neon: #39ff14;
@@ -526,20 +609,24 @@ h1, h2, h3, h4, h5, h6 {
 
   /* FORZAR SIEMPRE MODO CLARO - SOBRESCRIBIR DETECCIÓN DEL SISTEMA */
   html {
-    color-scheme: light !important;
+    color-scheme: light;
+  }
+
+  .dark html {
+    color-scheme: dark;
   }
 
   body {
-    background: linear-gradient(135deg, hsl(195 100% 98%), hsl(270 100% 99%)) !important;
+    background: linear-gradient(135deg, hsl(195 100% 98%), hsl(270 100% 99%));
     background-attachment: fixed;
     min-height: 100vh;
     @apply text-foreground;
-    color-scheme: light !important;
+    color-scheme: light;
   }
 
-  /* Forzar modo claro en todos los elementos */
-  * {
-    color-scheme: light !important;
+  .dark body {
+    background: linear-gradient(135deg, hsl(222 84% 5%), hsl(222 84% 8%));
+    color-scheme: dark;
   }
 }
 

@@ -114,8 +114,8 @@ export function VirtualizedList<T>({
       <div className={cn('flex items-center justify-center', className)} style={{ height, width }}>
         {loadingComponent || (
           <div className="text-center">
-            <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-blue-500 mx-auto mb-2" />
-            <p className="text-sm text-gray-500">Cargando...</p>
+            <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-primary mx-auto mb-2" />
+            <p className="text-sm text-muted-foreground">Cargando...</p>
           </div>
         )}
       </div>
@@ -126,7 +126,7 @@ export function VirtualizedList<T>({
     return (
       <div className={cn('flex items-center justify-center', className)} style={{ height, width }}>
         <div className="text-center">
-          <p className="text-gray-500">{emptyMessage}</p>
+          <p className="text-muted-foreground">{emptyMessage}</p>
         </div>
       </div>
     );
@@ -147,8 +147,8 @@ export function VirtualizedList<T>({
         overscanCount={overscanCount}
         direction={direction}
         className={cn(
-          'scrollbar-thin scrollbar-thumb-gray-300 scrollbar-track-gray-100',
-          isScrolling && 'scrollbar-thumb-gray-400'
+          'scrollbar-thin scrollbar-thumb-muted-foreground/30 scrollbar-track-muted/20',
+          isScrolling && 'scrollbar-thumb-muted-foreground/50'
         )}
       >
         {ItemComponent}
@@ -243,9 +243,9 @@ export function VirtualizedProjectList({
   const renderProjectItem = useCallback(({ index, style, item }: { index: number; style: React.CSSProperties; item: ProjectItem }) => {
     return (
       <div style={style} className="px-4 py-2">
-        <div className="bg-white rounded-lg border border-gray-200 p-4 hover:shadow-md transition-shadow cursor-pointer">
+        <div className="bg-card rounded-lg border border-border p-4 hover:shadow-md transition-shadow cursor-pointer">
           <div className="flex items-center justify-between mb-2">
-            <h3 className="font-semibold text-gray-900 truncate">{item.title}</h3>
+            <h3 className="font-semibold text-foreground truncate">{item.title}</h3>
             <span className={cn(
               'px-2 py-1 rounded-full text-xs font-medium',
               item.status === 'completed' && 'bg-green-100 text-green-800',
@@ -257,11 +257,11 @@ export function VirtualizedProjectList({
             </span>
           </div>
           
-          <p className="text-sm text-gray-600 mb-3 line-clamp-2">{item.description}</p>
+          <p className="text-sm text-muted-foreground mb-3 line-clamp-2">{item.description}</p>
           
           <div className="flex items-center justify-between">
             <div className="flex-1 mr-4">
-              <div className="flex items-center justify-between text-xs text-gray-500 mb-1">
+              <div className="flex items-center justify-between text-xs text-muted-foreground mb-1">
                 <span>Progreso</span>
                 <span>{item.progress}%</span>
               </div>
@@ -300,7 +300,7 @@ export function VirtualizedProjectList({
             </div>
           </div>
           
-          <div className="mt-3 text-xs text-gray-500">
+          <div className="mt-3 text-xs text-muted-foreground">
             Creado: {new Date(item.createdAt).toLocaleDateString()}
             {item.updatedAt !== item.createdAt && (
               <span className="ml-2">
@@ -363,7 +363,7 @@ export function VirtualizedTutorialList({
             <div className="flex-1">
               <h3 className="font-semibold text-gray-900 mb-1">{item.title}</h3>
               <p className="text-sm text-gray-600 mb-2">{item.description}</p>
-              <div className="flex items-center gap-4 text-xs text-gray-500">
+              <div className="flex items-center gap-4 text-xs text-muted-foreground">
                 <span className="px-2 py-1 bg-blue-100 text-blue-800 rounded-full">
                   {item.category}
                 </span>
@@ -379,7 +379,7 @@ export function VirtualizedTutorialList({
           
           {!item.completed && (
             <div className="mb-3">
-              <div className="flex items-center justify-between text-xs text-gray-500 mb-1">
+              <div className="flex items-center justify-between text-xs text-muted-foreground mb-1">
                 <span>Progreso</span>
                 <span>{item.progress}%</span>
               </div>

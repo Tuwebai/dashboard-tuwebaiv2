@@ -141,8 +141,8 @@ export const OptimizedInput = memo<OptimizedInputProps>(({
     const baseClasses = 'block w-full px-3 py-2 border rounded-md shadow-sm focus:outline-none focus:ring-2 focus:ring-offset-2 transition-colors';
     
     const stateClasses = error 
-      ? 'border-red-300 focus:ring-red-500 focus:border-red-500'
-      : 'border-gray-300 focus:ring-blue-500 focus:border-blue-500';
+      ? 'border-destructive focus:ring-destructive focus:border-destructive'
+      : 'border-border focus:ring-primary focus:border-primary';
     
     const iconClasses = icon 
       ? (iconPosition === 'left' ? 'pl-10' : 'pr-10')
@@ -154,7 +154,7 @@ export const OptimizedInput = memo<OptimizedInputProps>(({
   return (
     <div className="space-y-1">
       {label && (
-        <label className="block text-sm font-medium text-gray-700">
+        <label className="block text-sm font-medium text-foreground">
           {label}
         </label>
       )}
@@ -162,7 +162,7 @@ export const OptimizedInput = memo<OptimizedInputProps>(({
       <div className="relative">
         {icon && iconPosition === 'left' && (
           <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
-            <span className="text-gray-400">{icon}</span>
+            <span className="text-muted-foreground">{icon}</span>
           </div>
         )}
         
@@ -173,17 +173,17 @@ export const OptimizedInput = memo<OptimizedInputProps>(({
         
         {icon && iconPosition === 'right' && (
           <div className="absolute inset-y-0 right-0 pr-3 flex items-center pointer-events-none">
-            <span className="text-gray-400">{icon}</span>
+            <span className="text-muted-foreground">{icon}</span>
           </div>
         )}
       </div>
       
       {error && (
-        <p className="text-sm text-red-600">{error}</p>
+        <p className="text-sm text-destructive">{error}</p>
       )}
       
       {helperText && !error && (
-        <p className="text-sm text-gray-500">{helperText}</p>
+        <p className="text-sm text-muted-foreground">{helperText}</p>
       )}
     </div>
   );
@@ -225,7 +225,7 @@ export const OptimizedList = memo<OptimizedListProps<any>>(({
         {loadingComponent || (
           <div className="animate-pulse">
             {[...Array(3)].map((_, i) => (
-              <div key={i} className="h-4 bg-gray-200 rounded w-full" />
+              <div key={i} className="h-4 bg-muted rounded w-full" />
             ))}
           </div>
         )}
@@ -235,7 +235,7 @@ export const OptimizedList = memo<OptimizedListProps<any>>(({
 
   if (items.length === 0) {
     return (
-      <div className={cn('text-center py-8 text-gray-500', className)}>
+      <div className={cn('text-center py-8 text-muted-foreground', className)}>
         {emptyMessage}
       </div>
     );
@@ -281,7 +281,7 @@ export const OptimizedModal = memo<OptimizedModalProps>(({
     };
     
     return cn(
-      'bg-white rounded-lg shadow-xl',
+      'bg-card rounded-lg shadow-xl',
       sizeClasses[size],
       className
     );
@@ -325,8 +325,8 @@ export const OptimizedModal = memo<OptimizedModalProps>(({
       
       <div className={modalClasses}>
         {title && (
-          <div className="px-6 py-4 border-b border-gray-200">
-            <h3 className="text-lg font-semibold text-gray-900">{title}</h3>
+          <div className="px-6 py-4 border-b border-border">
+            <h3 className="text-lg font-semibold text-card-foreground">{title}</h3>
           </div>
         )}
         
@@ -398,15 +398,15 @@ export const OptimizedTable = memo<OptimizedTableProps<any>>(({
 
   return (
     <div className={cn('overflow-x-auto', className)}>
-      <table className="min-w-full divide-y divide-gray-200">
-        <thead className="bg-gray-50">
+      <table className="min-w-full divide-y divide-border">
+        <thead className="bg-muted/50">
           <tr>
             {columns.map((column) => (
               <th
                 key={String(column.key)}
                 className={cn(
-                  'px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider',
-                  column.sortable && 'cursor-pointer hover:bg-gray-100',
+                  'px-6 py-3 text-left text-xs font-medium text-muted-foreground uppercase tracking-wider',
+                  column.sortable && 'cursor-pointer hover:bg-muted',
                   column.width && `w-${column.width}`
                 )}
                 onClick={() => column.sortable && handleSort(String(column.key))}
@@ -414,7 +414,7 @@ export const OptimizedTable = memo<OptimizedTableProps<any>>(({
                 <div className="flex items-center space-x-1">
                   <span>{column.title}</span>
                   {column.sortable && (
-                    <span className="text-gray-400">
+                    <span className="text-muted-foreground">
                       {sortKey === column.key ? (
                         sortDirection === 'asc' ? '↑' : '↓'
                       ) : (
@@ -427,13 +427,13 @@ export const OptimizedTable = memo<OptimizedTableProps<any>>(({
             ))}
           </tr>
         </thead>
-        <tbody className="bg-white divide-y divide-gray-200">
+        <tbody className="bg-card divide-y divide-border">
           {data.map((item, index) => (
-            <tr key={index} className="hover:bg-gray-50">
+            <tr key={index} className="hover:bg-muted/50">
               {columns.map((column) => (
                 <td
                   key={String(column.key)}
-                  className="px-6 py-4 whitespace-nowrap text-sm text-gray-900"
+                  className="px-6 py-4 whitespace-nowrap text-sm text-foreground"
                 >
                   {renderCell(column, item, index)}
                 </td>

@@ -95,8 +95,8 @@ export default function Sidebar() {
     <NavLink
       to={to}
       className={({ isActive }) =>
-        `relative group cursor-pointer transition-all duration-300 ease-out hover:bg-gray-50 w-full
-        ${isActive ? 'bg-gradient-to-r from-blue-50 to-indigo-50' : ''}`
+        `relative group cursor-pointer transition-all duration-300 ease-out hover:bg-sidebar-accent w-full
+        ${isActive ? 'bg-gradient-to-r from-sidebar-primary/10 to-sidebar-primary/5' : ''}`
       }
       aria-label={`Navegar a ${label}`}
       aria-describedby={count ? `count-${label.toLowerCase()}` : undefined}
@@ -106,17 +106,17 @@ export default function Sidebar() {
           <div className="flex items-center px-4 py-3.5 space-x-4">
             <div className={`relative p-2 rounded-xl transition-all duration-300 ${
               isActive 
-                ? 'bg-blue-500 text-white shadow-lg shadow-blue-500/25' 
-                : 'bg-gray-100 text-gray-600 group-hover:bg-blue-100 group-hover:text-blue-600'
+                ? 'bg-sidebar-primary text-sidebar-primary-foreground shadow-lg shadow-sidebar-primary/25' 
+                : 'bg-sidebar-accent text-sidebar-foreground/70 group-hover:bg-sidebar-primary/10 group-hover:text-sidebar-primary'
             }`}>
               {icon}
-              {/* Indicador azul al lado del icono */}
+              {/* Indicador al lado del icono */}
               {isActive && (
-                <div className="absolute -left-2 top-1/2 transform -translate-y-1/2 w-1 h-6 bg-blue-500 rounded-r-full"></div>
+                <div className="absolute -left-2 top-1/2 transform -translate-y-1/2 w-1 h-6 bg-sidebar-primary rounded-r-full"></div>
               )}
             </div>
             <div className="flex-1 min-w-0">
-              <span className="text-sm font-medium text-gray-900 group-hover:text-blue-600 transition-colors duration-200">
+              <span className="text-sm font-medium text-sidebar-foreground group-hover:text-sidebar-primary transition-colors duration-200">
                 {label}
               </span>
               {count !== undefined && (
@@ -177,25 +177,25 @@ export default function Sidebar() {
             }, 100);
           }
         }}
-        className={`relative group cursor-pointer transition-all duration-300 ease-out hover:bg-gray-50 w-full
-        ${isActive ? 'bg-gradient-to-r from-blue-50 to-indigo-50' : ''}`}
+        className={`relative group cursor-pointer transition-all duration-300 ease-out hover:bg-sidebar-accent w-full
+        ${isActive ? 'bg-gradient-to-r from-sidebar-primary/10 to-sidebar-primary/5' : ''}`}
       >
         <div className="flex items-center px-4 py-3.5 space-x-4">
           <div className={`relative p-2 rounded-xl transition-all duration-300 ${
             isActive 
-              ? 'bg-blue-500 text-white shadow-lg shadow-blue-500/25' 
-              : 'bg-gray-100 text-gray-600 group-hover:bg-blue-100 group-hover:text-blue-600'
+              ? 'bg-sidebar-primary text-sidebar-primary-foreground shadow-lg shadow-sidebar-primary/25' 
+              : 'bg-sidebar-accent text-sidebar-foreground/70 group-hover:bg-sidebar-primary/10 group-hover:text-sidebar-primary'
           }`}>
             <div className="transition-transform duration-300 group-hover:scale-110">
               {icon}
             </div>
-            {/* Indicador azul al lado del icono */}
+            {/* Indicador al lado del icono */}
             {isActive && (
-              <div className="absolute -left-2 top-1/2 transform -translate-y-1/2 w-1 h-6 bg-blue-500 rounded-r-full"></div>
+              <div className="absolute -left-2 top-1/2 transform -translate-y-1/2 w-1 h-6 bg-sidebar-primary rounded-r-full"></div>
             )}
           </div>
           <span className={`font-medium text-sm flex-1 text-center ${
-            isActive ? 'text-gray-900' : 'text-gray-700 group-hover:text-gray-900'
+            isActive ? 'text-sidebar-foreground' : 'text-sidebar-foreground/80 group-hover:text-sidebar-foreground'
           }`}>
             {t(label)}
           </span>
@@ -231,10 +231,10 @@ export default function Sidebar() {
   };
 
   return (
-    <aside className="w-80 h-screen bg-white border-r border-gray-200 flex flex-col shadow-xl">
+    <aside className="w-80 h-screen bg-sidebar-background border-r border-sidebar-border flex flex-col shadow-xl">
       <div className="flex-1 flex flex-col min-h-0 overflow-hidden">
         {/* Header visual mejorado */}
-        <div className="p-6 border-b border-gray-100 bg-gradient-to-r from-gray-50 to-white">
+        <div className="p-6 border-b border-sidebar-border bg-gradient-to-r from-sidebar-accent to-sidebar-background">
           {/* Información del usuario */}
           <div className="flex flex-col items-center gap-3">
             {/* Avatar del usuario - usar imagen real si existe */}
@@ -264,10 +264,10 @@ export default function Sidebar() {
             )}
             
             <div className="text-center">
-              <div className="font-bold text-xl text-gray-900 truncate max-w-[200px]">
+              <div className="font-bold text-xl text-sidebar-foreground truncate max-w-[200px]">
                 {user?.full_name || 'Usuario'}
               </div>
-              <div className="text-sm text-gray-500 truncate max-w-[200px]">
+              <div className="text-sm text-sidebar-foreground/70 truncate max-w-[200px]">
                 {user?.email}
               </div>
             </div>
@@ -280,8 +280,8 @@ export default function Sidebar() {
           <nav className="flex-1 overflow-y-auto py-2">
             {/* Sección Principal */}
             <div className="mb-8 px-2">
-              <div className="text-xs font-semibold text-gray-400 uppercase tracking-wider px-4 py-2 mb-2">{t('Principal')}</div>
-              <div className="h-px bg-gradient-to-r from-gray-200 to-transparent mb-2"></div>
+              <div className="text-xs font-semibold text-sidebar-foreground/60 uppercase tracking-wider px-4 py-2 mb-2">{t('Principal')}</div>
+              <div className="h-px bg-gradient-to-r from-sidebar-border to-transparent mb-2"></div>
               <div className="space-y-1">
                 {adminNavItem('dashboard', <BarChart3 size={18} />, t('Dashboard'))}
                 {adminNavItem('usuarios', <Users size={18} />, t('Usuarios'), counts.users)}
@@ -331,10 +331,10 @@ export default function Sidebar() {
 
             {/* ANÁLISIS */}
             <div className="mb-8 px-2">
-              <div className="text-xs font-semibold text-gray-400 uppercase tracking-wider px-4 py-2 mb-2">
+              <div className="text-xs font-semibold text-sidebar-foreground/60 uppercase tracking-wider px-4 py-2 mb-2">
                 {t('Análisis')}
               </div>
-              <div className="h-px bg-gradient-to-r from-gray-200 to-transparent mb-2"></div>
+              <div className="h-px bg-gradient-to-r from-sidebar-border to-transparent mb-2"></div>
               <div className="space-y-1">
                 {adminNavItem('advanced-analytics', <BarChart size={18} />, t('Analytics Avanzado'))}
               </div>
@@ -344,8 +344,8 @@ export default function Sidebar() {
 
             {/* Sección Sistema */}
             <div className="mb-8 px-2">
-              <div className="text-xs font-semibold text-gray-400 uppercase tracking-wider px-4 py-2 mb-2">Sistema</div>
-              <div className="h-px bg-gradient-to-r from-gray-200 to-transparent mb-2"></div>
+              <div className="text-xs font-semibold text-sidebar-foreground/60 uppercase tracking-wider px-4 py-2 mb-2">Sistema</div>
+              <div className="h-px bg-gradient-to-r from-sidebar-border to-transparent mb-2"></div>
               <div className="space-y-1">
                 {adminNavItem('notifications', <Bell size={18} />, 'Notificaciones')}
                 {navItem('/configuracion', <Settings size={18} />, 'Configuración')}
@@ -357,8 +357,8 @@ export default function Sidebar() {
           <nav className="flex-1 overflow-y-auto py-2 px-2">
             {/* Sección Principal */}
             <div className="mb-6 px-2">
-              <div className="text-xs font-semibold text-gray-400 uppercase tracking-wider px-4 py-2 mb-2">Principal</div>
-              <div className="h-px bg-gradient-to-r from-gray-200 to-transparent mb-2"></div>
+              <div className="text-xs font-semibold text-sidebar-foreground/60 uppercase tracking-wider px-4 py-2 mb-2">Principal</div>
+              <div className="h-px bg-gradient-to-r from-sidebar-border to-transparent mb-2"></div>
               <div className="space-y-1">
                 {navItem('/dashboard', <Home size={18} />, t('Dashboard'))}
                 {navItem('/proyectos', <FolderKanban size={18} />, t('Proyectos'))}
@@ -367,8 +367,8 @@ export default function Sidebar() {
 
             {/* Sección Personal */}
             <div className="mb-6 px-2">
-              <div className="text-xs font-semibold text-gray-400 uppercase tracking-wider px-4 py-2 mb-2">Personal</div>
-              <div className="h-px bg-gradient-to-r from-gray-200 to-transparent mb-2"></div>
+              <div className="text-xs font-semibold text-sidebar-foreground/60 uppercase tracking-wider px-4 py-2 mb-2">Personal</div>
+              <div className="h-px bg-gradient-to-r from-sidebar-border to-transparent mb-2"></div>
               <div className="space-y-1">
                 {navItem('/perfil', <User size={18} />, t('Mi Perfil'))}
                 {navItem('/facturacion', <CreditCard size={18} />, t('Facturación'))}
@@ -377,8 +377,8 @@ export default function Sidebar() {
 
             {/* Sección Soporte */}
             <div className="mb-6 px-2">
-              <div className="text-xs font-semibold text-gray-400 uppercase tracking-wider px-4 py-2 mb-2">Soporte</div>
-              <div className="h-px bg-gradient-to-r from-gray-200 to-transparent mb-2"></div>
+              <div className="text-xs font-semibold text-sidebar-foreground/60 uppercase tracking-wider px-4 py-2 mb-2">Soporte</div>
+              <div className="h-px bg-gradient-to-r from-sidebar-border to-transparent mb-2"></div>
               <div className="space-y-1">
                 {navItem('/soporte', <HelpCircle size={18} />, t('Soporte'))}
                 {navItem('/configuracion', <Settings size={18} />, t('Configuración'))}
@@ -389,11 +389,11 @@ export default function Sidebar() {
       </div>
 
       {/* Footer mejorado */}
-      <div className="p-4 border-t border-gray-100 bg-gradient-to-r from-gray-50 to-white">
+      <div className="p-4 border-t border-sidebar-border bg-gradient-to-r from-sidebar-accent to-sidebar-background">
         <Button
           onClick={logout}
           variant="ghost"
-          className="w-full flex items-center space-x-3 px-3 py-3 text-gray-700 hover:bg-red-50 hover:text-red-600 rounded-xl transition-all duration-300 group"
+          className="w-full flex items-center space-x-3 px-3 py-3 text-sidebar-foreground hover:bg-destructive/10 hover:text-destructive rounded-xl transition-all duration-300 group"
         >
           <TooltipProvider>
             <Tooltip>
