@@ -1,0 +1,473 @@
+/* =====================================================
+   ESTILOS PARA EL CENTRO DE NOTIFICACIONES AVANZADO
+   ===================================================== */
+
+.advanced-notification-center {
+  @apply max-w-7xl mx-auto p-6;
+}
+
+/* =====================================================
+   ESTILOS DE NOTIFICACIONES INDIVIDUALES
+   ===================================================== */
+
+.notification-item {
+  @apply relative overflow-hidden;
+  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+.notification-item::before {
+  content: '';
+  @apply absolute left-0 top-0 bottom-0 w-1 bg-transparent;
+  transition: background-color 0.3s ease;
+}
+
+.notification-item:hover::before {
+  @apply bg-blue-500;
+}
+
+.notification-item:not(.is-read)::before {
+  @apply bg-blue-500;
+}
+
+.notification-item:not(.is-read) {
+  @apply shadow-sm;
+}
+
+.notification-item.is-urgent {
+  @apply border-red-300 bg-red-50/50;
+}
+
+.notification-item.is-urgent::before {
+  @apply bg-red-500;
+}
+
+.notification-item.is-urgent:hover {
+  @apply bg-red-100 border-red-400;
+}
+
+/* =====================================================
+   ESTILOS DE GRUPOS DE NOTIFICACIONES
+   ===================================================== */
+
+.notification-group {
+  @apply relative;
+}
+
+.group-header {
+  @apply relative overflow-hidden;
+  transition: all 0.2s ease;
+}
+
+.group-header::after {
+  content: '';
+  @apply absolute bottom-0 left-0 right-0 h-0.5 bg-gradient-to-r from-blue-500 to-purple-500 opacity-0;
+  transition: opacity 0.2s ease;
+}
+
+.group-header:hover::after {
+  @apply opacity-100;
+}
+
+.group-header:hover {
+  @apply bg-slate-200 shadow-sm;
+}
+
+.group-content {
+  @apply relative;
+}
+
+.group-content::before {
+  content: '';
+  @apply absolute left-6 top-0 bottom-0 w-px bg-slate-200;
+}
+
+/* =====================================================
+   ESTILOS DE FILTROS
+   ===================================================== */
+
+.filters-panel {
+  @apply relative overflow-hidden;
+  animation: slideDown 0.3s ease-out;
+}
+
+.filters-panel::before {
+  content: '';
+  @apply absolute top-0 left-0 right-0 h-px bg-gradient-to-r from-transparent via-slate-300 to-transparent;
+}
+
+@keyframes slideDown {
+  from {
+    opacity: 0;
+    transform: translateY(-10px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+/* =====================================================
+   ESTILOS DE BADGES Y ESTADOS
+   ===================================================== */
+
+.notification-item .badge {
+  @apply transition-all duration-200;
+}
+
+.notification-item:hover .badge {
+  @apply scale-105;
+}
+
+/* =====================================================
+   ESTILOS DE BOTONES DE ACCIÓN
+   ===================================================== */
+
+.notification-item .action-button {
+  @apply opacity-60 transition-all duration-200;
+}
+
+.notification-item:hover .action-button {
+  @apply opacity-100;
+}
+
+.notification-item .action-button:hover {
+  @apply scale-110;
+}
+
+/* =====================================================
+   ESTILOS DE SCROLL Y CARGA
+   ===================================================== */
+
+.notification-center-scroll {
+  scrollbar-width: thin;
+  scrollbar-color: rgb(203 213 225) transparent;
+}
+
+.notification-center-scroll::-webkit-scrollbar {
+  width: 6px;
+}
+
+.notification-center-scroll::-webkit-scrollbar-track {
+  @apply bg-transparent;
+}
+
+.notification-center-scroll::-webkit-scrollbar-thumb {
+  @apply bg-slate-300 rounded-full;
+}
+
+.notification-center-scroll::-webkit-scrollbar-thumb:hover {
+  @apply bg-slate-400;
+}
+
+/* =====================================================
+   ESTILOS DE ANIMACIONES
+   ===================================================== */
+
+.notification-item {
+  animation: fadeInUp 0.3s ease-out;
+}
+
+@keyframes fadeInUp {
+  from {
+    opacity: 0;
+    transform: translateY(20px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+.notification-item:nth-child(1) { animation-delay: 0.1s; }
+.notification-item:nth-child(2) { animation-delay: 0.2s; }
+.notification-item:nth-child(3) { animation-delay: 0.3s; }
+.notification-item:nth-child(4) { animation-delay: 0.4s; }
+.notification-item:nth-child(5) { animation-delay: 0.5s; }
+
+/* =====================================================
+   ESTILOS DE ESTADÍSTICAS
+   ===================================================== */
+
+.stats-card {
+  @apply relative overflow-hidden;
+}
+
+.stats-card::before {
+  content: '';
+  @apply absolute top-0 left-0 right-0 h-1 bg-gradient-to-r from-blue-500 via-purple-500 to-pink-500;
+}
+
+.stats-number {
+  @apply font-bold text-3xl;
+  background: linear-gradient(135deg, #3b82f6, #8b5cf6);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+}
+
+/* =====================================================
+   ESTILOS DE ESTADOS VACÍOS
+   ===================================================== */
+
+.empty-state {
+  @apply text-center py-12;
+  animation: fadeIn 0.5s ease-out;
+}
+
+.empty-state-icon {
+  @apply mx-auto mb-4 text-slate-300;
+  animation: float 3s ease-in-out infinite;
+}
+
+@keyframes float {
+  0%, 100% {
+    transform: translateY(0px);
+  }
+  50% {
+    transform: translateY(-10px);
+  }
+}
+
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+  }
+  to {
+    opacity: 1;
+  }
+}
+
+/* =====================================================
+   ESTILOS DE RESPONSIVIDAD
+   ===================================================== */
+
+@media (max-width: 768px) {
+  .advanced-notification-center {
+    @apply p-4;
+  }
+  
+  .filters-panel .grid {
+    @apply grid-cols-1 gap-3;
+  }
+  
+  .notification-item {
+    @apply p-3;
+  }
+  
+  .group-header {
+    @apply p-2;
+  }
+}
+
+@media (max-width: 640px) {
+  .stats-header {
+    @apply flex-col space-y-4;
+  }
+  
+  .stats-numbers {
+    @apply grid-cols-2 gap-4;
+  }
+  
+  .controls-row {
+    @apply flex-col space-y-3;
+  }
+  
+  .controls-row > div {
+    @apply w-full;
+  }
+}
+
+/* =====================================================
+   ESTILOS DE ACCESIBILIDAD
+   ===================================================== */
+
+.notification-item:focus-within {
+  @apply ring-2 ring-blue-500 ring-offset-2;
+}
+
+.group-header:focus-within {
+  @apply ring-2 ring-blue-500 ring-offset-2;
+}
+
+/* =====================================================
+   ESTILOS FORZADOS A MODO CLARO
+   ===================================================== */
+
+/* Eliminado dark mode del sistema - siempre modo claro */
+
+/* =====================================================
+   ESTILOS DE TRANSICIONES SUAVES
+   ===================================================== */
+
+.notification-item,
+.group-header,
+.filters-panel,
+.stats-card {
+  @apply transition-all duration-300 ease-out;
+}
+
+/* =====================================================
+   ESTILOS DE HOVER Y FOCUS
+   ===================================================== */
+
+.notification-item:hover {
+  @apply transform scale-[1.01] shadow-lg;
+}
+
+.group-header:hover {
+  @apply transform scale-[1.005];
+}
+
+/* =====================================================
+   ESTILOS DE LOADING STATES
+   ===================================================== */
+
+.loading-skeleton {
+  @apply animate-pulse bg-slate-200 rounded;
+}
+
+.loading-skeleton-text {
+  @apply h-4 bg-slate-200 rounded;
+}
+
+.loading-skeleton-title {
+  @apply h-6 bg-slate-200 rounded w-3/4;
+}
+
+.loading-skeleton-message {
+  @apply h-4 bg-slate-200 rounded w-full;
+}
+
+/* =====================================================
+   ESTILOS DE NOTIFICACIONES URGENTES
+   ===================================================== */
+
+.notification-item.is-urgent {
+  @apply animate-pulse;
+  animation-duration: 2s;
+}
+
+.notification-item.is-urgent::after {
+  content: '';
+  @apply absolute top-0 right-0 w-3 h-3 bg-red-500 rounded-full;
+  animation: pulse 2s infinite;
+}
+
+@keyframes pulse {
+  0%, 100% {
+    opacity: 1;
+    transform: scale(1);
+  }
+  50% {
+    opacity: 0.5;
+    transform: scale(1.2);
+  }
+}
+
+/* =====================================================
+   ESTILOS DE SELECTION STATES
+   ===================================================== */
+
+.notification-item.selected {
+  @apply ring-2 ring-blue-500 bg-blue-50;
+}
+
+.notification-item.selected:hover {
+  @apply bg-blue-100;
+}
+
+/* =====================================================
+   ESTILOS DE EXPAND/COLLAPSE
+   ===================================================== */
+
+.group-content {
+  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+.group-content.collapsed {
+  @apply max-h-0 overflow-hidden opacity-0;
+}
+
+.group-content.expanded {
+  @apply max-h-none opacity-100;
+}
+
+/* =====================================================
+   ESTILOS DE TOOLTIPS Y HINTS
+   ===================================================== */
+
+.notification-item[data-tooltip] {
+  @apply relative;
+}
+
+.notification-item[data-tooltip]::after {
+  content: attr(data-tooltip);
+  @apply absolute bottom-full left-1/2 transform -translate-x-1/2 mb-2 px-2 py-1 text-xs text-white bg-slate-900 rounded opacity-0 pointer-events-none;
+  transition: opacity 0.2s ease;
+  white-space: nowrap;
+  z-index: 1000;
+}
+
+.notification-item[data-tooltip]:hover::after {
+  @apply opacity-100;
+}
+
+/* =====================================================
+   ESTILOS DE PROGRESS BARS
+   ===================================================== */
+
+.notification-progress {
+  @apply w-full h-1 bg-slate-200 rounded-full overflow-hidden;
+}
+
+.notification-progress-bar {
+  @apply h-full bg-gradient-to-r from-blue-500 to-purple-500 rounded-full;
+  transition: width 0.3s ease;
+}
+
+/* =====================================================
+   ESTILOS DE TIMELINE VIEW
+   ===================================================== */
+
+.timeline-view .notification-item {
+  @apply relative;
+}
+
+.timeline-view .notification-item::before {
+  content: '';
+  @apply absolute left-8 top-0 bottom-0 w-px bg-slate-200;
+}
+
+.timeline-view .notification-item:last-child::before {
+  @apply hidden;
+}
+
+.timeline-view .notification-item::after {
+  content: '';
+  @apply absolute left-6 top-6 w-3 h-3 bg-white border-2 border-slate-300 rounded-full;
+  transform: translateX(-50%);
+}
+
+.timeline-view .notification-item.is-urgent::after {
+  @apply border-red-500 bg-red-500;
+}
+
+/* =====================================================
+   ESTILOS DE GRID VIEW
+   ===================================================== */
+
+.grid-view {
+  @apply grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4;
+}
+
+.grid-view .notification-item {
+  @apply h-48 flex flex-col justify-between;
+}
+
+.grid-view .notification-item .notification-content {
+  @apply flex-1;
+}
+
+.grid-view .notification-item .notification-actions {
+  @apply mt-auto pt-3 border-t border-slate-200;
+}

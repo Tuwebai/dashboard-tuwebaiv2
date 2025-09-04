@@ -1,0 +1,7 @@
+# Netlify redirects para SPA
+# Redirigir todas las rutas a index.html para que React Router las maneje
+/*    /index.html   200
+
+# Redirecciones específicas si las necesitas
+# /admin    /admin/   301
+# /dashboard    /dashboard/   301

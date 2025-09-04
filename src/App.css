@@ -1,0 +1,644 @@
+#root {
+  max-width: 1280px;
+  margin: 0 auto;
+  padding: 2rem;
+  text-align: center;
+  user-select: none;
+  -webkit-user-select: none;
+  -moz-user-select: none;
+  -ms-user-select: none;
+}
+
+/* Evitar selección de texto en todos los elementos */
+* {
+  user-select: none;
+  -webkit-user-select: none;
+  -moz-user-select: none;
+  -ms-user-select: none;
+}
+
+/* Permitir selección solo en inputs */
+input, textarea {
+  user-select: text;
+  -webkit-user-select: text;
+  -moz-user-select: text;
+  -ms-user-select: text;
+}
+
+.logo {
+  height: 6em;
+  padding: 1.5em;
+  will-change: filter;
+  transition: filter 300ms;
+}
+.logo:hover {
+  filter: drop-shadow(0 0 2em #646cffaa);
+}
+.logo.react:hover {
+  filter: drop-shadow(0 0 2em #61dafbaa);
+}
+
+@keyframes logo-spin {
+  from {
+    transform: rotate(0deg);
+  }
+  to {
+    transform: rotate(360deg);
+  }
+}
+
+@media (prefers-reduced-motion: no-preference) {
+  a:nth-of-type(2) .logo {
+    animation: logo-spin infinite 20s linear;
+  }
+}
+
+.card {
+  padding: 2em;
+}
+
+.read-the-docs {
+  color: #888;
+}
+
+/* Elementos 3D para dashboard */
+@keyframes float-3d {
+  0% {
+    transform: translateY(0px) rotateX(0deg) rotateY(0deg);
+  }
+  25% {
+    transform: translateY(-10px) rotateX(5deg) rotateY(5deg);
+  }
+  50% {
+    transform: translateY(-20px) rotateX(0deg) rotateY(10deg);
+  }
+  75% {
+    transform: translateY(-10px) rotateX(-5deg) rotateY(5deg);
+  }
+  100% {
+    transform: translateY(0px) rotateX(0deg) rotateY(0deg);
+  }
+}
+
+@keyframes rotate-3d {
+  0% {
+    transform: rotateX(0deg) rotateY(0deg) rotateZ(0deg);
+  }
+  25% {
+    transform: rotateX(10deg) rotateY(10deg) rotateZ(5deg);
+  }
+  50% {
+    transform: rotateX(0deg) rotateY(20deg) rotateZ(0deg);
+  }
+  75% {
+    transform: rotateX(-10deg) rotateY(10deg) rotateZ(-5deg);
+  }
+  100% {
+    transform: rotateX(0deg) rotateY(0deg) rotateZ(0deg);
+  }
+}
+
+@keyframes pulse-3d {
+  0% {
+    transform: scale(1) rotateX(0deg);
+    box-shadow: 0 0 20px rgba(236, 72, 153, 0.3);
+  }
+  50% {
+    transform: scale(1.1) rotateX(10deg);
+    box-shadow: 0 0 30px rgba(236, 72, 153, 0.6);
+  }
+  100% {
+    transform: scale(1) rotateX(0deg);
+    box-shadow: 0 0 20px rgba(236, 72, 153, 0.3);
+  }
+}
+
+@keyframes orbit {
+  0% {
+    transform: rotate(0deg) translateX(50px) rotate(0deg);
+  }
+  100% {
+    transform: rotate(360deg) translateX(50px) rotate(-360deg);
+  }
+}
+
+@keyframes data-flow {
+  0% {
+    transform: translateX(-100px) scale(0.8);
+    opacity: 0;
+  }
+  50% {
+    transform: translateX(0px) scale(1);
+    opacity: 1;
+  }
+  100% {
+    transform: translateX(100px) scale(0.8);
+    opacity: 0;
+  }
+}
+
+/* Clases para elementos 3D */
+.element-3d {
+  transform-style: preserve-3d;
+  perspective: 1000px;
+}
+
+.float-3d {
+  animation: float-3d 6s ease-in-out infinite;
+}
+
+.rotate-3d {
+  animation: rotate-3d 8s linear infinite;
+}
+
+.pulse-3d {
+  animation: pulse-3d 3s ease-in-out infinite;
+}
+
+.orbit {
+  animation: orbit 10s linear infinite;
+}
+
+.data-flow {
+  animation: data-flow 4s ease-in-out infinite;
+}
+
+/* Efectos de profundidad */
+.depth-1 {
+  transform: translateZ(10px);
+}
+
+.depth-2 {
+  transform: translateZ(20px);
+}
+
+.depth-3 {
+  transform: translateZ(30px);
+}
+
+/* Sombras 3D */
+.shadow-3d {
+  box-shadow: 
+    0 10px 20px rgba(0, 0, 0, 0.3),
+    0 20px 40px rgba(0, 0, 0, 0.2),
+    inset 0 1px 0 rgba(255, 255, 255, 0.1);
+}
+
+.shadow-3d-hover:hover {
+  box-shadow: 
+    0 15px 30px rgba(0, 0, 0, 0.4),
+    0 25px 50px rgba(0, 0, 0, 0.3),
+    inset 0 1px 0 rgba(255, 255, 255, 0.2);
+}
+
+/* Efectos de interacción con mouse */
+@keyframes mouse-follow {
+  0% {
+    transform: translate(0, 0) scale(1);
+  }
+  100% {
+    transform: translate(var(--mouse-x, 0), var(--mouse-y, 0)) scale(1.1);
+  }
+}
+
+@keyframes mouse-tilt {
+  0% {
+    transform: rotateX(0deg) rotateY(0deg);
+  }
+  100% {
+    transform: rotateX(var(--mouse-y, 0)) rotateY(var(--mouse-x, 0));
+  }
+}
+
+@keyframes mouse-glow {
+  0% {
+    box-shadow: 0 0 20px rgba(0, 0, 0, 0.3);
+  }
+  100% {
+    box-shadow: 0 0 40px rgba(6, 182, 212, 0.6);
+  }
+}
+
+.interactive-3d {
+  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+  cursor: pointer;
+}
+
+.interactive-3d:hover {
+  animation: mouse-follow 0.3s ease-out forwards;
+  filter: brightness(1.2);
+}
+
+.interactive-3d:active {
+  transform: scale(0.95);
+}
+
+.mouse-tilt {
+  transition: transform 0.1s ease-out;
+}
+
+.mouse-glow:hover {
+  animation: mouse-glow 0.3s ease-out forwards;
+}
+
+/* Efectos de ondas */
+@keyframes ripple {
+  0% {
+    transform: scale(0);
+    opacity: 1;
+  }
+  100% {
+    transform: scale(4);
+    opacity: 0;
+  }
+}
+
+.ripple-effect {
+  position: relative;
+  overflow: hidden;
+}
+
+.ripple-effect::before {
+  content: '';
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  width: 0;
+  height: 0;
+  border-radius: 50%;
+  background: rgba(255, 255, 255, 0.3);
+  transform: translate(-50%, -50%);
+  transition: width 0.6s, height 0.6s;
+}
+
+.ripple-effect:hover::before {
+  width: 300px;
+  height: 300px;
+}
+
+/* Efectos específicos para dispositivos táctiles */
+@media (hover: none) and (pointer: coarse) {
+  .interactive-3d {
+    transition: all 0.2s ease-out;
+  }
+  
+  .interactive-3d:active {
+    transform: scale(0.9) !important;
+    filter: brightness(1.3);
+  }
+  
+  .mouse-glow:active {
+    box-shadow: 0 0 50px rgba(6, 182, 212, 0.8);
+  }
+  
+  .ripple-effect:active::before {
+    width: 400px;
+    height: 400px;
+    background: rgba(6, 182, 212, 0.4);
+  }
+}
+
+/* Efectos de vibración táctil */
+.touch-feedback {
+  -webkit-tap-highlight-color: transparent;
+  -webkit-touch-callout: none;
+  -webkit-user-select: none;
+  -khtml-user-select: none;
+  -moz-user-select: none;
+  -ms-user-select: none;
+  user-select: none;
+}
+
+/* Animaciones táctiles mejoradas */
+@keyframes touch-pulse {
+  0% {
+    transform: scale(1);
+  }
+  50% {
+    transform: scale(1.05);
+  }
+  100% {
+    transform: scale(1);
+  }
+}
+
+.touch-pulse:active {
+  animation: touch-pulse 0.2s ease-out;
+}
+
+/* Efectos de ondas táctiles */
+@keyframes touch-wave {
+  0% {
+    transform: scale(0);
+    opacity: 1;
+  }
+  100% {
+    transform: scale(3);
+    opacity: 0;
+  }
+}
+
+.touch-wave::after {
+  content: '';
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  width: 0;
+  height: 0;
+  border-radius: 50%;
+  background: rgba(6, 182, 212, 0.6);
+  transform: translate(-50%, -50%);
+  pointer-events: none;
+}
+
+.touch-wave:active::after {
+  animation: touch-wave 0.4s ease-out;
+}
+
+/* Efectos de deformación de texto */
+@keyframes text-explode {
+  0% {
+    transform: translate(0, 0) rotate(0deg);
+    opacity: 1;
+  }
+  100% {
+    transform: translate(var(--random-x, 0), var(--random-y, 0)) rotate(var(--random-rotation, 0deg));
+    opacity: 0.7;
+  }
+}
+
+@keyframes text-chaos {
+  0% {
+    transform: translate(0, 0) scale(1) rotate(0deg);
+  }
+  25% {
+    transform: translate(-20px, -15px) scale(1.2) rotate(-10deg);
+  }
+  50% {
+    transform: translate(15px, -20px) scale(0.8) rotate(10deg);
+  }
+  75% {
+    transform: translate(-10px, 15px) scale(1.1) rotate(-5deg);
+  }
+  100% {
+    transform: translate(0, 0) scale(1) rotate(0deg);
+  }
+}
+
+@keyframes text-explode {
+  0% {
+    transform: translate(0, 0) scale(1) rotate(0deg);
+    opacity: 1;
+    color: inherit;
+    filter: blur(0px);
+  }
+  25% {
+    transform: translate(-20px, -25px) scale(1.5) rotate(-15deg);
+    opacity: 0.9;
+    color: #ff6b6b;
+    filter: blur(1px);
+  }
+  50% {
+    transform: translate(25px, -20px) scale(0.7) rotate(15deg);
+    opacity: 0.8;
+    color: #4ecdc4;
+    filter: blur(2px);
+  }
+  75% {
+    transform: translate(-15px, 20px) scale(1.3) rotate(-10deg);
+    opacity: 0.7;
+    color: #45b7d1;
+    filter: blur(1px);
+  }
+  100% {
+    transform: translate(var(--scatter-x, 0), var(--scatter-y, 0)) scale(1.2) rotate(var(--scatter-rotation, 0deg));
+    opacity: 0.6;
+    color: #ff6b6b;
+    filter: blur(1px);
+  }
+}
+
+.text-deformed {
+  animation: text-explode 0.8s ease-out forwards !important;
+  color: #ff6b6b !important;
+  text-shadow: 0 0 20px #ff6b6b, 0 0 40px #ff6b6b !important;
+  transform: scale(1.2) rotate(5deg) !important;
+  filter: blur(1px) !important;
+}
+
+.text-chaos {
+  animation: text-chaos 0.6s ease-in-out infinite;
+}
+
+/* Efectos de dispersión de letras */
+.letter-scatter {
+  display: inline-block;
+  transition: all 0.3s cubic-bezier(0.68, -0.55, 0.265, 1.55);
+  position: relative;
+}
+
+.letter-scatter.text-deformed {
+  animation: text-explode 0.8s ease-out forwards !important;
+  color: #ff6b6b !important;
+  text-shadow: 0 0 20px #ff6b6b, 0 0 40px #ff6b6b !important;
+  transform: translate(var(--scatter-x, 0), var(--scatter-y, 0)) rotate(var(--scatter-rotation, 0deg)) scale(1.3) !important;
+  display: inline-block !important;
+  position: relative !important;
+  filter: blur(1px) !important;
+}
+
+.letter-scatter:hover {
+  transform: translate(var(--scatter-x, 0), var(--scatter-y, 0)) rotate(var(--scatter-rotation, 0deg));
+  color: var(--scatter-color, inherit);
+  text-shadow: 0 0 10px currentColor;
+}
+
+/* Animaciones para barras de progreso avanzadas */
+@keyframes shimmer {
+  0% { background-position: -200% 0; }
+  100% { background-position: 200% 0; }
+}
+
+.animate-shimmer {
+  background: linear-gradient(90deg, transparent, rgba(255,255,255,0.4), transparent);
+  background-size: 200% 100%;
+  animation: shimmer 2s infinite;
+}
+
+@keyframes pulse-glow {
+  0%, 100% { 
+    box-shadow: 0 0 5px rgba(59, 130, 246, 0.3);
+    transform: scale(1);
+  }
+  50% { 
+    box-shadow: 0 0 15px rgba(59, 130, 246, 0.8);
+    transform: scale(1.1);
+  }
+}
+
+.animate-pulse-glow {
+  animation: pulse-glow 2s ease-in-out infinite;
+}
+
+/* Animaciones para indicadores de actividad */
+@keyframes activity-pulse {
+  0%, 100% { 
+    opacity: 1;
+    transform: scale(1);
+  }
+  50% { 
+    opacity: 0.7;
+    transform: scale(1.2);
+  }
+}
+
+.animate-activity-pulse {
+  animation: activity-pulse 1.5s ease-in-out infinite;
+}
+
+/* Efectos de hover para tarjetas de proyecto */
+.project-card-hover {
+  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+.project-card-hover:hover {
+  transform: translateY(-4px);
+  box-shadow: 0 20px 40px -12px rgba(0, 0, 0, 0.15);
+}
+
+/* Animaciones para timeline de fases */
+@keyframes phase-complete {
+  0% { 
+    transform: scale(1);
+    box-shadow: 0 0 0 0 rgba(34, 197, 94, 0.7);
+  }
+  70% { 
+    transform: scale(1.1);
+    box-shadow: 0 0 0 10px rgba(34, 197, 94, 0);
+  }
+  100% { 
+    transform: scale(1);
+    box-shadow: 0 0 0 0 rgba(34, 197, 94, 0);
+  }
+}
+
+.animate-phase-complete {
+  animation: phase-complete 0.6s ease-out;
+}
+
+/* Mejoras de accesibilidad - Contraste mejorado */
+:root {
+  /* Colores con mejor contraste para accesibilidad */
+  --text-primary: #1e293b; /* slate-800 - mejor contraste */
+  --text-secondary: #475569; /* slate-600 - mejor contraste */
+  --text-muted: #64748b; /* slate-500 - mejor contraste */
+  --bg-primary: #ffffff;
+  --bg-secondary: #f8fafc; /* slate-50 */
+  --bg-tertiary: #f1f5f9; /* slate-100 */
+  --border-primary: #e2e8f0; /* slate-200 */
+  --border-secondary: #cbd5e1; /* slate-300 */
+  
+  /* Colores de estado con mejor contraste */
+  --success-text: #166534; /* green-800 */
+  --success-bg: #dcfce7; /* green-100 */
+  --warning-text: #92400e; /* amber-800 */
+  --warning-bg: #fef3c7; /* amber-100 */
+  --error-text: #991b1b; /* red-800 */
+  --error-bg: #fee2e2; /* red-100 */
+  --info-text: #1e40af; /* blue-800 */
+  --info-bg: #dbeafe; /* blue-100 */
+}
+
+/* Clases de accesibilidad */
+.text-accessible {
+  color: var(--text-primary);
+  font-weight: 500;
+}
+
+.text-accessible-secondary {
+  color: var(--text-secondary);
+}
+
+.text-accessible-muted {
+  color: var(--text-muted);
+}
+
+.bg-accessible {
+  background-color: var(--bg-primary);
+}
+
+.bg-accessible-secondary {
+  background-color: var(--bg-secondary);
+}
+
+.border-accessible {
+  border-color: var(--border-primary);
+}
+
+/* Estados con mejor contraste */
+.status-success {
+  color: var(--success-text);
+  background-color: var(--success-bg);
+  border: 1px solid #16a34a; /* green-600 */
+}
+
+.status-warning {
+  color: var(--warning-text);
+  background-color: var(--warning-bg);
+  border: 1px solid #d97706; /* amber-600 */
+}
+
+.status-error {
+  color: var(--error-text);
+  background-color: var(--error-bg);
+  border: 1px solid #dc2626; /* red-600 */
+}
+
+.status-info {
+  color: var(--info-text);
+  background-color: var(--info-bg);
+  border: 1px solid #2563eb; /* blue-600 */
+}
+
+/* Focus visible mejorado */
+.focus-visible {
+  outline: 2px solid #3b82f6; /* blue-500 */
+  outline-offset: 2px;
+  border-radius: 4px;
+}
+
+.focus-visible:focus {
+  outline: 2px solid #3b82f6;
+  outline-offset: 2px;
+}
+
+/* Efectos de ondas en el texto */
+@keyframes text-wave {
+  0% {
+    transform: translateY(0px);
+  }
+  50% {
+    transform: translateY(-10px);
+  }
+  100% {
+    transform: translateY(0px);
+  }
+}
+
+.text-wave {
+  animation: text-wave 0.6s ease-in-out;
+}
+
+/* Efectos de magnetismo */
+@keyframes text-magnet {
+  0% {
+    transform: translate(0, 0);
+  }
+  100% {
+    transform: translate(var(--magnet-x, 0), var(--magnet-y, 0));
+  }
+}
+
+.text-magnet {
+  animation: text-magnet 0.2s ease-out forwards;
+}

@@ -1,0 +1,312 @@
+/* Optimizaciones para dispositivos móviles */
+
+/* Variables CSS para breakpoints */
+:root {
+  --mobile-breakpoint: 768px;
+  --tablet-breakpoint: 1024px;
+  --touch-target-size: 44px;
+  --mobile-padding: 16px;
+  --mobile-margin: 8px;
+}
+
+/* Base para dispositivos móviles */
+@media (max-width: 768px) {
+  /* Mejorar legibilidad del texto */
+  body {
+    -webkit-text-size-adjust: 100%;
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+  }
+
+  /* Optimizar contenedores */
+  .container {
+    padding-left: var(--mobile-padding);
+    padding-right: var(--mobile-padding);
+  }
+
+  /* Mejorar botones para touch */
+  .btn-mobile-optimized {
+    min-height: var(--touch-target-size);
+    min-width: var(--touch-target-size);
+    padding: 12px 16px;
+    touch-action: manipulation;
+    -webkit-tap-highlight-color: transparent;
+  }
+
+  /* Optimizar cards */
+  .card-mobile {
+    margin-bottom: var(--mobile-margin);
+    border-radius: 12px;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+  }
+
+  /* Mejorar formularios */
+  .form-mobile input,
+  .form-mobile textarea,
+  .form-mobile select {
+    min-height: var(--touch-target-size);
+    font-size: 16px; /* Evita zoom en iOS */
+    padding: 12px 16px;
+  }
+
+  /* Optimizar tablas para móvil */
+  .table-mobile {
+    display: block;
+    overflow-x: auto;
+    white-space: nowrap;
+  }
+
+  .table-mobile thead {
+    display: none;
+  }
+
+  .table-mobile tbody {
+    display: block;
+  }
+
+  .table-mobile tr {
+    display: block;
+    margin-bottom: 16px;
+    border: 1px solid #e5e7eb;
+    border-radius: 8px;
+    padding: 16px;
+  }
+
+  .table-mobile td {
+    display: block;
+    text-align: left;
+    border: none;
+    padding: 4px 0;
+  }
+
+  .table-mobile td:before {
+    content: attr(data-label) ": ";
+    font-weight: 600;
+    color: #6b7280;
+  }
+
+  /* Optimizar modales para móvil */
+  .modal-mobile {
+    margin: 0;
+    max-height: 100vh;
+    border-radius: 0;
+  }
+
+  .modal-mobile .modal-content {
+    padding: var(--mobile-padding);
+    max-height: calc(100vh - 32px);
+    overflow-y: auto;
+  }
+
+  /* Mejorar navegación */
+  .nav-mobile {
+    position: fixed;
+    bottom: 0;
+    left: 0;
+    right: 0;
+    z-index: 50;
+    background: white;
+    border-top: 1px solid #e5e7eb;
+    padding: 8px 0;
+  }
+
+  /* Optimizar grid para móvil */
+  .grid-mobile {
+    grid-template-columns: 1fr;
+    gap: var(--mobile-margin);
+  }
+
+  /* Mejorar espaciado */
+  .space-mobile > * + * {
+    margin-top: var(--mobile-margin);
+  }
+
+  .space-mobile-x > * + * {
+    margin-left: var(--mobile-margin);
+  }
+
+  /* Optimizar texto */
+  .text-mobile {
+    font-size: 16px;
+    line-height: 1.5;
+  }
+
+  .text-mobile-sm {
+    font-size: 14px;
+    line-height: 1.4;
+  }
+
+  /* Mejorar iconos */
+  .icon-mobile {
+    width: 24px;
+    height: 24px;
+  }
+
+  /* Optimizar listas */
+  .list-mobile {
+    padding: 0;
+  }
+
+  .list-mobile li {
+    padding: 12px 0;
+    border-bottom: 1px solid #f3f4f6;
+  }
+
+  .list-mobile li:last-child {
+    border-bottom: none;
+  }
+
+  /* Mejorar badges */
+  .badge-mobile {
+    padding: 4px 8px;
+    font-size: 12px;
+    border-radius: 6px;
+  }
+
+  /* Optimizar dropdowns */
+  .dropdown-mobile {
+    position: fixed;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    z-index: 100;
+    background: rgba(0, 0, 0, 0.5);
+  }
+
+  .dropdown-mobile-content {
+    position: absolute;
+    bottom: 0;
+    left: 0;
+    right: 0;
+    background: white;
+    border-radius: 16px 16px 0 0;
+    padding: 16px;
+    max-height: 50vh;
+    overflow-y: auto;
+  }
+}
+
+/* Optimizaciones para tablets */
+@media (min-width: 769px) and (max-width: 1024px) {
+  .container {
+    padding-left: 24px;
+    padding-right: 24px;
+  }
+
+  .grid-tablet {
+    grid-template-columns: repeat(2, 1fr);
+    gap: 16px;
+  }
+
+  .tablet-optimized {
+    font-size: 15px;
+  }
+}
+
+/* Optimizaciones para orientación landscape en móvil */
+@media (max-width: 768px) and (orientation: landscape) {
+  .modal-mobile {
+    max-height: 100vh;
+  }
+
+  .modal-mobile .modal-content {
+    max-height: calc(100vh - 16px);
+  }
+
+  .nav-mobile {
+    display: none; /* Ocultar navegación inferior en landscape */
+  }
+}
+
+/* Mejoras para dispositivos táctiles */
+@media (hover: none) and (pointer: coarse) {
+  /* Aumentar área de toque */
+  .touch-target {
+    min-height: var(--touch-target-size);
+    min-width: var(--touch-target-size);
+  }
+
+  /* Mejorar feedback visual */
+  .touch-feedback:active {
+    transform: scale(0.98);
+    transition: transform 0.1s ease;
+  }
+
+  /* Optimizar scroll */
+  .touch-scroll {
+    -webkit-overflow-scrolling: touch;
+    overscroll-behavior: contain;
+  }
+
+  /* Mejorar selección de texto */
+  .touch-select {
+    -webkit-user-select: text;
+    user-select: text;
+  }
+}
+
+/* Optimizaciones para PWA */
+@media (display-mode: standalone) {
+  .pwa-optimized {
+    padding-top: env(safe-area-inset-top);
+    padding-bottom: env(safe-area-inset-bottom);
+    padding-left: env(safe-area-inset-left);
+    padding-right: env(safe-area-inset-right);
+  }
+
+  .pwa-nav {
+    padding-bottom: calc(env(safe-area-inset-bottom) + 8px);
+  }
+}
+
+/* Mejoras de accesibilidad para móvil */
+@media (max-width: 768px) {
+  /* Mejorar contraste */
+  .text-mobile {
+    color: #1f2937;
+  }
+
+  .text-muted-mobile {
+    color: #6b7280;
+  }
+
+  /* Mejorar focus */
+  .focus-mobile:focus {
+    outline: 2px solid #3b82f6;
+    outline-offset: 2px;
+  }
+
+  /* Mejorar animaciones */
+  .animate-mobile {
+    transition: all 0.2s ease;
+  }
+
+  /* Reducir animaciones si el usuario lo prefiere */
+  @media (prefers-reduced-motion: reduce) {
+    .animate-mobile {
+      transition: none;
+    }
+  }
+}
+
+/* Utilidades específicas para móvil */
+.mobile-only {
+  display: block;
+}
+
+.desktop-only {
+  display: none;
+}
+
+@media (min-width: 769px) {
+  .mobile-only {
+    display: none;
+  }
+
+  .desktop-only {
+    display: block;
+  }
+}
+
+/* Forzar modo claro en móvil - eliminado dark mode del sistema */

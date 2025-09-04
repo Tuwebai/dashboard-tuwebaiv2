@@ -1,0 +1,54 @@
+<!DOCTYPE html>
+<html lang="es">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>TuWebAI - Dashboard Profesional de Desarrollo Web, IA y Automatización</title>
+    
+    <!-- FORZAR MODO CLARO DESDE EL INICIO -->
+    <script>
+      // Forzar modo claro antes de que se cargue cualquier CSS
+      document.documentElement.style.colorScheme = 'light';
+      document.documentElement.classList.add('light');
+      document.documentElement.classList.remove('dark');
+      
+      // Prevenir detección del modo del sistema
+      if (window.matchMedia && window.matchMedia('(prefers-color-scheme: dark)').matches) {
+        document.documentElement.style.colorScheme = 'light';
+        document.documentElement.classList.add('light');
+        document.documentElement.classList.remove('dark');
+      }
+    </script>
+    <meta name="description" content="TuWebAI: Plataforma premium para desarrollo web, dashboards, automatización y gestión de proyectos con IA. Herramientas avanzadas, colaboración, notificaciones y analítica profesional." />
+    <meta name="keywords" content="dashboard, desarrollo web, IA, inteligencia artificial, automatización, proyectos, gestión, notificaciones, analítica, premium, profesional, TuWebAI" />
+    <meta name="author" content="TuWebAI" />
+    <meta name="robots" content="index, follow" />
+    <link rel="canonical" href="https://tuwebai.com/" />
+    <meta name="theme-color" content="#181824" />
+
+    <meta property="og:title" content="TuWebAI - Dashboard Profesional de Desarrollo Web, IA y Automatización" />
+    <meta property="og:description" content="Plataforma premium para desarrollo web, dashboards, automatización y gestión de proyectos con IA. Herramientas avanzadas, colaboración, notificaciones y analítica profesional." />
+    <meta property="og:type" content="website" />
+    <meta property="og:url" content="https://tuwebai.com/" />
+    <meta property="og:image" content="/logoweb.jpg" />
+    <meta property="og:site_name" content="TuWebAI" />
+
+    <meta name="twitter:card" content="summary_large_image" />
+    <meta name="twitter:site" content="@tuwebai" />
+    <meta name="twitter:title" content="TuWebAI - Dashboard Profesional de Desarrollo Web, IA y Automatización" />
+    <meta name="twitter:description" content="Plataforma premium para desarrollo web, dashboards, automatización y gestión de proyectos con IA. Herramientas avanzadas, colaboración, notificaciones y analítica profesional." />
+    <meta name="twitter:image" content="/logoweb.jpg" />
+
+    <!-- Favicon -->
+    <link rel="icon" type="image/jpeg" href="/logoweb.jpg" />
+    <link rel="icon" type="image/png" href="/favicon.png" />
+    
+    <!-- EmailJS SDK -->
+    <script type="text/javascript" src="https://cdn.jsdelivr.net/npm/@emailjs/browser@3/dist/email.min.js"></script>
+  </head>
+
+  <body>
+    <div id="root"></div>
+    <script type="module" src="/src/main.tsx"></script>
+  </body>
+</html>
