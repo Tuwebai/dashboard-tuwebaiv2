@@ -40,6 +40,41 @@ export default function LandingPage() {
   const { login, loginWithGoogle, loginWithGithub } = useApp();
   const navigate = useNavigate();
 
+  // Agregar estilos CSS para las animaciones
+  React.useEffect(() => {
+    const style = document.createElement('style');
+    style.textContent = `
+      @keyframes slideUp {
+        from {
+          transform: translateY(100%);
+          opacity: 0;
+        }
+        to {
+          transform: translateY(0);
+          opacity: 1;
+        }
+      }
+      
+      @keyframes pulse {
+        0%, 100% {
+          opacity: 1;
+        }
+        50% {
+          opacity: 0.7;
+        }
+      }
+      
+      .animate-pulse {
+        animation: pulse 2s cubic-bezier(0.4, 0, 0.6, 1) infinite;
+      }
+    `;
+    document.head.appendChild(style);
+    
+    return () => {
+      document.head.removeChild(style);
+    };
+  }, []);
+
   // Auto-play demo
   useEffect(() => {
     if (isPlaying) {
@@ -509,7 +544,7 @@ export default function LandingPage() {
                 <div className="relative transform rotate-1 hover:rotate-0 transition-all duration-700 ease-out">
                   <div className="bg-white rounded-2xl p-2 shadow-2xl">
                     <img 
-                      src="/dashboardcliente.png" 
+                      src="/analisislandingpage.png" 
                       alt="Dashboard Cliente mostrando análisis y métricas" 
                       className="w-full h-auto rounded-xl shadow-lg"
                     />
@@ -773,7 +808,7 @@ export default function LandingPage() {
 
                     {/* Stats Cards */}
                     <div className="grid grid-cols-2 lg:grid-cols-4 gap-4">
-                      <div className={`rounded-lg p-4 cursor-pointer hover:shadow-lg transition-all duration-300 ${isDarkMode ? 'bg-gradient-to-br from-blue-900/20 to-blue-800/20 border border-blue-700/30' : 'bg-gradient-to-br from-blue-50 to-blue-100'}`} onClick={() => setActiveDemo('projects')}>
+                      <div className={`rounded-lg p-4 hover:shadow-lg transition-all duration-300 ${isDarkMode ? 'bg-gradient-to-br from-blue-900/20 to-blue-800/20 border border-blue-700/30' : 'bg-gradient-to-br from-blue-50 to-blue-100'}`}>
                         <div className="flex items-center justify-between mb-2">
                           <Target className={`h-6 w-6 transition-colors duration-300 ${isDarkMode ? 'text-blue-400' : 'text-blue-600'}`} />
                           <div className="w-3 h-3 bg-green-500 rounded-full animate-pulse"></div>
@@ -783,7 +818,7 @@ export default function LandingPage() {
                         <div className={`text-xs mt-1 transition-colors duration-300 ${isDarkMode ? 'text-blue-400' : 'text-blue-600'}`}>+3 este mes</div>
                       </div>
 
-                      <div className={`rounded-lg p-4 cursor-pointer hover:shadow-lg transition-all duration-300 ${isDarkMode ? 'bg-gradient-to-br from-green-900/20 to-green-800/20 border border-green-700/30' : 'bg-gradient-to-br from-green-50 to-green-100'}`} onClick={() => setActiveDemo('analytics')}>
+                      <div className={`rounded-lg p-4 hover:shadow-lg transition-all duration-300 ${isDarkMode ? 'bg-gradient-to-br from-green-900/20 to-green-800/20 border border-green-700/30' : 'bg-gradient-to-br from-green-50 to-green-100'}`}>
                         <div className="flex items-center justify-between mb-2">
                           <TrendingUp className={`h-6 w-6 transition-colors duration-300 ${isDarkMode ? 'text-green-400' : 'text-green-600'}`} />
                           <div className="w-3 h-3 bg-green-500 rounded-full animate-pulse"></div>
@@ -793,7 +828,7 @@ export default function LandingPage() {
                         <div className={`text-xs mt-1 transition-colors duration-300 ${isDarkMode ? 'text-green-400' : 'text-green-600'}`}>+2 esta semana</div>
                       </div>
 
-                      <div className={`rounded-lg p-4 cursor-pointer hover:shadow-lg transition-all duration-300 ${isDarkMode ? 'bg-gradient-to-br from-orange-900/20 to-orange-800/20 border border-orange-700/30' : 'bg-gradient-to-br from-orange-50 to-orange-100'}`} onClick={() => setActiveDemo('team')}>
+                      <div className={`rounded-lg p-4 hover:shadow-lg transition-all duration-300 ${isDarkMode ? 'bg-gradient-to-br from-orange-900/20 to-orange-800/20 border border-orange-700/30' : 'bg-gradient-to-br from-orange-50 to-orange-100'}`}>
                         <div className="flex items-center justify-between mb-2">
                           <Users className={`h-6 w-6 transition-colors duration-300 ${isDarkMode ? 'text-orange-400' : 'text-orange-600'}`} />
                           <div className="w-3 h-3 bg-green-500 rounded-full animate-pulse"></div>
@@ -803,7 +838,7 @@ export default function LandingPage() {
                         <div className={`text-xs mt-1 transition-colors duration-300 ${isDarkMode ? 'text-orange-400' : 'text-orange-600'}`}>+5 hoy</div>
                       </div>
 
-                      <div className={`rounded-lg p-4 cursor-pointer hover:shadow-lg transition-all duration-300 ${isDarkMode ? 'bg-gradient-to-br from-purple-900/20 to-purple-800/20 border border-purple-700/30' : 'bg-gradient-to-br from-purple-50 to-purple-100'}`} onClick={() => setActiveDemo('settings')}>
+                      <div className={`rounded-lg p-4 hover:shadow-lg transition-all duration-300 ${isDarkMode ? 'bg-gradient-to-br from-purple-900/20 to-purple-800/20 border border-purple-700/30' : 'bg-gradient-to-br from-purple-50 to-purple-100'}`}>
                         <div className="flex items-center justify-between mb-2">
                           <Activity className={`h-6 w-6 transition-colors duration-300 ${isDarkMode ? 'text-purple-400' : 'text-purple-600'}`} />
                           <div className="w-3 h-3 bg-green-500 rounded-full animate-pulse"></div>
@@ -933,20 +968,119 @@ export default function LandingPage() {
                             {/* Gráfico de Rendimiento */}
                             <div className={`rounded-lg p-4 shadow-sm transition-colors duration-300 ${isDarkMode ? 'bg-gray-700' : 'bg-white'}`}>
                               <h4 className={`font-semibold mb-4 transition-colors duration-300 ${isDarkMode ? 'text-white' : 'text-gray-900'}`}>Rendimiento del Mes</h4>
-                              <div className="h-48 bg-gradient-to-br from-blue-50 to-green-50 rounded-lg flex items-center justify-center relative overflow-hidden">
-                                <div className="absolute inset-0 bg-gradient-to-r from-blue-500/10 to-green-500/10"></div>
-                                <div className="text-center z-10">
-                                  <div className="text-4xl mb-2">📊</div>
-                                  <div className={`text-lg font-semibold transition-colors duration-300 ${isDarkMode ? 'text-white' : 'text-gray-900'}`}>Gráfico Interactivo</div>
-                                  <div className={`text-sm transition-colors duration-300 ${isDarkMode ? 'text-gray-300' : 'text-gray-600'}`}>Visualización de datos en tiempo real</div>
+                              <div className="h-48 relative">
+                                {/* Gráfico de barras interactivo */}
+                                <div className="flex items-end justify-between h-full px-4 space-x-2">
+                                  {/* Barra 1 - Enero */}
+                                  <div className="flex flex-col items-center group cursor-pointer">
+                                    <div 
+                                      className={`w-10 bg-gradient-to-t from-blue-500 to-blue-400 rounded-t-lg transition-all duration-500 group-hover:from-blue-600 group-hover:to-blue-500 group-hover:scale-110 group-hover:shadow-lg animate-pulse ${isDarkMode ? 'shadow-blue-500/30' : 'shadow-blue-200'}`}
+                                      style={{ 
+                                        height: '60%',
+                                        animation: 'slideUp 0.8s ease-out 0.1s both'
+                                      }}
+                                      title="Enero: 60% - 1,200 proyectos"
+                                    ></div>
+                                    <span className={`text-xs mt-2 transition-colors duration-300 ${isDarkMode ? 'text-gray-300' : 'text-gray-600'}`}>Ene</span>
+                                    <span className={`text-xs font-medium transition-colors duration-300 ${isDarkMode ? 'text-blue-400' : 'text-blue-600'}`}>1.2K</span>
+                                  </div>
+                                  
+                                  {/* Barra 2 - Febrero */}
+                                  <div className="flex flex-col items-center group cursor-pointer">
+                                    <div 
+                                      className={`w-10 bg-gradient-to-t from-green-500 to-green-400 rounded-t-lg transition-all duration-500 group-hover:from-green-600 group-hover:to-green-500 group-hover:scale-110 group-hover:shadow-lg animate-pulse ${isDarkMode ? 'shadow-green-500/30' : 'shadow-green-200'}`}
+                                      style={{ 
+                                        height: '80%',
+                                        animation: 'slideUp 0.8s ease-out 0.2s both'
+                                      }}
+                                      title="Febrero: 80% - 1,600 proyectos"
+                                    ></div>
+                                    <span className={`text-xs mt-2 transition-colors duration-300 ${isDarkMode ? 'text-gray-300' : 'text-gray-600'}`}>Feb</span>
+                                    <span className={`text-xs font-medium transition-colors duration-300 ${isDarkMode ? 'text-green-400' : 'text-green-600'}`}>1.6K</span>
+                                  </div>
+                                  
+                                  {/* Barra 3 - Marzo */}
+                                  <div className="flex flex-col items-center group cursor-pointer">
+                                    <div 
+                                      className={`w-10 bg-gradient-to-t from-orange-500 to-orange-400 rounded-t-lg transition-all duration-500 group-hover:from-orange-600 group-hover:to-orange-500 group-hover:scale-110 group-hover:shadow-lg animate-pulse ${isDarkMode ? 'shadow-orange-500/30' : 'shadow-orange-200'}`}
+                                      style={{ 
+                                        height: '45%',
+                                        animation: 'slideUp 0.8s ease-out 0.3s both'
+                                      }}
+                                      title="Marzo: 45% - 900 proyectos"
+                                    ></div>
+                                    <span className={`text-xs mt-2 transition-colors duration-300 ${isDarkMode ? 'text-gray-300' : 'text-gray-600'}`}>Mar</span>
+                                    <span className={`text-xs font-medium transition-colors duration-300 ${isDarkMode ? 'text-orange-400' : 'text-orange-600'}`}>900</span>
+                                  </div>
+                                  
+                                  {/* Barra 4 - Abril */}
+                                  <div className="flex flex-col items-center group cursor-pointer">
+                                    <div 
+                                      className={`w-10 bg-gradient-to-t from-purple-500 to-purple-400 rounded-t-lg transition-all duration-500 group-hover:from-purple-600 group-hover:to-purple-500 group-hover:scale-110 group-hover:shadow-lg animate-pulse ${isDarkMode ? 'shadow-purple-500/30' : 'shadow-purple-200'}`}
+                                      style={{ 
+                                        height: '90%',
+                                        animation: 'slideUp 0.8s ease-out 0.4s both'
+                                      }}
+                                      title="Abril: 90% - 1,800 proyectos"
+                                    ></div>
+                                    <span className={`text-xs mt-2 transition-colors duration-300 ${isDarkMode ? 'text-gray-300' : 'text-gray-600'}`}>Abr</span>
+                                    <span className={`text-xs font-medium transition-colors duration-300 ${isDarkMode ? 'text-purple-400' : 'text-purple-600'}`}>1.8K</span>
+                                  </div>
+                                  
+                                  {/* Barra 5 - Mayo */}
+                                  <div className="flex flex-col items-center group cursor-pointer">
+                                    <div 
+                                      className={`w-10 bg-gradient-to-t from-cyan-500 to-cyan-400 rounded-t-lg transition-all duration-500 group-hover:from-cyan-600 group-hover:to-cyan-500 group-hover:scale-110 group-hover:shadow-lg animate-pulse ${isDarkMode ? 'shadow-cyan-500/30' : 'shadow-cyan-200'}`}
+                                      style={{ 
+                                        height: '75%',
+                                        animation: 'slideUp 0.8s ease-out 0.5s both'
+                                      }}
+                                      title="Mayo: 75% - 1,500 proyectos"
+                                    ></div>
+                                    <span className={`text-xs mt-2 transition-colors duration-300 ${isDarkMode ? 'text-gray-300' : 'text-gray-600'}`}>May</span>
+                                    <span className={`text-xs font-medium transition-colors duration-300 ${isDarkMode ? 'text-cyan-400' : 'text-cyan-600'}`}>1.5K</span>
+                                  </div>
+                                  
+                                  {/* Barra 6 - Junio */}
+                                  <div className="flex flex-col items-center group cursor-pointer">
+                                    <div 
+                                      className={`w-10 bg-gradient-to-t from-pink-500 to-pink-400 rounded-t-lg transition-all duration-500 group-hover:from-pink-600 group-hover:to-pink-500 group-hover:scale-110 group-hover:shadow-lg animate-pulse ${isDarkMode ? 'shadow-pink-500/30' : 'shadow-pink-200'}`}
+                                      style={{ 
+                                        height: '95%',
+                                        animation: 'slideUp 0.8s ease-out 0.6s both'
+                                      }}
+                                      title="Junio: 95% - 1,900 proyectos"
+                                    ></div>
+                                    <span className={`text-xs mt-2 transition-colors duration-300 ${isDarkMode ? 'text-gray-300' : 'text-gray-600'}`}>Jun</span>
+                                    <span className={`text-xs font-medium transition-colors duration-300 ${isDarkMode ? 'text-pink-400' : 'text-pink-600'}`}>1.9K</span>
+                                  </div>
                                 </div>
-                                {/* Barras de ejemplo */}
-                                <div className="absolute bottom-4 left-4 right-4 flex items-end space-x-2 h-20">
-                                  <div className="bg-blue-500 w-8 rounded-t" style={{height: '60%'}}></div>
-                                  <div className="bg-green-500 w-8 rounded-t" style={{height: '80%'}}></div>
-                                  <div className="bg-orange-500 w-8 rounded-t" style={{height: '45%'}}></div>
-                                  <div className="bg-purple-500 w-8 rounded-t" style={{height: '70%'}}></div>
-                                  <div className="bg-cyan-500 w-8 rounded-t" style={{height: '90%'}}></div>
+                                
+                                {/* Línea de referencia */}
+                                <div className={`absolute top-0 left-0 right-0 h-px ${isDarkMode ? 'bg-gray-600' : 'bg-gray-200'}`}></div>
+                                
+                                {/* Tooltip de información */}
+                                <div className={`absolute top-2 right-2 text-xs transition-colors duration-300 ${isDarkMode ? 'text-gray-400' : 'text-gray-500'}`}>
+                                  <div className="flex items-center space-x-1">
+                                    <div className="w-2 h-2 bg-green-500 rounded-full animate-pulse"></div>
+                                    <span>Datos en tiempo real</span>
+                                  </div>
+                                </div>
+                              </div>
+                              
+                              {/* Leyenda del gráfico */}
+                              <div className="mt-4 flex flex-wrap gap-4 text-xs">
+                                <div className="flex items-center space-x-2">
+                                  <div className="w-3 h-3 bg-blue-500 rounded animate-pulse"></div>
+                                  <span className={`transition-colors duration-300 ${isDarkMode ? 'text-gray-300' : 'text-gray-600'}`}>Proyectos Completados</span>
+                                </div>
+                                <div className="flex items-center space-x-2">
+                                  <div className="w-3 h-3 bg-green-500 rounded animate-pulse"></div>
+                                  <span className={`transition-colors duration-300 ${isDarkMode ? 'text-gray-300' : 'text-gray-600'}`}>Proyectos Activos</span>
+                                </div>
+                                <div className="flex items-center space-x-2">
+                                  <div className="w-3 h-3 bg-orange-500 rounded animate-pulse"></div>
+                                  <span className={`transition-colors duration-300 ${isDarkMode ? 'text-gray-300' : 'text-gray-600'}`}>En Revisión</span>
                                 </div>
                               </div>
                             </div>
