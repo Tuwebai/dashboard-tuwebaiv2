@@ -13,6 +13,10 @@ body {
   font-weight: 400;
   line-height: 1.4;
   letter-spacing: -0.01em;
+  /* Mejorar scroll en dispositivos móviles */
+  -webkit-overflow-scrolling: touch;
+  overscroll-behavior: auto;
+  scroll-behavior: auto;
 }
 
 /* Tipografía Profesional - Escala Tipográfica */
@@ -832,5 +836,47 @@ h1, h2, h3, h4, h5, h6 {
 
   .page-link:disabled {
     @apply opacity-50 cursor-not-allowed;
+  }
+}
+
+/* Mejoras específicas para scroll en dispositivos móviles */
+@media (max-width: 768px) {
+  /* Permitir scroll libre en dispositivos móviles */
+  html, body {
+    overflow-x: hidden;
+    overflow-y: auto;
+    -webkit-overflow-scrolling: touch;
+    overscroll-behavior: auto;
+    scroll-behavior: auto;
+  }
+  
+  /* Evitar scroll automático en contenedores */
+  * {
+    scroll-behavior: auto !important;
+  }
+  
+  /* Mejorar scroll en secciones */
+  section {
+    scroll-behavior: auto;
+    overscroll-behavior: auto;
+  }
+  
+  /* Permitir scroll natural en contenedores con overflow */
+  .overflow-auto, .overflow-y-auto, .overflow-x-auto {
+    -webkit-overflow-scrolling: touch;
+    overscroll-behavior: auto;
+    scroll-behavior: auto;
+  }
+  
+  /* Evitar scroll automático en modales */
+  .modal-content {
+    scroll-behavior: auto;
+    overscroll-behavior: auto;
+  }
+  
+  /* Mejorar scroll en cards y contenedores */
+  .card, .card-content {
+    scroll-behavior: auto;
+    overscroll-behavior: auto;
   }
 }

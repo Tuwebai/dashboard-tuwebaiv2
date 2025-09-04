@@ -236,7 +236,8 @@
   /* Optimizar scroll */
   .touch-scroll {
     -webkit-overflow-scrolling: touch;
-    overscroll-behavior: contain;
+    overscroll-behavior: auto;
+    scroll-behavior: auto;
   }
 
   /* Mejorar selección de texto */
