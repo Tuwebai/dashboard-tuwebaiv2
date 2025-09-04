@@ -31,12 +31,9 @@ const DYNAMIC_PATTERNS = [
 // =====================================================
 
 self.addEventListener('install', (event) => {
-  console.log('🔧 Service Worker: Instalando...');
-  
   event.waitUntil(
     caches.open(STATIC_CACHE_NAME)
       .then((cache) => {
-        console.log('📦 Service Worker: Cacheando recursos estáticos...');
         // Cachear recursos uno por uno para manejar respuestas 206
         return Promise.allSettled(
           STATIC_ASSETS.map(asset => {
@@ -45,24 +42,20 @@ self.addEventListener('install', (event) => {
                 // Solo cachear respuestas exitosas y completas
                 if (response.ok && response.status !== 206) {
                   return cache.put(asset, response);
-                } else {
-                  console.warn(`⚠️ Service Worker: Saltando recurso ${asset} (status: ${response.status})`);
-                  return Promise.resolve();
                 }
+                return Promise.resolve();
               })
-              .catch(error => {
-                console.warn(`⚠️ Service Worker: Error cacheando ${asset}:`, error);
+              .catch(() => {
                 return Promise.resolve();
               });
           })
         );
       })
       .then(() => {
-        console.log('✅ Service Worker: Instalación completada');
         return self.skipWaiting();
       })
       .catch((error) => {
-        console.error('❌ Service Worker: Error en instalación:', error);
+        console.error('Service Worker installation error:', error);
       })
   );
 });
@@ -72,8 +65,6 @@ self.addEventListener('install', (event) => {
 // =====================================================
 
 self.addEventListener('activate', (event) => {
-  console.log('🚀 Service Worker: Activando...');
-  
   event.waitUntil(
     caches.keys()
       .then((cacheNames) => {
@@ -83,14 +74,12 @@ self.addEventListener('activate', (event) => {
             if (cacheName !== STATIC_CACHE_NAME && 
                 cacheName !== DYNAMIC_CACHE_NAME && 
                 cacheName !== CACHE_NAME) {
-              console.log('🗑️ Service Worker: Eliminando cache antiguo:', cacheName);
             return caches.delete(cacheName);
           }
         })
       );
     })
       .then(() => {
-        console.log('✅ Service Worker: Activación completada');
         return self.clients.claim();
       })
   );
@@ -179,7 +168,6 @@ async function networkFirst(request) {
     
     return networkResponse;
   } catch (error) {
-    console.log('🌐 Network First: Fallback a cache');
     const cachedResponse = await caches.match(request);
     if (cachedResponse) {
       return cachedResponse;
@@ -276,7 +264,7 @@ self.addEventListener('message', (event) => {
       break;
       
     default:
-      console.log('📨 Service Worker: Mensaje desconocido:', type);
+      // Mensaje desconocido ignorado
   }
 });
 
@@ -289,7 +277,6 @@ async function clearAllCaches() {
   await Promise.all(
     cacheNames.map(cacheName => caches.delete(cacheName))
   );
-  console.log('🗑️ Service Worker: Todos los caches eliminados');
 }
 
 async function getCacheSize() {
@@ -358,4 +345,4 @@ self.addEventListener('notificationclick', (event) => {
   }
 });
 
-console.log('🎯 Service Worker: Cargado y listo');
+// Service Worker cargado y listo
