@@ -36,6 +36,9 @@ export default function LandingPage() {
   const [isLoading, setIsLoading] = useState(false);
   const [activeDemo, setActiveDemo] = useState<string | null>(null);
   const [isPlaying, setIsPlaying] = useState(false);
+  const [showDemoModal, setShowDemoModal] = useState(false);
+  const [demoMessage, setDemoMessage] = useState('');
+  const [isDemoMode, setIsDemoMode] = useState(false);
   const { login, loginWithGoogle, loginWithGithub } = useApp();
   const navigate = useNavigate();
 
@@ -56,6 +59,11 @@ export default function LandingPage() {
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
+    if (isDemoMode) {
+      setDemoMessage('🎉 ¡Modo Demo! En la versión real, aquí se iniciaría sesión con las credenciales proporcionadas.');
+      setShowDemoModal(true);
+      return;
+    }
     setIsLoading(true);
     const success = await login(email, password);
     if (success) {
@@ -75,6 +83,11 @@ export default function LandingPage() {
   };
 
   const handleGoogleLogin = async () => {
+    if (isDemoMode) {
+      setDemoMessage('🚀 ¡Modo Demo! En la versión real, aquí se iniciaría sesión con Google.');
+      setShowDemoModal(true);
+      return;
+    }
     setIsLoading(true);
     const success = await loginWithGoogle();
     if (success) {
@@ -86,6 +99,11 @@ export default function LandingPage() {
   };
 
   const handleGithubLogin = async () => {
+    if (isDemoMode) {
+      setDemoMessage('⚡ ¡Modo Demo! En la versión real, aquí se iniciaría sesión con GitHub.');
+      setShowDemoModal(true);
+      return;
+    }
     setIsLoading(true);
     const success = await loginWithGithub();
     if (success) {
@@ -94,6 +112,29 @@ export default function LandingPage() {
       toast({ title: 'Error', description: 'No se pudo iniciar sesión con GitHub.', variant: 'destructive' });
     }
     setIsLoading(false);
+  };
+
+  const handleRegister = () => {
+    if (isDemoMode) {
+      setDemoMessage('📝 ¡Modo Demo! En la versión real, aquí se abriría el formulario de registro.');
+      setShowDemoModal(true);
+      return;
+    }
+    navigate('/register');
+  };
+
+  const handleDemoAction = (action: string) => {
+    const messages = {
+      'dashboard': '🎯 ¡Accediendo al Dashboard! En la versión real, aquí verías todos tus proyectos y métricas.',
+      'projects': '📊 ¡Vista de Proyectos! Aquí gestionarías todos tus proyectos web de forma organizada.',
+      'team': '👥 ¡Gestión de Equipo! Aquí administrarías los miembros y roles de tu equipo.',
+      'settings': '⚙️ ¡Configuración! Aquí personalizarías tu experiencia y preferencias.',
+      'create-account': '✨ ¡Crear Cuenta! En la versión real, aquí te registrarías para acceder a todas las funcionalidades.',
+      'view-demo': '🎮 ¡Demo Completo! Aquí verías una demostración completa de todas las funcionalidades.'
+    };
+    
+    setDemoMessage(messages[action as keyof typeof messages] || '🎉 ¡Acción Demo!');
+    setShowDemoModal(true);
   };
 
   const demoCards = [
@@ -132,7 +173,11 @@ export default function LandingPage() {
   ];
 
   return (
-    <div className="min-h-screen bg-white overflow-x-hidden">
+    <div className="min-h-screen bg-white overflow-x-hidden scroll-smooth" style={{ 
+      WebkitOverflowScrolling: 'touch',
+      overscrollBehavior: 'none',
+      scrollBehavior: 'smooth'
+    }}>
       {/* Header fijo */}
       <header className="fixed top-0 left-0 right-0 z-50 bg-white/95 backdrop-blur-md border-b border-gray-200">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
@@ -146,15 +191,25 @@ export default function LandingPage() {
               </span>
             </div>
             <div className="flex items-center space-x-4">
-              <Button variant="ghost" asChild>
-                <Link to="/login" className="text-gray-600 hover:text-gray-900">
-                  Login
-                </Link>
+              <Button 
+                variant="ghost" 
+                className="text-gray-600 hover:text-gray-900"
+                onClick={() => handleDemoAction('login')}
+              >
+                Login
               </Button>
-              <Button asChild className="bg-gradient-to-r from-cyan-500 to-emerald-600 hover:from-cyan-600 hover:to-emerald-700">
-                <Link to="/register">
-                  Registro
-                </Link>
+              <Button 
+                className="bg-gradient-to-r from-cyan-500 to-emerald-600 hover:from-cyan-600 hover:to-emerald-700"
+                onClick={handleRegister}
+              >
+                Registro
+              </Button>
+              <Button 
+                variant="outline" 
+                className="border-cyan-500 text-cyan-600 hover:bg-cyan-50"
+                onClick={() => setIsDemoMode(!isDemoMode)}
+              >
+                {isDemoMode ? '🎮 Demo ON' : '🎮 Demo OFF'}
               </Button>
             </div>
           </div>
@@ -329,11 +384,41 @@ export default function LandingPage() {
         </div>
       </section>
 
-      {/* Secciones alternadas */}
+      {/* Secciones alternadas - IMAGEN IZQUIERDA, TEXTO DERECHA */}
       <section className="py-24 bg-white">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="grid lg:grid-cols-2 gap-20 items-center">
-            <div className="space-y-8">
+            {/* IMAGEN - IZQUIERDA */}
+            <div className="relative order-1 lg:order-1">
+              <div className="relative group">
+                <div className="absolute -inset-4 bg-gradient-to-r from-blue-500/20 to-purple-500/20 rounded-3xl blur-2xl group-hover:blur-3xl transition-all duration-500"></div>
+                <div className="relative transform -rotate-1 hover:rotate-0 transition-all duration-700 ease-out">
+                  <div className="bg-white rounded-2xl p-2 shadow-2xl">
+                    <img 
+                      src="/dashboardadmin.png" 
+                      alt="Dashboard Admin mostrando gestión de proyectos" 
+                      className="w-full h-auto rounded-xl shadow-lg"
+                    />
+                  </div>
+                </div>
+                {/* Elementos flotantes que complementan la imagen */}
+                <div className="absolute -top-4 -right-4 bg-white rounded-xl p-3 shadow-lg border border-gray-200">
+                  <div className="flex items-center space-x-2">
+                    <div className="w-3 h-3 bg-blue-500 rounded-full animate-pulse"></div>
+                    <span className="text-sm font-medium text-gray-700">5 Proyectos activos</span>
+                  </div>
+                </div>
+                <div className="absolute -bottom-4 -left-4 bg-white rounded-xl p-3 shadow-lg border border-gray-200">
+                  <div className="flex items-center space-x-2">
+                    <Users className="h-4 w-4 text-purple-600" />
+                    <span className="text-sm font-medium text-gray-700">6 Usuarios</span>
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            {/* TEXTO - DERECHA */}
+            <div className="space-y-8 order-2 lg:order-2">
               <div className="space-y-4">
                 <div className="inline-flex items-center px-4 py-2 rounded-full bg-blue-100 text-blue-800 text-sm font-medium">
                   <Target className="h-4 w-4 mr-2" />
@@ -387,34 +472,6 @@ export default function LandingPage() {
                       <h3 className="font-semibold text-gray-900">Personalización total</h3>
                       <p className="text-sm text-gray-600">Adapta la herramienta a tu flujo</p>
                     </div>
-                  </div>
-                </div>
-              </div>
-            </div>
-            
-            <div className="relative order-2 lg:order-2">
-              <div className="relative group">
-                <div className="absolute -inset-4 bg-gradient-to-r from-blue-500/20 to-purple-500/20 rounded-3xl blur-2xl group-hover:blur-3xl transition-all duration-500"></div>
-                <div className="relative transform -rotate-1 hover:rotate-0 transition-all duration-700 ease-out">
-                  <div className="bg-white rounded-2xl p-2 shadow-2xl">
-                    <img 
-                      src="/dashboardadmin.png" 
-                      alt="Dashboard Admin mostrando gestión de proyectos" 
-                      className="w-full h-auto rounded-xl shadow-lg"
-                    />
-                  </div>
-                </div>
-                {/* Elementos flotantes que complementan la imagen */}
-                <div className="absolute -top-4 -right-4 bg-white rounded-xl p-3 shadow-lg border border-gray-200">
-                  <div className="flex items-center space-x-2">
-                    <div className="w-3 h-3 bg-blue-500 rounded-full animate-pulse"></div>
-                    <span className="text-sm font-medium text-gray-700">5 Proyectos activos</span>
-                  </div>
-                </div>
-                <div className="absolute -bottom-4 -left-4 bg-white rounded-xl p-3 shadow-lg border border-gray-200">
-                  <div className="flex items-center space-x-2">
-                    <Users className="h-4 w-4 text-purple-600" />
-                    <span className="text-sm font-medium text-gray-700">6 Usuarios</span>
                   </div>
                 </div>
               </div>
@@ -657,89 +714,357 @@ export default function LandingPage() {
         </div>
       </section>
 
-      {/* Mini demo interactiva */}
+      {/* Demo Interactivo del Dashboard */}
       <section className="py-24 bg-gradient-to-br from-gray-50 to-white">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="text-center mb-16">
-            <h2 className="text-4xl font-bold text-gray-900 mb-4">
-              Prueba la experiencia
+            <div className="inline-flex items-center px-4 py-2 rounded-full bg-cyan-100 text-cyan-800 text-sm font-medium mb-4">
+              <Play className="h-4 w-4 mr-2" />
+              Demo Interactivo
+            </div>
+            <h2 className="text-5xl font-bold text-gray-900 mb-4">
+              Prueba el dashboard 
+              <span className="bg-gradient-to-r from-cyan-600 to-blue-600 bg-clip-text text-transparent"> en vivo</span>
             </h2>
-            <p className="text-xl text-gray-600">
-              Interactúa con nuestro dashboard y descubre todas las funcionalidades
+            <p className="text-xl text-gray-600 max-w-3xl mx-auto">
+              Interactúa con nuestro dashboard real sin registrarte. Explora todas las funcionalidades y descubre cómo puede transformar tu gestión de proyectos.
             </p>
           </div>
 
-          <div className="relative">
-            {/* Controles de la demo */}
-            <div className="flex justify-center mb-8">
-              <div className="flex items-center space-x-4 bg-white rounded-full p-2 shadow-lg">
-                <Button
-                  variant="ghost"
-                  size="sm"
-                  onClick={() => setIsPlaying(!isPlaying)}
-                  className="rounded-full"
-                >
-                  {isPlaying ? <Pause className="h-4 w-4" /> : <Play className="h-4 w-4" />}
-                </Button>
-                <span className="text-sm text-gray-600">
-                  {isPlaying ? 'Demo en vivo' : 'Iniciar demo'}
-                </span>
+          {/* Dashboard Interactivo */}
+          <div className="bg-white rounded-2xl shadow-2xl border border-gray-200 overflow-hidden">
+            {/* Header del Dashboard */}
+            <div className="bg-gradient-to-r from-gray-900 to-gray-800 px-6 py-4">
+              <div className="flex items-center justify-between">
+                <div className="flex items-center space-x-3">
+                  <div className="w-8 h-8 bg-gradient-to-r from-cyan-500 to-emerald-600 rounded-lg flex items-center justify-center">
+                    <span className="text-white font-bold text-sm">T</span>
+                  </div>
+                  <div>
+                    <h3 className="text-white font-semibold">TuWebAI Dashboard</h3>
+                    <p className="text-gray-300 text-sm">Demo Interactivo</p>
+                  </div>
+                </div>
+                <div className="flex items-center space-x-2">
+                  <div className="w-3 h-3 bg-red-500 rounded-full"></div>
+                  <div className="w-3 h-3 bg-yellow-500 rounded-full"></div>
+                  <div className="w-3 h-3 bg-green-500 rounded-full"></div>
+                </div>
               </div>
             </div>
 
-            {/* Grid de cards interactivas */}
-            <div className="grid md:grid-cols-2 lg:grid-cols-4 gap-6">
-              {demoCards.map((card) => {
-                const Icon = card.icon;
-                const isActive = activeDemo === card.id;
-                
-                return (
-                  <Card 
-                    key={card.id}
-                    className={`cursor-pointer transition-all duration-300 hover:shadow-xl ${
-                      isActive 
-                        ? 'ring-2 ring-cyan-500 shadow-xl scale-105' 
-                        : 'hover:scale-105'
-                    }`}
-                    onClick={() => setActiveDemo(isActive ? null : card.id)}
-                  >
-                    <CardContent className="p-6">
-                      <div className={`w-12 h-12 rounded-lg bg-gradient-to-r ${card.color} flex items-center justify-center mb-4`}>
-                        <Icon className="h-6 w-6 text-white" />
-                      </div>
-                      <h3 className="text-lg font-semibold text-gray-900 mb-2">
-                        {card.title}
-                      </h3>
-                      <p className="text-gray-600 text-sm mb-4">
-                        {card.description}
-                      </p>
-                      {isActive && (
-                        <div className="space-y-2">
-                          {Object.entries(card.stats).map(([key, value]) => (
-                            <div key={key} className="flex justify-between text-sm">
-                              <span className="text-gray-500 capitalize">{key}:</span>
-                              <span className="font-medium text-gray-900">{value}</span>
-                            </div>
-                          ))}
+            {/* Contenido del Dashboard */}
+            <div className="p-6">
+              {/* Sidebar y Main Content */}
+              <div className="grid lg:grid-cols-4 gap-6">
+                {/* Sidebar */}
+                <div className="lg:col-span-1">
+                  <div className="space-y-4">
+                    <div className="bg-gray-50 rounded-lg p-4">
+                      <div className="flex items-center space-x-3 mb-3">
+                        <div className="w-8 h-8 bg-green-500 rounded-full flex items-center justify-center">
+                          <span className="text-white font-bold text-sm">E</span>
                         </div>
-                      )}
-                    </CardContent>
-                  </Card>
-                );
-              })}
-            </div>
+                        <div>
+                          <p className="font-medium text-gray-900">Usuario Demo</p>
+                          <p className="text-sm text-gray-500">demo@tuwebai.com</p>
+                        </div>
+                      </div>
+                    </div>
+                    
+                    <nav className="space-y-2">
+                      <button 
+                        className="w-full flex items-center space-x-3 px-3 py-2 text-left bg-blue-50 text-blue-700 rounded-lg hover:bg-blue-100 transition-colors"
+                        onClick={() => handleDemoAction('dashboard')}
+                      >
+                        <Target className="h-4 w-4" />
+                        <span className="text-sm font-medium">Dashboard</span>
+                      </button>
+                      <button 
+                        className="w-full flex items-center space-x-3 px-3 py-2 text-left text-gray-600 hover:bg-gray-50 rounded-lg transition-colors"
+                        onClick={() => handleDemoAction('projects')}
+                      >
+                        <BarChart3 className="h-4 w-4" />
+                        <span className="text-sm">Proyectos</span>
+                      </button>
+                      <button 
+                        className="w-full flex items-center space-x-3 px-3 py-2 text-left text-gray-600 hover:bg-gray-50 rounded-lg transition-colors"
+                        onClick={() => handleDemoAction('team')}
+                      >
+                        <Users className="h-4 w-4" />
+                        <span className="text-sm">Equipo</span>
+                      </button>
+                      <button 
+                        className="w-full flex items-center space-x-3 px-3 py-2 text-left text-gray-600 hover:bg-gray-50 rounded-lg transition-colors"
+                        onClick={() => handleDemoAction('settings')}
+                      >
+                        <Settings className="h-4 w-4" />
+                        <span className="text-sm">Configuración</span>
+                      </button>
+                    </nav>
+                  </div>
+                </div>
 
-            {/* Indicador de estado */}
-            <div className="flex justify-center mt-8">
-              <div className="flex space-x-2">
-                {demoCards.map((card) => (
-                  <div
-                    key={card.id}
-                    className={`w-3 h-3 rounded-full transition-colors duration-300 ${
-                      activeDemo === card.id ? 'bg-cyan-500' : 'bg-gray-300'
-                    }`}
-                  />
-                ))}
+                {/* Main Content */}
+                <div className="lg:col-span-3">
+                  <div className="space-y-6">
+                    {/* Header */}
+                    <div>
+                      <h1 className="text-2xl font-bold text-gray-900">Mi Dashboard</h1>
+                      <p className="text-gray-600">Gestiona y revisa el progreso de tus proyectos web</p>
+                    </div>
+
+                    {/* Stats Cards */}
+                    <div className="grid grid-cols-2 lg:grid-cols-4 gap-4">
+                      <div className="bg-gradient-to-br from-blue-50 to-blue-100 rounded-lg p-4 cursor-pointer hover:shadow-lg transition-all duration-300" onClick={() => setActiveDemo('projects')}>
+                        <div className="flex items-center justify-between mb-2">
+                          <Target className="h-6 w-6 text-blue-600" />
+                          <div className="w-3 h-3 bg-green-500 rounded-full animate-pulse"></div>
+                        </div>
+                        <div className="text-2xl font-bold text-blue-900">12</div>
+                        <div className="text-sm text-blue-700">Proyectos Activos</div>
+                        <div className="text-xs text-blue-600 mt-1">+3 este mes</div>
+                      </div>
+
+                      <div className="bg-gradient-to-br from-green-50 to-green-100 rounded-lg p-4 cursor-pointer hover:shadow-lg transition-all duration-300" onClick={() => setActiveDemo('analytics')}>
+                        <div className="flex items-center justify-between mb-2">
+                          <TrendingUp className="h-6 w-6 text-green-600" />
+                          <div className="w-3 h-3 bg-green-500 rounded-full animate-pulse"></div>
+                        </div>
+                        <div className="text-2xl font-bold text-green-900">8</div>
+                        <div className="text-sm text-green-700">En Progreso</div>
+                        <div className="text-xs text-green-600 mt-1">+2 esta semana</div>
+                      </div>
+
+                      <div className="bg-gradient-to-br from-orange-50 to-orange-100 rounded-lg p-4 cursor-pointer hover:shadow-lg transition-all duration-300" onClick={() => setActiveDemo('team')}>
+                        <div className="flex items-center justify-between mb-2">
+                          <Users className="h-6 w-6 text-orange-600" />
+                          <div className="w-3 h-3 bg-green-500 rounded-full animate-pulse"></div>
+                        </div>
+                        <div className="text-2xl font-bold text-orange-900">24</div>
+                        <div className="text-sm text-orange-700">Comentarios</div>
+                        <div className="text-xs text-orange-600 mt-1">+5 hoy</div>
+                      </div>
+
+                      <div className="bg-gradient-to-br from-purple-50 to-purple-100 rounded-lg p-4 cursor-pointer hover:shadow-lg transition-all duration-300" onClick={() => setActiveDemo('settings')}>
+                        <div className="flex items-center justify-between mb-2">
+                          <Activity className="h-6 w-6 text-purple-600" />
+                          <div className="w-3 h-3 bg-green-500 rounded-full animate-pulse"></div>
+                        </div>
+                        <div className="text-2xl font-bold text-purple-900">85%</div>
+                        <div className="text-sm text-purple-700">Progreso General</div>
+                        <div className="text-xs text-purple-600 mt-1">+12% este mes</div>
+                      </div>
+                    </div>
+
+                    {/* Interactive Demo Panel */}
+                    {activeDemo && (
+                      <div className="bg-gray-50 rounded-lg p-6 border border-gray-200">
+                        <div className="flex items-center justify-between mb-4">
+                          <h3 className="text-lg font-semibold text-gray-900">
+                            {demoCards.find(card => card.id === activeDemo)?.title} - Demo Interactivo
+                          </h3>
+                          <button 
+                            onClick={() => setActiveDemo(null)}
+                            className="text-gray-400 hover:text-gray-600"
+                          >
+                            ✕
+                          </button>
+                        </div>
+                        
+                        {activeDemo === 'projects' && (
+                          <div className="space-y-4">
+                            <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                              <div className="bg-white rounded-lg p-4 shadow-sm">
+                                <h4 className="font-medium text-gray-900 mb-2">Proyectos Recientes</h4>
+                                <div className="space-y-2">
+                                  <div className="flex items-center justify-between">
+                                    <span className="text-sm text-gray-600">E-commerce App</span>
+                                    <span className="text-xs bg-green-100 text-green-800 px-2 py-1 rounded">En Progreso</span>
+                                  </div>
+                                  <div className="flex items-center justify-between">
+                                    <span className="text-sm text-gray-600">Landing Page</span>
+                                    <span className="text-xs bg-blue-100 text-blue-800 px-2 py-1 rounded">Completado</span>
+                                  </div>
+                                  <div className="flex items-center justify-between">
+                                    <span className="text-sm text-gray-600">Dashboard Admin</span>
+                                    <span className="text-xs bg-yellow-100 text-yellow-800 px-2 py-1 rounded">Pendiente</span>
+                                  </div>
+                                </div>
+                              </div>
+                              <div className="bg-white rounded-lg p-4 shadow-sm">
+                                <h4 className="font-medium text-gray-900 mb-2">Estadísticas</h4>
+                                <div className="space-y-2">
+                                  <div className="flex justify-between">
+                                    <span className="text-sm text-gray-600">Total Proyectos:</span>
+                                    <span className="font-medium">12</span>
+                                  </div>
+                                  <div className="flex justify-between">
+                                    <span className="text-sm text-gray-600">Completados:</span>
+                                    <span className="font-medium text-green-600">8</span>
+                                  </div>
+                                  <div className="flex justify-between">
+                                    <span className="text-sm text-gray-600">En Progreso:</span>
+                                    <span className="font-medium text-blue-600">3</span>
+                                  </div>
+                                  <div className="flex justify-between">
+                                    <span className="text-sm text-gray-600">Pendientes:</span>
+                                    <span className="font-medium text-yellow-600">1</span>
+                                  </div>
+                                </div>
+                              </div>
+                            </div>
+                          </div>
+                        )}
+
+                        {activeDemo === 'analytics' && (
+                          <div className="space-y-4">
+                            <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+                              <div className="bg-white rounded-lg p-4 shadow-sm text-center">
+                                <div className="text-3xl font-bold text-green-600 mb-1">+24%</div>
+                                <div className="text-sm text-gray-600">Crecimiento</div>
+                              </div>
+                              <div className="bg-white rounded-lg p-4 shadow-sm text-center">
+                                <div className="text-3xl font-bold text-blue-600 mb-1">2.4K</div>
+                                <div className="text-sm text-gray-600">Vistas</div>
+                              </div>
+                              <div className="bg-white rounded-lg p-4 shadow-sm text-center">
+                                <div className="text-3xl font-bold text-purple-600 mb-1">8.2%</div>
+                                <div className="text-sm text-gray-600">Conversión</div>
+                              </div>
+                            </div>
+                            <div className="bg-white rounded-lg p-4 shadow-sm">
+                              <h4 className="font-medium text-gray-900 mb-3">Gráfico de Rendimiento</h4>
+                              <div className="h-32 bg-gradient-to-r from-blue-50 to-green-50 rounded-lg flex items-end justify-center">
+                                <div className="text-gray-500 text-sm">📊 Gráfico interactivo aquí</div>
+                              </div>
+                            </div>
+                          </div>
+                        )}
+
+                        {activeDemo === 'team' && (
+                          <div className="space-y-4">
+                            <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                              <div className="bg-white rounded-lg p-4 shadow-sm">
+                                <h4 className="font-medium text-gray-900 mb-3">Miembros del Equipo</h4>
+                                <div className="space-y-2">
+                                  <div className="flex items-center space-x-3">
+                                    <div className="w-8 h-8 bg-blue-500 rounded-full flex items-center justify-center">
+                                      <span className="text-white text-sm font-bold">A</span>
+                                    </div>
+                                    <div>
+                                      <div className="text-sm font-medium">Ana García</div>
+                                      <div className="text-xs text-gray-500">Desarrolladora</div>
+                                    </div>
+                                  </div>
+                                  <div className="flex items-center space-x-3">
+                                    <div className="w-8 h-8 bg-green-500 rounded-full flex items-center justify-center">
+                                      <span className="text-white text-sm font-bold">C</span>
+                                    </div>
+                                    <div>
+                                      <div className="text-sm font-medium">Carlos López</div>
+                                      <div className="text-xs text-gray-500">Diseñador</div>
+                                    </div>
+                                  </div>
+                                  <div className="flex items-center space-x-3">
+                                    <div className="w-8 h-8 bg-purple-500 rounded-full flex items-center justify-center">
+                                      <span className="text-white text-sm font-bold">M</span>
+                                    </div>
+                                    <div>
+                                      <div className="text-sm font-medium">María Rodríguez</div>
+                                      <div className="text-xs text-gray-500">Project Manager</div>
+                                    </div>
+                                  </div>
+                                </div>
+                              </div>
+                              <div className="bg-white rounded-lg p-4 shadow-sm">
+                                <h4 className="font-medium text-gray-900 mb-3">Actividad Reciente</h4>
+                                <div className="space-y-2">
+                                  <div className="text-sm text-gray-600">✅ Ana completó el diseño</div>
+                                  <div className="text-sm text-gray-600">💬 Carlos comentó en el proyecto</div>
+                                  <div className="text-sm text-gray-600">🔄 María actualizó el estado</div>
+                                  <div className="text-sm text-gray-600">📝 Nueva tarea asignada</div>
+                                </div>
+                              </div>
+                            </div>
+                          </div>
+                        )}
+
+                        {activeDemo === 'settings' && (
+                          <div className="space-y-4">
+                            <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                              <div className="bg-white rounded-lg p-4 shadow-sm">
+                                <h4 className="font-medium text-gray-900 mb-3">Configuración General</h4>
+                                <div className="space-y-3">
+                                  <div className="flex items-center justify-between">
+                                    <span className="text-sm text-gray-600">Notificaciones</span>
+                                    <div className="w-12 h-6 bg-green-500 rounded-full relative">
+                                      <div className="w-5 h-5 bg-white rounded-full absolute right-0.5 top-0.5"></div>
+                                    </div>
+                                  </div>
+                                  <div className="flex items-center justify-between">
+                                    <span className="text-sm text-gray-600">Tema Oscuro</span>
+                                    <div className="w-12 h-6 bg-gray-300 rounded-full relative">
+                                      <div className="w-5 h-5 bg-white rounded-full absolute left-0.5 top-0.5"></div>
+                                    </div>
+                                  </div>
+                                  <div className="flex items-center justify-between">
+                                    <span className="text-sm text-gray-600">Auto-guardado</span>
+                                    <div className="w-12 h-6 bg-green-500 rounded-full relative">
+                                      <div className="w-5 h-5 bg-white rounded-full absolute right-0.5 top-0.5"></div>
+                                    </div>
+                                  </div>
+                                </div>
+                              </div>
+                              <div className="bg-white rounded-lg p-4 shadow-sm">
+                                <h4 className="font-medium text-gray-900 mb-3">Integraciones</h4>
+                                <div className="space-y-2">
+                                  <div className="flex items-center justify-between">
+                                    <span className="text-sm text-gray-600">Google Drive</span>
+                                    <span className="text-xs bg-green-100 text-green-800 px-2 py-1 rounded">Conectado</span>
+                                  </div>
+                                  <div className="flex items-center justify-between">
+                                    <span className="text-sm text-gray-600">Slack</span>
+                                    <span className="text-xs bg-green-100 text-green-800 px-2 py-1 rounded">Conectado</span>
+                                  </div>
+                                  <div className="flex items-center justify-between">
+                                    <span className="text-sm text-gray-600">GitHub</span>
+                                    <span className="text-xs bg-yellow-100 text-yellow-800 px-2 py-1 rounded">Pendiente</span>
+                                  </div>
+                                </div>
+                              </div>
+                            </div>
+                          </div>
+                        )}
+                      </div>
+                    )}
+
+                    {/* Call to Action */}
+                    <div className="text-center bg-gradient-to-r from-cyan-50 to-blue-50 rounded-lg p-8">
+                      <h3 className="text-2xl font-bold text-gray-900 mb-2">
+                        ¿Listo para comenzar?
+                      </h3>
+                      <p className="text-gray-600 mb-6">
+                        Crea tu cuenta gratuita y accede a todas estas funcionalidades y más.
+                      </p>
+                      <div className="flex flex-col sm:flex-row gap-4 justify-center">
+                        <Button 
+                          className="bg-gradient-to-r from-cyan-500 to-blue-600 hover:from-cyan-600 hover:to-blue-700 text-white px-8 py-3"
+                          onClick={() => handleDemoAction('create-account')}
+                        >
+                          Crear Cuenta Gratuita
+                        </Button>
+                        <Button 
+                          variant="outline" 
+                          className="px-8 py-3"
+                          onClick={() => handleDemoAction('view-demo')}
+                        >
+                          Ver Demo Completo
+                        </Button>
+                      </div>
+                    </div>
+                  </div>
+                </div>
               </div>
             </div>
           </div>
@@ -792,6 +1117,42 @@ export default function LandingPage() {
           </div>
         </div>
       </footer>
+
+      {/* Modal de Demo */}
+      {showDemoModal && (
+        <div className="fixed inset-0 bg-black/50 flex items-center justify-center z-50 p-4">
+          <div className="bg-white rounded-2xl p-8 max-w-md w-full mx-4 shadow-2xl">
+            <div className="text-center">
+              <div className="w-16 h-16 bg-gradient-to-r from-cyan-500 to-blue-600 rounded-full flex items-center justify-center mx-auto mb-4">
+                <span className="text-2xl">🎮</span>
+              </div>
+              <h3 className="text-2xl font-bold text-gray-900 mb-4">
+                Modo Demo Activado
+              </h3>
+              <p className="text-gray-600 mb-6">
+                {demoMessage}
+              </p>
+              <div className="flex flex-col sm:flex-row gap-3">
+                <Button 
+                  className="bg-gradient-to-r from-cyan-500 to-blue-600 hover:from-cyan-600 hover:to-blue-700 text-white"
+                  onClick={() => setShowDemoModal(false)}
+                >
+                  Entendido
+                </Button>
+                <Button 
+                  variant="outline"
+                  onClick={() => {
+                    setShowDemoModal(false);
+                    setIsDemoMode(true);
+                  }}
+                >
+                  Activar Demo Permanente
+                </Button>
+              </div>
+            </div>
+          </div>
+        </div>
+      )}
     </div>
   );
 }
