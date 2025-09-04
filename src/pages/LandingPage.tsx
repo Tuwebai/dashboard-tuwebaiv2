@@ -36,9 +36,7 @@ export default function LandingPage() {
   const [isLoading, setIsLoading] = useState(false);
   const [activeDemo, setActiveDemo] = useState<string | null>(null);
   const [isPlaying, setIsPlaying] = useState(false);
-  const [showDemoModal, setShowDemoModal] = useState(false);
-  const [demoMessage, setDemoMessage] = useState('');
-  const [isDemoMode, setIsDemoMode] = useState(false);
+  const [isDarkMode, setIsDarkMode] = useState(false);
   const { login, loginWithGoogle, loginWithGithub } = useApp();
   const navigate = useNavigate();
 
@@ -59,11 +57,6 @@ export default function LandingPage() {
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    if (isDemoMode) {
-      setDemoMessage('🎉 ¡Modo Demo! En la versión real, aquí se iniciaría sesión con las credenciales proporcionadas.');
-      setShowDemoModal(true);
-      return;
-    }
     setIsLoading(true);
     const success = await login(email, password);
     if (success) {
@@ -83,11 +76,6 @@ export default function LandingPage() {
   };
 
   const handleGoogleLogin = async () => {
-    if (isDemoMode) {
-      setDemoMessage('🚀 ¡Modo Demo! En la versión real, aquí se iniciaría sesión con Google.');
-      setShowDemoModal(true);
-      return;
-    }
     setIsLoading(true);
     const success = await loginWithGoogle();
     if (success) {
@@ -99,11 +87,6 @@ export default function LandingPage() {
   };
 
   const handleGithubLogin = async () => {
-    if (isDemoMode) {
-      setDemoMessage('⚡ ¡Modo Demo! En la versión real, aquí se iniciaría sesión con GitHub.');
-      setShowDemoModal(true);
-      return;
-    }
     setIsLoading(true);
     const success = await loginWithGithub();
     if (success) {
@@ -115,26 +98,11 @@ export default function LandingPage() {
   };
 
   const handleRegister = () => {
-    if (isDemoMode) {
-      setDemoMessage('📝 ¡Modo Demo! En la versión real, aquí se abriría el formulario de registro.');
-      setShowDemoModal(true);
-      return;
-    }
     navigate('/register');
   };
 
   const handleDemoAction = (action: string) => {
-    const messages = {
-      'dashboard': '🎯 ¡Accediendo al Dashboard! En la versión real, aquí verías todos tus proyectos y métricas.',
-      'projects': '📊 ¡Vista de Proyectos! Aquí gestionarías todos tus proyectos web de forma organizada.',
-      'team': '👥 ¡Gestión de Equipo! Aquí administrarías los miembros y roles de tu equipo.',
-      'settings': '⚙️ ¡Configuración! Aquí personalizarías tu experiencia y preferencias.',
-      'create-account': '✨ ¡Crear Cuenta! En la versión real, aquí te registrarías para acceder a todas las funcionalidades.',
-      'view-demo': '🎮 ¡Demo Completo! Aquí verías una demostración completa de todas las funcionalidades.'
-    };
-    
-    setDemoMessage(messages[action as keyof typeof messages] || '🎉 ¡Acción Demo!');
-    setShowDemoModal(true);
+    setActiveDemo(action);
   };
 
   const demoCards = [
@@ -203,13 +171,6 @@ export default function LandingPage() {
                 onClick={handleRegister}
               >
                 Registro
-              </Button>
-              <Button 
-                variant="outline" 
-                className="border-cyan-500 text-cyan-600 hover:bg-cyan-50"
-                onClick={() => setIsDemoMode(!isDemoMode)}
-              >
-                {isDemoMode ? '🎮 Demo ON' : '🎮 Demo OFF'}
               </Button>
             </div>
           </div>
@@ -714,25 +675,21 @@ export default function LandingPage() {
         </div>
       </section>
 
-      {/* Demo Interactivo del Dashboard */}
+      {/* Dashboard Interactivo Real */}
       <section className="py-24 bg-gradient-to-br from-gray-50 to-white">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="text-center mb-16">
-            <div className="inline-flex items-center px-4 py-2 rounded-full bg-cyan-100 text-cyan-800 text-sm font-medium mb-4">
-              <Play className="h-4 w-4 mr-2" />
-              Demo Interactivo
-            </div>
             <h2 className="text-5xl font-bold text-gray-900 mb-4">
               Prueba el dashboard 
               <span className="bg-gradient-to-r from-cyan-600 to-blue-600 bg-clip-text text-transparent"> en vivo</span>
             </h2>
             <p className="text-xl text-gray-600 max-w-3xl mx-auto">
-              Interactúa con nuestro dashboard real sin registrarte. Explora todas las funcionalidades y descubre cómo puede transformar tu gestión de proyectos.
+              Explora nuestro dashboard con datos simulados y descubre todas las funcionalidades disponibles.
             </p>
           </div>
 
           {/* Dashboard Interactivo */}
-          <div className="bg-white rounded-2xl shadow-2xl border border-gray-200 overflow-hidden">
+          <div className={`rounded-2xl shadow-2xl border overflow-hidden transition-colors duration-300 ${isDarkMode ? 'bg-gray-900 border-gray-700' : 'bg-white border-gray-200'}`}>
             {/* Header del Dashboard */}
             <div className="bg-gradient-to-r from-gray-900 to-gray-800 px-6 py-4">
               <div className="flex items-center justify-between">
@@ -754,48 +711,48 @@ export default function LandingPage() {
             </div>
 
             {/* Contenido del Dashboard */}
-            <div className="p-6">
+            <div className={`p-6 transition-colors duration-300 ${isDarkMode ? 'bg-gray-900' : 'bg-white'}`}>
               {/* Sidebar y Main Content */}
               <div className="grid lg:grid-cols-4 gap-6">
                 {/* Sidebar */}
                 <div className="lg:col-span-1">
                   <div className="space-y-4">
-                    <div className="bg-gray-50 rounded-lg p-4">
+                    <div className={`rounded-lg p-4 transition-colors duration-300 ${isDarkMode ? 'bg-gray-800' : 'bg-gray-50'}`}>
                       <div className="flex items-center space-x-3 mb-3">
                         <div className="w-8 h-8 bg-green-500 rounded-full flex items-center justify-center">
                           <span className="text-white font-bold text-sm">E</span>
                         </div>
                         <div>
-                          <p className="font-medium text-gray-900">Usuario Demo</p>
-                          <p className="text-sm text-gray-500">demo@tuwebai.com</p>
+                          <p className={`font-medium transition-colors duration-300 ${isDarkMode ? 'text-white' : 'text-gray-900'}`}>Usuario Demo</p>
+                          <p className={`text-sm transition-colors duration-300 ${isDarkMode ? 'text-gray-400' : 'text-gray-500'}`}>demo@tuwebai.com</p>
                         </div>
                       </div>
                     </div>
                     
                     <nav className="space-y-2">
                       <button 
-                        className="w-full flex items-center space-x-3 px-3 py-2 text-left bg-blue-50 text-blue-700 rounded-lg hover:bg-blue-100 transition-colors"
+                        className={`w-full flex items-center space-x-3 px-3 py-2 text-left rounded-lg transition-colors ${activeDemo === 'dashboard' ? (isDarkMode ? 'bg-blue-900 text-blue-300' : 'bg-blue-50 text-blue-700') : (isDarkMode ? 'text-gray-400 hover:bg-gray-800' : 'text-gray-600 hover:bg-gray-50')}`}
                         onClick={() => handleDemoAction('dashboard')}
                       >
                         <Target className="h-4 w-4" />
                         <span className="text-sm font-medium">Dashboard</span>
                       </button>
                       <button 
-                        className="w-full flex items-center space-x-3 px-3 py-2 text-left text-gray-600 hover:bg-gray-50 rounded-lg transition-colors"
+                        className={`w-full flex items-center space-x-3 px-3 py-2 text-left rounded-lg transition-colors ${activeDemo === 'projects' ? (isDarkMode ? 'bg-blue-900 text-blue-300' : 'bg-blue-50 text-blue-700') : (isDarkMode ? 'text-gray-400 hover:bg-gray-800' : 'text-gray-600 hover:bg-gray-50')}`}
                         onClick={() => handleDemoAction('projects')}
                       >
                         <BarChart3 className="h-4 w-4" />
                         <span className="text-sm">Proyectos</span>
                       </button>
                       <button 
-                        className="w-full flex items-center space-x-3 px-3 py-2 text-left text-gray-600 hover:bg-gray-50 rounded-lg transition-colors"
+                        className={`w-full flex items-center space-x-3 px-3 py-2 text-left rounded-lg transition-colors ${activeDemo === 'team' ? (isDarkMode ? 'bg-blue-900 text-blue-300' : 'bg-blue-50 text-blue-700') : (isDarkMode ? 'text-gray-400 hover:bg-gray-800' : 'text-gray-600 hover:bg-gray-50')}`}
                         onClick={() => handleDemoAction('team')}
                       >
                         <Users className="h-4 w-4" />
                         <span className="text-sm">Equipo</span>
                       </button>
                       <button 
-                        className="w-full flex items-center space-x-3 px-3 py-2 text-left text-gray-600 hover:bg-gray-50 rounded-lg transition-colors"
+                        className={`w-full flex items-center space-x-3 px-3 py-2 text-left rounded-lg transition-colors ${activeDemo === 'settings' ? (isDarkMode ? 'bg-blue-900 text-blue-300' : 'bg-blue-50 text-blue-700') : (isDarkMode ? 'text-gray-400 hover:bg-gray-800' : 'text-gray-600 hover:bg-gray-50')}`}
                         onClick={() => handleDemoAction('settings')}
                       >
                         <Settings className="h-4 w-4" />
@@ -1004,9 +961,12 @@ export default function LandingPage() {
                                   </div>
                                   <div className="flex items-center justify-between">
                                     <span className="text-sm text-gray-600">Tema Oscuro</span>
-                                    <div className="w-12 h-6 bg-gray-300 rounded-full relative">
-                                      <div className="w-5 h-5 bg-white rounded-full absolute left-0.5 top-0.5"></div>
-                                    </div>
+                                    <button 
+                                      className={`w-12 h-6 rounded-full relative transition-colors ${isDarkMode ? 'bg-cyan-500' : 'bg-gray-300'}`}
+                                      onClick={() => setIsDarkMode(!isDarkMode)}
+                                    >
+                                      <div className={`w-5 h-5 bg-white rounded-full absolute top-0.5 transition-transform ${isDarkMode ? 'right-0.5' : 'left-0.5'}`}></div>
+                                    </button>
                                   </div>
                                   <div className="flex items-center justify-between">
                                     <span className="text-sm text-gray-600">Auto-guardado</span>
@@ -1050,16 +1010,9 @@ export default function LandingPage() {
                       <div className="flex flex-col sm:flex-row gap-4 justify-center">
                         <Button 
                           className="bg-gradient-to-r from-cyan-500 to-blue-600 hover:from-cyan-600 hover:to-blue-700 text-white px-8 py-3"
-                          onClick={() => handleDemoAction('create-account')}
+                          onClick={() => navigate('/register')}
                         >
                           Crear Cuenta Gratuita
-                        </Button>
-                        <Button 
-                          variant="outline" 
-                          className="px-8 py-3"
-                          onClick={() => handleDemoAction('view-demo')}
-                        >
-                          Ver Demo Completo
                         </Button>
                       </div>
                     </div>
@@ -1118,41 +1071,7 @@ export default function LandingPage() {
         </div>
       </footer>
 
-      {/* Modal de Demo */}
-      {showDemoModal && (
-        <div className="fixed inset-0 bg-black/50 flex items-center justify-center z-50 p-4">
-          <div className="bg-white rounded-2xl p-8 max-w-md w-full mx-4 shadow-2xl">
-            <div className="text-center">
-              <div className="w-16 h-16 bg-gradient-to-r from-cyan-500 to-blue-600 rounded-full flex items-center justify-center mx-auto mb-4">
-                <span className="text-2xl">🎮</span>
-              </div>
-              <h3 className="text-2xl font-bold text-gray-900 mb-4">
-                Modo Demo Activado
-              </h3>
-              <p className="text-gray-600 mb-6">
-                {demoMessage}
-              </p>
-              <div className="flex flex-col sm:flex-row gap-3">
-                <Button 
-                  className="bg-gradient-to-r from-cyan-500 to-blue-600 hover:from-cyan-600 hover:to-blue-700 text-white"
-                  onClick={() => setShowDemoModal(false)}
-                >
-                  Entendido
-                </Button>
-                <Button 
-                  variant="outline"
-                  onClick={() => {
-                    setShowDemoModal(false);
-                    setIsDemoMode(true);
-                  }}
-                >
-                  Activar Demo Permanente
-                </Button>
-              </div>
-            </div>
-          </div>
-        </div>
-      )}
+
     </div>
   );
 }
