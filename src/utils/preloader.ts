@@ -2,8 +2,6 @@
 // SISTEMA DE PRELOADING ESTRATÉGICO
 // =====================================================
 
-import React from 'react';
-
 interface PreloadResource {
   href: string;
   as: 'script' | 'style' | 'image' | 'font' | 'fetch' | 'document';
@@ -303,141 +301,9 @@ class PreloadManager {
 export const preloadManager = new PreloadManager();
 
 // =====================================================
-// HOOK PARA PRELOADING EN REACT
+// HOOK PARA PRELOADING EN REACT (MOVED TO .tsx FILE)
 // =====================================================
-
-export const usePreload = () => {
-  const [isPreloading, setIsPreloading] = React.useState(false);
-  const [preloadStats, setPreloadStats] = React.useState(preloadManager.getStats());
-
-  const preloadCritical = React.useCallback(async () => {
-    setIsPreloading(true);
-    try {
-      await preloadManager.preloadCriticalResources();
-    } finally {
-      setIsPreloading(false);
-      setPreloadStats(preloadManager.getStats());
-    }
-  }, []);
-
-  const preloadRoute = React.useCallback(async (route: string) => {
-    setIsPreloading(true);
-    try {
-      await preloadManager.preloadRoute(route);
-    } finally {
-      setIsPreloading(false);
-      setPreloadStats(preloadManager.getStats());
-    }
-  }, []);
-
-  const preloadImages = React.useCallback(async (imageUrls: string[], priority: 'high' | 'medium' | 'low' = 'medium') => {
-    setIsPreloading(true);
-    try {
-      await preloadManager.preloadImages(imageUrls, priority);
-    } finally {
-      setIsPreloading(false);
-      setPreloadStats(preloadManager.getStats());
-    }
-  }, []);
-
-  const preloadOnHover = React.useCallback((element: HTMLElement | null, resources: PreloadResource[]) => {
-    if (element) {
-      preloadManager.preloadOnHover(element, resources);
-    }
-  }, []);
-
-  // Actualizar estadísticas periódicamente
-  React.useEffect(() => {
-    const interval = setInterval(() => {
-      setPreloadStats(preloadManager.getStats());
-    }, 1000);
-
-    return () => clearInterval(interval);
-  }, []);
-
-  return {
-    isPreloading,
-    preloadStats,
-    preloadCritical,
-    preloadRoute,
-    preloadImages,
-    preloadOnHover
-  };
-};
-
-// =====================================================
-// COMPONENTE DE PRELOADING ESTRATÉGICO
-// =====================================================
-
-interface StrategicPreloaderProps {
-  children: React.ReactNode;
-  preloadRoutes?: string[];
-  preloadImages?: string[];
-  preloadFonts?: string[];
-  preloadScripts?: string[];
-}
-
-export function StrategicPreloader({
-  children,
-  preloadRoutes = [],
-  preloadImages = [],
-  preloadFonts = [],
-  preloadScripts = []
-}: StrategicPreloaderProps) {
-  const { preloadCritical, preloadRoute, preloadImages: preloadImagesFn, preloadStats } = usePreload();
-
-  // Preload crítico al montar
-  React.useEffect(() => {
-    preloadCritical();
-  }, [preloadCritical]);
-
-  // Preload de rutas en background
-  React.useEffect(() => {
-    preloadRoutes.forEach(route => {
-      // Preload con delay para no bloquear la carga inicial
-      setTimeout(() => {
-        preloadRoute(route);
-      }, 2000);
-    });
-  }, [preloadRoutes, preloadRoute]);
-
-  // Preload de imágenes en background
-  React.useEffect(() => {
-    if (preloadImages.length > 0) {
-      setTimeout(() => {
-        preloadImagesFn(preloadImages, 'low');
-      }, 3000);
-    }
-  }, [preloadImages, preloadImagesFn]);
-
-  // Preload de fuentes
-  React.useEffect(() => {
-    if (preloadFonts.length > 0) {
-      preloadManager.preloadFonts(preloadFonts);
-    }
-  }, [preloadFonts]);
-
-  // Preload de scripts
-  React.useEffect(() => {
-    if (preloadScripts.length > 0) {
-      preloadManager.preloadScripts(preloadScripts, 'low');
-    }
-  }, [preloadScripts]);
-
-  return (
-    <>
-      {children}
-      {/* Debug info en desarrollo */}
-      {process.env.NODE_ENV === 'development' && (
-        <div className="fixed bottom-4 right-4 bg-black bg-opacity-75 text-white p-2 rounded text-xs">
-          <div>Preloaded: {preloadStats.preloadedCount}</div>
-          <div>Queue: {preloadStats.queueLength}</div>
-          <div>Processing: {preloadStats.isProcessing ? 'Yes' : 'No'}</div>
-        </div>
-      )}
-    </>
-  );
-}
+// Los hooks y componentes de React se han movido al archivo .tsx correspondiente
 
 // =====================================================
 // UTILIDADES DE PRELOADING

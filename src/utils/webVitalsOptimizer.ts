@@ -1,5 +1,3 @@
-import React from 'react';
-
 // =====================================================
 // OPTIMIZADOR DE CORE WEB VITALS
 // =====================================================
@@ -558,37 +556,6 @@ class WebVitalsOptimizer {
 export const webVitalsOptimizer = new WebVitalsOptimizer();
 
 // =====================================================
-// HOOK PARA REACT
+// HOOK PARA REACT (MOVED TO .tsx FILE)
 // =====================================================
-
-export const useWebVitalsOptimizer = () => {
-  const [optimizations, setOptimizations] = React.useState(webVitalsOptimizer.getOptimizations());
-  const [overallScore, setOverallScore] = React.useState(webVitalsOptimizer.getOverallScore());
-  const [recommendations, setRecommendations] = React.useState(webVitalsOptimizer.getRecommendations());
-
-  React.useEffect(() => {
-    const interval = setInterval(() => {
-      setOptimizations(webVitalsOptimizer.getOptimizations());
-      setOverallScore(webVitalsOptimizer.getOverallScore());
-      setRecommendations(webVitalsOptimizer.getRecommendations());
-    }, 1000);
-
-    return () => clearInterval(interval);
-  }, []);
-
-  const applyOptimization = React.useCallback((metric: string) => {
-    const success = webVitalsOptimizer.applyOptimization(metric);
-    if (success) {
-      setOptimizations(webVitalsOptimizer.getOptimizations());
-      setOverallScore(webVitalsOptimizer.getOverallScore());
-    }
-    return success;
-  }, []);
-
-  return {
-    optimizations,
-    overallScore,
-    recommendations,
-    applyOptimization
-  };
-};
+// El hook useWebVitalsOptimizer se ha movido al archivo .tsx correspondiente
