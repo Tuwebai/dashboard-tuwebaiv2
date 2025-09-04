@@ -37,7 +37,25 @@ self.addEventListener('install', (event) => {
     caches.open(STATIC_CACHE_NAME)
       .then((cache) => {
         console.log('📦 Service Worker: Cacheando recursos estáticos...');
-        return cache.addAll(STATIC_ASSETS);
+        // Cachear recursos uno por uno para manejar respuestas 206
+        return Promise.allSettled(
+          STATIC_ASSETS.map(asset => {
+            return fetch(asset)
+              .then(response => {
+                // Solo cachear respuestas exitosas y completas
+                if (response.ok && response.status !== 206) {
+                  return cache.put(asset, response);
+                } else {
+                  console.warn(`⚠️ Service Worker: Saltando recurso ${asset} (status: ${response.status})`);
+                  return Promise.resolve();
+                }
+              })
+              .catch(error => {
+                console.warn(`⚠️ Service Worker: Error cacheando ${asset}:`, error);
+                return Promise.resolve();
+              });
+          })
+        );
       })
       .then(() => {
         console.log('✅ Service Worker: Instalación completada');

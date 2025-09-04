@@ -8,7 +8,9 @@
     "build": "npx vite build",
     "build:dev": "npx vite build --mode development",
     "lint": "eslint .",
-    "preview": "vite preview"
+    "preview": "vite preview",
+    "clean": "node scripts/clean-and-rebuild.js",
+    "clean:dev": "rm -rf node_modules/.vite dist && npm run dev"
   },
   "dependencies": {
     "@aws-sdk/client-s3": "^3.844.0",

@@ -1,13 +1,18 @@
 import { defineConfig } from 'vite'
 import react from '@vitejs/plugin-react'
-import path from 'path'
+import { resolve } from 'path'
 
 // https://vitejs.dev/config/
 export default defineConfig({
-  plugins: [react()],
+  plugins: [
+    react({
+      // Configuración optimizada para React
+      jsxRuntime: 'automatic'
+    })
+  ],
   resolve: {
     alias: {
-      "@": path.resolve(__dirname, "./src"),
+      "@": resolve(__dirname, "./src"),
     },
   },
   build: {
@@ -36,7 +41,7 @@ export default defineConfig({
         },
         // Code splitting manual para optimizar carga
         manualChunks: (id) => {
-          // React core - asegurar que React esté en un chunk separado
+          // React core - asegurar que React esté en un chunk separado y bien definido
           if (id.includes('react/') || id.includes('react-dom/') || id.includes('react-dom/client')) {
             return 'react-vendor';
           }
@@ -96,8 +101,8 @@ export default defineConfig({
             return 'i18n-vendor';
           }
           
-          // Large node_modules
-          if (id.includes('node_modules')) {
+          // Large node_modules - excluir React para evitar conflictos
+          if (id.includes('node_modules') && !id.includes('react')) {
             return 'vendor';
           }
         }
@@ -195,7 +200,7 @@ export default defineConfig({
   
   // Configuración de define para variables de entorno
   define: {
-    __APP_VERSION__: JSON.stringify(process.env.npm_package_version),
+    __APP_VERSION__: JSON.stringify(process.env.npm_package_version || '1.0.0'),
     __BUILD_TIME__: JSON.stringify(new Date().toISOString())
   },
   
