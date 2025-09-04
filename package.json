@@ -5,12 +5,13 @@
   "type": "module",
   "scripts": {
     "dev": "vite",
-    "build": "npx vite build",
-    "build:dev": "npx vite build --mode development",
+    "build": "pnpm vite build",
+    "build:dev": "pnpm vite build --mode development",
     "lint": "eslint .",
     "preview": "vite preview",
     "clean": "node scripts/clean-and-rebuild.js",
-    "clean:dev": "rm -rf node_modules/.vite dist && npm run dev"
+    "clean:dev": "rm -rf node_modules/.vite dist && pnpm dev",
+    "install:clean": "rm -rf node_modules pnpm-lock.yaml && pnpm install"
   },
   "dependencies": {
     "@aws-sdk/client-s3": "^3.844.0",
