@@ -1,7 +1,6 @@
 import { useApp } from '@/contexts/AppContext';
 import type { AppContextType } from '@/contexts/AppContext';
-import React from 'react';
-import { useState, useEffect } from 'react';
+import React, { useState, useEffect, useCallback, useMemo } from 'react';
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
@@ -57,7 +56,7 @@ const customStyles = `
   }
 `;
 
-export default function Configuracion() {
+const Configuracion = React.memo(() => {
   const { user, updateUserSettings, getUserProjects } = useApp() as AppContextType;
   const [loading, setLoading] = useState(false);
   const [activeTab, setActiveTab] = useState('general');
@@ -1115,4 +1114,8 @@ export default function Configuracion() {
       </div>
     </>
   );
-} 
+});
+
+Configuracion.displayName = 'Configuracion';
+
+export default Configuracion; 

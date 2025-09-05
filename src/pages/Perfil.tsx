@@ -1,6 +1,5 @@
-import React from 'react';
+import React, { useState, useEffect, useCallback, useMemo } from 'react';
 import { useApp } from '@/contexts/AppContext';
-import { useState, useEffect, useRef } from 'react';
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
@@ -42,7 +41,7 @@ import TwoFactorAuth from '@/components/security/TwoFactorAuth';
 import PasswordValidator from '@/components/security/PasswordValidator';
 import SecurityIndicators from '@/components/security/SecurityIndicators';
 
-export default function Perfil() {
+const Perfil = React.memo(() => {
   const { user, getUserProjects, updateUserSettings } = useApp();
   const [isEditing, setIsEditing] = useState(false);
   const [isChangingPassword, setIsChangingPassword] = useState(false);
@@ -875,4 +874,8 @@ export default function Perfil() {
       </div>
     </div>
   );
-} 
+});
+
+Perfil.displayName = 'Perfil';
+
+export default Perfil; 

@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useCallback, useMemo } from 'react';
 import { useNavigate, useLocation } from 'react-router-dom';
 import { useApp } from '@/contexts/AppContext';
 import { useTranslation } from 'react-i18next';
@@ -56,7 +56,7 @@ import { ChartDashboard, RealTimeCharts } from '@/components/AdvancedCharts';
 
 
 
-export default function Admin() {
+const Admin = React.memo(() => {
   const { t } = useTranslation();
   const { user } = useApp();
   const navigate = useNavigate();
@@ -1395,4 +1395,8 @@ export default function Admin() {
        </Dialog>
     </>
   );
-}
+});
+
+Admin.displayName = 'Admin';
+
+export default Admin;

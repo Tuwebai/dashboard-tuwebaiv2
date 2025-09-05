@@ -1,5 +1,4 @@
-import React from 'react';
-import { useState, useEffect, useCallback, useMemo } from 'react';
+import React, { useState, useEffect, useCallback, useMemo } from 'react';
 import { useApp } from '@/contexts/AppContext';
 import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
@@ -43,7 +42,7 @@ import { userService } from '@/lib/supabaseService';
 import VerDetallesProyecto from '@/components/VerDetallesProyecto';
 import ProjectCard from '@/components/ProjectCard';
 
-export default function ProjectsPage() {
+const ProjectsPage = React.memo(() => {
   const { projects, loading, error, refreshData, user } = useApp();
   const navigate = useNavigate();
   const location = useLocation();
@@ -469,4 +468,8 @@ export default function ProjectsPage() {
       </div>
     </div>
   );
-}
+});
+
+ProjectsPage.displayName = 'ProjectsPage';
+
+export default ProjectsPage;

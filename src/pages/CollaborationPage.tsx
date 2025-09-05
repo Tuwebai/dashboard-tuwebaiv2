@@ -1,5 +1,4 @@
-import React from 'react';
-import { useState, useEffect, useRef } from 'react';
+import React, { useState, useEffect, useRef, useCallback, useMemo } from 'react';
 import { useParams } from 'react-router-dom';
 import { useApp } from '@/contexts/AppContext';
 import { Button } from '@/components/ui/button';
@@ -151,7 +150,7 @@ interface CollaborationStats {
   timeSpent: number;
 }
 
-export default function CollaborationPage() {
+const CollaborationPage = React.memo(() => {
   const { projectId } = useParams<{ projectId: string }>();
   const { user, projects, loading, error, refreshData } = useApp();
   const [activeTab, setActiveTab] = useState('chat');
@@ -1297,4 +1296,8 @@ export default function CollaborationPage() {
       </Dialog>
     </div>
   );
-} 
+});
+
+CollaborationPage.displayName = 'CollaborationPage';
+
+export default CollaborationPage; 

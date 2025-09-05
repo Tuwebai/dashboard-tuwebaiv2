@@ -1,8 +1,6 @@
-import React from 'react';
-import { useState, useEffect, useMemo, useCallback, useRef } from 'react';
-import { useNavigate } from 'react-router-dom';
+import React, { useState, useEffect, useMemo, useCallback, useRef } from 'react';
+import { useNavigate, Navigate } from 'react-router-dom';
 import { useApp } from '@/contexts/AppContext';
-import { Navigate } from 'react-router-dom';
 import { DragDropContext, Droppable, DropResult } from '@hello-pangea/dnd';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
@@ -170,7 +168,7 @@ const FASES = [
   { key: 'deploy', label: 'Deploy', icon: '🚀' },
 ];
 
-export default function Dashboard() {
+const Dashboard = React.memo(() => {
   const { user, projects, updateProject, addCommentToPhase, deleteProject, loading } = useApp();
   const navigate = useNavigate();
   
@@ -203,14 +201,14 @@ export default function Dashboard() {
   });
 
   // Función para calcular progreso del proyecto
-  const calculateProjectProgress = (project: Project) => {
+  const calculateProjectProgress = useCallback((project: Project) => {
     if (!project.fases || project.fases.length === 0) return 0;
     const completedPhases = project.fases.filter((f: ProjectPhase) => f.estado === 'Terminado').length;
     return Math.round((completedPhases / project.fases.length) * 100);
-  };
+  }, []);
 
   // Función para obtener el estado del proyecto
-  const getProjectStatus = (project: Project) => {
+  const getProjectStatus = useCallback((project: Project) => {
     if (!project.fases || project.fases.length === 0) return 'Sin iniciar';
     
     const completedPhases = project.fases.filter((f: ProjectPhase) => f.estado === 'Terminado').length;
@@ -220,10 +218,10 @@ export default function Dashboard() {
     if (completedPhases === totalPhases) return 'Completado';
     if (completedPhases > totalPhases / 2) return 'En progreso avanzado';
     return 'En progreso';
-  };
+  }, []);
 
   // Función para obtener el color del estado
-  const getStatusColor = (status: string) => {
+  const getStatusColor = useCallback((status: string) => {
     switch (status) {
       case 'Completado': 
         return 'bg-green-500/10 text-green-600 border-green-500/20 dark:bg-green-500/20 dark:text-green-400 dark:border-green-500/40 dark:shadow-green-500/10';
@@ -236,10 +234,10 @@ export default function Dashboard() {
       default: 
         return 'bg-slate-500/10 text-slate-600 border-slate-500/20 dark:bg-slate-500/20 dark:text-slate-400 dark:border-slate-500/40 dark:shadow-slate-500/10';
     }
-  };
+  }, []);
 
   // Función para obtener el icono del estado
-  const getStatusIcon = (status: string) => {
+  const getStatusIcon = useCallback((status: string) => {
     switch (status) {
       case 'Completado': return <CheckCircle className="h-4 w-4" />;
       case 'En progreso avanzado': return <Play className="h-4 w-4" />;
@@ -247,7 +245,7 @@ export default function Dashboard() {
       case 'Sin iniciar': return <Clock className="h-4 w-4" />;
       default: return <AlertCircle className="h-4 w-4" />;
     }
-  };
+  }, []);
 
   // Función para cargar información de los creadores de proyectos
   const loadProjectCreators = useCallback(async (projects: Project[]) => {
@@ -1525,4 +1523,8 @@ export default function Dashboard() {
       </div>
     </>
   );
-}
+});
+
+Dashboard.displayName = 'Dashboard';
+
+export default Dashboard;

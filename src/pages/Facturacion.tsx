@@ -3,7 +3,7 @@ import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
 import { Progress } from '@/components/ui/progress';
 import { useApp } from '@/contexts/AppContext';
-import { useEffect, useState } from 'react';
+import React, { useEffect, useState, useCallback, useMemo } from 'react';
 
 import { Navigate } from 'react-router-dom';
 import { Download, CreditCard, Calendar, FileText, TrendingUp, AlertCircle, Plus, ExternalLink, CheckCircle, Star, Zap, Globe, Users, Shield, RefreshCw } from 'lucide-react';
@@ -15,7 +15,7 @@ import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from 
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { useTranslation } from 'react-i18next';
 
-export default function Facturacion() {
+const Facturacion = React.memo(() => {
   const { user } = useApp();
   const [pagos, setPagos] = useState<Payment[]>([]);
   const [loading, setLoading] = useState(true);
@@ -484,4 +484,8 @@ export default function Facturacion() {
       </div>
     </div>
   );
-} 
+});
+
+Facturacion.displayName = 'Facturacion';
+
+export default Facturacion; 
