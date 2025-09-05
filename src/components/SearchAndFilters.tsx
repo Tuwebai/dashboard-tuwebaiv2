@@ -228,27 +228,27 @@ export default function SearchAndFilters({
     progressRange[1] < 100;
 
   return (
-    <div className="bg-white rounded-2xl shadow-lg border border-slate-200/50 p-6">
+    <div className="bg-white dark:bg-slate-800/50 rounded-2xl shadow-lg border border-slate-200/50 dark:border-slate-700/50 p-6">
       <div className="flex items-center justify-between mb-6">
-        <h3 className="text-xl font-semibold text-slate-800 flex items-center gap-2">
-          <Search className="h-5 w-5 text-slate-600" />
+        <h3 className="text-xl font-semibold text-slate-800 dark:text-white flex items-center gap-2">
+          <Search className="h-5 w-5 text-slate-600 dark:text-slate-400" />
           Búsqueda y Filtros
         </h3>
         <div className="flex items-center gap-2">
           {onRefresh && (
-            <Button variant="outline" size="sm" onClick={onRefresh} className="border-slate-300 text-slate-700 hover:bg-slate-50">
+            <Button variant="outline" size="sm" onClick={onRefresh} className="border-slate-300 text-slate-700 hover:bg-slate-50 dark:border-slate-600 dark:text-slate-300 dark:hover:bg-slate-700/50">
               <RefreshCw className="h-4 w-4 mr-2" />
               Actualizar
             </Button>
           )}
           {onExport && (
-            <Button variant="outline" size="sm" onClick={() => onExport(filteredProjects)} className="border-slate-300 text-slate-700 hover:bg-slate-50">
+            <Button variant="outline" size="sm" onClick={() => onExport(filteredProjects)} className="border-slate-300 text-slate-700 hover:bg-slate-50 dark:border-slate-600 dark:text-slate-300 dark:hover:bg-slate-700/50">
               <Download className="h-4 w-4 mr-2" />
               Exportar
             </Button>
           )}
           {hasActiveFilters && (
-            <Button variant="outline" size="sm" onClick={clearFilters} className="border-slate-300 text-slate-700 hover:bg-slate-50">
+            <Button variant="outline" size="sm" onClick={clearFilters} className="border-slate-300 text-slate-700 hover:bg-slate-50 dark:border-slate-600 dark:text-slate-300 dark:hover:bg-slate-700/50">
               <X className="h-4 w-4 mr-2" />
               Limpiar
             </Button>
@@ -263,13 +263,13 @@ export default function SearchAndFilters({
               placeholder="Buscar proyectos por nombre, descripción o funcionalidades..."
               value={searchTerm}
               onChange={(e) => setSearchTerm(e.target.value)}
-              className="w-full border-slate-200 focus:border-blue-500 focus:ring-2 focus:ring-blue-200"
+              className="w-full border-slate-200 focus:border-blue-500 focus:ring-2 focus:ring-blue-200 dark:border-slate-600 dark:bg-slate-700 dark:text-white dark:focus:border-blue-400 dark:focus:ring-blue-500/20"
             />
           </div>
           <Button
             variant="outline"
             onClick={() => setShowAdvanced(!showAdvanced)}
-            className="border-slate-300 text-slate-700 hover:bg-slate-50"
+            className="border-slate-300 text-slate-700 hover:bg-slate-50 dark:border-slate-600 dark:text-slate-300 dark:hover:bg-slate-700/50"
           >
             <Filter className="h-4 w-4 mr-2" />
             Filtros
@@ -280,9 +280,9 @@ export default function SearchAndFilters({
         {/* Filtros básicos */}
         <div className="grid grid-cols-1 md:grid-cols-4 gap-4">
           <div>
-            <Label className="text-sm font-medium text-slate-700">Tipo de proyecto</Label>
+            <Label className="text-sm font-medium text-slate-700 dark:text-slate-300">Tipo de proyecto</Label>
             <Select value={selectedType} onValueChange={setSelectedType}>
-              <SelectTrigger className="border-slate-200 focus:border-blue-500 focus:ring-2 focus:ring-blue-200">
+              <SelectTrigger className="border-slate-200 focus:border-blue-500 focus:ring-2 focus:ring-blue-200 dark:border-slate-600 dark:bg-slate-700 dark:text-white dark:focus:border-blue-400 dark:focus:ring-blue-500/20">
                 <SelectValue />
               </SelectTrigger>
               <SelectContent>
@@ -295,9 +295,9 @@ export default function SearchAndFilters({
           </div>
 
           <div>
-            <Label className="text-sm font-medium text-slate-700">Estado</Label>
+            <Label className="text-sm font-medium text-slate-700 dark:text-slate-300">Estado</Label>
             <Select value={selectedStatus} onValueChange={setSelectedStatus}>
-              <SelectTrigger className="border-slate-200 focus:border-blue-500 focus:ring-2 focus:ring-blue-200">
+              <SelectTrigger className="border-slate-200 focus:border-blue-500 focus:ring-2 focus:ring-blue-200 dark:border-slate-600 dark:bg-slate-700 dark:text-white dark:focus:border-blue-400 dark:focus:ring-blue-500/20">
                 <SelectValue />
               </SelectTrigger>
               <SelectContent>
@@ -310,9 +310,9 @@ export default function SearchAndFilters({
           </div>
 
           <div>
-            <Label className="text-sm font-medium text-slate-700">Ordenar por</Label>
+            <Label className="text-sm font-medium text-slate-700 dark:text-slate-300">Ordenar por</Label>
             <Select value={sortBy} onValueChange={setSortBy}>
-              <SelectTrigger className="border-slate-200 focus:border-blue-500 focus:ring-2 focus:ring-blue-200">
+              <SelectTrigger className="border-slate-200 focus:border-blue-500 focus:ring-2 focus:ring-blue-200 dark:border-slate-600 dark:bg-slate-700 dark:text-white dark:focus:border-blue-400 dark:focus:ring-blue-500/20">
                 <SelectValue />
               </SelectTrigger>
               <SelectContent>
@@ -326,13 +326,13 @@ export default function SearchAndFilters({
           </div>
 
           <div>
-            <Label className="text-sm font-medium text-slate-700">Orden</Label>
+            <Label className="text-sm font-medium text-slate-700 dark:text-slate-300">Orden</Label>
             <div className="flex gap-2">
               <Button
                 variant={sortOrder === 'asc' ? 'default' : 'outline'}
                 size="sm"
                 onClick={() => setSortOrder('asc')}
-                className={sortOrder === 'asc' ? 'bg-blue-500 hover:bg-blue-600' : 'border-slate-300 text-slate-700 hover:bg-slate-50'}
+                className={sortOrder === 'asc' ? 'bg-blue-500 hover:bg-blue-600 text-white' : 'border-slate-300 text-slate-700 hover:bg-slate-50 dark:border-slate-600 dark:text-slate-300 dark:hover:bg-slate-700/50'}
               >
                 <SortAsc className="h-4 w-4" />
               </Button>
@@ -340,7 +340,7 @@ export default function SearchAndFilters({
                 variant={sortOrder === 'desc' ? 'default' : 'outline'}
                 size="sm"
                 onClick={() => setSortOrder('desc')}
-                className={sortOrder === 'desc' ? 'bg-blue-500 hover:bg-blue-600' : 'border-slate-300 text-slate-700 hover:bg-slate-50'}
+                className={sortOrder === 'desc' ? 'bg-blue-500 hover:bg-blue-600 text-white' : 'border-slate-300 text-slate-700 hover:bg-slate-50 dark:border-slate-600 dark:text-slate-300 dark:hover:bg-slate-700/50'}
               >
                 <SortDesc className="h-4 w-4" />
               </Button>
@@ -350,14 +350,14 @@ export default function SearchAndFilters({
 
         {/* Filtros avanzados */}
         {showAdvanced && (
-          <div className="space-y-4 pt-4 border-t border-slate-200">
+          <div className="space-y-4 pt-4 border-t border-slate-200 dark:border-slate-600">
             <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
               {/* Rango de fechas */}
               <div>
-                <Label className="text-sm font-medium text-slate-700">Rango de fechas</Label>
+                <Label className="text-sm font-medium text-slate-700 dark:text-slate-300">Rango de fechas</Label>
                 <Popover>
                   <PopoverTrigger asChild>
-                    <Button variant="outline" className="w-full justify-start text-left font-normal border-slate-200 text-slate-700 hover:bg-slate-50">
+                    <Button variant="outline" className="w-full justify-start text-left font-normal border-slate-200 text-slate-700 hover:bg-slate-50 dark:border-slate-600 dark:text-slate-300 dark:hover:bg-slate-700/50">
                       <CalendarIcon className="mr-2 h-4 w-4" />
                       {selectedDateRange.from ? (
                         selectedDateRange.to ? (
@@ -447,37 +447,37 @@ export default function SearchAndFilters({
             <div className="flex items-center gap-2 flex-wrap">
               <span className="text-sm text-slate-600">Filtros activos:</span>
               {searchTerm && (
-                <Badge variant="secondary" className="text-xs bg-slate-100 text-slate-700 border-slate-200">
+                <Badge variant="secondary" className="text-xs bg-slate-100 text-slate-700 border-slate-200 dark:bg-slate-700 dark:text-slate-300 dark:border-slate-600">
                   Búsqueda: "{searchTerm}"
                 </Badge>
               )}
               {selectedType !== 'all' && (
-                <Badge variant="secondary" className="text-xs bg-slate-100 text-slate-700 border-slate-200">
+                <Badge variant="secondary" className="text-xs bg-slate-100 text-slate-700 border-slate-200 dark:bg-slate-700 dark:text-slate-300 dark:border-slate-600">
                   Tipo: {selectedType}
                 </Badge>
               )}
               {selectedStatus !== 'all' && (
-                <Badge variant="secondary" className="text-xs bg-slate-100 text-slate-700 border-slate-200">
+                <Badge variant="secondary" className="text-xs bg-slate-100 text-slate-700 border-slate-200 dark:bg-slate-700 dark:text-slate-300 dark:border-slate-600">
                   Estado: {selectedStatus}
                 </Badge>
               )}
               {selectedDateRange.from && (
-                <Badge variant="secondary" className="text-xs bg-slate-100 text-slate-700 border-slate-200">
+                <Badge variant="secondary" className="text-xs bg-slate-100 text-slate-700 border-slate-200 dark:bg-slate-700 dark:text-slate-300 dark:border-slate-600">
                   Desde: {format(selectedDateRange.from, "dd/MM/yyyy", { locale: es })}
                 </Badge>
               )}
               {selectedDateRange.to && (
-                <Badge variant="secondary" className="text-xs bg-slate-100 text-slate-700 border-slate-200">
+                <Badge variant="secondary" className="text-xs bg-slate-100 text-slate-700 border-slate-200 dark:bg-slate-700 dark:text-slate-300 dark:border-slate-600">
                   Hasta: {format(selectedDateRange.to, "dd/MM/yyyy", { locale: es })}
                 </Badge>
               )}
               {selectedTags.length > 0 && (
-                <Badge variant="secondary" className="text-xs bg-slate-100 text-slate-700 border-slate-200">
+                <Badge variant="secondary" className="text-xs bg-slate-100 text-slate-700 border-slate-200 dark:bg-slate-700 dark:text-slate-300 dark:border-slate-600">
                   Tags: {selectedTags.length}
                 </Badge>
               )}
               {(progressRange[0] > 0 || progressRange[1] < 100) && (
-                <Badge variant="secondary" className="text-xs bg-slate-100 text-slate-700 border-slate-200">
+                <Badge variant="secondary" className="text-xs bg-slate-100 text-slate-700 border-slate-200 dark:bg-slate-700 dark:text-slate-300 dark:border-slate-600">
                   Progreso: {progressRange[0]}%-{progressRange[1]}%
                 </Badge>
               )}
@@ -486,8 +486,8 @@ export default function SearchAndFilters({
         )}
 
         {/* Resultados */}
-        <div className="pt-2 border-t border-slate-200">
-          <p className="text-sm text-slate-600">
+        <div className="pt-2 border-t border-slate-200 dark:border-slate-600">
+          <p className="text-sm text-slate-600 dark:text-slate-300">
             Mostrando {filteredProjects.length} de {projects.length} proyectos
           </p>
         </div>
