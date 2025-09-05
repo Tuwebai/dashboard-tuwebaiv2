@@ -69,11 +69,11 @@ export default function Facturacion() {
 
   const getStatusColor = (status: string) => {
     switch (status) {
-      case 'approved': return 'bg-green-500/10 text-green-600 border-green-500/20';
-      case 'pending': return 'bg-yellow-500/10 text-yellow-600 border-yellow-500/20';
-      case 'rejected': return 'bg-red-500/10 text-red-600 border-red-500/20';
-      case 'cancelled': return 'bg-gray-500/10 text-gray-600 border-gray-500/20';
-      default: return 'bg-gray-500/10 text-gray-600 border-gray-500/20';
+      case 'approved': return 'bg-green-500/10 text-green-600 border-green-500/20 dark:bg-green-900/20 dark:text-green-300 dark:border-green-700/50';
+      case 'pending': return 'bg-yellow-500/10 text-yellow-600 border-yellow-500/20 dark:bg-yellow-900/20 dark:text-yellow-300 dark:border-yellow-700/50';
+      case 'rejected': return 'bg-red-500/10 text-red-600 border-red-500/20 dark:bg-red-900/20 dark:text-red-300 dark:border-red-700/50';
+      case 'cancelled': return 'bg-gray-500/10 text-gray-600 border-gray-500/20 dark:bg-gray-700/50 dark:text-gray-300 dark:border-gray-600/50';
+      default: return 'bg-gray-500/10 text-gray-600 border-gray-500/20 dark:bg-gray-700/50 dark:text-gray-300 dark:border-gray-600/50';
     }
   };
 
@@ -185,14 +185,14 @@ export default function Facturacion() {
   };
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-slate-50 via-blue-50/30 to-indigo-50/30">
+    <div className="min-h-screen bg-gradient-to-br from-slate-50 via-blue-50/30 to-indigo-50/30 dark:from-slate-900 dark:via-slate-800/50 dark:to-slate-900">
       <div className="p-6 max-w-7xl mx-auto space-y-6">
         {/* Header con diseño claro */}
-        <div className="bg-white rounded-2xl p-6 shadow-lg border border-slate-200/50">
+        <div className="bg-white dark:bg-slate-800/50 rounded-2xl p-6 shadow-lg border border-slate-200/50 dark:border-slate-700/50">
           <div className="flex flex-col lg:flex-row lg:items-center justify-between gap-4">
             <div>
-              <h1 className="text-3xl font-bold text-slate-800">Facturación y Pagos</h1>
-              <p className="text-slate-600 mt-2">
+              <h1 className="text-3xl font-bold text-slate-800 dark:text-white">Facturación y Pagos</h1>
+              <p className="text-slate-600 dark:text-slate-300 mt-2">
                 Gestiona tus pagos y descarga facturas
               </p>
             </div>
@@ -211,15 +211,15 @@ export default function Facturacion() {
 
         {/* Resumen de pagos */}
         <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
-          <Card className="bg-white rounded-2xl shadow-lg border border-slate-200/50">
+          <Card className="bg-white dark:bg-slate-800/50 rounded-2xl shadow-lg border border-slate-200/50 dark:border-slate-700/50">
             <CardContent className="p-6">
               <div className="flex items-center gap-3">
-                <div className="p-3 bg-blue-100 rounded-xl">
-                  <TrendingUp className="h-6 w-6 text-blue-600" />
+                <div className="p-3 bg-blue-100 dark:bg-blue-900/20 rounded-xl">
+                  <TrendingUp className="h-6 w-6 text-blue-600 dark:text-blue-400" />
                 </div>
                 <div>
-                  <p className="text-sm font-medium text-slate-600">Total Gastado</p>
-                  <p className="text-2xl font-bold text-slate-800">
+                  <p className="text-sm font-medium text-slate-600 dark:text-slate-300">Total Gastado</p>
+                  <p className="text-2xl font-bold text-slate-800 dark:text-white">
                     {formatCurrency(totalGastado, 'ARS')}
                   </p>
                 </div>
@@ -227,29 +227,29 @@ export default function Facturacion() {
             </CardContent>
           </Card>
 
-          <Card className="bg-white rounded-2xl shadow-lg border border-slate-200/50">
+          <Card className="bg-white dark:bg-slate-800/50 rounded-2xl shadow-lg border border-slate-200/50 dark:border-slate-700/50">
             <CardContent className="p-6">
               <div className="flex items-center gap-3">
-                <div className="p-3 bg-green-100 rounded-xl">
-                  <FileText className="h-6 w-6 text-green-600" />
+                <div className="p-3 bg-green-100 dark:bg-green-900/20 rounded-xl">
+                  <FileText className="h-6 w-6 text-green-600 dark:text-green-400" />
                 </div>
                 <div>
-                  <p className="text-sm font-medium text-slate-600">Pagos Completados</p>
-                  <p className="text-2xl font-bold text-slate-800">{pagosCompletados}</p>
+                  <p className="text-sm font-medium text-slate-600 dark:text-slate-300">Pagos Completados</p>
+                  <p className="text-2xl font-bold text-slate-800 dark:text-white">{pagosCompletados}</p>
                 </div>
               </div>
             </CardContent>
           </Card>
 
-          <Card className="bg-white rounded-2xl shadow-lg border border-slate-200/50">
+          <Card className="bg-white dark:bg-slate-800/50 rounded-2xl shadow-lg border border-slate-200/50 dark:border-slate-700/50">
             <CardContent className="p-6">
               <div className="flex items-center gap-3">
-                <div className="p-3 bg-yellow-100 rounded-xl">
-                  <AlertCircle className="h-6 w-6 text-yellow-600" />
+                <div className="p-3 bg-yellow-100 dark:bg-yellow-900/20 rounded-xl">
+                  <AlertCircle className="h-6 w-6 text-yellow-600 dark:text-yellow-400" />
                 </div>
                 <div>
-                  <p className="text-sm font-medium text-slate-600">Pagos Pendientes</p>
-                  <p className="text-2xl font-bold text-slate-800">{pagosPendientes}</p>
+                  <p className="text-sm font-medium text-slate-600 dark:text-slate-300">Pagos Pendientes</p>
+                  <p className="text-2xl font-bold text-slate-800 dark:text-white">{pagosPendientes}</p>
                 </div>
               </div>
             </CardContent>
@@ -257,9 +257,9 @@ export default function Facturacion() {
         </div>
 
         {/* Lista de pagos */}
-        <Card className="bg-white rounded-2xl shadow-lg border border-slate-200/50">
+        <Card className="bg-white dark:bg-slate-800/50 rounded-2xl shadow-lg border border-slate-200/50 dark:border-slate-700/50">
           <CardHeader>
-            <CardTitle className="text-xl text-slate-800">
+            <CardTitle className="text-xl text-slate-800 dark:text-white">
               Lista completa de todos tus pagos y transacciones
             </CardTitle>
           </CardHeader>
@@ -268,10 +268,10 @@ export default function Facturacion() {
               <div className="flex items-center justify-center py-16">
                 <div className="text-center">
                   <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-blue-500 mx-auto mb-6"></div>
-                  <h3 className="text-lg font-semibold text-slate-800 mb-2">
+                  <h3 className="text-lg font-semibold text-slate-800 dark:text-white mb-2">
                     Cargando historial de pagos
                   </h3>
-                  <p className="text-slate-600 max-w-md mx-auto">
+                  <p className="text-slate-600 dark:text-slate-300 max-w-md mx-auto">
                     Estamos sincronizando tu información de pagos desde tuweb-ai.com. 
                     Esto puede tomar unos segundos.
                   </p>
@@ -279,13 +279,13 @@ export default function Facturacion() {
               </div>
             ) : error ? (
               <div className="text-center py-16">
-                <div className="w-20 h-20 bg-gradient-to-br from-red-100 to-red-200 rounded-full flex items-center justify-center mx-auto mb-6 shadow-sm">
-                  <AlertCircle className="h-10 w-10 text-red-500" />
+                <div className="w-20 h-20 bg-gradient-to-br from-red-100 to-red-200 dark:from-red-900/20 dark:to-red-800/20 rounded-full flex items-center justify-center mx-auto mb-6 shadow-sm">
+                  <AlertCircle className="h-10 w-10 text-red-500 dark:text-red-400" />
                 </div>
-                <h3 className="text-xl font-semibold mb-3 text-slate-800">
+                <h3 className="text-xl font-semibold mb-3 text-slate-800 dark:text-white">
                   Error al cargar los pagos
                 </h3>
-                <p className="text-slate-600 mb-6 max-w-md mx-auto leading-relaxed">
+                <p className="text-slate-600 dark:text-slate-300 mb-6 max-w-md mx-auto leading-relaxed">
                   {error}
                 </p>
                 <div className="flex flex-col sm:flex-row gap-3 justify-center">
@@ -299,7 +299,7 @@ export default function Facturacion() {
                   <Button
                     variant="outline"
                     onClick={() => setIsPaymentModalOpen(true)}
-                    className="border-slate-300 text-slate-700 hover:bg-slate-50 px-6"
+                    className="border-slate-300 text-slate-700 hover:bg-slate-50 dark:border-slate-600 dark:text-slate-300 dark:hover:bg-slate-700/50 px-6"
                   >
                     <Plus className="h-4 w-4 mr-2" />
                     Crear pago
@@ -308,13 +308,13 @@ export default function Facturacion() {
               </div>
             ) : pagos.length === 0 ? (
               <div className="text-center py-16">
-                <div className="w-20 h-20 bg-gradient-to-br from-slate-100 to-slate-200 rounded-full flex items-center justify-center mx-auto mb-6 shadow-sm">
-                  <CreditCard className="h-10 w-10 text-slate-500" />
+                <div className="w-20 h-20 bg-gradient-to-br from-slate-100 to-slate-200 dark:from-slate-700 dark:to-slate-600 rounded-full flex items-center justify-center mx-auto mb-6 shadow-sm">
+                  <CreditCard className="h-10 w-10 text-slate-500 dark:text-slate-400" />
                 </div>
-                <h3 className="text-xl font-semibold mb-3 text-slate-800">
+                <h3 className="text-xl font-semibold mb-3 text-slate-800 dark:text-white">
                   No tienes pagos registrados
                 </h3>
-                <p className="text-slate-600 mb-6 max-w-md mx-auto leading-relaxed">
+                <p className="text-slate-600 dark:text-slate-300 mb-6 max-w-md mx-auto leading-relaxed">
                   Tu historial de pagos aparecerá aquí una vez que realices tu primera transacción. 
                   Todos los pagos se sincronizan automáticamente desde tuweb-ai.com.
                 </p>
@@ -329,7 +329,7 @@ export default function Facturacion() {
                   <Button
                     variant="outline"
                     onClick={handleRetryLoad}
-                    className="border-slate-300 text-slate-700 hover:bg-slate-50 px-6"
+                    className="border-slate-300 text-slate-700 hover:bg-slate-50 dark:border-slate-600 dark:text-slate-300 dark:hover:bg-slate-700/50 px-6"
                   >
                     <RefreshCw className="h-4 w-4 mr-2" />
                     Actualizar
@@ -341,19 +341,19 @@ export default function Facturacion() {
                 {pagos.map((pago) => (
                   <div
                     key={pago.id}
-                    className="flex items-center justify-between p-4 bg-slate-50 rounded-xl hover:bg-slate-100 transition-colors cursor-pointer"
+                    className="flex items-center justify-between p-4 bg-slate-50 dark:bg-slate-700/50 rounded-xl hover:bg-slate-100 dark:hover:bg-slate-600/50 transition-colors cursor-pointer"
                     onClick={() => {
                       setSelectedPago(pago);
                       setIsModalOpen(true);
                     }}
                   >
                     <div className="flex items-center gap-4">
-                      <div className="p-2 bg-blue-100 rounded-lg">
-                        <CreditCard className="h-5 w-5 text-blue-600" />
+                      <div className="p-2 bg-blue-100 dark:bg-blue-900/20 rounded-lg">
+                        <CreditCard className="h-5 w-5 text-blue-600 dark:text-blue-400" />
                       </div>
                       <div>
-                        <p className="font-medium text-slate-800">{pago.description}</p>
-                        <p className="text-sm text-slate-600">
+                        <p className="font-medium text-slate-800 dark:text-white">{pago.description}</p>
+                        <p className="text-sm text-slate-600 dark:text-slate-300">
                           {new Date(pago.createdAt).toLocaleDateString('es-ES')}
                         </p>
                       </div>
@@ -362,7 +362,7 @@ export default function Facturacion() {
                       <Badge className={getStatusColor(pago.status)}>
                         {getStatusText(pago.status)}
                       </Badge>
-                      <p className="font-semibold text-slate-800">
+                      <p className="font-semibold text-slate-800 dark:text-white">
                         {formatCurrency(pago.amount, pago.currency)}
                       </p>
                       <Button
@@ -372,7 +372,7 @@ export default function Facturacion() {
                           e.stopPropagation();
                           handleDownloadInvoice(pago);
                         }}
-                        className="text-slate-600 hover:text-slate-800 hover:bg-slate-200"
+                        className="text-slate-600 hover:text-slate-800 hover:bg-slate-200 dark:text-slate-300 dark:hover:text-white dark:hover:bg-slate-600/50"
                       >
                         <Download className="h-4 w-4" />
                       </Button>
@@ -386,47 +386,47 @@ export default function Facturacion() {
 
         {/* Modal de detalles del pago */}
         <Dialog open={isModalOpen} onOpenChange={setIsModalOpen}>
-          <DialogContent className="max-w-2xl bg-white rounded-2xl shadow-2xl border border-slate-200/50">
+          <DialogContent className="max-w-2xl bg-white dark:bg-slate-800/50 rounded-2xl shadow-2xl border border-slate-200/50 dark:border-slate-700/50">
             {selectedPago && (
               <div className="space-y-6">
                 <DialogHeader>
-                  <DialogTitle className="text-2xl font-bold text-slate-800">
+                  <DialogTitle className="text-2xl font-bold text-slate-800 dark:text-white">
                     Detalles del Pago
                   </DialogTitle>
                 </DialogHeader>
                 <div className="grid grid-cols-2 gap-4 text-sm">
                   <div>
-                    <span className="text-slate-500">ID:</span>
-                    <p className="font-medium text-slate-800">{selectedPago.id}</p>
+                    <span className="text-slate-500 dark:text-slate-400">ID:</span>
+                    <p className="font-medium text-slate-800 dark:text-white">{selectedPago.id}</p>
                   </div>
                   <div>
-                    <span className="text-slate-500">Estado:</span>
+                    <span className="text-slate-500 dark:text-slate-400">Estado:</span>
                     <Badge className={`ml-2 ${getStatusColor(selectedPago.status)}`}>
                       {getStatusText(selectedPago.status)}
                     </Badge>
                   </div>
                   <div>
-                    <span className="text-slate-500">Monto:</span>
-                    <p className="font-medium text-slate-800">
+                    <span className="text-slate-500 dark:text-slate-400">Monto:</span>
+                    <p className="font-medium text-slate-800 dark:text-white">
                       {formatCurrency(selectedPago.amount, selectedPago.currency)}
                     </p>
                   </div>
                   <div>
-                    <span className="text-slate-500">Fecha:</span>
-                    <p className="font-medium text-slate-800">
+                    <span className="text-slate-500 dark:text-slate-400">Fecha:</span>
+                    <p className="font-medium text-slate-800 dark:text-white">
                       {new Date(selectedPago.createdAt).toLocaleDateString('es-ES')}
                     </p>
                   </div>
                   <div className="col-span-2">
-                    <span className="text-slate-500">Descripción:</span>
-                    <p className="font-medium text-slate-800">{selectedPago.description}</p>
+                    <span className="text-slate-500 dark:text-slate-400">Descripción:</span>
+                    <p className="font-medium text-slate-800 dark:text-white">{selectedPago.description}</p>
                   </div>
                 </div>
                 <div className="flex justify-end gap-3 pt-4">
                   <Button
                     variant="outline"
                     onClick={() => setIsModalOpen(false)}
-                    className="border-slate-300 text-slate-700 hover:bg-slate-50"
+                    className="border-slate-300 text-slate-700 hover:bg-slate-50 dark:border-slate-600 dark:text-slate-300 dark:hover:bg-slate-700/50"
                   >
                     Cerrar
                   </Button>
@@ -445,9 +445,9 @@ export default function Facturacion() {
 
         {/* Modal de nuevo pago */}
         <Dialog open={isPaymentModalOpen} onOpenChange={setIsPaymentModalOpen}>
-          <DialogContent className="max-w-2xl bg-white rounded-2xl shadow-2xl border border-slate-200/50">
+          <DialogContent className="max-w-2xl bg-white dark:bg-slate-800/50 rounded-2xl shadow-2xl border border-slate-200/50 dark:border-slate-700/50">
             <DialogHeader>
-              <DialogTitle className="text-2xl font-bold text-slate-800">
+              <DialogTitle className="text-2xl font-bold text-slate-800 dark:text-white">
                 Crear Nuevo Pago
               </DialogTitle>
             </DialogHeader>
