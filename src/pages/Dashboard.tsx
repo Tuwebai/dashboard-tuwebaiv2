@@ -225,11 +225,16 @@ export default function Dashboard() {
   // Función para obtener el color del estado
   const getStatusColor = (status: string) => {
     switch (status) {
-      case 'Completado': return 'bg-green-500/10 text-green-600 border-green-500/20';
-      case 'En progreso avanzado': return 'bg-blue-500/10 text-blue-600 border-blue-500/20';
-      case 'En progreso': return 'bg-yellow-500/10 text-yellow-600 border-yellow-500/20';
-      case 'Sin iniciar': return 'bg-slate-500/10 text-slate-600 border-slate-500/20';
-      default: return 'bg-slate-500/10 text-slate-600 border-slate-500/20';
+      case 'Completado': 
+        return 'bg-green-500/10 text-green-600 border-green-500/20 dark:bg-green-500/20 dark:text-green-400 dark:border-green-500/40 dark:shadow-green-500/10';
+      case 'En progreso avanzado': 
+        return 'bg-blue-500/10 text-blue-600 border-blue-500/20 dark:bg-blue-500/20 dark:text-blue-400 dark:border-blue-500/40 dark:shadow-blue-500/10';
+      case 'En progreso': 
+        return 'bg-yellow-500/10 text-yellow-600 border-yellow-500/20 dark:bg-yellow-500/20 dark:text-yellow-400 dark:border-yellow-500/40 dark:shadow-yellow-500/10';
+      case 'Sin iniciar': 
+        return 'bg-slate-500/10 text-slate-600 border-slate-500/20 dark:bg-slate-500/20 dark:text-slate-400 dark:border-slate-500/40 dark:shadow-slate-500/10';
+      default: 
+        return 'bg-slate-500/10 text-slate-600 border-slate-500/20 dark:bg-slate-500/20 dark:text-slate-400 dark:border-slate-500/40 dark:shadow-slate-500/10';
     }
   };
 
@@ -710,7 +715,7 @@ export default function Dashboard() {
   return (
     <>
       <style>{customStyles}</style>
-      <div className="min-h-screen bg-gradient-to-br from-background via-background/95 to-background/90">
+      <div className="min-h-screen bg-gradient-to-br from-background via-background/95 to-background/90 dark:from-slate-900 dark:via-slate-800 dark:to-slate-900 transition-all duration-300">
         <div className="flex-1 overflow-hidden">
           <div className="h-full overflow-y-auto">
           
@@ -725,9 +730,12 @@ export default function Dashboard() {
               whileHover={{ scale: 1.02 }}
               transition={{ duration: 0.3, ease: "easeOut" }}
             >
-              <div className="bg-card rounded-2xl p-4 sm:p-6 shadow-xl hover:shadow-2xl transition-all duration-500 transform hover:-translate-y-2 border border-border/50 backdrop-blur-sm overflow-hidden bg-gradient-to-br from-primary/5 via-primary/10 to-primary/15 relative">
+              <div className="bg-card dark:bg-slate-800/50 rounded-2xl p-4 sm:p-6 shadow-xl hover:shadow-2xl dark:shadow-2xl dark:shadow-blue-500/20 dark:hover:shadow-3xl dark:hover:shadow-blue-500/30 transition-all duration-500 transform hover:-translate-y-2 border border-border/50 dark:border-slate-700/50 backdrop-blur-sm overflow-hidden bg-gradient-to-br from-primary/5 via-primary/10 to-primary/15 dark:from-blue-500/30 dark:via-blue-600/35 dark:to-blue-700/40 relative">
                 {/* Efecto de brillo sutil */}
                 <div className="absolute inset-0 bg-gradient-to-br from-transparent via-white/20 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-500"></div>
+                
+                {/* Efecto de brillo adicional para modo oscuro - Azul */}
+                <div className="absolute inset-0 bg-gradient-to-br from-blue-500/20 via-blue-400/30 to-blue-600/20 opacity-0 dark:opacity-100 group-hover:opacity-100 dark:group-hover:opacity-100 transition-opacity duration-500"></div>
                 
                 {/* Icono mejorado con animación flotante */}
                 <div className="flex items-center justify-center w-14 h-14 sm:w-16 sm:h-16 rounded-2xl mb-4 shadow-2xl group-hover:scale-110 transition-all duration-500 bg-gradient-to-br from-sky-500 via-blue-600 to-indigo-700 text-white animate-float relative overflow-hidden">
@@ -736,12 +744,12 @@ export default function Dashboard() {
                 </div>
                 
                 {/* Valor con animación mejorada */}
-                <div className="text-3xl sm:text-4xl lg:text-5xl font-bold text-card-foreground mb-3 group-hover:scale-105 transition-transform duration-300 metric-value-animation bg-gradient-to-r from-primary to-primary/80 bg-clip-text text-transparent">
+                <div className="text-3xl sm:text-4xl lg:text-5xl font-bold text-card-foreground dark:text-white mb-3 group-hover:scale-105 transition-transform duration-300 metric-value-animation bg-gradient-to-r from-primary to-primary/80 dark:from-blue-400 dark:to-blue-600 bg-clip-text text-transparent">
                   {dashboardStats.totalProjects}
                 </div>
                 
                 {/* Título con mejor tipografía */}
-                <div className="text-lg sm:text-xl font-bold text-card-foreground mb-2 flex items-center gap-2">
+                <div className="text-lg sm:text-xl font-bold text-card-foreground dark:text-white mb-2 flex items-center gap-2">
                   Proyectos Activos
                   <ContextualHelp 
                     context="proyectos" 
@@ -751,9 +759,9 @@ export default function Dashboard() {
                 </div>
                 
                 {/* Subtítulo con icono */}
-                <div className="text-sm text-muted-foreground flex items-center gap-2">
-                  <div className="w-2 h-2 bg-gradient-to-r from-emerald-400 to-teal-500 rounded-full animate-pulse"></div>
-                  <span className="text-emerald-600 font-semibold">
+                <div className="text-sm text-muted-foreground dark:text-slate-300 flex items-center gap-2">
+                  <div className="w-2 h-2 bg-gradient-to-r from-emerald-400 to-teal-500 dark:from-emerald-500 dark:to-teal-400 rounded-full animate-pulse"></div>
+                  <span className="text-emerald-600 dark:text-emerald-400 font-semibold">
                     {dashboardStats.inProgressProjects}
                   </span>
                   <span>en progreso</span>
@@ -773,9 +781,12 @@ export default function Dashboard() {
               whileHover={{ scale: 1.02 }}
               transition={{ duration: 0.3, ease: "easeOut" }}
             >
-              <div className="bg-card rounded-2xl p-4 sm:p-6 shadow-xl hover:shadow-2xl transition-all duration-500 transform hover:-translate-y-2 border border-border/50 backdrop-blur-sm overflow-hidden bg-gradient-to-br from-emerald-500/5 via-green-500/10 to-teal-500/15 relative">
+              <div className="bg-card dark:bg-slate-800/50 rounded-2xl p-4 sm:p-6 shadow-xl hover:shadow-2xl dark:shadow-2xl dark:shadow-emerald-500/20 dark:hover:shadow-3xl dark:hover:shadow-emerald-500/30 transition-all duration-500 transform hover:-translate-y-2 border border-border/50 dark:border-slate-700/50 backdrop-blur-sm overflow-hidden bg-gradient-to-br from-emerald-500/5 via-green-500/10 to-teal-500/15 dark:from-emerald-500/30 dark:via-green-600/35 dark:to-teal-600/40 relative">
                 {/* Efecto de brillo sutil */}
                 <div className="absolute inset-0 bg-gradient-to-br from-transparent via-white/20 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-500"></div>
+                
+                {/* Efecto de brillo adicional para modo oscuro - Verde */}
+                <div className="absolute inset-0 bg-gradient-to-br from-emerald-500/20 via-green-400/30 to-teal-500/20 opacity-0 dark:opacity-100 group-hover:opacity-100 dark:group-hover:opacity-100 transition-opacity duration-500"></div>
                 
                 {/* Icono mejorado con animación de progreso */}
                 <div className="flex items-center justify-center w-14 h-14 sm:w-16 sm:h-16 rounded-2xl mb-4 shadow-2xl group-hover:scale-110 transition-all duration-500 bg-gradient-to-br from-emerald-500 via-green-600 to-teal-700 text-white animate-pulse-glow relative overflow-hidden">
@@ -784,19 +795,19 @@ export default function Dashboard() {
                 </div>
                 
                 {/* Valor con animación mejorada */}
-                <div className="text-3xl sm:text-4xl lg:text-5xl font-bold text-card-foreground mb-3 group-hover:scale-105 transition-transform duration-300 metric-value-animation bg-gradient-to-r from-emerald-600 to-teal-700 bg-clip-text text-transparent">
+                <div className="text-3xl sm:text-4xl lg:text-5xl font-bold text-card-foreground dark:text-white mb-3 group-hover:scale-105 transition-transform duration-300 metric-value-animation bg-gradient-to-r from-emerald-600 to-teal-700 dark:from-emerald-400 dark:to-teal-500 bg-clip-text text-transparent">
                   {dashboardStats.inProgressProjects}
                 </div>
                 
                 {/* Título con mejor tipografía */}
-                <div className="text-lg sm:text-xl font-bold text-card-foreground mb-2">
+                <div className="text-lg sm:text-xl font-bold text-card-foreground dark:text-white mb-2">
                   En Progreso
                 </div>
                 
                 {/* Subtítulo con icono */}
-                <div className="text-sm text-muted-foreground flex items-center gap-2">
-                  <div className="w-2 h-2 bg-gradient-to-r from-blue-400 to-indigo-500 rounded-full animate-pulse"></div>
-                  <span className="text-blue-600 font-semibold">
+                <div className="text-sm text-muted-foreground dark:text-slate-300 flex items-center gap-2">
+                  <div className="w-2 h-2 bg-gradient-to-r from-blue-400 to-indigo-500 dark:from-blue-500 dark:to-indigo-400 rounded-full animate-pulse"></div>
+                  <span className="text-blue-600 dark:text-blue-400 font-semibold">
                     {dashboardStats.pendingProjects}
                   </span>
                   <span>pendientes</span>
@@ -817,9 +828,12 @@ export default function Dashboard() {
               whileHover={{ scale: 1.02 }}
               transition={{ duration: 0.3, ease: "easeOut" }}
             >
-              <div className="bg-card rounded-2xl p-4 sm:p-6 shadow-xl hover:shadow-2xl transition-all duration-500 transform hover:-translate-y-2 border border-border/50 backdrop-blur-sm overflow-hidden bg-gradient-to-br from-amber-500/5 via-yellow-500/10 to-orange-500/15 relative">
+              <div className="bg-card dark:bg-slate-800/50 rounded-2xl p-4 sm:p-6 shadow-xl hover:shadow-2xl dark:shadow-2xl dark:shadow-amber-500/20 dark:hover:shadow-3xl dark:hover:shadow-amber-500/30 transition-all duration-500 transform hover:-translate-y-2 border border-border/50 dark:border-slate-700/50 backdrop-blur-sm overflow-hidden bg-gradient-to-br from-amber-500/5 via-yellow-500/10 to-orange-500/15 dark:from-amber-500/30 dark:via-yellow-600/35 dark:to-orange-600/40 relative">
                 {/* Efecto de brillo sutil */}
                 <div className="absolute inset-0 bg-gradient-to-br from-transparent via-white/20 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-500"></div>
+                
+                {/* Efecto de brillo adicional para modo oscuro - Naranja */}
+                <div className="absolute inset-0 bg-gradient-to-br from-amber-500/20 via-yellow-400/30 to-orange-500/20 opacity-0 dark:opacity-100 group-hover:opacity-100 dark:group-hover:opacity-100 transition-opacity duration-500"></div>
                 
                 {/* Icono mejorado con animación de chat */}
                 <div className="flex items-center justify-center w-14 h-14 sm:w-16 sm:h-16 rounded-2xl mb-4 shadow-2xl group-hover:scale-110 transition-all duration-500 bg-gradient-to-br from-amber-500 via-yellow-600 to-orange-700 text-white animate-float relative overflow-hidden">
@@ -831,19 +845,19 @@ export default function Dashboard() {
                 </div>
                 
                 {/* Valor con animación mejorada */}
-                <div className="text-3xl sm:text-4xl lg:text-5xl font-bold text-card-foreground mb-3 group-hover:scale-105 transition-transform duration-300 metric-value-animation bg-gradient-to-r from-amber-600 to-orange-700 bg-clip-text text-transparent">
+                <div className="text-3xl sm:text-4xl lg:text-5xl font-bold text-card-foreground dark:text-white mb-3 group-hover:scale-105 transition-transform duration-300 metric-value-animation bg-gradient-to-r from-amber-600 to-orange-700 dark:from-amber-400 dark:to-orange-500 bg-clip-text text-transparent">
                   {dashboardStats.totalComments}
                 </div>
                 
                 {/* Título con mejor tipografía */}
-                <div className="text-lg sm:text-xl font-bold text-card-foreground mb-2">
+                <div className="text-lg sm:text-xl font-bold text-card-foreground dark:text-white mb-2">
                   Comentarios
                 </div>
                 
                 {/* Subtítulo con icono */}
-                <div className="text-sm text-muted-foreground flex items-center gap-2">
-                  <div className="w-2 h-2 bg-gradient-to-r from-green-400 to-emerald-500 rounded-full animate-pulse"></div>
-                  <span className="text-green-600 font-semibold">
+                <div className="text-sm text-muted-foreground dark:text-slate-300 flex items-center gap-2">
+                  <div className="w-2 h-2 bg-gradient-to-r from-green-400 to-emerald-500 dark:from-green-500 dark:to-emerald-400 rounded-full animate-pulse"></div>
+                  <span className="text-green-600 dark:text-green-400 font-semibold">
                     {dashboardStats.completedProjects}
                   </span>
                   <span>completados</span>
@@ -864,9 +878,12 @@ export default function Dashboard() {
               whileHover={{ scale: 1.02 }}
               transition={{ duration: 0.3, ease: "easeOut" }}
             >
-              <div className="bg-card rounded-2xl p-4 sm:p-6 shadow-xl hover:shadow-2xl transition-all duration-500 transform hover:-translate-y-2 border border-border/50 backdrop-blur-sm overflow-hidden bg-gradient-to-br from-violet-500/5 via-purple-500/10 to-fuchsia-500/15 relative">
+              <div className="bg-card dark:bg-slate-800/50 rounded-2xl p-4 sm:p-6 shadow-xl hover:shadow-2xl dark:shadow-2xl dark:shadow-violet-500/20 dark:hover:shadow-3xl dark:hover:shadow-violet-500/30 transition-all duration-500 transform hover:-translate-y-2 border border-border/50 dark:border-slate-700/50 backdrop-blur-sm overflow-hidden bg-gradient-to-br from-violet-500/5 via-purple-500/10 to-fuchsia-500/15 dark:from-violet-500/30 dark:via-purple-600/35 dark:to-fuchsia-600/40 relative">
                 {/* Efecto de brillo sutil */}
                 <div className="absolute inset-0 bg-gradient-to-br from-transparent via-white/20 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-500"></div>
+                
+                {/* Efecto de brillo adicional para modo oscuro - Violeta */}
+                <div className="absolute inset-0 bg-gradient-to-br from-violet-500/20 via-purple-400/30 to-fuchsia-500/20 opacity-0 dark:opacity-100 group-hover:opacity-100 dark:group-hover:opacity-100 transition-opacity duration-500"></div>
                 
                 {/* Icono mejorado con animación de crecimiento */}
                 <div className="flex items-center justify-center w-14 h-14 sm:w-16 sm:h-16 rounded-2xl mb-4 shadow-2xl group-hover:scale-110 transition-all duration-500 bg-gradient-to-br from-violet-500 via-purple-600 to-fuchsia-700 text-white animate-pulse-glow relative overflow-hidden">
@@ -883,19 +900,19 @@ export default function Dashboard() {
                 </div>
                 
                 {/* Valor con animación mejorada */}
-                <div className="text-3xl sm:text-4xl lg:text-5xl font-bold text-card-foreground mb-3 group-hover:scale-105 transition-transform duration-300 metric-value-animation bg-gradient-to-r from-violet-600 to-fuchsia-700 bg-clip-text text-transparent">
+                <div className="text-3xl sm:text-4xl lg:text-5xl font-bold text-card-foreground dark:text-white mb-3 group-hover:scale-105 transition-transform duration-300 metric-value-animation bg-gradient-to-r from-violet-600 to-fuchsia-700 dark:from-violet-400 dark:to-fuchsia-500 bg-clip-text text-transparent">
                   {dashboardStats.averageProgress}%
                 </div>
                 
                 {/* Título con mejor tipografía */}
-                <div className="text-lg sm:text-xl font-bold text-card-foreground mb-2">
+                <div className="text-lg sm:text-xl font-bold text-card-foreground dark:text-white mb-2">
                   Progreso General
                 </div>
                 
                 {/* Subtítulo con icono */}
-                <div className="text-sm text-muted-foreground flex items-center gap-2">
-                  <div className="w-2 h-2 bg-gradient-to-r from-green-400 to-emerald-500 rounded-full animate-pulse"></div>
-                  <span className="text-green-600 font-semibold">
+                <div className="text-sm text-muted-foreground dark:text-slate-300 flex items-center gap-2">
+                  <div className="w-2 h-2 bg-gradient-to-r from-green-400 to-emerald-500 dark:from-green-500 dark:to-emerald-400 rounded-full animate-pulse"></div>
+                  <span className="text-green-600 dark:text-green-400 font-semibold">
                     {dashboardStats.completedProjects}
                   </span>
                   <span>finalizados</span>
@@ -917,7 +934,7 @@ export default function Dashboard() {
             
             {/* Filtros y Controles */}
             <motion.div 
-              className="bg-card rounded-2xl p-6 sm:p-8 shadow-xl border border-border/50 relative overflow-hidden"
+              className="bg-card dark:bg-slate-800/50 rounded-2xl p-6 sm:p-8 shadow-xl border border-border/50 dark:border-slate-700/50 relative overflow-hidden"
               initial={{ opacity: 0, y: 20 }}
               animate={{ opacity: 1, y: 0 }}
               transition={{ duration: 0.5 }}
@@ -931,7 +948,7 @@ export default function Dashboard() {
                     <div className="w-10 h-10 bg-gradient-to-br from-blue-500 to-indigo-600 rounded-xl flex items-center justify-center shadow-lg">
                       <Filter className="h-5 w-5 text-white" />
                     </div>
-                    <h2 className="text-xl sm:text-2xl font-bold text-card-foreground bg-gradient-to-r from-primary to-primary/80 bg-clip-text text-transparent">
+                    <h2 className="text-xl sm:text-2xl font-bold text-card-foreground dark:text-white bg-gradient-to-r from-primary to-primary/80 dark:from-blue-400 dark:to-blue-600 bg-clip-text text-transparent">
                       Filtros y Controles
                     </h2>
                   </div>
@@ -939,7 +956,7 @@ export default function Dashboard() {
                     variant="outline"
                     size="sm"
                     onClick={clearFilters}
-                    className="border-border text-foreground hover:bg-muted hover:border-primary hover:text-primary transition-all duration-300 hover:scale-105 shadow-sm hover:shadow-md"
+                    className="border-border dark:border-slate-600 text-foreground dark:text-slate-300 hover:bg-muted dark:hover:bg-slate-700 hover:border-primary dark:hover:border-blue-500 hover:text-primary dark:hover:text-blue-400 transition-all duration-300 hover:scale-105 shadow-sm hover:shadow-md"
                   >
                     <RefreshCw className="h-4 w-4 mr-2" />
                     Limpiar
@@ -1037,38 +1054,38 @@ export default function Dashboard() {
               </div>
               
               {/* Información de filtros aplicados */}
-              <div className="mt-6 flex flex-wrap items-center gap-3 text-sm text-muted-foreground">
-                <div className="flex items-center gap-2 px-3 py-2 bg-muted/50 rounded-lg border border-border">
-                  <div className="w-2 h-2 bg-primary rounded-full animate-pulse"></div>
-                  <span className="font-medium">Mostrando {filteredAndSortedProjects.length} de {userProjects.length} proyectos</span>
+              <div className="mt-6 flex flex-wrap items-center gap-3 text-sm text-muted-foreground dark:text-slate-300">
+                <div className="flex items-center gap-2 px-3 py-2 bg-muted/50 dark:bg-slate-700/50 rounded-lg border border-border dark:border-slate-600">
+                  <div className="w-2 h-2 bg-primary dark:bg-blue-400 rounded-full animate-pulse"></div>
+                  <span className="font-medium text-foreground dark:text-white">Mostrando {filteredAndSortedProjects.length} de {userProjects.length} proyectos</span>
                 </div>
                 
-                <div className="flex items-center gap-2 px-3 py-2 bg-green-500/10 rounded-lg border border-green-500/20">
-                  <div className="w-2 h-2 bg-green-500 rounded-full animate-pulse"></div>
-                  <span className="font-medium text-green-600">Actualizaciones en tiempo real activas</span>
+                <div className="flex items-center gap-2 px-3 py-2 bg-green-500/10 dark:bg-green-500/30 rounded-lg border border-green-500/20 dark:border-green-500/50">
+                  <div className="w-2 h-2 bg-green-500 dark:bg-green-400 rounded-full animate-pulse"></div>
+                  <span className="font-medium text-green-600 dark:text-green-300">Actualizaciones en tiempo real activas</span>
                 </div>
                 
                 {searchTerm && (
-                  <Badge variant="outline" className="bg-gradient-to-r from-primary/10 to-primary/20 text-primary border-primary/30 px-3 py-1.5 shadow-sm hover:shadow-md transition-all duration-300 hover:scale-105">
+                  <Badge variant="outline" className="bg-gradient-to-r from-primary/10 to-primary/20 dark:from-blue-500/30 dark:to-blue-600/40 text-primary dark:text-blue-200 border-primary/30 dark:border-blue-500/60 px-3 py-1.5 shadow-sm hover:shadow-md dark:shadow-blue-500/20 dark:hover:shadow-blue-500/30 transition-all duration-300 hover:scale-105">
                     <Search className="h-3 w-3 mr-1" />
                     Búsqueda: "{searchTerm}"
                   </Badge>
                 )}
                 
                 {statusFilter !== 'all' && (
-                  <Badge variant="outline" className="bg-gradient-to-r from-emerald-50 to-teal-50 text-emerald-700 border-emerald-300 px-3 py-1.5 shadow-sm hover:shadow-md transition-all duration-300 hover:scale-105">
+                  <Badge variant="outline" className="bg-gradient-to-r from-emerald-50 to-teal-50 dark:from-emerald-500/30 dark:to-teal-500/40 text-emerald-700 dark:text-emerald-200 border-emerald-300 dark:border-emerald-500/60 px-3 py-1.5 shadow-sm hover:shadow-md dark:shadow-emerald-500/20 dark:hover:shadow-emerald-500/30 transition-all duration-300 hover:scale-105">
                     <Activity className="h-3 w-3 mr-1" />
                     Estado: {statusFilter}
                   </Badge>
                 )}
                 
-                <Badge variant="outline" className="bg-gradient-to-r from-violet-50 to-purple-50 text-violet-700 border-violet-300 px-3 py-1.5 shadow-sm hover:shadow-md transition-all duration-300 hover:scale-105">
+                <Badge variant="outline" className="bg-gradient-to-r from-violet-50 to-purple-50 dark:from-violet-500/30 dark:to-purple-500/40 text-violet-700 dark:text-violet-200 border-violet-300 dark:border-violet-500/60 px-3 py-1.5 shadow-sm hover:shadow-md dark:shadow-violet-500/20 dark:hover:shadow-violet-500/30 transition-all duration-300 hover:scale-105">
                   <SortAsc className="h-3 w-3 mr-1" />
                   Orden: {dragMode ? 'Personalizado' : sortBy === 'recent' ? 'Más Recientes' : sortBy === 'name' ? 'Nombre' : sortBy === 'progress' ? 'Progreso' : 'Estado'}
                 </Badge>
                 
                 {dragMode && (
-                  <Badge variant="outline" className="bg-gradient-to-r from-blue-50 to-indigo-50 text-blue-700 border-blue-300 px-3 py-1.5 shadow-sm hover:shadow-md transition-all duration-300 hover:scale-105 animate-pulse">
+                  <Badge variant="outline" className="bg-gradient-to-r from-blue-50 to-indigo-50 dark:from-blue-500/30 dark:to-indigo-500/40 text-blue-700 dark:text-blue-200 border-blue-300 dark:border-blue-500/60 px-3 py-1.5 shadow-sm hover:shadow-md dark:shadow-blue-500/20 dark:hover:shadow-blue-500/30 transition-all duration-300 hover:scale-105 animate-pulse">
                     <GripVertical className="h-3 w-3 mr-1" />
                     Modo Arrastrar Activo
                   </Badge>
@@ -1079,7 +1096,7 @@ export default function Dashboard() {
             {/* Barra de Bulk Actions */}
             {bulkActionMode && selectedProjects.size > 0 && (
               <motion.div 
-                className="bg-blue-50 border border-blue-200 rounded-2xl p-4 shadow-lg"
+                className="bg-blue-50 dark:bg-blue-500/20 border border-blue-200 dark:border-blue-500/30 rounded-2xl p-4 shadow-lg"
                 initial={{ opacity: 0, y: -20 }}
                 animate={{ opacity: 1, y: 0 }}
                 transition={{ duration: 0.3 }}
@@ -1090,7 +1107,7 @@ export default function Dashboard() {
                       <div className="w-8 h-8 bg-blue-500 rounded-full flex items-center justify-center">
                         <span className="text-white font-bold text-sm">{selectedProjects.size}</span>
                       </div>
-                      <span className="font-semibold text-blue-800">
+                      <span className="font-semibold text-blue-800 dark:text-blue-200">
                         {selectedProjects.size} proyecto{selectedProjects.size > 1 ? 's' : ''} seleccionado{selectedProjects.size > 1 ? 's' : ''}
                       </span>
                     </div>
@@ -1098,7 +1115,7 @@ export default function Dashboard() {
                       variant="outline"
                       size="sm"
                       onClick={handleSelectAll}
-                      className="border-blue-300 text-blue-700 hover:bg-blue-100"
+                      className="border-blue-300 dark:border-blue-500/40 text-blue-700 dark:text-blue-300 hover:bg-blue-100 dark:hover:bg-blue-500/20"
                     >
                       {selectedProjects.size === filteredAndSortedProjects.length ? 'Deseleccionar Todo' : 'Seleccionar Todo'}
                     </Button>
@@ -1108,7 +1125,7 @@ export default function Dashboard() {
                       variant="outline"
                       size="sm"
                       onClick={handleBulkArchive}
-                      className="border-orange-300 text-orange-700 hover:bg-orange-100"
+                      className="border-orange-300 dark:border-orange-500/40 text-orange-700 dark:text-orange-400 hover:bg-orange-100 dark:hover:bg-orange-500/20"
                     >
                       <Archive className="h-4 w-4 mr-2" />
                       Archivar
@@ -1117,7 +1134,7 @@ export default function Dashboard() {
                       variant="outline"
                       size="sm"
                       onClick={handleBulkDelete}
-                      className="border-red-300 text-red-700 hover:bg-red-100"
+                      className="border-red-300 dark:border-red-500/40 text-red-700 dark:text-red-400 hover:bg-red-100 dark:hover:bg-red-500/20"
                     >
                       <Trash2 className="h-4 w-4 mr-2" />
                       Eliminar
@@ -1161,10 +1178,10 @@ export default function Dashboard() {
                   
                   {/* Texto principal */}
                   <div className="space-y-4">
-                    <h3 className="text-2xl sm:text-3xl font-bold text-foreground bg-gradient-to-r from-primary to-primary/80 bg-clip-text text-transparent">
+                    <h3 className="text-2xl sm:text-3xl font-bold text-foreground dark:text-white bg-gradient-to-r from-primary to-primary/80 dark:from-blue-400 dark:to-blue-600 bg-clip-text text-transparent">
                       {t('No tienes proyectos aún')}
                     </h3>
-                    <p className="text-muted-foreground text-base sm:text-lg max-w-md mx-auto leading-relaxed">
+                    <p className="text-muted-foreground dark:text-slate-300 text-base sm:text-lg max-w-md mx-auto leading-relaxed">
                       {t('Comienza creando tu primer proyecto web y verás el progreso en tiempo real.')}
                     </p>
                   </div>
@@ -1172,7 +1189,7 @@ export default function Dashboard() {
                   {/* Botón mejorado */}
                   <div className="pt-4">
                     <Button 
-                      className="px-8 py-4 bg-gradient-to-r from-blue-600 via-indigo-600 to-purple-700 hover:from-blue-700 hover:via-indigo-700 hover:to-purple-800 text-white rounded-xl font-bold text-lg transition-all duration-300 shadow-lg hover:shadow-xl transform hover:-translate-y-1 hover:scale-105 border-0 relative overflow-hidden group"
+                      className="px-8 py-4 bg-gradient-to-r from-blue-600 via-indigo-600 to-purple-700 dark:from-blue-500 dark:via-indigo-500 dark:to-purple-600 hover:from-blue-700 hover:via-indigo-700 hover:to-purple-800 dark:hover:from-blue-400 dark:hover:via-indigo-400 dark:hover:to-purple-500 text-white rounded-xl font-bold text-lg transition-all duration-300 shadow-lg hover:shadow-xl dark:shadow-2xl transform hover:-translate-y-1 hover:scale-105 border-0 relative overflow-hidden group"
                       onClick={() => navigate('/proyectos/nuevo')}
                     >
                       {/* Efecto de brillo */}
@@ -1224,11 +1241,11 @@ export default function Dashboard() {
                           <div className="w-8 h-8 bg-blue-500 rounded-full flex items-center justify-center">
                             <GripVertical className="h-4 w-4 text-white" />
                           </div>
-                          <span className="font-semibold text-blue-800">
+                          <span className="font-semibold text-blue-800 dark:text-blue-200">
                             Modo Arrastrar Activo
                           </span>
                         </div>
-                        <p className="text-sm text-blue-600">
+                        <p className="text-sm text-blue-600 dark:text-blue-300">
                           Arrastra los proyectos para reordenarlos por prioridad. Presiona ESC o Ctrl+D para salir.
                         </p>
                       </div>
@@ -1236,7 +1253,7 @@ export default function Dashboard() {
                         variant="outline"
                         size="sm"
                         onClick={handleToggleDragMode}
-                        className="border-blue-300 text-blue-700 hover:bg-blue-100"
+                        className="border-blue-300 dark:border-blue-500/40 text-blue-700 dark:text-blue-300 hover:bg-blue-100 dark:hover:bg-blue-500/20"
                       >
                         Salir
                       </Button>
@@ -1254,7 +1271,7 @@ export default function Dashboard() {
                           {...provided.droppableProps}
                           className={`flex flex-wrap gap-6 p-4 rounded-2xl transition-all duration-300 ${
                             snapshot.isDraggingOver 
-                              ? 'bg-blue-50 border-2 border-dashed border-blue-300' 
+                              ? 'bg-blue-50 dark:bg-blue-500/10 border-2 border-dashed border-blue-300 dark:border-blue-500/40' 
                               : 'bg-transparent'
                           }`}
                         >
@@ -1266,8 +1283,8 @@ export default function Dashboard() {
                               projectCreators={projectCreators}
                               onViewProject={handleViewProject}
                               onDeleteProject={handleDeleteProject}
-                              onNavigateToCollaboration={(project) => {
-                                const url = `/proyectos/${project.id}/colaboracion-cliente`;
+                              onNavigateToCollaboration={(projectId) => {
+                                const url = `/proyectos/${projectId}/colaboracion-cliente`;
                                 try {
                                   navigate(url);
                                 } catch (error) {
@@ -1313,8 +1330,8 @@ export default function Dashboard() {
                         projectCreators={projectCreators}
                         onViewProject={handleViewProject}
                         onDeleteProject={handleDeleteProject}
-                        onNavigateToCollaboration={(project) => {
-                          const url = `/proyectos/${project.id}/colaboracion-cliente`;
+                        onNavigateToCollaboration={(projectId) => {
+                          const url = `/proyectos/${projectId}/colaboracion-cliente`;
                           try {
                             navigate(url);
                           } catch (error) {
@@ -1447,8 +1464,8 @@ export default function Dashboard() {
                                     variant="outline" 
                                     className={`text-xs ${
                                       comment.tipo === 'admin' 
-                                        ? 'bg-blue-50 text-blue-700 border-blue-200' 
-                                        : 'bg-slate-50 text-card-foreground border-slate-200'
+                                        ? 'bg-blue-50 text-blue-700 border-blue-200 dark:bg-blue-500/20 dark:text-blue-300 dark:border-blue-500/40 dark:shadow-blue-500/10' 
+                                        : 'bg-slate-50 text-card-foreground border-slate-200 dark:bg-slate-500/20 dark:text-slate-300 dark:border-slate-500/40 dark:shadow-slate-500/10'
                                     }`}
                                   >
                                     {comment.tipo === 'admin' ? 'Admin' : 'Cliente'}

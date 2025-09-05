@@ -112,11 +112,11 @@ const getProjectStatus = (project: Project) => {
 // Función para obtener el color del estado
 const getStatusColor = (status: string) => {
   switch (status) {
-    case 'Completado': return 'bg-green-500/10 text-green-600 border-green-500/20';
-    case 'En progreso avanzado': return 'bg-blue-500/10 text-blue-600 border-blue-500/20';
-    case 'En progreso': return 'bg-yellow-500/10 text-yellow-600 border-yellow-500/20';
-    case 'Sin iniciar': return 'bg-muted/50 text-muted-foreground border-border/50';
-    default: return 'bg-muted/50 text-muted-foreground border-border/50';
+    case 'Completado': return 'bg-green-500/10 text-green-600 border-green-500/20 dark:bg-green-500/20 dark:text-green-400 dark:border-green-500/40';
+    case 'En progreso avanzado': return 'bg-blue-500/10 text-blue-600 border-blue-500/20 dark:bg-blue-500/20 dark:text-blue-400 dark:border-blue-500/40';
+    case 'En progreso': return 'bg-yellow-500/10 text-yellow-600 border-yellow-500/20 dark:bg-yellow-500/20 dark:text-yellow-400 dark:border-yellow-500/40';
+    case 'Sin iniciar': return 'bg-muted/50 text-muted-foreground border-border/50 dark:bg-slate-700/50 dark:text-slate-300 dark:border-slate-600/50';
+    default: return 'bg-muted/50 text-muted-foreground border-border/50 dark:bg-slate-700/50 dark:text-slate-300 dark:border-slate-600/50';
   }
 };
 
@@ -207,18 +207,18 @@ const getProjectTypeColor = (type: string) => {
   if (projectType) {
     // Mapear colores por ID del tipo
     switch (projectType.id) {
-      case 'landing-page': return 'bg-blue-500/10 text-blue-600 border-blue-500/20';
-      case 'ecommerce': return 'bg-green-500/10 text-green-600 border-green-500/20';
-      case 'corporate': return 'bg-purple-500/10 text-purple-600 border-purple-500/20';
-      case 'portfolio': return 'bg-pink-500/10 text-pink-600 border-pink-500/20';
-      case 'blog': return 'bg-orange-500/10 text-orange-600 border-orange-500/20';
-      case 'mobile-app': return 'bg-indigo-500/10 text-indigo-600 border-indigo-500/20';
-      case 'web-app': return 'bg-cyan-500/10 text-cyan-600 border-cyan-500/20';
-      case 'ui-ux': return 'bg-rose-500/10 text-rose-600 border-rose-500/20';
-      case 'development': return 'bg-emerald-500/10 text-emerald-600 border-emerald-500/20';
-      case 'database': return 'bg-amber-500/10 text-amber-600 border-amber-500/20';
-      case 'api': return 'bg-violet-500/10 text-violet-600 border-violet-500/20';
-      default: return 'bg-muted/50 text-muted-foreground border-border/50';
+      case 'landing-page': return 'bg-blue-500/10 text-blue-600 border-blue-500/20 dark:bg-blue-500/20 dark:text-blue-400 dark:border-blue-500/40';
+      case 'ecommerce': return 'bg-green-500/10 text-green-600 border-green-500/20 dark:bg-green-500/20 dark:text-green-400 dark:border-green-500/40';
+      case 'corporate': return 'bg-purple-500/10 text-purple-600 border-purple-500/20 dark:bg-purple-500/20 dark:text-purple-400 dark:border-purple-500/40';
+      case 'portfolio': return 'bg-pink-500/10 text-pink-600 border-pink-500/20 dark:bg-pink-500/20 dark:text-pink-400 dark:border-pink-500/40';
+      case 'blog': return 'bg-orange-500/10 text-orange-600 border-orange-500/20 dark:bg-orange-500/20 dark:text-orange-400 dark:border-orange-500/40';
+      case 'mobile-app': return 'bg-indigo-500/10 text-indigo-600 border-indigo-500/20 dark:bg-indigo-500/20 dark:text-indigo-400 dark:border-indigo-500/40';
+      case 'web-app': return 'bg-cyan-500/10 text-cyan-600 border-cyan-500/20 dark:bg-cyan-500/20 dark:text-cyan-400 dark:border-cyan-500/40';
+      case 'ui-ux': return 'bg-rose-500/10 text-rose-600 border-rose-500/20 dark:bg-rose-500/20 dark:text-rose-400 dark:border-rose-500/40';
+      case 'development': return 'bg-emerald-500/10 text-emerald-600 border-emerald-500/20 dark:bg-emerald-500/20 dark:text-emerald-400 dark:border-emerald-500/40';
+      case 'database': return 'bg-amber-500/10 text-amber-600 border-amber-500/20 dark:bg-amber-500/20 dark:text-amber-400 dark:border-amber-500/40';
+      case 'api': return 'bg-violet-500/10 text-violet-600 border-violet-500/20 dark:bg-violet-500/20 dark:text-violet-400 dark:border-violet-500/40';
+      default: return 'bg-muted/50 text-muted-foreground border-border/50 dark:bg-slate-700/50 dark:text-slate-300 dark:border-slate-600/50';
     }
   }
   
@@ -226,38 +226,38 @@ const getProjectTypeColor = (type: string) => {
   switch (type?.toLowerCase()) {
     case 'landing page':
     case 'landing':
-      return 'bg-blue-500/10 text-blue-600 border-blue-500/20';
+      return 'bg-blue-500/10 text-blue-600 border-blue-500/20 dark:bg-blue-500/20 dark:text-blue-400 dark:border-blue-500/40';
     case 'ecommerce':
     case 'tienda online':
-      return 'bg-green-500/10 text-green-600 border-green-500/20';
+      return 'bg-green-500/10 text-green-600 border-green-500/20 dark:bg-green-500/20 dark:text-green-400 dark:border-green-500/40';
     case 'corporativo':
     case 'empresa':
-      return 'bg-purple-500/10 text-purple-600 border-purple-500/20';
+      return 'bg-purple-500/10 text-purple-600 border-purple-500/20 dark:bg-purple-500/20 dark:text-purple-400 dark:border-purple-500/40';
     case 'portfolio':
     case 'portafolio':
-      return 'bg-pink-500/10 text-pink-600 border-pink-500/20';
+      return 'bg-pink-500/10 text-pink-600 border-pink-500/20 dark:bg-pink-500/20 dark:text-pink-400 dark:border-pink-500/40';
     case 'blog':
-      return 'bg-orange-500/10 text-orange-600 border-orange-500/20';
+      return 'bg-orange-500/10 text-orange-600 border-orange-500/20 dark:bg-orange-500/20 dark:text-orange-400 dark:border-orange-500/40';
     case 'app móvil':
     case 'mobile':
-      return 'bg-indigo-500/10 text-indigo-600 border-indigo-500/20';
+      return 'bg-indigo-500/10 text-indigo-600 border-indigo-500/20 dark:bg-indigo-500/20 dark:text-indigo-400 dark:border-indigo-500/40';
     case 'web app':
     case 'aplicación web':
-      return 'bg-cyan-500/10 text-cyan-600 border-cyan-500/20';
+      return 'bg-cyan-500/10 text-cyan-600 border-cyan-500/20 dark:bg-cyan-500/20 dark:text-cyan-400 dark:border-cyan-500/40';
     case 'diseño':
     case 'ui/ux':
-      return 'bg-rose-500/10 text-rose-600 border-rose-500/20';
+      return 'bg-rose-500/10 text-rose-600 border-rose-500/20 dark:bg-rose-500/20 dark:text-rose-400 dark:border-rose-500/40';
     case 'desarrollo':
     case 'programación':
-      return 'bg-emerald-500/10 text-emerald-600 border-emerald-500/20';
+      return 'bg-emerald-500/10 text-emerald-600 border-emerald-500/20 dark:bg-emerald-500/20 dark:text-emerald-400 dark:border-emerald-500/40';
     case 'base de datos':
     case 'database':
-      return 'bg-amber-500/10 text-amber-600 border-amber-500/20';
+      return 'bg-amber-500/10 text-amber-600 border-amber-500/20 dark:bg-amber-500/20 dark:text-amber-400 dark:border-amber-500/40';
     case 'api':
     case 'backend':
-      return 'bg-violet-500/10 text-violet-600 border-violet-500/20';
+      return 'bg-violet-500/10 text-violet-600 border-violet-500/20 dark:bg-violet-500/20 dark:text-violet-400 dark:border-violet-500/40';
     default:
-      return 'bg-muted/50 text-muted-foreground border-border/50';
+      return 'bg-muted/50 text-muted-foreground border-border/50 dark:bg-slate-700/50 dark:text-slate-300 dark:border-slate-600/50';
   }
 };
 
@@ -320,7 +320,7 @@ export default function ProjectCard({
       className="w-full max-w-xs"
     >
       <div 
-        className={`bg-card rounded-2xl shadow-lg border border-border/50 hover:shadow-2xl hover:border-border hover:shadow-primary/10 transition-all duration-500 ease-out overflow-hidden relative w-full h-[420px] flex flex-col group ${
+        className={`bg-card dark:bg-slate-800/50 rounded-2xl shadow-lg border border-border/50 dark:border-slate-700/50 hover:shadow-2xl hover:border-border dark:hover:border-slate-600 hover:shadow-primary/10 dark:hover:shadow-blue-500/10 transition-all duration-500 ease-out overflow-hidden relative w-full h-[420px] flex flex-col group ${
           isPendingApproval || isRejected ? 'cursor-default opacity-75' : 'cursor-pointer'
         } ${dragMode ? 'ring-2 ring-blue-500 ring-opacity-50' : ''}`}
         onClick={() => !isPendingApproval && !isRejected && !dragMode && onViewProject(project)}
@@ -328,13 +328,13 @@ export default function ProjectCard({
         {/* Header con gradiente sutil y profesional */}
         <div className={`relative h-16 bg-gradient-to-br transition-all duration-500 ease-out group-hover:shadow-lg ${
           approvalStatus === 'rejected' 
-            ? 'from-red-50 to-red-100 group-hover:from-red-100 group-hover:to-red-200' 
+            ? 'from-red-50 to-red-100 group-hover:from-red-100 group-hover:to-red-200 dark:from-red-900/20 dark:to-red-800/30 dark:group-hover:from-red-800/30 dark:group-hover:to-red-700/40' 
             : approvalStatus === 'pending'
-            ? 'from-amber-50 to-orange-100 group-hover:from-amber-100 group-hover:to-orange-200'
+            ? 'from-amber-50 to-orange-100 group-hover:from-amber-100 group-hover:to-orange-200 dark:from-amber-900/20 dark:to-orange-800/30 dark:group-hover:from-amber-800/30 dark:group-hover:to-orange-700/40'
             : isUrgent 
-            ? 'from-red-50 via-orange-50 to-yellow-100 group-hover:from-red-100 group-hover:via-orange-100 group-hover:to-yellow-200' 
-            : 'from-slate-50 via-blue-50 to-indigo-100 group-hover:from-slate-100 group-hover:via-blue-100 group-hover:to-indigo-200'
-        } border-b border-slate-200/50 group-hover:border-slate-300/70`}>
+            ? 'from-red-50 via-orange-50 to-yellow-100 group-hover:from-red-100 group-hover:via-orange-100 group-hover:to-yellow-200 dark:from-red-900/20 dark:via-orange-900/20 dark:to-yellow-800/30 dark:group-hover:from-red-800/30 dark:group-hover:via-orange-800/30 dark:group-hover:to-yellow-700/40' 
+            : 'from-slate-50 via-blue-50 to-indigo-100 group-hover:from-slate-100 group-hover:via-blue-100 group-hover:to-indigo-200 dark:from-slate-800/20 dark:via-blue-900/20 dark:to-indigo-800/30 dark:group-hover:from-slate-700/30 dark:group-hover:via-blue-800/30 dark:group-hover:to-indigo-700/40'
+        } border-b border-slate-200/50 dark:border-slate-700/50 group-hover:border-slate-300/70 dark:group-hover:border-slate-600/70`}>
           {/* Barra de estado sutil */}
           <div className={`absolute top-0 left-0 w-full h-1 ${
             approvalStatus === 'rejected' 
@@ -360,7 +360,7 @@ export default function ProjectCard({
                   position="top"
                 >
                   <h3 
-                    className="text-lg font-bold text-accessible truncate leading-tight tracking-tight cursor-help"
+                    className="text-lg font-bold text-accessible dark:text-white truncate leading-tight tracking-tight cursor-help"
                     tabIndex={0}
                     role="heading"
                     aria-level={3}
@@ -475,13 +475,13 @@ export default function ProjectCard({
         <div className="p-4 flex-1 flex flex-col">
           {/* Información del creador del proyecto - Solo visible para admin */}
           {user?.role === 'admin' && project.created_by && projectCreators[project.created_by] && (
-            <div className="flex items-center gap-2 p-2 bg-muted/50 rounded-lg border border-border/50 mb-3">
-              <User className="h-3 w-3 text-muted-foreground" />
+            <div className="flex items-center gap-2 p-2 bg-muted/50 dark:bg-slate-700/50 rounded-lg border border-border/50 dark:border-slate-600/50 mb-3">
+              <User className="h-3 w-3 text-muted-foreground dark:text-slate-400" />
               <div className="flex flex-col">
-                <span className="text-xs font-medium text-foreground">
+                <span className="text-xs font-medium text-foreground dark:text-white">
                   Creado por: {projectCreators[project.created_by].full_name}
                 </span>
-                <span className="text-xs text-muted-foreground">
+                <span className="text-xs text-muted-foreground dark:text-slate-400">
                   {projectCreators[project.created_by].email}
                 </span>
               </div>
@@ -492,12 +492,12 @@ export default function ProjectCard({
           <div className="flex items-center justify-between mb-3">
             <div className="flex items-center gap-2">
               {isPendingApproval ? (
-                <Badge variant="outline" className="bg-amber-50 text-amber-800 border-amber-300 text-xs px-3 py-1.5 font-medium shadow-sm hover:shadow-md hover:scale-105 transition-all duration-300 ease-out">
+                <Badge variant="outline" className="bg-amber-50 dark:bg-amber-900/20 text-amber-800 dark:text-amber-300 border-amber-300 dark:border-amber-600/40 text-xs px-3 py-1.5 font-medium shadow-sm hover:shadow-md hover:scale-105 transition-all duration-300 ease-out">
                   <Clock className="h-3 w-3 mr-1.5" />
                   Esperando Aprobación
                 </Badge>
               ) : isRejected ? (
-                <Badge variant="outline" className="bg-red-50 text-red-800 border-red-300 text-xs px-3 py-1.5 font-medium shadow-sm hover:shadow-md hover:scale-105 transition-all duration-300 ease-out">
+                <Badge variant="outline" className="bg-red-50 dark:bg-red-900/20 text-red-800 dark:text-red-300 border-red-300 dark:border-red-600/40 text-xs px-3 py-1.5 font-medium shadow-sm hover:shadow-md hover:scale-105 transition-all duration-300 ease-out">
                   <XCircle className="h-3 w-3 mr-1.5" />
                   Rechazado
                 </Badge>
@@ -564,7 +564,7 @@ export default function ProjectCard({
                         
                         {/* Punto de progreso animado */}
                         {progress > 0 && (
-                          <div className="absolute top-0 right-0 w-2 h-3 bg-card rounded-full shadow-lg animate-pulse-glow"></div>
+                          <div className="absolute top-0 right-0 w-2 h-3 bg-card dark:bg-slate-700 rounded-full shadow-lg animate-pulse-glow"></div>
                         )}
                       </div>
                     </div>
@@ -610,36 +610,36 @@ export default function ProjectCard({
           {/* Metadatos del proyecto compactos */}
           {!isPendingApproval && !isRejected ? (
             <div className="grid grid-cols-3 gap-2 text-xs mb-3 flex-1">
-              <div className="text-center p-2 bg-gradient-to-br from-blue-50 to-indigo-50 rounded-lg border border-blue-100">
-                <div className="font-bold text-blue-800 text-sm">{(project as any).funcionalidades?.length || 0}</div>
-                <div className="text-blue-600 font-medium text-xs">Funciones</div>
+              <div className="text-center p-2 bg-gradient-to-br from-blue-50 to-indigo-50 dark:from-blue-900/20 dark:to-indigo-900/30 rounded-lg border border-blue-100 dark:border-blue-600/40">
+                <div className="font-bold text-blue-800 dark:text-blue-300 text-sm">{(project as any).funcionalidades?.length || 0}</div>
+                <div className="text-blue-600 dark:text-blue-400 font-medium text-xs">Funciones</div>
               </div>
-              <div className="text-center p-2 bg-gradient-to-br from-green-50 to-emerald-50 rounded-lg border border-green-100">
-                <div className="font-bold text-green-800 text-sm">
+              <div className="text-center p-2 bg-gradient-to-br from-green-50 to-emerald-50 dark:from-green-900/20 dark:to-emerald-900/30 rounded-lg border border-green-100 dark:border-green-600/40">
+                <div className="font-bold text-green-800 dark:text-green-300 text-sm">
                   {project.fases?.filter((f: ProjectPhase) => f.estado === 'Terminado').length || 0}/{project.fases?.length || 0}
                 </div>
-                <div className="text-green-600 font-medium text-xs">Fases</div>
+                <div className="text-green-600 dark:text-green-400 font-medium text-xs">Fases</div>
               </div>
-              <div className="text-center p-2 bg-gradient-to-br from-purple-50 to-pink-50 rounded-lg border border-purple-100">
-                <div className="font-bold text-purple-800 text-sm flex items-center justify-center gap-1">
+              <div className="text-center p-2 bg-gradient-to-br from-purple-50 to-pink-50 dark:from-purple-900/20 dark:to-pink-900/30 rounded-lg border border-purple-100 dark:border-purple-600/40">
+                <div className="font-bold text-purple-800 dark:text-purple-300 text-sm flex items-center justify-center gap-1">
                   <MessageSquare className="h-3 w-3" />
                   {totalComments}
                 </div>
-                <div className="text-purple-600 font-medium text-xs">Comentarios</div>
+                <div className="text-purple-600 dark:text-purple-400 font-medium text-xs">Comentarios</div>
               </div>
             </div>
           ) : (
             <div className="mb-3 flex-1 flex items-center justify-center">
-              <div className="text-center text-muted-foreground">
+              <div className="text-center text-muted-foreground dark:text-slate-400">
                 {isPendingApproval ? (
                   <div className="space-y-2">
-                    <Clock className="h-8 w-8 mx-auto text-amber-500" />
+                    <Clock className="h-8 w-8 mx-auto text-amber-500 dark:text-amber-400" />
                     <p className="text-sm font-medium">Esperando aprobación</p>
                     <p className="text-xs">Los administradores revisarán tu proyecto</p>
                   </div>
                 ) : (
                   <div className="space-y-2">
-                    <XCircle className="h-8 w-8 mx-auto text-red-500" />
+                    <XCircle className="h-8 w-8 mx-auto text-red-500 dark:text-red-400" />
                     <p className="text-sm font-medium">Proyecto rechazado</p>
                     <p className="text-xs">Contacta a los administradores</p>
                   </div>
@@ -649,13 +649,13 @@ export default function ProjectCard({
           )}
 
           {/* Fechas mejor organizadas */}
-          <div className="flex items-center justify-between text-xs mb-3 p-2 bg-muted/50 rounded-lg border border-border">
-            <div className="flex items-center gap-1.5 text-muted-foreground">
-              <Calendar className="h-3 w-3 text-muted-foreground" />
+          <div className="flex items-center justify-between text-xs mb-3 p-2 bg-muted/50 dark:bg-slate-700/50 rounded-lg border border-border dark:border-slate-600/50">
+            <div className="flex items-center gap-1.5 text-muted-foreground dark:text-slate-400">
+              <Calendar className="h-3 w-3 text-muted-foreground dark:text-slate-400" />
               <span className="truncate font-medium">{formatDateSafe(project.created_at || project.createdAt)}</span>
             </div>
-            <div className="flex items-center gap-1.5 text-muted-foreground">
-              <Clock className="h-3 w-3 text-muted-foreground" />
+            <div className="flex items-center gap-1.5 text-muted-foreground dark:text-slate-400">
+              <Clock className="h-3 w-3 text-muted-foreground dark:text-slate-400" />
               <span className="truncate font-medium">{formatDateSafe(project.updated_at)}</span>
             </div>
           </div>
@@ -668,7 +668,7 @@ export default function ProjectCard({
                   <Button
                     variant="outline"
                     size="sm"
-                    className="flex-1 border-border text-foreground hover:bg-muted hover:border-border hover:shadow-md hover:scale-105 text-xs font-medium transition-all duration-300 ease-out"
+                    className="flex-1 border-border dark:border-slate-600 text-foreground dark:text-slate-300 hover:bg-muted dark:hover:bg-slate-700 hover:border-border dark:hover:border-slate-500 hover:shadow-md hover:scale-105 text-xs font-medium transition-all duration-300 ease-out"
                     onClick={(e) => {
                       e.stopPropagation();
                       onNavigateToCollaboration(project.id);
@@ -685,7 +685,7 @@ export default function ProjectCard({
                       <Button
                         variant="outline"
                         size="sm"
-                        className="border-border text-foreground hover:bg-muted hover:border-border hover:shadow-md hover:scale-105 text-xs font-medium transition-all duration-300 ease-out"
+                        className="border-border dark:border-slate-600 text-foreground dark:text-slate-300 hover:bg-muted dark:hover:bg-slate-700 hover:border-border dark:hover:border-slate-500 hover:shadow-md hover:scale-105 text-xs font-medium transition-all duration-300 ease-out"
                         onClick={(e) => {
                           e.stopPropagation();
                           onNavigateToEdit(project.id);
@@ -706,7 +706,7 @@ export default function ProjectCard({
               <Button
                 variant="outline"
                 size="sm"
-                className="flex-1 border-amber-200 text-amber-700 hover:bg-amber-50 hover:border-amber-300 hover:shadow-md hover:scale-105 text-xs font-medium transition-all duration-300 ease-out"
+                className="flex-1 border-amber-200 dark:border-amber-600/40 text-amber-700 dark:text-amber-300 hover:bg-amber-50 dark:hover:bg-amber-500/20 hover:border-amber-300 dark:hover:border-amber-500/60 hover:shadow-md hover:scale-105 text-xs font-medium transition-all duration-300 ease-out"
                 onClick={async (e) => {
                   e.stopPropagation();
                   try {

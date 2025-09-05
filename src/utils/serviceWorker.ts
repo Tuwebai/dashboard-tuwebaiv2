@@ -18,6 +18,12 @@ class ServiceWorkerManager {
       return null;
     }
 
+    // No registrar Service Worker en modo desarrollo
+    if (import.meta.env.DEV) {
+      console.log('🔧 Modo desarrollo: Service Worker deshabilitado');
+      return null;
+    }
+
     try {
       this.registration = await navigator.serviceWorker.register('/sw.js', {
         scope: '/'

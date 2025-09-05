@@ -136,7 +136,7 @@ export default function ClientCollaborationPage() {
       setUserAvatars(prev => ({
         ...prev,
         [user.id]: {
-          avatar: user.avatar,
+          avatar_url: user.avatar_url,
           full_name: user.full_name,
           email: user.email
         }

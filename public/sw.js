@@ -98,6 +98,21 @@ self.addEventListener('fetch', (event) => {
     return;
   }
   
+  // En modo desarrollo, no interceptar peticiones de Vite
+  if (url.hostname === 'localhost' && (url.port === '8083' || url.port === '5173')) {
+    // Permitir que Vite maneje sus propios recursos en desarrollo
+    if (url.pathname.includes('/node_modules/') || 
+        url.pathname.includes('/@vite/') ||
+        url.pathname.includes('/@fs/') ||
+        url.pathname.includes('/src/') ||
+        url.pathname.includes('.tsx') ||
+        url.pathname.includes('.ts') ||
+        url.pathname.includes('.jsx') ||
+        url.pathname.includes('.js')) {
+      return;
+    }
+  }
+  
   // Estrategia: Cache First para recursos estáticos
   if (isStaticAsset(request)) {
     event.respondWith(cacheFirst(request));
@@ -204,7 +219,12 @@ function isStaticAsset(request) {
   const url = new URL(request.url);
   const pathname = url.pathname;
   
-  // Recursos estáticos
+  // En desarrollo, no cachear recursos de Vite
+  if (url.hostname === 'localhost' && (url.port === '8083' || url.port === '5173')) {
+    return false;
+  }
+  
+  // Recursos estáticos solo en producción
   return pathname.endsWith('.js') ||
          pathname.endsWith('.css') ||
          pathname.endsWith('.png') ||

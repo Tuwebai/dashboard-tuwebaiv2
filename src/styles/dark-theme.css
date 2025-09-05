@@ -1,0 +1,460 @@
+/* =====================================================
+   SISTEMA DE TEMA OSCURO PROFESIONAL - TuWebAI
+   ===================================================== */
+
+/* Variables CSS para el sistema de tema oscuro */
+:root {
+  /* Paleta de grises profesionales para modo oscuro */
+  --dark-gray-50: #fafafa;
+  --dark-gray-100: #f5f5f5;
+  --dark-gray-200: #e5e5e5;
+  --dark-gray-300: #d4d4d4;
+  --dark-gray-400: #a3a3a3;
+  --dark-gray-500: #737373;
+  --dark-gray-600: #525252;
+  --dark-gray-700: #404040;
+  --dark-gray-800: #262626;
+  --dark-gray-900: #171717;
+  
+  /* Colores de fondo oscuros profesionales */
+  --dark-bg-primary: #0a0a0a;
+  --dark-bg-secondary: #111111;
+  --dark-bg-tertiary: #1a1a1a;
+  --dark-bg-card: #0f0f0f;
+  --dark-bg-sidebar: #0a0a0a;
+  --dark-bg-overlay: rgba(0, 0, 0, 0.8);
+  
+  /* Colores de texto para modo oscuro */
+  --dark-text-primary: #f8fafc;
+  --dark-text-secondary: #e2e8f0;
+  --dark-text-tertiary: #94a3b8;
+  --dark-text-quaternary: #64748b;
+  --dark-text-inverse: #0a0a0a;
+  
+  /* Bordes para modo oscuro */
+  --dark-border-primary: #1e293b;
+  --dark-border-secondary: #334155;
+  --dark-border-focus: #3b82f6;
+  
+  /* Estados para modo oscuro */
+  --dark-state-hover: #1e293b;
+  --dark-state-active: #334155;
+  --dark-state-focus: rgba(59, 130, 246, 0.1);
+  --dark-state-disabled: #374151;
+  
+  /* Sombras para modo oscuro */
+  --dark-shadow-card: 0 4px 6px -1px rgb(0 0 0 / 0.3);
+  --dark-shadow-elevated: 0 10px 15px -3px rgb(0 0 0 / 0.4);
+  --dark-shadow-floating: 0 20px 25px -5px rgb(0 0 0 / 0.5);
+  --dark-shadow-3xl: 0 35px 60px -12px rgb(0 0 0 / 0.6);
+  
+  /* Gradientes para modo oscuro */
+  --dark-gradient-primary: linear-gradient(135deg, #0a0a0a 0%, #111111 100%);
+  --dark-gradient-secondary: linear-gradient(135deg, #0f0f0f 0%, #1a1a1a 100%);
+  --dark-gradient-card: linear-gradient(145deg, #0f0f0f 0%, #1a1a1a 100%);
+  
+  /* Colores de marca para modo oscuro */
+  --dark-primary: #3b82f6;
+  --dark-primary-hover: #2563eb;
+  --dark-primary-light: #60a5fa;
+  --dark-secondary: #8b5cf6;
+  --dark-secondary-hover: #7c3aed;
+  --dark-accent: #06b6d4;
+  --dark-accent-hover: #0891b2;
+  
+  /* Colores semánticos para modo oscuro */
+  --dark-success: #10b981;
+  --dark-success-hover: #059669;
+  --dark-warning: #f59e0b;
+  --dark-warning-hover: #d97706;
+  --dark-error: #ef4444;
+  --dark-error-hover: #dc2626;
+  --dark-info: #06b6d4;
+  --dark-info-hover: #0891b2;
+}
+
+/* =====================================================
+   APLICACIÓN DEL TEMA OSCURO
+   ===================================================== */
+.dark {
+  /* Fondos */
+  --background: var(--dark-bg-primary);
+  --foreground: var(--dark-text-primary);
+  --card: var(--dark-bg-card);
+  --card-foreground: var(--dark-text-primary);
+  --popover: var(--dark-bg-card);
+  --popover-foreground: var(--dark-text-primary);
+  
+  /* Colores primarios */
+  --primary: var(--dark-primary);
+  --primary-foreground: var(--dark-text-inverse);
+  --secondary: var(--dark-secondary);
+  --secondary-foreground: var(--dark-text-inverse);
+  
+  /* Colores neutros */
+  --muted: var(--dark-bg-tertiary);
+  --muted-foreground: var(--dark-text-tertiary);
+  --accent: var(--dark-accent);
+  --accent-foreground: var(--dark-text-inverse);
+  
+  /* Colores destructivos */
+  --destructive: var(--dark-error);
+  --destructive-foreground: var(--dark-text-inverse);
+  
+  /* Bordes */
+  --border: var(--dark-border-primary);
+  --input: var(--dark-bg-tertiary);
+  --ring: var(--dark-primary);
+  
+  /* Sidebar */
+  --sidebar-background: var(--dark-bg-sidebar);
+  --sidebar-foreground: var(--dark-text-primary);
+  --sidebar-primary: var(--dark-primary);
+  --sidebar-primary-foreground: var(--dark-text-inverse);
+  --sidebar-accent: var(--dark-bg-tertiary);
+  --sidebar-accent-foreground: var(--dark-text-primary);
+  --sidebar-border: var(--dark-border-primary);
+  --sidebar-ring: var(--dark-primary);
+}
+
+/* =====================================================
+   COMPONENTES ESPECÍFICOS PARA MODO OSCURO
+   ===================================================== */
+.dark .card {
+  background: var(--dark-bg-card);
+  border: 1px solid var(--dark-border-primary);
+  box-shadow: var(--dark-shadow-card);
+}
+
+.dark .card:hover {
+  box-shadow: var(--dark-shadow-elevated);
+  border-color: var(--dark-border-secondary);
+}
+
+.dark .card-elevated {
+  box-shadow: var(--dark-shadow-elevated);
+}
+
+.dark .card-floating {
+  box-shadow: var(--dark-shadow-floating);
+}
+
+/* Botones en modo oscuro */
+.dark .btn-primary {
+  background: linear-gradient(135deg, var(--dark-primary) 0%, var(--dark-secondary) 100%);
+  color: var(--dark-text-inverse);
+  box-shadow: 0 4px 15px rgba(59, 130, 246, 0.3);
+}
+
+.dark .btn-primary:hover {
+  background: linear-gradient(135deg, var(--dark-primary-hover) 0%, var(--dark-secondary-hover) 100%);
+  box-shadow: 0 6px 20px rgba(59, 130, 246, 0.4);
+}
+
+.dark .btn-secondary {
+  background: var(--dark-bg-tertiary);
+  color: var(--dark-text-primary);
+  border: 1px solid var(--dark-border-primary);
+}
+
+.dark .btn-secondary:hover {
+  background: var(--dark-state-hover);
+  border-color: var(--dark-border-secondary);
+}
+
+.dark .btn-ghost {
+  background: transparent;
+  color: var(--dark-text-secondary);
+}
+
+.dark .btn-ghost:hover {
+  background: var(--dark-state-hover);
+  color: var(--dark-text-primary);
+}
+
+/* Inputs en modo oscuro */
+.dark .input {
+  background: var(--dark-bg-tertiary);
+  border: 1px solid var(--dark-border-primary);
+  color: var(--dark-text-primary);
+}
+
+.dark .input:focus {
+  border-color: var(--dark-border-focus);
+  box-shadow: 0 0 0 3px var(--dark-state-focus);
+}
+
+.dark .input::placeholder {
+  color: var(--dark-text-quaternary);
+}
+
+/* Badges en modo oscuro */
+.dark .badge-primary {
+  background: rgba(59, 130, 246, 0.1);
+  color: var(--dark-primary-light);
+  border: 1px solid rgba(59, 130, 246, 0.2);
+}
+
+.dark .badge-success {
+  background: rgba(16, 185, 129, 0.1);
+  color: #34d399;
+  border: 1px solid rgba(16, 185, 129, 0.2);
+}
+
+.dark .badge-warning {
+  background: rgba(245, 158, 11, 0.1);
+  color: #fbbf24;
+  border: 1px solid rgba(245, 158, 11, 0.2);
+}
+
+.dark .badge-error {
+  background: rgba(239, 68, 68, 0.1);
+  color: #f87171;
+  border: 1px solid rgba(239, 68, 68, 0.2);
+}
+
+/* Badges de filtros en modo oscuro */
+.dark .badge-filter {
+  background: rgba(59, 130, 246, 0.15);
+  color: #93c5fd;
+  border: 1px solid rgba(59, 130, 246, 0.3);
+  box-shadow: 0 2px 4px rgba(59, 130, 246, 0.1);
+}
+
+.dark .badge-filter:hover {
+  background: rgba(59, 130, 246, 0.25);
+  box-shadow: 0 4px 8px rgba(59, 130, 246, 0.2);
+}
+
+/* Badges de estado en modo oscuro */
+.dark .badge-status-completed {
+  background: rgba(16, 185, 129, 0.2);
+  color: #6ee7b7;
+  border: 1px solid rgba(16, 185, 129, 0.4);
+  box-shadow: 0 2px 4px rgba(16, 185, 129, 0.1);
+}
+
+.dark .badge-status-progress {
+  background: rgba(59, 130, 246, 0.2);
+  color: #93c5fd;
+  border: 1px solid rgba(59, 130, 246, 0.4);
+  box-shadow: 0 2px 4px rgba(59, 130, 246, 0.1);
+}
+
+.dark .badge-status-pending {
+  background: rgba(245, 158, 11, 0.2);
+  color: #fcd34d;
+  border: 1px solid rgba(245, 158, 11, 0.4);
+  box-shadow: 0 2px 4px rgba(245, 158, 11, 0.1);
+}
+
+.dark .badge-status-inactive {
+  background: rgba(107, 114, 128, 0.2);
+  color: #d1d5db;
+  border: 1px solid rgba(107, 114, 128, 0.4);
+  box-shadow: 0 2px 4px rgba(107, 114, 128, 0.1);
+}
+
+/* Sidebar en modo oscuro */
+.dark .sidebar {
+  background: var(--dark-bg-sidebar);
+  border-right: 1px solid var(--dark-border-primary);
+}
+
+.dark .sidebar-item {
+  color: var(--dark-text-secondary);
+}
+
+.dark .sidebar-item:hover {
+  background: var(--dark-state-hover);
+  color: var(--dark-text-primary);
+}
+
+.dark .sidebar-item.active {
+  background: var(--dark-state-focus);
+  color: var(--dark-primary-light);
+  font-weight: 500;
+}
+
+/* Progress bars en modo oscuro */
+.dark .progress {
+  background: var(--dark-bg-tertiary);
+}
+
+.dark .progress-fill {
+  background: linear-gradient(135deg, var(--dark-primary) 0%, var(--dark-secondary) 100%);
+}
+
+/* =====================================================
+   GRADIENTES Y EFECTOS ESPECIALES
+   ===================================================== */
+.dark .bg-gradient-primary {
+  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+}
+
+.dark .bg-gradient-secondary {
+  background: linear-gradient(135deg, #f093fb 0%, #f5576c 100%);
+}
+
+.dark .bg-gradient-success {
+  background: linear-gradient(135deg, #4facfe 0%, #00f2fe 100%);
+}
+
+.dark .bg-gradient-warning {
+  background: linear-gradient(135deg, #43e97b 0%, #38f9d7 100%);
+}
+
+.dark .bg-gradient-error {
+  background: linear-gradient(135deg, #fa709a 0%, #fee140 100%);
+}
+
+/* Glassmorphism para modo oscuro */
+.dark .glass {
+  background: rgba(0, 0, 0, 0.2);
+  backdrop-filter: blur(10px);
+  border: 1px solid rgba(255, 255, 255, 0.1);
+}
+
+/* Efectos de brillo para modo oscuro */
+.dark .glow {
+  box-shadow: 0 0 20px rgba(59, 130, 246, 0.3);
+}
+
+.dark .glow-success {
+  box-shadow: 0 0 20px rgba(16, 185, 129, 0.3);
+}
+
+.dark .glow-warning {
+  box-shadow: 0 0 20px rgba(245, 158, 11, 0.3);
+}
+
+.dark .glow-error {
+  box-shadow: 0 0 20px rgba(239, 68, 68, 0.3);
+}
+
+/* Sombras con blur de colores específicos para modo oscuro */
+.dark .shadow-3xl {
+  box-shadow: var(--dark-shadow-3xl);
+}
+
+.dark .shadow-blue-500\/20 {
+  box-shadow: 0 25px 50px -12px rgba(59, 130, 246, 0.35);
+}
+
+.dark .shadow-emerald-500\/20 {
+  box-shadow: 0 25px 50px -12px rgba(16, 185, 129, 0.35);
+}
+
+.dark .shadow-amber-500\/20 {
+  box-shadow: 0 25px 50px -12px rgba(245, 158, 11, 0.35);
+}
+
+.dark .shadow-violet-500\/20 {
+  box-shadow: 0 25px 50px -12px rgba(139, 92, 246, 0.35);
+}
+
+.dark .shadow-blue-500\/30 {
+  box-shadow: 0 35px 60px -12px rgba(59, 130, 246, 0.5);
+}
+
+.dark .shadow-emerald-500\/30 {
+  box-shadow: 0 35px 60px -12px rgba(16, 185, 129, 0.5);
+}
+
+.dark .shadow-amber-500\/30 {
+  box-shadow: 0 35px 60px -12px rgba(245, 158, 11, 0.5);
+}
+
+.dark .shadow-violet-500\/30 {
+  box-shadow: 0 35px 60px -12px rgba(139, 92, 246, 0.5);
+}
+
+/* =====================================================
+   ANIMACIONES ESPECÍFICAS PARA MODO OSCURO
+   ===================================================== */
+.dark .animate-pulse-glow {
+  animation: pulse-glow-dark 2s ease-in-out infinite;
+}
+
+@keyframes pulse-glow-dark {
+  0%, 100% {
+    box-shadow: 0 0 20px rgba(59, 130, 246, 0.3);
+  }
+  50% {
+    box-shadow: 0 0 40px rgba(59, 130, 246, 0.6);
+  }
+}
+
+.dark .animate-float {
+  animation: float-dark 3s ease-in-out infinite;
+}
+
+@keyframes float-dark {
+  0%, 100% {
+    transform: translateY(0px);
+  }
+  50% {
+    transform: translateY(-10px);
+  }
+}
+
+/* =====================================================
+   UTILIDADES ESPECÍFICAS PARA MODO OSCURO
+   ===================================================== */
+.dark .text-gradient {
+  background: linear-gradient(135deg, var(--dark-primary) 0%, var(--dark-secondary) 100%);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+}
+
+.dark .text-shadow {
+  text-shadow: 0 2px 4px rgba(0, 0, 0, 0.3);
+}
+
+.dark .border-gradient {
+  border: 1px solid transparent;
+  background: linear-gradient(var(--dark-bg-card), var(--dark-bg-card)) padding-box,
+              linear-gradient(135deg, var(--dark-primary), var(--dark-secondary)) border-box;
+}
+
+/* =====================================================
+   RESPONSIVE DESIGN PARA MODO OSCURO
+   ===================================================== */
+@media (max-width: 640px) {
+  .dark .card {
+    border-radius: 0.5rem;
+  }
+  
+  .dark .btn {
+    padding: 0.625rem 1.25rem;
+    font-size: 0.8125rem;
+  }
+}
+
+/* =====================================================
+   SCROLLBAR PERSONALIZADA PARA MODO OSCURO
+   ===================================================== */
+.dark ::-webkit-scrollbar {
+  width: 8px;
+  height: 8px;
+}
+
+.dark ::-webkit-scrollbar-track {
+  background: var(--dark-bg-tertiary);
+}
+
+.dark ::-webkit-scrollbar-thumb {
+  background: var(--dark-border-secondary);
+  border-radius: 4px;
+}
+
+.dark ::-webkit-scrollbar-thumb:hover {
+  background: var(--dark-text-quaternary);
+}
+
+/* Firefox para modo oscuro */
+.dark * {
+  scrollbar-width: thin;
+  scrollbar-color: var(--dark-border-secondary) var(--dark-bg-tertiary);
+}

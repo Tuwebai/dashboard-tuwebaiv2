@@ -1,10 +1,21 @@
 import { Navigate } from 'react-router-dom';
 import { useApp } from '@/contexts/AppContext';
+import { useEffect, useState } from 'react';
 
 const Index = () => {
   const { isAuthenticated, loading } = useApp();
+  const [isReady, setIsReady] = useState(false);
 
-  if (loading) {
+  useEffect(() => {
+    // Pequeño delay para asegurar que el contexto esté listo
+    const timer = setTimeout(() => {
+      setIsReady(true);
+    }, 100);
+
+    return () => clearTimeout(timer);
+  }, []);
+
+  if (loading || !isReady) {
     return (
       <div className="min-h-screen flex items-center justify-center bg-gradient-to-br from-slate-900 via-purple-900 to-slate-900">
         <div className="text-center">

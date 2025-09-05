@@ -63,9 +63,17 @@ export const ThemeProvider: React.FC<ThemeProviderProps> = ({ children }) => {
   }, [isAuthenticated, user]);
 
   useEffect(() => {
-    // Aplicar tema al documento
-    document.documentElement.classList.remove('light', 'dark');
-    document.documentElement.classList.add(theme);
+    // Aplicar tema al documento con transición suave
+    const root = document.documentElement;
+    
+    // Remover clases anteriores
+    root.classList.remove('light', 'dark');
+    
+    // Agregar clase de transición
+    root.style.transition = 'background-color 0.3s ease, color 0.3s ease';
+    
+    // Aplicar nuevo tema
+    root.classList.add(theme);
     
     // Guardar en localStorage como fallback
     localStorage.setItem('theme', theme);
@@ -76,6 +84,11 @@ export const ThemeProvider: React.FC<ThemeProviderProps> = ({ children }) => {
         console.error('Error saving user theme:', error);
       });
     }
+    
+    // Remover transición después de aplicar el tema
+    setTimeout(() => {
+      root.style.transition = '';
+    }, 300);
   }, [theme, isAuthenticated, user, loading]);
 
   const toggleTheme = () => {

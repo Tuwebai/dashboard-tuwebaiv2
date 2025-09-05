@@ -7,9 +7,9 @@ import { useOptimizedAnimations, useFadeInOut, useScaleAnimation, useSlideAnimat
 
 interface OptimizedMotionProps {
   children: React.ReactNode;
-  initial?: 'hidden' | 'visible';
-  animate?: 'hidden' | 'visible';
-  exit?: 'hidden' | 'visible';
+  initial?: 'hidden' | 'visible' | { opacity?: number; y?: number; x?: number; scale?: number };
+  animate?: 'hidden' | 'visible' | { opacity?: number; y?: number; x?: number; scale?: number };
+  exit?: 'hidden' | 'visible' | { opacity?: number; y?: number; x?: number; scale?: number };
   transition?: {
     duration?: number;
     delay?: number;
@@ -18,6 +18,7 @@ interface OptimizedMotionProps {
   whileHover?: {
     scale?: number;
     y?: number;
+    x?: number;
     rotate?: number;
   };
   whileTap?: {
@@ -61,7 +62,7 @@ export const OptimizedMotion = React.memo(React.forwardRef<HTMLDivElement, Optim
     setShouldRender(true);
     
     // Solo ocultar si explícitamente se solicita
-    if (animate === 'hidden') {
+    if (animate === 'hidden' || (typeof animate === 'object' && animate.opacity === 0)) {
       setIsVisible(false);
       // Ocultar después de la animación
       timeoutRef.current = setTimeout(() => {
@@ -111,10 +112,25 @@ export const OptimizedMotion = React.memo(React.forwardRef<HTMLDivElement, Optim
     let translateX = 0;
     let rotate = 0;
 
+    // Aplicar transformaciones de initial
+    if (typeof initial === 'object' && initial) {
+      if (initial.scale) scale *= initial.scale;
+      if (initial.y) translateY += initial.y;
+      if (initial.x) translateX += initial.x;
+    }
+
+    // Aplicar transformaciones de animate
+    if (typeof animate === 'object' && animate) {
+      if (animate.scale) scale *= animate.scale;
+      if (animate.y) translateY += animate.y;
+      if (animate.x) translateX += animate.x;
+    }
+
     // Aplicar transformaciones de hover
     if (isHovered && whileHover) {
       if (whileHover.scale) scale *= whileHover.scale;
       if (whileHover.y) translateY += whileHover.y;
+      if (whileHover.x) translateX += whileHover.x;
       if (whileHover.rotate) rotate += whileHover.rotate;
     }
 
@@ -136,13 +152,30 @@ export const OptimizedMotion = React.memo(React.forwardRef<HTMLDivElement, Optim
     if (rotate !== 0) transform += `rotate(${rotate}deg) `;
 
     return transform.trim();
-  }, [isVisible, isHovered, isTapped, whileHover, whileTap]);
+  }, [isVisible, isHovered, isTapped, whileHover, whileTap, initial, animate]);
+
+  // Calcular opacidad basada en initial, animate y visibilidad
+  const getOpacity = useCallback(() => {
+    if (!isVisible) return 0;
+    
+    // Si animate es un objeto con opacity, usarlo
+    if (typeof animate === 'object' && animate.opacity !== undefined) {
+      return animate.opacity;
+    }
+    
+    // Si initial es un objeto con opacity, usarlo para el estado inicial
+    if (typeof initial === 'object' && initial.opacity !== undefined) {
+      return initial.opacity;
+    }
+    
+    return 1;
+  }, [isVisible, animate, initial]);
 
   // SIEMPRE renderizar el componente, solo ocultar con CSS
   const animationStyles: React.CSSProperties = {
     transition: `all ${duration}ms ${ease}`,
     transitionDelay: `${delay}ms`,
-    opacity: isVisible ? 1 : 0,
+    opacity: getOpacity(),
     transform: getTransformStyles(),
     ...style,
   };

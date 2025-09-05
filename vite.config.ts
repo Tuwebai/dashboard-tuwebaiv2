@@ -13,6 +13,16 @@ export default defineConfig({
   server: {
     port: 8083,
     host: true,
+    hmr: {
+      port: 8083,
+      host: 'localhost',
+      clientPort: 8083
+    },
+    watch: {
+      usePolling: false
+    },
+    cors: true,
+    strictPort: true
   },
   envPrefix: 'VITE_',
   build: {
