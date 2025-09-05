@@ -1,11 +1,11 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useCallback, useMemo } from 'react';
 import { useNavigate, Link } from 'react-router-dom';
 import { useApp } from '@/contexts/AppContext';
 import { useTheme } from '@/contexts/ThemeContext';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
-import { Card, CardContent } from '@/components/ui/card';
+import { Card } from '@/components/ui/card';
 import { toast } from '@/hooks/use-toast';
 import ThemeToggle from '@/components/ThemeToggle';
 import { 
@@ -14,7 +14,6 @@ import {
   Github, 
   Chrome, 
   Zap, 
-  ArrowRight, 
   CheckCircle, 
   BarChart3, 
   Users, 
@@ -25,14 +24,11 @@ import {
   Shield,
   Clock,
   Star,
-  ChevronRight,
-  Play,
-  Pause,
   RefreshCw,
   X
 } from 'lucide-react';
 
-export default function LandingPage() {
+const LandingPage = React.memo(() => {
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [showPassword, setShowPassword] = useState(false);
@@ -44,49 +40,59 @@ export default function LandingPage() {
   const { theme, toggleTheme } = useTheme();
   const navigate = useNavigate();
 
+  // Estilos CSS optimizados con useMemo
+  const cssStyles = useMemo(() => `
+    @keyframes slideUp {
+      from {
+        transform: translateY(100%);
+        opacity: 0;
+      }
+      to {
+        transform: translateY(0);
+        opacity: 1;
+      }
+    }
+    
+    @keyframes pulse {
+      0%, 100% {
+        opacity: 1;
+      }
+      50% {
+        opacity: 0.7;
+      }
+    }
+    
+    .animate-pulse {
+      animation: pulse 2s cubic-bezier(0.4, 0, 0.6, 1) infinite;
+    }
+  `, []);
+
   // Agregar estilos CSS para las animaciones
-  React.useEffect(() => {
+  useEffect(() => {
     const style = document.createElement('style');
-    style.textContent = `
-      @keyframes slideUp {
-        from {
-          transform: translateY(100%);
-          opacity: 0;
-        }
-        to {
-          transform: translateY(0);
-          opacity: 1;
-        }
-      }
-      
-      @keyframes pulse {
-        0%, 100% {
-          opacity: 1;
-        }
-        50% {
-          opacity: 0.7;
-        }
-      }
-      
-      .animate-pulse {
-        animation: pulse 2s cubic-bezier(0.4, 0, 0.6, 1) infinite;
-      }
-    `;
+    style.textContent = cssStyles;
     document.head.appendChild(style);
     
     return () => {
-      document.head.removeChild(style);
-    };
-  }, []);
-
-  // Manejar tecla ESC para cerrar modal
-  React.useEffect(() => {
-    const handleKeyDown = (event: KeyboardEvent) => {
-      if (event.key === 'Escape' && previewImage) {
-        closeImagePreview();
+      if (document.head.contains(style)) {
+        document.head.removeChild(style);
       }
     };
+  }, [cssStyles]);
 
+  // Callbacks optimizados
+  const closeImagePreview = useCallback(() => {
+    setPreviewImage(null);
+  }, []);
+
+  const handleKeyDown = useCallback((event: KeyboardEvent) => {
+    if (event.key === 'Escape' && previewImage) {
+      closeImagePreview();
+    }
+  }, [previewImage, closeImagePreview]);
+
+  // Manejar tecla ESC para cerrar modal
+  useEffect(() => {
     if (previewImage) {
       document.addEventListener('keydown', handleKeyDown);
       document.body.style.overflow = 'hidden';
@@ -96,82 +102,85 @@ export default function LandingPage() {
       document.removeEventListener('keydown', handleKeyDown);
       document.body.style.overflow = 'unset';
     };
-  }, [previewImage]);
+  }, [previewImage, handleKeyDown]);
 
-  // Auto-play demo
+  // Auto-play demo optimizado
+  const demos = useMemo(() => ['projects', 'analytics', 'team', 'settings'], []);
+  
   useEffect(() => {
-    if (isPlaying) {
-      const interval = setInterval(() => {
-        setActiveDemo(prev => {
-          const demos = ['projects', 'analytics', 'team', 'settings'];
-          const currentIndex = demos.indexOf(prev || '');
-          const nextIndex = (currentIndex + 1) % demos.length;
-          return demos[nextIndex];
-        });
-      }, 2000);
-      return () => clearInterval(interval);
-    }
-  }, [isPlaying]);
+    if (!isPlaying) return;
+    
+    const interval = setInterval(() => {
+      setActiveDemo(prev => {
+        const currentIndex = demos.indexOf(prev || '');
+        const nextIndex = (currentIndex + 1) % demos.length;
+        return demos[nextIndex];
+      });
+    }, 2000);
+    
+    return () => clearInterval(interval);
+  }, [isPlaying, demos]);
 
-  const handleSubmit = async (e: React.FormEvent) => {
+  const handleSubmit = useCallback(async (e: React.FormEvent) => {
     e.preventDefault();
     setIsLoading(true);
-    const success = await login(email, password);
-    if (success) {
-      if (email.toLowerCase() === 'tuwebai@gmail.com') {
-        navigate('/admin');
+    try {
+      const success = await login(email, password);
+      if (success) {
+        navigate(email.toLowerCase() === 'tuwebai@gmail.com' ? '/admin' : '/dashboard');
       } else {
-        navigate('/dashboard');
+        toast({
+          title: "Error",
+          description: "Credenciales inválidas o usuario no registrado.",
+          variant: "destructive",
+        });
       }
-    } else {
+    } catch (error) {
       toast({
         title: "Error",
-        description: "Credenciales inválidas o usuario no registrado.",
+        description: "Ocurrió un error inesperado.",
         variant: "destructive",
       });
+    } finally {
+      setIsLoading(false);
     }
-    setIsLoading(false);
-  };
+  }, [email, password, login, navigate]);
 
-  const handleGoogleLogin = async () => {
+  const handleGoogleLogin = useCallback(async () => {
     setIsLoading(true);
-    const success = await loginWithGoogle();
-    if (success) {
-      // OAuth redirige automáticamente
-    } else {
+    try {
+      await loginWithGoogle();
+    } catch (error) {
       toast({ title: 'Error', description: 'No se pudo iniciar sesión con Google.', variant: 'destructive' });
+    } finally {
+      setIsLoading(false);
     }
-    setIsLoading(false);
-  };
+  }, [loginWithGoogle]);
 
-  const handleGithubLogin = async () => {
+  const handleGithubLogin = useCallback(async () => {
     setIsLoading(true);
-    const success = await loginWithGithub();
-    if (success) {
-      // OAuth redirige automáticamente
-    } else {
+    try {
+      await loginWithGithub();
+    } catch (error) {
       toast({ title: 'Error', description: 'No se pudo iniciar sesión con GitHub.', variant: 'destructive' });
+    } finally {
+      setIsLoading(false);
     }
-    setIsLoading(false);
-  };
+  }, [loginWithGithub]);
 
-  const handleRegister = () => {
+  const handleRegister = useCallback(() => {
     navigate('/register');
-  };
+  }, [navigate]);
 
-  const handleDemoAction = (action: string) => {
+  const handleDemoAction = useCallback((action: string) => {
     setActiveDemo(action);
-  };
+  }, []);
 
-  const handleImagePreview = (imageSrc: string) => {
+  const handleImagePreview = useCallback((imageSrc: string) => {
     setPreviewImage(imageSrc);
-  };
+  }, []);
 
-  const closeImagePreview = () => {
-    setPreviewImage(null);
-  };
-
-  const demoCards = [
+  const demoCards = useMemo(() => [
     {
       id: 'projects',
       title: 'Gestión de Proyectos',
@@ -204,7 +213,7 @@ export default function LandingPage() {
       color: 'from-orange-500 to-orange-600',
       stats: { integrations: 5, notifications: 12, custom: 3 }
     }
-  ];
+  ], []);
 
   return (
     <div className="min-h-screen bg-background overflow-x-hidden" style={{ 
@@ -218,7 +227,7 @@ export default function LandingPage() {
           <div className="flex justify-between items-center h-16">
             <div className="flex items-center space-x-3">
               <div className="bg-gradient-to-r from-cyan-500 to-emerald-600 rounded-xl p-2">
-                <img src="/logoweb.jpg" alt="TuWebAI" className="h-8 w-8 object-contain rounded-lg" />
+                <img src="/logoweb.jpg" alt="TuWebAI" className="h-8 w-8 object-contain rounded-lg" loading="eager" />
               </div>
               <span className="text-xl font-bold bg-gradient-to-r from-foreground to-muted-foreground bg-clip-text text-transparent">
                 Dashboard - TuWebAI
@@ -426,6 +435,8 @@ export default function LandingPage() {
                       src="/dashboardadmin.png" 
                       alt="Dashboard Admin mostrando gestión de proyectos" 
                       className="w-full h-auto rounded-xl shadow-lg hover:scale-105 transition-transform duration-300"
+                      loading="lazy"
+                      decoding="async"
                     />
                   </div>
                 </div>
@@ -579,6 +590,8 @@ export default function LandingPage() {
                       src="/analisislandingpage.png" 
                       alt="Dashboard Cliente mostrando análisis y métricas" 
                       className="w-full h-auto rounded-xl shadow-lg hover:scale-105 transition-transform duration-300"
+                      loading="lazy"
+                      decoding="async"
                     />
                   </div>
                 </div>
@@ -1352,7 +1365,7 @@ export default function LandingPage() {
             <div className="space-y-4">
               <div className="flex items-center space-x-3">
                 <div className="bg-gradient-to-r from-cyan-500 to-emerald-600 rounded-xl p-2">
-                  <img src="/logoweb.jpg" alt="TuWebAI" className="h-8 w-8 object-contain rounded-lg" />
+                  <img src="/logoweb.jpg" alt="TuWebAI" className="h-8 w-8 object-contain rounded-lg" loading="lazy" />
                 </div>
                 <span className="text-xl font-bold">Dashboard TuWebAI</span>
               </div>
@@ -1413,6 +1426,8 @@ export default function LandingPage() {
                 src={previewImage}
                 alt="Vista previa del dashboard"
                 className="max-w-full max-h-[80vh] rounded-xl"
+                loading="eager"
+                decoding="async"
               />
             </div>
             <div className="mt-4 text-center">
@@ -1426,4 +1441,8 @@ export default function LandingPage() {
 
     </div>
   );
-}
+});
+
+LandingPage.displayName = 'LandingPage';
+
+export default LandingPage;
