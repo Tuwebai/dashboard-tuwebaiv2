@@ -221,7 +221,7 @@ export default function LandingPage() {
                 <img src="/logoweb.jpg" alt="TuWebAI" className="h-8 w-8 object-contain rounded-lg" />
               </div>
               <span className="text-xl font-bold bg-gradient-to-r from-foreground to-muted-foreground bg-clip-text text-transparent">
-                TuWebAI
+                Dashboard - TuWebAI
               </span>
             </div>
             <div className="flex items-center space-x-4">
@@ -743,83 +743,83 @@ export default function LandingPage() {
       </section>
 
       {/* Dashboard Interactivo Real */}
-      <section className="py-24 bg-gradient-to-br from-gray-50 to-white">
+      <section className={`py-24 transition-colors duration-300 ${theme === 'dark' ? 'bg-gradient-to-br from-slate-900 to-slate-800' : 'bg-gradient-to-br from-gray-50 to-white'}`}>
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="text-center mb-16">
-            <h2 className="text-5xl font-bold text-gray-900 mb-4">
+            <h2 className={`text-5xl font-bold mb-4 transition-colors duration-300 ${theme === 'dark' ? 'text-white' : 'text-gray-900'}`}>
               Prueba el dashboard 
               <span className="bg-gradient-to-r from-cyan-600 to-blue-600 bg-clip-text text-transparent"> en vivo</span>
             </h2>
-            <p className="text-xl text-gray-600 max-w-3xl mx-auto">
+            <p className={`text-xl max-w-3xl mx-auto transition-colors duration-300 ${theme === 'dark' ? 'text-slate-300' : 'text-gray-600'}`}>
               Explora nuestro dashboard con datos simulados y descubre todas las funcionalidades disponibles.
             </p>
           </div>
 
           {/* Dashboard Interactivo */}
-          <div className={`rounded-2xl shadow-2xl border overflow-hidden transition-colors duration-300 ${theme === 'dark' ? 'bg-gray-900 border-gray-700' : 'bg-white border-gray-200'}`}>
+          <div className={`rounded-2xl overflow-hidden transition-all duration-300 ${theme === 'dark' ? 'bg-slate-900 border-2 border-slate-700 shadow-2xl shadow-slate-900/50' : 'bg-white border border-gray-200 shadow-2xl'}`}>
             {/* Header del Dashboard */}
-            <div className="bg-gradient-to-r from-gray-900 to-gray-800 px-6 py-4">
+            <div className={`px-6 py-4 transition-colors duration-300 ${theme === 'dark' ? 'bg-gradient-to-r from-slate-800 to-slate-700 border-b border-slate-600' : 'bg-gradient-to-r from-gray-900 to-gray-800'}`}>
               <div className="flex items-center justify-between">
                 <div className="flex items-center space-x-3">
-                  <div className="w-8 h-8 bg-gradient-to-r from-cyan-500 to-emerald-600 rounded-lg flex items-center justify-center">
+                  <div className="w-8 h-8 bg-gradient-to-r from-cyan-500 to-emerald-600 rounded-lg flex items-center justify-center shadow-lg">
                     <span className="text-white font-bold text-sm">T</span>
                   </div>
                   <div>
-                    <h3 className="text-white font-semibold">TuWebAI Dashboard</h3>
-                    <p className="text-gray-300 text-sm">Demo Interactivo</p>
+                    <h3 className={`font-semibold transition-colors duration-300 ${theme === 'dark' ? 'text-white' : 'text-white'}`}>TuWebAI Dashboard</h3>
+                    <p className={`text-sm transition-colors duration-300 ${theme === 'dark' ? 'text-slate-300' : 'text-gray-300'}`}>Demo Interactivo</p>
                   </div>
                 </div>
                 <div className="flex items-center space-x-2">
-                  <div className="w-3 h-3 bg-red-500 rounded-full"></div>
-                  <div className="w-3 h-3 bg-yellow-500 rounded-full"></div>
-                  <div className="w-3 h-3 bg-green-500 rounded-full"></div>
+                  <div className="w-3 h-3 bg-red-500 rounded-full shadow-sm"></div>
+                  <div className="w-3 h-3 bg-yellow-500 rounded-full shadow-sm"></div>
+                  <div className="w-3 h-3 bg-green-500 rounded-full shadow-sm"></div>
                 </div>
               </div>
             </div>
 
             {/* Contenido del Dashboard */}
-            <div className={`p-6 transition-colors duration-300 ${theme === 'dark' ? 'bg-gray-900' : 'bg-white'}`}>
+            <div className={`p-6 transition-colors duration-300 ${theme === 'dark' ? 'bg-slate-900' : 'bg-white'}`}>
               {/* Sidebar y Main Content */}
               <div className="grid lg:grid-cols-4 gap-6">
                 {/* Sidebar */}
                 <div className="lg:col-span-1">
                   <div className="space-y-4">
-                    <div className={`rounded-lg p-4 transition-colors duration-300 ${theme === 'dark' ? 'bg-gray-800' : 'bg-gray-50'}`}>
+                    <div className={`rounded-lg p-4 transition-colors duration-300 ${theme === 'dark' ? 'bg-slate-800 border border-slate-700 shadow-lg' : 'bg-gray-50'}`}>
                       <div className="flex items-center space-x-3 mb-3">
-                        <div className="w-8 h-8 bg-green-500 rounded-full flex items-center justify-center">
+                        <div className="w-8 h-8 bg-green-500 rounded-full flex items-center justify-center shadow-md">
                           <span className="text-white font-bold text-sm">E</span>
                         </div>
                         <div>
                           <p className={`font-medium transition-colors duration-300 ${theme === 'dark' ? 'text-white' : 'text-gray-900'}`}>Usuario Demo</p>
-                          <p className={`text-sm transition-colors duration-300 ${theme === 'dark' ? 'text-gray-400' : 'text-gray-500'}`}>demo@tuwebai.com</p>
+                          <p className={`text-sm transition-colors duration-300 ${theme === 'dark' ? 'text-slate-400' : 'text-gray-500'}`}>demo@tuwebai.com</p>
                         </div>
                       </div>
                     </div>
                     
                     <nav className="space-y-2">
                       <button 
-                        className={`w-full flex items-center space-x-3 px-3 py-2 text-left rounded-lg transition-colors ${activeDemo === 'dashboard' ? (theme === 'dark' ? 'bg-blue-900 text-blue-300' : 'bg-blue-50 text-blue-700') : (theme === 'dark' ? 'text-gray-400 hover:bg-gray-800' : 'text-gray-600 hover:bg-gray-50')}`}
+                        className={`w-full flex items-center space-x-3 px-3 py-2 text-left rounded-lg transition-all duration-200 ${activeDemo === 'dashboard' ? (theme === 'dark' ? 'bg-blue-900/50 text-blue-300 border border-blue-700 shadow-md' : 'bg-blue-50 text-blue-700') : (theme === 'dark' ? 'text-slate-400 hover:bg-slate-800 hover:text-slate-200 border border-transparent hover:border-slate-600' : 'text-gray-600 hover:bg-gray-50')}`}
                         onClick={() => handleDemoAction('dashboard')}
                       >
                         <Target className="h-4 w-4" />
                         <span className="text-sm font-medium">Dashboard</span>
                       </button>
                       <button 
-                        className={`w-full flex items-center space-x-3 px-3 py-2 text-left rounded-lg transition-colors ${activeDemo === 'projects' ? (theme === 'dark' ? 'bg-blue-900 text-blue-300' : 'bg-blue-50 text-blue-700') : (theme === 'dark' ? 'text-gray-400 hover:bg-gray-800' : 'text-gray-600 hover:bg-gray-50')}`}
+                        className={`w-full flex items-center space-x-3 px-3 py-2 text-left rounded-lg transition-all duration-200 ${activeDemo === 'projects' ? (theme === 'dark' ? 'bg-blue-900/50 text-blue-300 border border-blue-700 shadow-md' : 'bg-blue-50 text-blue-700') : (theme === 'dark' ? 'text-slate-400 hover:bg-slate-800 hover:text-slate-200 border border-transparent hover:border-slate-600' : 'text-gray-600 hover:bg-gray-50')}`}
                         onClick={() => handleDemoAction('projects')}
                       >
                         <BarChart3 className="h-4 w-4" />
                         <span className="text-sm">Proyectos</span>
                       </button>
                       <button 
-                        className={`w-full flex items-center space-x-3 px-3 py-2 text-left rounded-lg transition-colors ${activeDemo === 'team' ? (theme === 'dark' ? 'bg-blue-900 text-blue-300' : 'bg-blue-50 text-blue-700') : (theme === 'dark' ? 'text-gray-400 hover:bg-gray-800' : 'text-gray-600 hover:bg-gray-50')}`}
+                        className={`w-full flex items-center space-x-3 px-3 py-2 text-left rounded-lg transition-all duration-200 ${activeDemo === 'team' ? (theme === 'dark' ? 'bg-blue-900/50 text-blue-300 border border-blue-700 shadow-md' : 'bg-blue-50 text-blue-700') : (theme === 'dark' ? 'text-slate-400 hover:bg-slate-800 hover:text-slate-200 border border-transparent hover:border-slate-600' : 'text-gray-600 hover:bg-gray-50')}`}
                         onClick={() => handleDemoAction('team')}
                       >
                         <Users className="h-4 w-4" />
                         <span className="text-sm">Equipo</span>
                       </button>
                       <button 
-                        className={`w-full flex items-center space-x-3 px-3 py-2 text-left rounded-lg transition-colors ${activeDemo === 'settings' ? (theme === 'dark' ? 'bg-blue-900 text-blue-300' : 'bg-blue-50 text-blue-700') : (theme === 'dark' ? 'text-gray-400 hover:bg-gray-800' : 'text-gray-600 hover:bg-gray-50')}`}
+                        className={`w-full flex items-center space-x-3 px-3 py-2 text-left rounded-lg transition-all duration-200 ${activeDemo === 'settings' ? (theme === 'dark' ? 'bg-blue-900/50 text-blue-300 border border-blue-700 shadow-md' : 'bg-blue-50 text-blue-700') : (theme === 'dark' ? 'text-slate-400 hover:bg-slate-800 hover:text-slate-200 border border-transparent hover:border-slate-600' : 'text-gray-600 hover:bg-gray-50')}`}
                         onClick={() => handleDemoAction('settings')}
                       >
                         <Settings className="h-4 w-4" />
@@ -840,17 +840,17 @@ export default function LandingPage() {
 
                     {/* Stats Cards */}
                     <div className="grid grid-cols-2 lg:grid-cols-4 gap-4">
-                      <div className={`rounded-lg p-4 hover:shadow-lg transition-all duration-300 ${theme === 'dark' ? 'bg-gradient-to-br from-blue-900/20 to-blue-800/20 border border-blue-700/30' : 'bg-gradient-to-br from-blue-50 to-blue-100'}`}>
+                      <div className={`rounded-lg p-4 hover:shadow-lg transition-all duration-300 ${theme === 'dark' ? 'bg-gradient-to-br from-blue-900/30 to-blue-800/30 border border-blue-700/50 shadow-lg shadow-blue-900/20' : 'bg-gradient-to-br from-blue-50 to-blue-100'}`}>
                         <div className="flex items-center justify-between mb-2">
                           <Target className={`h-6 w-6 transition-colors duration-300 ${theme === 'dark' ? 'text-blue-400' : 'text-blue-600'}`} />
-                          <div className="w-3 h-3 bg-green-500 rounded-full animate-pulse"></div>
+                          <div className="w-3 h-3 bg-green-500 rounded-full animate-pulse shadow-sm"></div>
                         </div>
                         <div className={`text-2xl font-bold transition-colors duration-300 ${theme === 'dark' ? 'text-white' : 'text-blue-900'}`}>12</div>
                         <div className={`text-sm transition-colors duration-300 ${theme === 'dark' ? 'text-blue-300' : 'text-blue-700'}`}>Proyectos Activos</div>
                         <div className={`text-xs mt-1 transition-colors duration-300 ${theme === 'dark' ? 'text-blue-400' : 'text-blue-600'}`}>+3 este mes</div>
                       </div>
 
-                      <div className={`rounded-lg p-4 hover:shadow-lg transition-all duration-300 ${theme === 'dark' ? 'bg-gradient-to-br from-green-900/20 to-green-800/20 border border-green-700/30' : 'bg-gradient-to-br from-green-50 to-green-100'}`}>
+                      <div className={`rounded-lg p-4 hover:shadow-lg transition-all duration-300 ${theme === 'dark' ? 'bg-gradient-to-br from-green-900/30 to-green-800/30 border border-green-700/50 shadow-lg shadow-green-900/20' : 'bg-gradient-to-br from-green-50 to-green-100'}`}>
                         <div className="flex items-center justify-between mb-2">
                           <TrendingUp className={`h-6 w-6 transition-colors duration-300 ${theme === 'dark' ? 'text-green-400' : 'text-green-600'}`} />
                           <div className="w-3 h-3 bg-green-500 rounded-full animate-pulse"></div>
@@ -860,7 +860,7 @@ export default function LandingPage() {
                         <div className={`text-xs mt-1 transition-colors duration-300 ${theme === 'dark' ? 'text-green-400' : 'text-green-600'}`}>+2 esta semana</div>
                       </div>
 
-                      <div className={`rounded-lg p-4 hover:shadow-lg transition-all duration-300 ${theme === 'dark' ? 'bg-gradient-to-br from-orange-900/20 to-orange-800/20 border border-orange-700/30' : 'bg-gradient-to-br from-orange-50 to-orange-100'}`}>
+                      <div className={`rounded-lg p-4 hover:shadow-lg transition-all duration-300 ${theme === 'dark' ? 'bg-gradient-to-br from-orange-900/30 to-orange-800/30 border border-orange-700/50 shadow-lg shadow-orange-900/20' : 'bg-gradient-to-br from-orange-50 to-orange-100'}`}>
                         <div className="flex items-center justify-between mb-2">
                           <Users className={`h-6 w-6 transition-colors duration-300 ${theme === 'dark' ? 'text-orange-400' : 'text-orange-600'}`} />
                           <div className="w-3 h-3 bg-green-500 rounded-full animate-pulse"></div>
@@ -870,7 +870,7 @@ export default function LandingPage() {
                         <div className={`text-xs mt-1 transition-colors duration-300 ${theme === 'dark' ? 'text-orange-400' : 'text-orange-600'}`}>+5 hoy</div>
                       </div>
 
-                      <div className={`rounded-lg p-4 hover:shadow-lg transition-all duration-300 ${theme === 'dark' ? 'bg-gradient-to-br from-purple-900/20 to-purple-800/20 border border-purple-700/30' : 'bg-gradient-to-br from-purple-50 to-purple-100'}`}>
+                      <div className={`rounded-lg p-4 hover:shadow-lg transition-all duration-300 ${theme === 'dark' ? 'bg-gradient-to-br from-purple-900/30 to-purple-800/30 border border-purple-700/50 shadow-lg shadow-purple-900/20' : 'bg-gradient-to-br from-purple-50 to-purple-100'}`}>
                         <div className="flex items-center justify-between mb-2">
                           <Activity className={`h-6 w-6 transition-colors duration-300 ${theme === 'dark' ? 'text-purple-400' : 'text-purple-600'}`} />
                           <div className="w-3 h-3 bg-green-500 rounded-full animate-pulse"></div>
@@ -883,7 +883,7 @@ export default function LandingPage() {
 
                     {/* Interactive Demo Panel */}
                     {activeDemo && (
-                      <div className={`rounded-lg p-6 border transition-colors duration-300 ${theme === 'dark' ? 'bg-gray-800 border-gray-700' : 'bg-gray-50 border-gray-200'}`}>
+                      <div className={`rounded-lg p-6 border transition-colors duration-300 ${theme === 'dark' ? 'bg-slate-800 border-slate-600 shadow-lg shadow-slate-900/50' : 'bg-gray-50 border-gray-200'}`}>
                         <div className="flex items-center justify-between mb-4">
                           <h3 className={`text-lg font-semibold transition-colors duration-300 ${theme === 'dark' ? 'text-white' : 'text-gray-900'}`}>
                             {demoCards.find(card => card.id === activeDemo)?.title} - Demo Interactivo
@@ -901,7 +901,7 @@ export default function LandingPage() {
                             {/* Widgets del Dashboard */}
                             <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
                               {/* Widget de Actividad Reciente */}
-                              <div className={`rounded-lg p-4 shadow-sm transition-colors duration-300 ${theme === 'dark' ? 'bg-gray-700' : 'bg-white'}`}>
+                              <div className={`rounded-lg p-4 shadow-sm transition-colors duration-300 ${theme === 'dark' ? 'bg-slate-700 border border-slate-600' : 'bg-white'}`}>
                                 <div className="flex items-center justify-between mb-3">
                                   <h4 className={`font-semibold transition-colors duration-300 ${theme === 'dark' ? 'text-white' : 'text-gray-900'}`}>Actividad Reciente</h4>
                                   <div className="w-2 h-2 bg-green-500 rounded-full animate-pulse"></div>
@@ -923,7 +923,7 @@ export default function LandingPage() {
                               </div>
 
                               {/* Widget de Progreso de Proyectos */}
-                              <div className={`rounded-lg p-4 shadow-sm transition-colors duration-300 ${theme === 'dark' ? 'bg-gray-700' : 'bg-white'}`}>
+                              <div className={`rounded-lg p-4 shadow-sm transition-colors duration-300 ${theme === 'dark' ? 'bg-slate-700 border border-slate-600' : 'bg-white'}`}>
                                 <div className="flex items-center justify-between mb-3">
                                   <h4 className={`font-semibold transition-colors duration-300 ${theme === 'dark' ? 'text-white' : 'text-gray-900'}`}>Progreso de Proyectos</h4>
                                   <span className="text-xs text-green-600 font-medium">+15%</span>
@@ -960,7 +960,7 @@ export default function LandingPage() {
                               </div>
 
                               {/* Widget de Equipo */}
-                              <div className={`rounded-lg p-4 shadow-sm transition-colors duration-300 ${theme === 'dark' ? 'bg-gray-700' : 'bg-white'}`}>
+                              <div className={`rounded-lg p-4 shadow-sm transition-colors duration-300 ${theme === 'dark' ? 'bg-slate-700 border border-slate-600' : 'bg-white'}`}>
                                 <div className="flex items-center justify-between mb-3">
                                   <h4 className={`font-semibold transition-colors duration-300 ${theme === 'dark' ? 'text-white' : 'text-gray-900'}`}>Equipo Activo</h4>
                                   <span className="text-xs text-green-600 font-medium">3 en línea</span>
@@ -1153,7 +1153,7 @@ export default function LandingPage() {
                         {activeDemo === 'projects' && (
                           <div className="space-y-4">
                             <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                              <div className={`rounded-lg p-4 shadow-sm transition-colors duration-300 ${theme === 'dark' ? 'bg-gray-700' : 'bg-white'}`}>
+                              <div className={`rounded-lg p-4 shadow-sm transition-colors duration-300 ${theme === 'dark' ? 'bg-slate-700 border border-slate-600' : 'bg-white'}`}>
                                 <h4 className={`font-medium mb-2 transition-colors duration-300 ${theme === 'dark' ? 'text-white' : 'text-gray-900'}`}>Proyectos Recientes</h4>
                                 <div className="space-y-2">
                                   <div className="flex items-center justify-between">
@@ -1170,7 +1170,7 @@ export default function LandingPage() {
                                   </div>
                                 </div>
                               </div>
-                              <div className={`rounded-lg p-4 shadow-sm transition-colors duration-300 ${theme === 'dark' ? 'bg-gray-700' : 'bg-white'}`}>
+                              <div className={`rounded-lg p-4 shadow-sm transition-colors duration-300 ${theme === 'dark' ? 'bg-slate-700 border border-slate-600' : 'bg-white'}`}>
                                 <h4 className={`font-medium mb-2 transition-colors duration-300 ${theme === 'dark' ? 'text-white' : 'text-gray-900'}`}>Estadísticas</h4>
                                 <div className="space-y-2">
                                   <div className="flex justify-between">
@@ -1223,7 +1223,7 @@ export default function LandingPage() {
                         {activeDemo === 'team' && (
                           <div className="space-y-4">
                             <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                              <div className={`rounded-lg p-4 shadow-sm transition-colors duration-300 ${theme === 'dark' ? 'bg-gray-700' : 'bg-white'}`}>
+                              <div className={`rounded-lg p-4 shadow-sm transition-colors duration-300 ${theme === 'dark' ? 'bg-slate-700 border border-slate-600' : 'bg-white'}`}>
                                 <h4 className={`font-medium mb-3 transition-colors duration-300 ${theme === 'dark' ? 'text-white' : 'text-gray-900'}`}>Miembros del Equipo</h4>
                                 <div className="space-y-2">
                                   <div className="flex items-center space-x-3">
@@ -1255,7 +1255,7 @@ export default function LandingPage() {
                                   </div>
                                 </div>
                               </div>
-                              <div className={`rounded-lg p-4 shadow-sm transition-colors duration-300 ${theme === 'dark' ? 'bg-gray-700' : 'bg-white'}`}>
+                              <div className={`rounded-lg p-4 shadow-sm transition-colors duration-300 ${theme === 'dark' ? 'bg-slate-700 border border-slate-600' : 'bg-white'}`}>
                                 <h4 className={`font-medium mb-3 transition-colors duration-300 ${theme === 'dark' ? 'text-white' : 'text-gray-900'}`}>Actividad Reciente</h4>
                                 <div className="space-y-2">
                                   <div className={`text-sm transition-colors duration-300 ${theme === 'dark' ? 'text-gray-300' : 'text-gray-600'}`}>✅ Ana completó el diseño</div>
@@ -1271,7 +1271,7 @@ export default function LandingPage() {
                         {activeDemo === 'settings' && (
                           <div className="space-y-4">
                             <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                              <div className={`rounded-lg p-4 shadow-sm transition-colors duration-300 ${theme === 'dark' ? 'bg-gray-700' : 'bg-white'}`}>
+                              <div className={`rounded-lg p-4 shadow-sm transition-colors duration-300 ${theme === 'dark' ? 'bg-slate-700 border border-slate-600' : 'bg-white'}`}>
                                 <h4 className={`font-medium mb-3 transition-colors duration-300 ${theme === 'dark' ? 'text-white' : 'text-gray-900'}`}>Configuración General</h4>
                                 <div className="space-y-3">
                                   <div className="flex items-center justify-between">
@@ -1297,7 +1297,7 @@ export default function LandingPage() {
                                   </div>
                                 </div>
                               </div>
-                              <div className={`rounded-lg p-4 shadow-sm transition-colors duration-300 ${theme === 'dark' ? 'bg-gray-700' : 'bg-white'}`}>
+                              <div className={`rounded-lg p-4 shadow-sm transition-colors duration-300 ${theme === 'dark' ? 'bg-slate-700 border border-slate-600' : 'bg-white'}`}>
                                 <h4 className={`font-medium mb-3 transition-colors duration-300 ${theme === 'dark' ? 'text-white' : 'text-gray-900'}`}>Integraciones</h4>
                                 <div className="space-y-2">
                                   <div className="flex items-center justify-between">
@@ -1321,7 +1321,7 @@ export default function LandingPage() {
                     )}
 
                     {/* Call to Action */}
-                    <div className={`text-center rounded-lg p-8 transition-colors duration-300 ${theme === 'dark' ? 'bg-gradient-to-r from-gray-800 to-gray-700' : 'bg-gradient-to-r from-cyan-50 to-blue-50'}`}>
+                    <div className={`text-center rounded-lg p-8 transition-colors duration-300 ${theme === 'dark' ? 'bg-gradient-to-r from-slate-800 to-slate-700 border border-slate-600 shadow-lg shadow-slate-900/50' : 'bg-gradient-to-r from-cyan-50 to-blue-50'}`}>
                       <h3 className={`text-2xl font-bold mb-2 transition-colors duration-300 ${theme === 'dark' ? 'text-white' : 'text-gray-900'}`}>
                         ¿Listo para comenzar?
                       </h3>
@@ -1354,7 +1354,7 @@ export default function LandingPage() {
                 <div className="bg-gradient-to-r from-cyan-500 to-emerald-600 rounded-xl p-2">
                   <img src="/logoweb.jpg" alt="TuWebAI" className="h-8 w-8 object-contain rounded-lg" />
                 </div>
-                <span className="text-xl font-bold">TuWebAI</span>
+                <span className="text-xl font-bold">Dashboard TuWebAI</span>
               </div>
               <p className="text-gray-400">
                 La plataforma de gestión de proyectos más avanzada para equipos modernos.
