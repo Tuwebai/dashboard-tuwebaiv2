@@ -416,23 +416,23 @@ export default function Perfil() {
   }
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-slate-50 via-blue-50/30 to-indigo-50/30">
+    <div className="min-h-screen bg-gradient-to-br from-slate-50 via-blue-50/30 to-indigo-50/30 dark:from-slate-900 dark:via-slate-800/50 dark:to-slate-900">
       <div className="p-6 max-w-7xl mx-auto space-y-6">
         {/* Header con diseño claro */}
-        <div className="bg-card rounded-2xl p-6 shadow-lg border border-border/50">
+        <div className="bg-card dark:bg-slate-800/50 rounded-2xl p-6 shadow-lg border border-border/50 dark:border-slate-700/50">
           <div className="flex flex-col lg:flex-row lg:items-center justify-between gap-4">
             <div>
-              <h1 className="text-3xl font-bold text-slate-800">Mi Perfil</h1>
-              <p className="text-slate-600 mt-2">
+              <h1 className="text-3xl font-bold text-slate-800 dark:text-white">Mi Perfil</h1>
+              <p className="text-slate-600 dark:text-slate-300 mt-2">
                 Gestiona tu información personal y configuración
               </p>
             </div>
             <div className="flex items-center gap-4">
-              <div className="flex items-center gap-2 text-sm text-slate-600">
+              <div className="flex items-center gap-2 text-sm text-slate-600 dark:text-slate-300">
                 <User className="h-4 w-4" />
                 <span>Proyectos: {getUserProjects().length}</span>
               </div>
-              <Badge variant="secondary" className="bg-green-100 text-green-700 border-green-200">
+              <Badge variant="secondary" className="bg-green-100 text-green-700 border-green-200 dark:bg-green-900/20 dark:text-green-300 dark:border-green-700/50">
                 Miembro desde {new Date(user.created_at || Date.now()).toLocaleDateString('es-ES')}
               </Badge>
             </div>
@@ -443,16 +443,16 @@ export default function Perfil() {
           {/* Columna izquierda - Información personal */}
           <div className="lg:col-span-2 space-y-6">
             {/* Información Personal */}
-            <Card className="bg-card rounded-2xl shadow-lg border border-border/50">
+            <Card className="bg-card dark:bg-slate-800/50 rounded-2xl shadow-lg border border-border/50 dark:border-slate-700/50">
               <CardHeader className="pb-4">
                 <div className="flex items-center justify-between">
                   <div className="flex items-center gap-3">
-                    <div className="p-2 bg-blue-100 rounded-xl">
-                      <User className="h-5 w-5 text-blue-600" />
+                    <div className="p-2 bg-blue-100 dark:bg-blue-900/20 rounded-xl">
+                      <User className="h-5 w-5 text-blue-600 dark:text-blue-400" />
                     </div>
                     <div>
-                      <CardTitle className="text-xl text-slate-800">Información Personal</CardTitle>
-                      <CardDescription className="text-slate-600">
+                      <CardTitle className="text-xl text-slate-800 dark:text-white">Información Personal</CardTitle>
+                      <CardDescription className="text-slate-600 dark:text-slate-300">
                         Actualiza tu información personal y de contacto
                       </CardDescription>
                     </div>
@@ -461,7 +461,7 @@ export default function Perfil() {
                     variant="outline"
                     size="sm"
                     onClick={() => setIsEditing(!isEditing)}
-                    className="border-border text-foreground hover:bg-muted/50"
+                    className="border-border text-foreground hover:bg-muted/50 dark:border-slate-600 dark:text-slate-300 dark:hover:bg-slate-700/50"
                   >
                     {isEditing ? <X className="h-4 w-4 mr-2" /> : <Edit3 className="h-4 w-4 mr-2" />}
                     {isEditing ? 'Cancelar' : 'Editar'}
@@ -471,7 +471,7 @@ export default function Perfil() {
               <CardContent className="space-y-4">
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                   <div className="space-y-2">
-                    <Label htmlFor="name" className="text-sm font-medium text-foreground">
+                    <Label htmlFor="name" className="text-sm font-medium text-foreground dark:text-slate-300">
                       Nombre completo
                     </Label>
                     <Input
@@ -480,11 +480,11 @@ export default function Perfil() {
                       onChange={(e) => setProfileData({...profileData, name: e.target.value})}
                       placeholder="Tu nombre completo"
                       disabled={!isEditing}
-                      className="border-border focus:border-blue-500 focus:ring-blue-500"
+                      className="border-border focus:border-blue-500 focus:ring-blue-500 dark:border-slate-600 dark:bg-slate-700 dark:text-white dark:focus:border-blue-400 dark:focus:ring-blue-500/20"
                     />
                   </div>
                   <div className="space-y-2">
-                    <Label htmlFor="email" className="text-sm font-medium text-foreground">
+                    <Label htmlFor="email" className="text-sm font-medium text-foreground dark:text-slate-300">
                       Email
                     </Label>
                     <Input
@@ -493,11 +493,11 @@ export default function Perfil() {
                       onChange={(e) => setProfileData({...profileData, email: e.target.value})}
                       placeholder="tuemail@ejemplo.com"
                       disabled={!isEditing}
-                      className="border-border focus:border-blue-500 focus:ring-blue-500"
+                      className="border-border focus:border-blue-500 focus:ring-blue-500 dark:border-slate-600 dark:bg-slate-700 dark:text-white dark:focus:border-blue-400 dark:focus:ring-blue-500/20"
                     />
                   </div>
                   <div className="space-y-2">
-                    <Label htmlFor="phone" className="text-sm font-medium text-foreground">
+                    <Label htmlFor="phone" className="text-sm font-medium text-foreground dark:text-slate-300">
                       Teléfono
                     </Label>
                     <Input
@@ -506,11 +506,11 @@ export default function Perfil() {
                       onChange={(e) => setProfileData({...profileData, phone: e.target.value})}
                       placeholder="+54 9 11 1234-5678"
                       disabled={!isEditing}
-                      className="border-border focus:border-blue-500 focus:ring-blue-500"
+                      className="border-border focus:border-blue-500 focus:ring-blue-500 dark:border-slate-600 dark:bg-slate-700 dark:text-white dark:focus:border-blue-400 dark:focus:ring-blue-500/20"
                     />
                   </div>
                   <div className="space-y-2">
-                    <Label htmlFor="company" className="text-sm font-medium text-foreground">
+                    <Label htmlFor="company" className="text-sm font-medium text-foreground dark:text-slate-300">
                       Empresa
                     </Label>
                     <Input
@@ -519,11 +519,11 @@ export default function Perfil() {
                       onChange={(e) => setProfileData({...profileData, company: e.target.value})}
                       placeholder="Nombre de tu empresa"
                       disabled={!isEditing}
-                      className="border-border focus:border-blue-500 focus:ring-blue-500"
+                      className="border-border focus:border-blue-500 focus:ring-blue-500 dark:border-slate-600 dark:bg-slate-700 dark:text-white dark:focus:border-blue-400 dark:focus:ring-blue-500/20"
                     />
                   </div>
                   <div className="space-y-2">
-                    <Label htmlFor="position" className="text-sm font-medium text-foreground">
+                    <Label htmlFor="position" className="text-sm font-medium text-foreground dark:text-slate-300">
                       Cargo
                     </Label>
                     <Input
@@ -532,11 +532,11 @@ export default function Perfil() {
                       onChange={(e) => setProfileData({...profileData, position: e.target.value})}
                       placeholder="Tu cargo o posición"
                       disabled={!isEditing}
-                      className="border-border focus:border-blue-500 focus:ring-blue-500"
+                      className="border-border focus:border-blue-500 focus:ring-blue-500 dark:border-slate-600 dark:bg-slate-700 dark:text-white dark:focus:border-blue-400 dark:focus:ring-blue-500/20"
                     />
                   </div>
                   <div className="space-y-2">
-                    <Label htmlFor="location" className="text-sm font-medium text-foreground">
+                    <Label htmlFor="location" className="text-sm font-medium text-foreground dark:text-slate-300">
                       Ubicación
                     </Label>
                     <Input
@@ -545,12 +545,12 @@ export default function Perfil() {
                       onChange={(e) => setProfileData({...profileData, location: e.target.value})}
                       placeholder="Ciudad, País"
                       disabled={!isEditing}
-                      className="border-border focus:border-blue-500 focus:ring-blue-500"
+                      className="border-border focus:border-blue-500 focus:ring-blue-500 dark:border-slate-600 dark:bg-slate-700 dark:text-white dark:focus:border-blue-400 dark:focus:ring-blue-500/20"
                     />
                   </div>
                 </div>
                 <div className="space-y-2">
-                  <Label htmlFor="website" className="text-sm font-medium text-foreground">
+                  <Label htmlFor="website" className="text-sm font-medium text-foreground dark:text-slate-300">
                     Sitio web
                   </Label>
                   <Input
@@ -563,7 +563,7 @@ export default function Perfil() {
                   />
                 </div>
                 <div className="space-y-2">
-                  <Label htmlFor="bio" className="text-sm font-medium text-foreground">
+                  <Label htmlFor="bio" className="text-sm font-medium text-foreground dark:text-slate-300">
                     Biografía
                   </Label>
                   <Textarea
@@ -596,16 +596,16 @@ export default function Perfil() {
             </Card>
 
             {/* Seguridad - Acordeón Completo */}
-            <Card className="bg-card rounded-2xl shadow-lg border border-border/50">
+            <Card className="bg-card dark:bg-slate-800/50 rounded-2xl shadow-lg border border-border/50 dark:border-slate-700/50">
               <CardHeader className="pb-4">
                 <div className="flex items-center justify-between">
                   <div className="flex items-center gap-3">
-                    <div className="p-2 bg-green-100 rounded-xl">
-                      <Shield className="h-5 w-5 text-green-600" />
+                    <div className="p-2 bg-green-100 dark:bg-green-900/20 rounded-xl">
+                      <Shield className="h-5 w-5 text-green-600 dark:text-green-400" />
                     </div>
                     <div>
-                      <CardTitle className="text-xl text-slate-800">Seguridad</CardTitle>
-                      <CardDescription className="text-slate-600">
+                      <CardTitle className="text-xl text-slate-800 dark:text-white">Seguridad</CardTitle>
+                      <CardDescription className="text-slate-600 dark:text-slate-300">
                         Gestiona la seguridad de tu cuenta
                       </CardDescription>
                     </div>
@@ -614,7 +614,7 @@ export default function Perfil() {
                     variant="outline"
                     size="sm"
                     onClick={() => setIsSecurityExpanded(!isSecurityExpanded)}
-                    className="border-border text-foreground hover:bg-muted/50"
+                    className="border-border text-foreground hover:bg-muted/50 dark:border-slate-600 dark:text-slate-300 dark:hover:bg-slate-700/50"
                   >
                     {isSecurityExpanded ? <X className="h-4 w-4 mr-2" /> : <Shield className="h-4 w-4 mr-2" />}
                     {isSecurityExpanded ? 'Cerrar' : 'Abrir'}
@@ -640,15 +640,15 @@ export default function Perfil() {
                   />
 
                   {/* Cambio de Contraseña */}
-                  <div className="border-t border-slate-200 pt-6">
+                  <div className="border-t border-slate-200 dark:border-slate-600 pt-6">
                     <div className="flex items-center justify-between mb-4">
                       <div className="flex items-center gap-3">
-                        <div className="p-2 bg-blue-100 rounded-xl">
-                          <Lock className="h-5 w-5 text-blue-600" />
+                        <div className="p-2 bg-blue-100 dark:bg-blue-900/20 rounded-xl">
+                          <Lock className="h-5 w-5 text-blue-600 dark:text-blue-400" />
                         </div>
                         <div>
-                          <h3 className="text-lg font-semibold text-slate-800">Cambiar Contraseña</h3>
-                          <p className="text-sm text-slate-600">
+                          <h3 className="text-lg font-semibold text-slate-800 dark:text-white">Cambiar Contraseña</h3>
+                          <p className="text-sm text-slate-600 dark:text-slate-300">
                             Actualiza tu contraseña para mantener tu cuenta segura
                           </p>
                         </div>
@@ -657,7 +657,7 @@ export default function Perfil() {
                         variant="outline"
                         size="sm"
                         onClick={() => setIsChangingPassword(!isChangingPassword)}
-                        className="border-border text-foreground hover:bg-muted/50"
+                        className="border-border text-foreground hover:bg-muted/50 dark:border-slate-600 dark:text-slate-300 dark:hover:bg-slate-700/50"
                       >
                         {isChangingPassword ? <X className="h-4 w-4 mr-2" /> : <Lock className="h-4 w-4 mr-2" />}
                         {isChangingPassword ? 'Cancelar' : 'Cambiar contraseña'}
@@ -665,16 +665,16 @@ export default function Perfil() {
                     </div>
 
                     {!isChangingPassword ? (
-                      <div className="flex items-center justify-between p-4 bg-muted/50 rounded-xl">
+                      <div className="flex items-center justify-between p-4 bg-muted/50 dark:bg-slate-700/50 rounded-xl">
                         <div className="flex items-center gap-3">
-                          <Lock className="h-5 w-5 text-slate-500" />
-                          <span className="text-slate-600">Última actualización: Nunca</span>
+                          <Lock className="h-5 w-5 text-slate-500 dark:text-slate-400" />
+                          <span className="text-slate-600 dark:text-slate-300">Última actualización: Nunca</span>
                         </div>
                       </div>
                     ) : (
                       <div className="space-y-4">
                         <div className="space-y-2">
-                          <Label htmlFor="currentPassword" className="text-sm font-medium text-foreground">
+                          <Label htmlFor="currentPassword" className="text-sm font-medium text-foreground dark:text-slate-300">
                             Contraseña actual
                           </Label>
                           <div className="relative">
@@ -684,7 +684,7 @@ export default function Perfil() {
                               value={passwordData.currentPassword}
                               onChange={(e) => setPasswordData({...passwordData, currentPassword: e.target.value})}
                               placeholder="Ingresa tu contraseña actual"
-                              className="border-border focus:border-blue-500 focus:ring-blue-500 pr-10"
+                              className="border-border focus:border-blue-500 focus:ring-blue-500 pr-10 dark:border-slate-600 dark:bg-slate-700 dark:text-white dark:focus:border-blue-400 dark:focus:ring-blue-500/20"
                             />
                             <Button
                               type="button"
@@ -693,14 +693,14 @@ export default function Perfil() {
                               className="absolute right-0 top-0 h-full px-3 py-2 hover:bg-transparent"
                               onClick={() => setShowPassword(!showPassword)}
                             >
-                              {showPassword ? <EyeOff className="h-4 w-4 text-slate-500" /> : <Eye className="h-4 w-4 text-slate-500" />}
+                              {showPassword ? <EyeOff className="h-4 w-4 text-slate-500 dark:text-slate-400" /> : <Eye className="h-4 w-4 text-slate-500 dark:text-slate-400" />}
                             </Button>
                           </div>
                         </div>
                         
                         {/* Nueva contraseña con validador */}
                         <div className="space-y-2">
-                          <Label htmlFor="newPassword" className="text-sm font-medium text-foreground">
+                          <Label htmlFor="newPassword" className="text-sm font-medium text-foreground dark:text-slate-300">
                             Nueva contraseña
                           </Label>
                           <PasswordValidator
@@ -715,7 +715,7 @@ export default function Perfil() {
                         </div>
                         
                         <div className="space-y-2">
-                          <Label htmlFor="confirmPassword" className="text-sm font-medium text-foreground">
+                          <Label htmlFor="confirmPassword" className="text-sm font-medium text-foreground dark:text-slate-300">
                             Confirmar nueva contraseña
                           </Label>
                           <div className="relative">
@@ -725,7 +725,7 @@ export default function Perfil() {
                               value={passwordData.confirmPassword}
                               onChange={(e) => setPasswordData({...passwordData, confirmPassword: e.target.value})}
                               placeholder="Confirma tu nueva contraseña"
-                              className="border-border focus:border-blue-500 focus:ring-blue-500 pr-10"
+                              className="border-border focus:border-blue-500 focus:ring-blue-500 pr-10 dark:border-slate-600 dark:bg-slate-700 dark:text-white dark:focus:border-blue-400 dark:focus:ring-blue-500/20"
                             />
                             <Button
                               type="button"
