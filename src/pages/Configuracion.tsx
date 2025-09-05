@@ -493,7 +493,7 @@ export default function Configuracion() {
                             value={generalSettings.timezone}
                             onValueChange={(value) => setGeneralSettings({...generalSettings, timezone: value})}
                           >
-                            <SelectTrigger className="border-slate-300 focus:border-blue-500 focus:ring-blue-500">
+                            <SelectTrigger className="border-slate-300 focus:border-blue-500 focus:ring-blue-500 dark:border-slate-600 dark:bg-slate-700 dark:text-white dark:focus:border-blue-400 dark:focus:ring-blue-500/20">
                               <SelectValue />
                             </SelectTrigger>
                             <SelectContent>
@@ -686,10 +686,10 @@ export default function Configuracion() {
 
               {/* Configuración de Rendimiento */}
               <TabsContent value="rendimiento" className="space-y-6">
-                <Card className="bg-card rounded-2xl shadow-lg border border-border/50">
+                <Card className="bg-card dark:bg-slate-800/50 rounded-2xl shadow-lg border border-border/50 dark:border-slate-700/50">
                   <CardHeader>
-                    <CardTitle className="text-xl text-slate-800 flex items-center gap-2">
-                      <Monitor className="h-5 w-5 text-purple-600" />
+                    <CardTitle className="text-xl text-slate-800 dark:text-white flex items-center gap-2">
+                      <Monitor className="h-5 w-5 text-purple-600 dark:text-purple-400" />
                       Configuración de Rendimiento
                     </CardTitle>
                   </CardHeader>
@@ -754,7 +754,7 @@ export default function Configuracion() {
                           value={performanceSettings.image_quality}
                           onValueChange={(value) => setPerformanceSettings({...performanceSettings, image_quality: value})}
                         >
-                          <SelectTrigger className="w-32 border-slate-300 focus:border-blue-500 focus:ring-blue-500">
+                          <SelectTrigger className="w-32 border-slate-300 focus:border-blue-500 focus:ring-blue-500 dark:border-slate-600 dark:bg-slate-700 dark:text-white dark:focus:border-blue-400 dark:focus:ring-blue-500/20">
                             <SelectValue />
                           </SelectTrigger>
                           <SelectContent>
@@ -816,17 +816,17 @@ export default function Configuracion() {
 
               {/* Configuración de Seguridad */}
               <TabsContent value="seguridad" className="space-y-6">
-                <Card className="bg-card rounded-2xl shadow-lg border border-border/50">
+                <Card className="bg-card dark:bg-slate-800/50 rounded-2xl shadow-lg border border-border/50 dark:border-slate-700/50">
                   <CardHeader>
-                    <CardTitle className="text-xl text-slate-800 flex items-center gap-2">
-                      <Lock className="h-5 w-5 text-red-600" />
+                    <CardTitle className="text-xl text-slate-800 dark:text-white flex items-center gap-2">
+                      <Lock className="h-5 w-5 text-red-600 dark:text-red-400" />
                       Configuración de Seguridad
                     </CardTitle>
                   </CardHeader>
                   <CardContent className="space-y-6">
                     <div className="space-y-4">
-                      <div className="space-y-2 p-4 bg-slate-50 rounded-xl">
-                        <Label className="text-sm font-medium text-slate-700">
+                      <div className="space-y-2 p-4 bg-slate-50 dark:bg-slate-700/50 rounded-xl">
+                        <Label className="text-sm font-medium text-slate-700 dark:text-slate-300">
                           Tiempo de sesión: {securitySettings.session_timeout} minutos
                         </Label>
                         <Slider
@@ -837,13 +837,13 @@ export default function Configuracion() {
                           step={15}
                           className="w-full"
                         />
-                        <p className="text-xs text-slate-500">
+                        <p className="text-xs text-slate-500 dark:text-slate-400">
                           Tiempo antes de que se cierre la sesión por inactividad
                         </p>
                       </div>
 
-                      <div className="space-y-2 p-4 bg-slate-50 rounded-xl">
-                        <Label className="text-sm font-medium text-slate-700">
+                      <div className="space-y-2 p-4 bg-slate-50 dark:bg-slate-700/50 rounded-xl">
+                        <Label className="text-sm font-medium text-slate-700 dark:text-slate-300">
                           Intentos máximos de login: {securitySettings.max_login_attempts}
                         </Label>
                         <Slider
@@ -854,7 +854,7 @@ export default function Configuracion() {
                           step={1}
                           className="w-full"
                         />
-                        <p className="text-xs text-slate-500">
+                        <p className="text-xs text-slate-500 dark:text-slate-400">
                           Número de intentos antes de bloquear la cuenta
                         </p>
                       </div>
@@ -942,13 +942,13 @@ export default function Configuracion() {
               {/* Configuración de Administración del Sistema (Solo para Admins) */}
               {user?.role === 'admin' && (
                 <TabsContent value="admin" className="space-y-6">
-                  <Card className="bg-card rounded-2xl shadow-lg border border-border/50">
+                  <Card className="bg-card dark:bg-slate-800/50 rounded-2xl shadow-lg border border-border/50 dark:border-slate-700/50">
                     <CardHeader>
-                      <CardTitle className="text-xl text-slate-800 flex items-center gap-2">
-                        <Cog className="h-5 w-5 text-orange-600" />
+                      <CardTitle className="text-xl text-slate-800 dark:text-white flex items-center gap-2">
+                        <Cog className="h-5 w-5 text-orange-600 dark:text-orange-400" />
                         Administración del Sistema
                       </CardTitle>
-                      <CardDescription className="text-muted-foreground">
+                      <CardDescription className="text-muted-foreground dark:text-slate-300">
                         Configuraciones avanzadas del sistema (solo para administradores)
                       </CardDescription>
                     </CardHeader>
