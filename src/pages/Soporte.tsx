@@ -190,20 +190,20 @@ export default function Soporte() {
 
   const getPriorityColor = (priority: string) => {
     switch (priority) {
-      case 'high': return 'bg-red-500/10 text-red-600 border-red-500/20';
-      case 'medium': return 'bg-yellow-500/10 text-yellow-600 border-yellow-500/20';
-      case 'low': return 'bg-green-500/10 text-green-600 border-green-500/20';
-      default: return 'bg-gray-500/10 text-gray-600 border-gray-500/20';
+      case 'high': return 'bg-red-500/10 text-red-600 border-red-500/20 dark:bg-red-900/20 dark:text-red-300 dark:border-red-700/50';
+      case 'medium': return 'bg-yellow-500/10 text-yellow-600 border-yellow-500/20 dark:bg-yellow-900/20 dark:text-yellow-300 dark:border-yellow-700/50';
+      case 'low': return 'bg-green-500/10 text-green-600 border-green-500/20 dark:bg-green-900/20 dark:text-green-300 dark:border-green-700/50';
+      default: return 'bg-gray-500/10 text-gray-600 border-gray-500/20 dark:bg-gray-700/50 dark:text-gray-300 dark:border-gray-600/50';
     }
   };
 
   const getStatusColor = (status: string) => {
     switch (status) {
-      case 'open': return 'bg-blue-500/10 text-blue-600 border-blue-500/20';
-      case 'responded': return 'bg-yellow-500/10 text-yellow-600 border-yellow-500/20';
-      case 'in_conversation': return 'bg-purple-500/10 text-purple-600 border-purple-500/20';
-      case 'closed': return 'bg-green-500/10 text-green-600 border-green-500/20';
-      default: return 'bg-gray-500/10 text-gray-600 border-gray-500/20';
+      case 'open': return 'bg-blue-500/10 text-blue-600 border-blue-500/20 dark:bg-blue-900/20 dark:text-blue-300 dark:border-blue-700/50';
+      case 'responded': return 'bg-yellow-500/10 text-yellow-600 border-yellow-500/20 dark:bg-yellow-900/20 dark:text-yellow-300 dark:border-yellow-700/50';
+      case 'in_conversation': return 'bg-purple-500/10 text-purple-600 border-purple-500/20 dark:bg-purple-900/20 dark:text-purple-300 dark:border-purple-700/50';
+      case 'closed': return 'bg-green-500/10 text-green-600 border-green-500/20 dark:bg-green-900/20 dark:text-green-300 dark:border-green-700/50';
+      default: return 'bg-gray-500/10 text-gray-600 border-gray-500/20 dark:bg-gray-700/50 dark:text-gray-300 dark:border-gray-600/50';
     }
   };
 
@@ -222,25 +222,25 @@ export default function Soporte() {
   const ticketsResueltos = tickets.filter(t => t.status === 'closed').length;
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-slate-50 via-blue-50/30 to-indigo-50/30">
+    <div className="min-h-screen bg-gradient-to-br from-slate-50 via-blue-50/30 to-indigo-50/30 dark:from-slate-900 dark:via-slate-800/50 dark:to-slate-900">
       <div className="p-6 max-w-7xl mx-auto space-y-6">
         {/* Header con diseño claro */}
-        <div className="bg-white rounded-2xl p-6 shadow-lg border border-slate-200/50">
+        <div className="bg-white dark:bg-slate-800/50 rounded-2xl p-6 shadow-lg border border-slate-200/50 dark:border-slate-700/50">
           <div className="flex flex-col lg:flex-row lg:items-center justify-between gap-4">
             <div>
-              <h1 className="text-3xl font-bold text-slate-800">Soporte</h1>
-              <p className="text-slate-600 mt-2">
+              <h1 className="text-3xl font-bold text-slate-800 dark:text-white">Soporte</h1>
+              <p className="text-slate-600 dark:text-slate-300 mt-2">
                 Obtén ayuda y resuelve tus consultas
               </p>
             </div>
             <div className="flex items-center gap-4">
-              <div className="flex items-center gap-2 text-sm text-slate-600">
+              <div className="flex items-center gap-2 text-sm text-slate-600 dark:text-slate-300">
                 <FileText className="h-4 w-4" />
                 <span>Proyectos: {getUserProjects().length}</span>
               </div>
               <Button
                 variant="outline"
-                className="border-slate-300 text-slate-700 hover:bg-slate-50"
+                className="border-slate-300 text-slate-700 hover:bg-slate-50 dark:border-slate-600 dark:text-slate-300 dark:hover:bg-slate-700/50"
               >
                 <HelpCircle className="h-4 w-4 mr-2" />
                 Soporte 24/7
@@ -251,43 +251,43 @@ export default function Soporte() {
 
         {/* Resumen de tickets */}
         <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
-          <Card className="bg-white rounded-2xl shadow-lg border border-slate-200/50">
+          <Card className="bg-white dark:bg-slate-800/50 rounded-2xl shadow-lg border border-slate-200/50 dark:border-slate-700/50">
             <CardContent className="p-6">
               <div className="flex items-center gap-3">
-                <div className="p-3 bg-yellow-100 rounded-xl">
-                  <Clock className="h-6 w-6 text-yellow-600" />
+                <div className="p-3 bg-yellow-100 dark:bg-yellow-900/20 rounded-xl">
+                  <Clock className="h-6 w-6 text-yellow-600 dark:text-yellow-400" />
                 </div>
                 <div>
-                  <p className="text-sm font-medium text-slate-600">Tickets Abiertos</p>
-                  <p className="text-2xl font-bold text-slate-800">{ticketsAbiertos}</p>
+                  <p className="text-sm font-medium text-slate-600 dark:text-slate-300">Tickets Abiertos</p>
+                  <p className="text-2xl font-bold text-slate-800 dark:text-white">{ticketsAbiertos}</p>
                 </div>
               </div>
             </CardContent>
           </Card>
 
-          <Card className="bg-white rounded-2xl shadow-lg border border-slate-200/50">
+          <Card className="bg-white dark:bg-slate-800/50 rounded-2xl shadow-lg border border-slate-200/50 dark:border-slate-700/50">
             <CardContent className="p-6">
               <div className="flex items-center gap-3">
-                <div className="p-3 bg-blue-100 rounded-xl">
-                  <MessageSquare className="h-6 w-6 text-blue-600" />
+                <div className="p-3 bg-blue-100 dark:bg-blue-900/20 rounded-xl">
+                  <MessageSquare className="h-6 w-6 text-blue-600 dark:text-blue-400" />
                 </div>
                 <div>
-                  <p className="text-sm font-medium text-slate-600">Respondidos</p>
-                  <p className="text-2xl font-bold text-slate-800">{ticketsRespondidos}</p>
+                  <p className="text-sm font-medium text-slate-600 dark:text-slate-300">Respondidos</p>
+                  <p className="text-2xl font-bold text-slate-800 dark:text-white">{ticketsRespondidos}</p>
                 </div>
               </div>
             </CardContent>
           </Card>
 
-          <Card className="bg-white rounded-2xl shadow-lg border border-slate-200/50">
+          <Card className="bg-white dark:bg-slate-800/50 rounded-2xl shadow-lg border border-slate-200/50 dark:border-slate-700/50">
             <CardContent className="p-6">
               <div className="flex items-center gap-3">
-                <div className="p-3 bg-green-100 rounded-xl">
-                  <CheckCircle className="h-6 w-6 text-green-600" />
+                <div className="p-3 bg-green-100 dark:bg-green-900/20 rounded-xl">
+                  <CheckCircle className="h-6 w-6 text-green-600 dark:text-green-400" />
                 </div>
                 <div>
-                  <p className="text-sm font-medium text-slate-600">Resueltos</p>
-                  <p className="text-2xl font-bold text-slate-800">{ticketsResueltos}</p>
+                  <p className="text-sm font-medium text-slate-600 dark:text-slate-300">Resueltos</p>
+                  <p className="text-2xl font-bold text-slate-800 dark:text-white">{ticketsResueltos}</p>
                 </div>
               </div>
             </CardContent>
@@ -296,56 +296,56 @@ export default function Soporte() {
 
         <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
           {/* Información de contacto */}
-          <Card className="bg-white rounded-2xl shadow-lg border border-slate-200/50">
+          <Card className="bg-white dark:bg-slate-800/50 rounded-2xl shadow-lg border border-slate-200/50 dark:border-slate-700/50">
             <CardHeader>
-              <CardTitle className="text-xl text-slate-800 flex items-center gap-2">
-                <MessageSquare className="h-5 w-5 text-blue-600" />
+              <CardTitle className="text-xl text-slate-800 dark:text-white flex items-center gap-2">
+                <MessageSquare className="h-5 w-5 text-blue-600 dark:text-blue-400" />
                 Múltiples formas de contactarnos
               </CardTitle>
             </CardHeader>
             <CardContent className="space-y-4">
-              <div className="flex items-center gap-3 p-3 bg-slate-50 rounded-xl">
-                <div className="p-2 bg-blue-100 rounded-lg">
-                  <Mail className="h-4 w-4 text-blue-600" />
+              <div className="flex items-center gap-3 p-3 bg-slate-50 dark:bg-slate-700/50 rounded-xl">
+                <div className="p-2 bg-blue-100 dark:bg-blue-900/20 rounded-lg">
+                  <Mail className="h-4 w-4 text-blue-600 dark:text-blue-400" />
                 </div>
                 <div>
-                  <p className="font-medium text-slate-800">Email</p>
-                  <p className="text-sm text-slate-600">tuwebai@gmail.com</p>
+                  <p className="font-medium text-slate-800 dark:text-white">Email</p>
+                  <p className="text-sm text-slate-600 dark:text-slate-300">tuwebai@gmail.com</p>
                 </div>
               </div>
-              <div className="flex items-center gap-3 p-3 bg-slate-50 rounded-xl">
-                <div className="p-2 bg-green-100 rounded-lg">
-                  <Phone className="h-4 w-4 text-green-600" />
+              <div className="flex items-center gap-3 p-3 bg-slate-50 dark:bg-slate-700/50 rounded-xl">
+                <div className="p-2 bg-green-100 dark:bg-green-900/20 rounded-lg">
+                  <Phone className="h-4 w-4 text-green-600 dark:text-green-400" />
                 </div>
                 <div>
-                  <p className="font-medium text-slate-800">Teléfono</p>
-                  <p className="text-sm text-slate-600">+5493571416044</p>
+                  <p className="font-medium text-slate-800 dark:text-white">Teléfono</p>
+                  <p className="text-sm text-slate-600 dark:text-slate-300">+5493571416044</p>
                 </div>
               </div>
-              <div className="flex items-center gap-3 p-3 bg-slate-50 rounded-xl">
-                <div className="p-2 bg-purple-100 rounded-lg">
-                  <Clock className="h-4 w-4 text-purple-600" />
+              <div className="flex items-center gap-3 p-3 bg-slate-50 dark:bg-slate-700/50 rounded-xl">
+                <div className="p-2 bg-purple-100 dark:bg-purple-900/20 rounded-lg">
+                  <Clock className="h-4 w-4 text-purple-600 dark:text-purple-400" />
                 </div>
                 <div>
-                  <p className="font-medium text-slate-800">Horarios de atención</p>
-                  <p className="text-sm text-slate-600">Lunes a Viernes 9:00 - 18:00</p>
+                  <p className="font-medium text-slate-800 dark:text-white">Horarios de atención</p>
+                  <p className="text-sm text-slate-600 dark:text-slate-300">Lunes a Viernes 9:00 - 18:00</p>
                 </div>
               </div>
             </CardContent>
           </Card>
 
           {/* Formulario de nuevo ticket */}
-          <Card className="bg-white rounded-2xl shadow-lg border border-slate-200/50">
+          <Card className="bg-white dark:bg-slate-800/50 rounded-2xl shadow-lg border border-slate-200/50 dark:border-slate-700/50">
             <CardHeader>
-              <CardTitle className="text-xl text-slate-800 flex items-center gap-2">
-                <Plus className="h-5 w-5 text-green-600" />
+              <CardTitle className="text-xl text-slate-800 dark:text-white flex items-center gap-2">
+                <Plus className="h-5 w-5 text-green-600 dark:text-green-400" />
                 Envía una consulta y te responderemos pronto
               </CardTitle>
             </CardHeader>
             <CardContent>
               <form onSubmit={handleSubmitTicket} className="space-y-4">
                 <div className="space-y-2">
-                  <label htmlFor="title" className="text-sm font-medium text-slate-700">
+                  <label htmlFor="title" className="text-sm font-medium text-slate-700 dark:text-slate-300">
                     Asunto
                   </label>
                   <Input
@@ -353,12 +353,12 @@ export default function Soporte() {
                     value={formData.title}
                     onChange={(e) => setFormData({...formData, title: e.target.value})}
                     placeholder="Describe brevemente tu consulta"
-                    className="border-slate-300 focus:border-blue-500 focus:ring-blue-500"
+                    className="border-slate-300 focus:border-blue-500 focus:ring-blue-500 dark:border-slate-600 dark:bg-slate-700 dark:text-white dark:focus:border-blue-400 dark:focus:ring-blue-500/20"
                     required
                   />
                 </div>
                 <div className="space-y-2">
-                  <label htmlFor="description" className="text-sm font-medium text-slate-700">
+                  <label htmlFor="description" className="text-sm font-medium text-slate-700 dark:text-slate-300">
                     Mensaje
                   </label>
                   <Textarea
@@ -372,7 +372,7 @@ export default function Soporte() {
                   />
                 </div>
                 <div className="space-y-2">
-                  <label htmlFor="priority" className="text-sm font-medium text-slate-700">
+                  <label htmlFor="priority" className="text-sm font-medium text-slate-700 dark:text-slate-300">
                     Prioridad
                   </label>
                   <Select
@@ -381,7 +381,7 @@ export default function Soporte() {
                       setFormData({...formData, priority: value})
                     }
                   >
-                    <SelectTrigger className="border-slate-300 focus:border-blue-500 focus:ring-blue-500">
+                    <SelectTrigger className="border-slate-300 focus:border-blue-500 focus:ring-blue-500 dark:border-slate-600 dark:bg-slate-700 dark:text-white dark:focus:border-blue-400 dark:focus:ring-blue-500/20">
                       <SelectValue />
                     </SelectTrigger>
                     <SelectContent>
@@ -404,9 +404,9 @@ export default function Soporte() {
         </div>
 
         {/* Historial de tickets */}
-        <Card className="bg-white rounded-2xl shadow-lg border border-slate-200/50">
+        <Card className="bg-white dark:bg-slate-800/50 rounded-2xl shadow-lg border border-slate-200/50 dark:border-slate-700/50">
           <CardHeader>
-            <CardTitle className="text-xl text-slate-800">
+            <CardTitle className="text-xl text-slate-800 dark:text-white">
               Historial completo de tus consultas y respuestas
             </CardTitle>
           </CardHeader>
@@ -415,16 +415,16 @@ export default function Soporte() {
               <div className="flex items-center justify-center py-12">
                 <div className="text-center">
                   <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-blue-500 mx-auto mb-4"></div>
-                  <p className="text-slate-600">Cargando tickets...</p>
+                  <p className="text-slate-600 dark:text-slate-300">Cargando tickets...</p>
                 </div>
               </div>
             ) : tickets.length === 0 ? (
               <div className="text-center py-12">
-                <div className="w-16 h-16 bg-slate-100 rounded-full flex items-center justify-center mx-auto mb-4">
-                  <MessageSquare className="h-8 w-8 text-slate-400" />
+                <div className="w-16 h-16 bg-slate-100 dark:bg-slate-700 rounded-full flex items-center justify-center mx-auto mb-4">
+                  <MessageSquare className="h-8 w-8 text-slate-400 dark:text-slate-500" />
                 </div>
-                <h3 className="text-lg font-semibold mb-2 text-slate-800">No hay tickets</h3>
-                <p className="text-slate-600">
+                <h3 className="text-lg font-semibold mb-2 text-slate-800 dark:text-white">No hay tickets</h3>
+                <p className="text-slate-600 dark:text-slate-300">
                   Cuando envíes tu primer ticket, aparecerá aquí.
                 </p>
               </div>
@@ -433,13 +433,13 @@ export default function Soporte() {
                 {tickets.map((ticket) => (
                   <div
                     key={ticket.id}
-                    className="p-4 bg-slate-50 rounded-xl hover:bg-slate-100 transition-colors"
+                    className="p-4 bg-slate-50 dark:bg-slate-700/50 rounded-xl hover:bg-slate-100 dark:hover:bg-slate-600/50 transition-colors"
                   >
                     <div className="flex items-start justify-between mb-3">
                                              <div className="flex-1">
-                         <h4 className="font-semibold text-slate-800 mb-1">{ticket.title}</h4>
-                         <p className="text-sm text-slate-600 mb-2">{ticket.description}</p>
-                         <div className="flex items-center gap-3 text-xs text-slate-500">
+                         <h4 className="font-semibold text-slate-800 dark:text-white mb-1">{ticket.title}</h4>
+                         <p className="text-sm text-slate-600 dark:text-slate-300 mb-2">{ticket.description}</p>
+                         <div className="flex items-center gap-3 text-xs text-slate-500 dark:text-slate-400">
                            <span>{formatDateSafe(ticket.created_at)}</span>
                            <span>•</span>
                            <span>{user.email}</span>
@@ -457,19 +457,19 @@ export default function Soporte() {
                     
                     {/* Respuesta del admin */}
                     {ticket.respuesta && (
-                      <div className="mt-3 p-3 bg-blue-50 rounded-lg border-l-4 border-blue-500">
+                      <div className="mt-3 p-3 bg-blue-50 dark:bg-blue-900/20 rounded-lg border-l-4 border-blue-500 dark:border-blue-400">
                         <div className="flex items-center gap-2 mb-2">
-                          <CheckCircle className="h-4 w-4 text-blue-600" />
-                          <span className="text-sm font-medium text-blue-800">Respuesta del equipo</span>
+                          <CheckCircle className="h-4 w-4 text-blue-600 dark:text-blue-400" />
+                          <span className="text-sm font-medium text-blue-800 dark:text-blue-200">Respuesta del equipo</span>
                         </div>
-                        <p className="text-sm text-blue-700">{ticket.respuesta}</p>
+                        <p className="text-sm text-blue-700 dark:text-blue-300">{ticket.respuesta}</p>
                         {ticket.respondido_por && (
-                          <p className="text-xs text-blue-600 mt-2">
+                          <p className="text-xs text-blue-600 dark:text-blue-400 mt-2">
                             Respondido por: {ticket.respondido_por}
                           </p>
                         )}
                         {ticket.fecha_respuesta && (
-                          <p className="text-xs text-blue-600">
+                          <p className="text-xs text-blue-600 dark:text-blue-400">
                             {formatDateSafe(ticket.fecha_respuesta)}
                           </p>
                         )}

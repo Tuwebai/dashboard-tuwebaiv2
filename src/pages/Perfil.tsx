@@ -775,18 +775,18 @@ export default function Perfil() {
           {/* Columna derecha - Foto de perfil y cuenta */}
           <div className="space-y-6">
             {/* Foto de perfil */}
-            <Card className="bg-card rounded-2xl shadow-lg border border-border/50">
+            <Card className="bg-card dark:bg-slate-800/50 rounded-2xl shadow-lg border border-border/50 dark:border-slate-700/50">
               <CardHeader className="pb-4">
                 <div className="flex items-center gap-3">
-                  <div className="p-2 bg-purple-100 rounded-xl">
-                    <Camera className="h-5 w-5 text-purple-600" />
+                  <div className="p-2 bg-purple-100 dark:bg-purple-900/20 rounded-xl">
+                    <Camera className="h-5 w-5 text-purple-600 dark:text-purple-400" />
                   </div>
-                  <CardTitle className="text-xl text-slate-800">Foto de perfil</CardTitle>
+                  <CardTitle className="text-xl text-slate-800 dark:text-white">Foto de perfil</CardTitle>
                 </div>
               </CardHeader>
               <CardContent className="text-center space-y-4">
                 <div className="flex justify-center">
-                  <Avatar className="h-24 w-24 border-4 border-slate-200">
+                  <Avatar className="h-24 w-24 border-4 border-slate-200 dark:border-slate-600">
                     <AvatarImage 
                       src={user.avatar_url || user.avatar} 
                       alt={user.full_name || user.email} 
@@ -801,7 +801,7 @@ export default function Perfil() {
                   variant="outline"
                   onClick={handlePhotoChange}
                   disabled={loading}
-                  className="w-full border-border text-foreground hover:bg-muted/50"
+                  className="w-full border-border text-foreground hover:bg-muted/50 dark:border-slate-600 dark:text-slate-300 dark:hover:bg-slate-700/50"
                 >
                   {loading ? (
                     <div className="animate-spin rounded-full h-4 w-4 border-b-2 border-slate-500 mr-2"></div>
@@ -817,7 +817,7 @@ export default function Perfil() {
                     variant="outline"
                     onClick={handleDeleteAvatar}
                     disabled={loading}
-                    className="w-full border-red-300 text-red-700 hover:bg-red-50 hover:border-red-400"
+                    className="w-full border-red-300 text-red-700 hover:bg-red-50 hover:border-red-400 dark:border-red-600 dark:text-red-300 dark:hover:bg-red-900/20 dark:hover:border-red-500"
                   >
                     {loading ? (
                       <div className="animate-spin rounded-full h-4 w-4 border-b-2 border-red-500 mr-2"></div>
@@ -840,31 +840,31 @@ export default function Perfil() {
             </Card>
 
             {/* Información de la cuenta */}
-            <Card className="bg-card rounded-2xl shadow-lg border border-border/50">
+            <Card className="bg-card dark:bg-slate-800/50 rounded-2xl shadow-lg border border-border/50 dark:border-slate-700/50">
               <CardHeader className="pb-4">
                 <div className="flex items-center gap-3">
-                  <div className="p-2 bg-indigo-100 rounded-xl">
-                    <FileText className="h-5 w-5 text-indigo-600" />
+                  <div className="p-2 bg-indigo-100 dark:bg-indigo-900/20 rounded-xl">
+                    <FileText className="h-5 w-5 text-indigo-600 dark:text-indigo-400" />
                   </div>
-                  <CardTitle className="text-xl text-slate-800">Información de la cuenta</CardTitle>
+                  <CardTitle className="text-xl text-slate-800 dark:text-white">Información de la cuenta</CardTitle>
                 </div>
               </CardHeader>
               <CardContent className="space-y-4">
-                <div className="flex items-center justify-between p-3 bg-muted/50 rounded-xl">
-                  <span className="text-sm font-medium text-foreground">Rol:</span>
-                  <Badge variant="secondary" className="bg-yellow-100 text-yellow-700 border-yellow-200">
+                <div className="flex items-center justify-between p-3 bg-muted/50 dark:bg-slate-700/50 rounded-xl">
+                  <span className="text-sm font-medium text-foreground dark:text-slate-300">Rol:</span>
+                  <Badge variant="secondary" className="bg-yellow-100 text-yellow-700 border-yellow-200 dark:bg-yellow-900/20 dark:text-yellow-300 dark:border-yellow-700/50">
                     {user.role || 'user'}
                   </Badge>
                 </div>
-                <div className="flex items-center justify-between p-3 bg-muted/50 rounded-xl">
-                  <span className="text-sm font-medium text-foreground">Estado:</span>
-                  <Badge variant="secondary" className="bg-green-100 text-green-700 border-green-200">
+                <div className="flex items-center justify-between p-3 bg-muted/50 dark:bg-slate-700/50 rounded-xl">
+                  <span className="text-sm font-medium text-foreground dark:text-slate-300">Estado:</span>
+                  <Badge variant="secondary" className="bg-green-100 text-green-700 border-green-200 dark:bg-green-900/20 dark:text-green-300 dark:border-green-700/50">
                     {user.status || 'active'}
                   </Badge>
                 </div>
-                <div className="flex items-center justify-between p-3 bg-muted/50 rounded-xl">
-                  <span className="text-sm font-medium text-foreground">Miembro desde:</span>
-                  <span className="text-sm text-slate-600">
+                <div className="flex items-center justify-between p-3 bg-muted/50 dark:bg-slate-700/50 rounded-xl">
+                  <span className="text-sm font-medium text-foreground dark:text-slate-300">Miembro desde:</span>
+                  <span className="text-sm text-slate-600 dark:text-slate-300">
                     {new Date(user.created_at || Date.now()).toLocaleDateString('es-ES')}
                   </span>
                 </div>

@@ -318,7 +318,7 @@ export default function Configuracion() {
   return (
     <>
       <style>{customStyles}</style>
-      <div className="min-h-screen bg-gradient-to-br from-slate-50 via-blue-50/30 to-indigo-50/30">
+      <div className="min-h-screen bg-gradient-to-br from-slate-50 via-blue-50/30 to-indigo-50/30 dark:from-slate-900 dark:via-slate-800/50 dark:to-slate-900">
         <div className="p-6 max-w-7xl mx-auto space-y-6">
           {/* Header con diseño claro y moderno */}
           <motion.div 
@@ -327,11 +327,11 @@ export default function Configuracion() {
             transition={{ duration: 0.6, ease: "easeOut" }}
             className="relative group"
           >
-            <div className="bg-card rounded-2xl p-6 shadow-lg hover:shadow-2xl transition-all duration-500 transform hover:-translate-y-1 border border-border/50 backdrop-blur-sm overflow-hidden bg-gradient-to-br from-white via-blue-25 to-indigo-25">
+            <div className="bg-card dark:bg-slate-800/50 rounded-2xl p-6 shadow-lg hover:shadow-2xl transition-all duration-500 transform hover:-translate-y-1 border border-border/50 dark:border-slate-700/50 backdrop-blur-sm overflow-hidden bg-gradient-to-br from-white via-blue-25 to-indigo-25 dark:from-slate-800 dark:via-slate-700/50 dark:to-slate-800">
               <div className="flex flex-col lg:flex-row lg:items-center justify-between gap-4">
                 <div>
                   <motion.h1 
-                    className="text-3xl font-bold bg-gradient-to-r from-slate-800 via-blue-800 to-indigo-800 bg-clip-text text-transparent"
+                    className="text-3xl font-bold bg-gradient-to-r from-slate-800 via-blue-800 to-indigo-800 dark:from-white dark:via-blue-200 dark:to-indigo-200 bg-clip-text text-transparent"
                     initial={{ opacity: 0, x: -20 }}
                     animate={{ opacity: 1, x: 0 }}
                     transition={{ duration: 0.8, delay: 0.2 }}
@@ -339,7 +339,7 @@ export default function Configuracion() {
                     Configuración
                   </motion.h1>
                   <motion.p 
-                    className="text-muted-foreground mt-2 text-lg"
+                    className="text-muted-foreground dark:text-slate-300 mt-2 text-lg"
                     initial={{ opacity: 0, x: -20 }}
                     animate={{ opacity: 1, x: 0 }}
                     transition={{ duration: 0.8, delay: 0.4 }}
@@ -353,8 +353,8 @@ export default function Configuracion() {
                   animate={{ opacity: 1, x: 0 }}
                   transition={{ duration: 0.8, delay: 0.6 }}
                 >
-                  <div className="flex items-center gap-2 text-sm text-muted-foreground bg-muted/50 px-4 py-2 rounded-xl">
-                    <FileText className="h-4 w-4 text-blue-600" />
+                  <div className="flex items-center gap-2 text-sm text-muted-foreground dark:text-slate-300 bg-muted/50 dark:bg-slate-700/50 px-4 py-2 rounded-xl">
+                    <FileText className="h-4 w-4 text-blue-600 dark:text-blue-400" />
                     <span className="font-semibold">Proyectos: {getUserProjects().length}</span>
                   </div>
                 </motion.div>
@@ -370,10 +370,10 @@ export default function Configuracion() {
             transition={{ duration: 0.6, delay: 0.3 }}
           >
             <Tabs value={activeTab} onValueChange={setActiveTab} className="w-full">
-              <TabsList className={`grid w-full ${user?.role === 'admin' ? 'grid-cols-5' : 'grid-cols-4'} bg-card rounded-2xl shadow-lg hover:shadow-xl transition-all duration-300 border border-border/50 p-1 backdrop-blur-sm`}>
+              <TabsList className={`grid w-full ${user?.role === 'admin' ? 'grid-cols-5' : 'grid-cols-4'} bg-card dark:bg-slate-800/50 rounded-2xl shadow-lg hover:shadow-xl transition-all duration-300 border border-border/50 dark:border-slate-700/50 p-1 backdrop-blur-sm`}>
                 <TabsTrigger 
                   value="general" 
-                  className="data-[state=active]:bg-gradient-to-r data-[state=active]:from-blue-500 data-[state=active]:to-blue-600 data-[state=active]:text-white rounded-xl transition-all duration-300 hover:scale-105 data-[state=active]:shadow-lg text-slate-700 font-medium"
+                  className="data-[state=active]:bg-gradient-to-r data-[state=active]:from-blue-500 data-[state=active]:to-blue-600 data-[state=active]:text-white rounded-xl transition-all duration-300 hover:scale-105 data-[state=active]:shadow-lg text-slate-700 dark:text-slate-300 font-medium"
                 >
                   <motion.div
                     whileHover={{ scale: 1.05 }}
@@ -386,7 +386,7 @@ export default function Configuracion() {
                 </TabsTrigger>
                 <TabsTrigger 
                   value="privacidad" 
-                  className="data-[state=active]:bg-gradient-to-r data-[state=active]:from-green-500 data-[state=active]:to-emerald-600 data-[state=active]:text-white rounded-xl transition-all duration-300 hover:scale-105 data-[state=active]:shadow-lg text-slate-700 font-medium"
+                  className="data-[state=active]:bg-gradient-to-r data-[state=active]:from-green-500 data-[state=active]:to-emerald-600 data-[state=active]:text-white rounded-xl transition-all duration-300 hover:scale-105 data-[state=active]:shadow-lg text-slate-700 dark:text-slate-300 font-medium"
                 >
                   <motion.div
                     whileHover={{ scale: 1.05 }}
@@ -399,7 +399,7 @@ export default function Configuracion() {
                 </TabsTrigger>
                 <TabsTrigger 
                   value="rendimiento" 
-                  className="data-[state=active]:bg-gradient-to-r data-[state=active]:from-purple-500 data-[state=active]:to-pink-600 data-[state=active]:text-white rounded-xl transition-all duration-300 hover:scale-105 data-[state=active]:shadow-lg text-slate-700 font-medium"
+                  className="data-[state=active]:bg-gradient-to-r data-[state=active]:from-purple-500 data-[state=active]:to-pink-600 data-[state=active]:text-white rounded-xl transition-all duration-300 hover:scale-105 data-[state=active]:shadow-lg text-slate-700 dark:text-slate-300 font-medium"
                 >
                   <motion.div
                     whileHover={{ scale: 1.05 }}
@@ -412,7 +412,7 @@ export default function Configuracion() {
                 </TabsTrigger>
                 <TabsTrigger 
                   value="seguridad" 
-                  className="data-[state=active]:bg-gradient-to-r data-[state=active]:from-red-500 data-[state=active]:to-pink-600 data-[state=active]:text-white rounded-xl transition-all duration-300 hover:scale-105 data-[state=active]:shadow-lg text-slate-700 font-medium"
+                  className="data-[state=active]:bg-gradient-to-r data-[state=active]:from-red-500 data-[state=active]:to-pink-600 data-[state=active]:text-white rounded-xl transition-all duration-300 hover:scale-105 data-[state=active]:shadow-lg text-slate-700 dark:text-slate-300 font-medium"
                 >
                   <motion.div
                     whileHover={{ scale: 1.05 }}
@@ -426,7 +426,7 @@ export default function Configuracion() {
                 {user?.role === 'admin' && (
                   <TabsTrigger 
                     value="admin" 
-                    className="data-[state=active]:bg-gradient-to-r data-[state=active]:from-orange-500 data-[state=active]:to-red-600 data-[state=active]:text-white rounded-xl transition-all duration-300 hover:scale-105 data-[state=active]:shadow-lg text-slate-700 font-medium"
+                    className="data-[state=active]:bg-gradient-to-r data-[state=active]:from-orange-500 data-[state=active]:to-red-600 data-[state=active]:text-white rounded-xl transition-all duration-300 hover:scale-105 data-[state=active]:shadow-lg text-slate-700 dark:text-slate-300 font-medium"
                   >
                     <motion.div
                       whileHover={{ scale: 1.05 }}
@@ -448,14 +448,14 @@ export default function Configuracion() {
                   transition={{ duration: 0.6, delay: 0.4 }}
                   className="relative group"
                 >
-                  <Card className="bg-card rounded-2xl shadow-lg hover:shadow-2xl transition-all duration-500 transform hover:-translate-y-1 border border-border/50 backdrop-blur-sm overflow-hidden bg-gradient-to-br from-white via-blue-25 to-indigo-25">
+                  <Card className="bg-card dark:bg-slate-800/50 rounded-2xl shadow-lg hover:shadow-2xl transition-all duration-500 transform hover:-translate-y-1 border border-border/50 dark:border-slate-700/50 backdrop-blur-sm overflow-hidden bg-gradient-to-br from-white via-blue-25 to-indigo-25 dark:from-slate-800 dark:via-slate-700/50 dark:to-slate-800">
                     <CardHeader>
-                      <CardTitle className="text-xl text-slate-800 flex items-center gap-2">
+                      <CardTitle className="text-xl text-slate-800 dark:text-white flex items-center gap-2">
                         <motion.div
                           whileHover={{ rotate: 360 }}
                           transition={{ duration: 0.6 }}
                         >
-                          <Globe className="h-5 w-5 text-blue-600" />
+                          <Globe className="h-5 w-5 text-blue-600 dark:text-blue-400" />
                         </motion.div>
                         Configuración General
                       </CardTitle>
@@ -467,14 +467,14 @@ export default function Configuracion() {
                           whileHover={{ scale: 1.02 }}
                           transition={{ duration: 0.2 }}
                         >
-                          <Label htmlFor="language" className="text-sm font-medium text-slate-700">
+                          <Label htmlFor="language" className="text-sm font-medium text-slate-700 dark:text-slate-300">
                             Idioma
                           </Label>
                           <Select
                             value={generalSettings.language}
                             onValueChange={(value) => setGeneralSettings({...generalSettings, language: value})}
                           >
-                            <SelectTrigger className="border-slate-300 focus:border-blue-500 focus:ring-blue-500 hover:border-blue-400 transition-colors duration-200">
+                            <SelectTrigger className="border-slate-300 focus:border-blue-500 focus:ring-blue-500 hover:border-blue-400 transition-colors duration-200 dark:border-slate-600 dark:bg-slate-700 dark:text-white dark:focus:border-blue-400 dark:focus:ring-blue-500/20">
                               <SelectValue />
                             </SelectTrigger>
                             <SelectContent>
@@ -486,7 +486,7 @@ export default function Configuracion() {
                         </motion.div>
 
                         <div className="space-y-2">
-                          <Label htmlFor="timezone" className="text-sm font-medium text-slate-700">
+                          <Label htmlFor="timezone" className="text-sm font-medium text-slate-700 dark:text-slate-300">
                             Zona horaria
                           </Label>
                           <Select
@@ -510,14 +510,14 @@ export default function Configuracion() {
                           whileHover={{ scale: 1.02 }}
                           transition={{ duration: 0.2 }}
                         >
-                          <Label htmlFor="date_format" className="text-sm font-medium text-slate-700">
+                          <Label htmlFor="date_format" className="text-sm font-medium text-slate-700 dark:text-slate-300">
                             Formato de fecha
                           </Label>
                           <Select
                             value={generalSettings.date_format}
                             onValueChange={(value) => setGeneralSettings({...generalSettings, date_format: value})}
                           >
-                            <SelectTrigger className="border-slate-300 focus:border-blue-500 focus:ring-blue-500 hover:border-blue-400 transition-colors duration-200">
+                            <SelectTrigger className="border-slate-300 focus:border-blue-500 focus:ring-blue-500 hover:border-blue-400 transition-colors duration-200 dark:border-slate-600 dark:bg-slate-700 dark:text-white dark:focus:border-blue-400 dark:focus:ring-blue-500/20">
                               <SelectValue />
                             </SelectTrigger>
                             <SelectContent>
@@ -533,14 +533,14 @@ export default function Configuracion() {
                           whileHover={{ scale: 1.02 }}
                           transition={{ duration: 0.2 }}
                         >
-                          <Label htmlFor="time_format" className="text-sm font-medium text-slate-700">
+                          <Label htmlFor="time_format" className="text-sm font-medium text-slate-700 dark:text-slate-300">
                             Formato de hora
                           </Label>
                           <Select
                             value={generalSettings.time_format}
                             onValueChange={(value) => setGeneralSettings({...generalSettings, time_format: value})}
                           >
-                            <SelectTrigger className="border-slate-300 focus:border-blue-500 focus:ring-blue-500 hover:border-blue-400 transition-colors duration-200">
+                            <SelectTrigger className="border-slate-300 focus:border-blue-500 focus:ring-blue-500 hover:border-blue-400 transition-colors duration-200 dark:border-slate-600 dark:bg-slate-700 dark:text-white dark:focus:border-blue-400 dark:focus:ring-blue-500/20">
                               <SelectValue />
                             </SelectTrigger>
                             <SelectContent>
@@ -572,21 +572,21 @@ export default function Configuracion() {
 
               {/* Configuración de Privacidad */}
               <TabsContent value="privacidad" className="space-y-6">
-                <Card className="bg-card rounded-2xl shadow-lg border border-border/50">
+                <Card className="bg-card dark:bg-slate-800/50 rounded-2xl shadow-lg border border-border/50 dark:border-slate-700/50">
                   <CardHeader>
-                    <CardTitle className="text-xl text-slate-800 flex items-center gap-2">
-                      <Shield className="h-5 w-5 text-green-600" />
+                    <CardTitle className="text-xl text-slate-800 dark:text-white flex items-center gap-2">
+                      <Shield className="h-5 w-5 text-green-600 dark:text-green-400" />
                       Configuración de Privacidad
                     </CardTitle>
                   </CardHeader>
                   <CardContent className="space-y-6">
                     <div className="space-y-4">
-                      <div className="flex items-center justify-between p-4 bg-slate-50 rounded-xl">
+                      <div className="flex items-center justify-between p-4 bg-slate-50 dark:bg-slate-700/50 rounded-xl">
                         <div className="space-y-1">
-                          <Label className="text-sm font-medium text-slate-700">
+                          <Label className="text-sm font-medium text-slate-700 dark:text-slate-300">
                             Visibilidad del perfil
                           </Label>
-                          <p className="text-xs text-slate-500">
+                          <p className="text-xs text-slate-500 dark:text-slate-400">
                             Controla quién puede ver tu información
                           </p>
                         </div>
@@ -594,7 +594,7 @@ export default function Configuracion() {
                           value={privacySettings.profile_visibility}
                           onValueChange={(value) => setPrivacySettings({...privacySettings, profile_visibility: value})}
                         >
-                          <SelectTrigger className="w-32 border-slate-300 focus:border-blue-500 focus:ring-blue-500">
+                          <SelectTrigger className="w-32 border-slate-300 focus:border-blue-500 focus:ring-blue-500 dark:border-slate-600 dark:bg-slate-700 dark:text-white dark:focus:border-blue-400 dark:focus:ring-blue-500/20">
                             <SelectValue />
                           </SelectTrigger>
                           <SelectContent>
@@ -605,12 +605,12 @@ export default function Configuracion() {
                         </Select>
                       </div>
 
-                      <div className="flex items-center justify-between p-4 bg-slate-50 rounded-xl">
+                      <div className="flex items-center justify-between p-4 bg-slate-50 dark:bg-slate-700/50 rounded-xl">
                         <div className="space-y-1">
-                          <Label className="text-sm font-medium text-slate-700">
+                          <Label className="text-sm font-medium text-slate-700 dark:text-slate-300">
                             Mostrar email
                           </Label>
-                          <p className="text-xs text-slate-500">
+                          <p className="text-xs text-slate-500 dark:text-slate-400">
                             Permite que otros usuarios vean tu email
                           </p>
                         </div>
@@ -620,12 +620,12 @@ export default function Configuracion() {
                         />
                       </div>
 
-                      <div className="flex items-center justify-between p-4 bg-slate-50 rounded-xl">
+                      <div className="flex items-center justify-between p-4 bg-slate-50 dark:bg-slate-700/50 rounded-xl">
                         <div className="space-y-1">
-                          <Label className="text-sm font-medium text-slate-700">
+                          <Label className="text-sm font-medium text-slate-700 dark:text-slate-300">
                             Mostrar teléfono
                           </Label>
-                          <p className="text-xs text-slate-500">
+                          <p className="text-xs text-slate-500 dark:text-slate-400">
                             Permite que otros usuarios vean tu teléfono
                           </p>
                         </div>
@@ -635,12 +635,12 @@ export default function Configuracion() {
                         />
                       </div>
 
-                      <div className="flex items-center justify-between p-4 bg-slate-50 rounded-xl">
+                      <div className="flex items-center justify-between p-4 bg-slate-50 dark:bg-slate-700/50 rounded-xl">
                         <div className="space-y-1">
-                          <Label className="text-sm font-medium text-slate-700">
+                          <Label className="text-sm font-medium text-slate-700 dark:text-slate-300">
                             Análisis y cookies
                           </Label>
-                          <p className="text-xs text-slate-500">
+                          <p className="text-xs text-slate-500 dark:text-slate-400">
                             Permite el uso de cookies para mejorar la experiencia
                           </p>
                         </div>
@@ -650,12 +650,12 @@ export default function Configuracion() {
                         />
                       </div>
 
-                      <div className="flex items-center justify-between p-4 bg-slate-50 rounded-xl">
+                      <div className="flex items-center justify-between p-4 bg-slate-50 dark:bg-slate-700/50 rounded-xl">
                         <div className="space-y-1">
-                          <Label className="text-sm font-medium text-slate-700">
+                          <Label className="text-sm font-medium text-slate-700 dark:text-slate-300">
                             Autenticación de dos factores
                           </Label>
-                          <p className="text-xs text-slate-500">
+                          <p className="text-xs text-slate-500 dark:text-slate-400">
                             Añade una capa extra de seguridad a tu cuenta
                           </p>
                         </div>
@@ -695,12 +695,12 @@ export default function Configuracion() {
                   </CardHeader>
                   <CardContent className="space-y-6">
                     <div className="space-y-4">
-                      <div className="flex items-center justify-between p-4 bg-slate-50 rounded-xl">
+                      <div className="flex items-center justify-between p-4 bg-slate-50 dark:bg-slate-700/50 rounded-xl">
                         <div className="space-y-1">
-                          <Label className="text-sm font-medium text-slate-700">
+                          <Label className="text-sm font-medium text-slate-700 dark:text-slate-300">
                             Guardado automático
                           </Label>
-                          <p className="text-xs text-slate-500">
+                          <p className="text-xs text-slate-500 dark:text-slate-400">
                             Guarda automáticamente tus cambios
                           </p>
                         </div>
@@ -726,12 +726,12 @@ export default function Configuracion() {
                         </div>
                       )}
 
-                      <div className="flex items-center justify-between p-4 bg-slate-50 rounded-xl">
+                      <div className="flex items-center justify-between p-4 bg-slate-50 dark:bg-slate-700/50 rounded-xl">
                         <div className="space-y-1">
-                          <Label className="text-sm font-medium text-slate-700">
+                          <Label className="text-sm font-medium text-slate-700 dark:text-slate-300">
                             Cache habilitado
                           </Label>
-                          <p className="text-xs text-slate-500">
+                          <p className="text-xs text-slate-500 dark:text-slate-400">
                             Mejora la velocidad de carga
                           </p>
                         </div>
@@ -741,12 +741,12 @@ export default function Configuracion() {
                         />
                       </div>
 
-                      <div className="flex items-center justify-between p-4 bg-slate-50 rounded-xl">
+                      <div className="flex items-center justify-between p-4 bg-slate-50 dark:bg-slate-700/50 rounded-xl">
                         <div className="space-y-1">
-                          <Label className="text-sm font-medium text-slate-700">
+                          <Label className="text-sm font-medium text-slate-700 dark:text-slate-300">
                             Calidad de imagen
                           </Label>
-                          <p className="text-xs text-slate-500">
+                          <p className="text-xs text-slate-500 dark:text-slate-400">
                             Balance entre calidad y velocidad
                           </p>
                         </div>
@@ -765,12 +765,12 @@ export default function Configuracion() {
                         </Select>
                       </div>
 
-                      <div className="flex items-center justify-between p-4 bg-slate-50 rounded-xl">
+                      <div className="flex items-center justify-between p-4 bg-slate-50 dark:bg-slate-700/50 rounded-xl">
                         <div className="space-y-1">
-                          <Label className="text-sm font-medium text-slate-700">
+                          <Label className="text-sm font-medium text-slate-700 dark:text-slate-300">
                             Animaciones
                           </Label>
-                          <p className="text-xs text-slate-500">
+                          <p className="text-xs text-slate-500 dark:text-slate-400">
                             Habilita las animaciones de la interfaz
                           </p>
                         </div>
@@ -780,12 +780,12 @@ export default function Configuracion() {
                         />
                       </div>
 
-                      <div className="flex items-center justify-between p-4 bg-slate-50 rounded-xl">
+                      <div className="flex items-center justify-between p-4 bg-slate-50 dark:bg-slate-700/50 rounded-xl">
                         <div className="space-y-1">
-                          <Label className="text-sm font-medium text-slate-700">
+                          <Label className="text-sm font-medium text-slate-700 dark:text-slate-300">
                             Modo de bajo ancho de banda
                           </Label>
-                          <p className="text-xs text-slate-500">
+                          <p className="text-xs text-slate-500 dark:text-slate-400">
                             Optimiza para conexiones lentas
                           </p>
                         </div>
@@ -859,12 +859,12 @@ export default function Configuracion() {
                         </p>
                       </div>
 
-                      <div className="flex items-center justify-between p-4 bg-slate-50 rounded-xl">
+                      <div className="flex items-center justify-between p-4 bg-slate-50 dark:bg-slate-700/50 rounded-xl">
                         <div className="space-y-1">
-                          <Label className="text-sm font-medium text-slate-700">
+                          <Label className="text-sm font-medium text-slate-700 dark:text-slate-300">
                             Cambio obligatorio de contraseña
                           </Label>
-                          <p className="text-xs text-slate-500">
+                          <p className="text-xs text-slate-500 dark:text-slate-400">
                             Fuerza el cambio de contraseña periódicamente
                           </p>
                         </div>
@@ -890,12 +890,12 @@ export default function Configuracion() {
                         </div>
                       )}
 
-                      <div className="flex items-center justify-between p-4 bg-slate-50 rounded-xl">
+                      <div className="flex items-center justify-between p-4 bg-slate-50 dark:bg-slate-700/50 rounded-xl">
                         <div className="space-y-1">
-                          <Label className="text-sm font-medium text-slate-700">
+                          <Label className="text-sm font-medium text-slate-700 dark:text-slate-300">
                             Notificaciones de login
                           </Label>
-                          <p className="text-xs text-slate-500">
+                          <p className="text-xs text-slate-500 dark:text-slate-400">
                             Recibe alertas cuando se inicie sesión en tu cuenta
                           </p>
                         </div>
@@ -905,12 +905,12 @@ export default function Configuracion() {
                         />
                       </div>
 
-                      <div className="flex items-center justify-between p-4 bg-slate-50 rounded-xl">
+                      <div className="flex items-center justify-between p-4 bg-slate-50 dark:bg-slate-700/50 rounded-xl">
                         <div className="space-y-1">
-                          <Label className="text-sm font-medium text-slate-700">
+                          <Label className="text-sm font-medium text-slate-700 dark:text-slate-300">
                             Gestión de dispositivos
                           </Label>
-                          <p className="text-xs text-slate-500">
+                          <p className="text-xs text-slate-500 dark:text-slate-400">
                             Permite gestionar dispositivos conectados
                           </p>
                         </div>
@@ -955,7 +955,7 @@ export default function Configuracion() {
                     <CardContent className="space-y-6">
                       <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
                         <div className="space-y-2">
-                          <Label className="text-sm font-medium text-slate-700">
+                          <Label className="text-sm font-medium text-slate-700 dark:text-slate-300">
                             Nombre del Sistema
                           </Label>
                           <Input
@@ -967,7 +967,7 @@ export default function Configuracion() {
                         </div>
 
                         <div className="space-y-2">
-                          <Label className="text-sm font-medium text-slate-700">
+                          <Label className="text-sm font-medium text-slate-700 dark:text-slate-300">
                             Zona Horaria del Sistema
                           </Label>
                           <Select
@@ -988,7 +988,7 @@ export default function Configuracion() {
                         </div>
 
                         <div className="space-y-2">
-                          <Label className="text-sm font-medium text-slate-700">
+                          <Label className="text-sm font-medium text-slate-700 dark:text-slate-300">
                             Idioma del Sistema
                           </Label>
                           <Select
@@ -1007,7 +1007,7 @@ export default function Configuracion() {
                         </div>
 
                         <div className="space-y-2">
-                          <Label className="text-sm font-medium text-slate-700">
+                          <Label className="text-sm font-medium text-slate-700 dark:text-slate-300">
                             Nivel de Log
                           </Label>
                           <Select
@@ -1043,12 +1043,12 @@ export default function Configuracion() {
                           />
                         </div>
 
-                        <div className="flex items-center justify-between p-4 bg-slate-50 rounded-xl">
+                        <div className="flex items-center justify-between p-4 bg-slate-50 dark:bg-slate-700/50 rounded-xl">
                           <div className="space-y-1">
-                            <Label className="text-sm font-medium text-slate-700">
+                            <Label className="text-sm font-medium text-slate-700 dark:text-slate-300">
                               Modo Debug
                             </Label>
-                            <p className="text-xs text-slate-500">
+                            <p className="text-xs text-slate-500 dark:text-slate-400">
                               Habilita información de debug para desarrolladores
                             </p>
                           </div>
@@ -1058,12 +1058,12 @@ export default function Configuracion() {
                           />
                         </div>
 
-                        <div className="flex items-center justify-between p-4 bg-slate-50 rounded-xl">
+                        <div className="flex items-center justify-between p-4 bg-slate-50 dark:bg-slate-700/50 rounded-xl">
                           <div className="space-y-1">
-                            <Label className="text-sm font-medium text-slate-700">
+                            <Label className="text-sm font-medium text-slate-700 dark:text-slate-300">
                               Actualizaciones Automáticas
                             </Label>
-                            <p className="text-xs text-slate-500">
+                            <p className="text-xs text-slate-500 dark:text-slate-400">
                               Permite actualizaciones automáticas del sistema
                             </p>
                           </div>
