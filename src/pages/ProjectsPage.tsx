@@ -30,6 +30,7 @@ import {
 import { useNavigate, useLocation, useParams } from 'react-router-dom';
 import { toast } from '@/hooks/use-toast';
 import SearchAndFilters from '@/components/SearchAndFilters';
+import ProjectMetrics from '@/components/ProjectMetrics';
 
 import { exportProjects, exportCompleteReport } from '@/utils/exportUtils';
 import { ErrorMessage } from '@/components/ErrorBoundary';
@@ -359,7 +360,13 @@ const ProjectsPage = React.memo(() => {
           </div>
         </div>
 
-
+        {/* Métricas de Proyectos */}
+        <div className="bg-card dark:bg-slate-800/50 rounded-2xl shadow-lg border border-border/50 dark:border-slate-700/50">
+          <ProjectMetrics 
+            projects={visibleProjects} 
+            loading={loading}
+          />
+        </div>
 
         {/* Búsqueda y filtros */}
         <div className="bg-card dark:bg-slate-800/50 rounded-2xl shadow-lg border border-border/50 dark:border-slate-700/50">
