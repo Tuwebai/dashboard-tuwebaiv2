@@ -39,24 +39,25 @@ export const useGeminiAI = ({ apiKey, temperature = 0.7, maxTokens = 2048 }: Use
       let tickets = [];
 
       try {
-        // Consulta simple de proyectos - solo columnas básicas
+        // Consulta de proyectos con columnas correctas
         const projectsResult = await supabase
           .from('projects')
-          .select('id, name, created_at')
+          .select('id, name, status, progress, created_at, created_by')
           .limit(10);
         
         if (projectsResult.error) {
           console.warn('⚠️ Error obteniendo proyectos:', projectsResult.error);
-          // Intentar consulta aún más simple
-          const simpleProjectsResult = await supabase
+          // Fallback a consulta simple
+          const simpleResult = await supabase
             .from('projects')
             .select('id, name')
             .limit(5);
           
-          if (simpleProjectsResult.error) {
-            console.warn('⚠️ Error en consulta simple de proyectos:', simpleProjectsResult.error);
+          if (simpleResult.error) {
+            console.warn('⚠️ Error en consulta simple de proyectos:', simpleResult.error);
+            projects = [];
           } else {
-            projects = simpleProjectsResult.data || [];
+            projects = simpleResult.data || [];
             console.log('✅ Proyectos obtenidos (consulta simple):', projects.length);
           }
         } else {
@@ -65,6 +66,7 @@ export const useGeminiAI = ({ apiKey, temperature = 0.7, maxTokens = 2048 }: Use
         }
       } catch (error) {
         console.warn('⚠️ Error en consulta de proyectos:', error);
+        projects = [];
       }
 
       try {
@@ -84,24 +86,25 @@ export const useGeminiAI = ({ apiKey, temperature = 0.7, maxTokens = 2048 }: Use
       }
 
       try {
-        // Consulta simple de tickets - solo columnas básicas
+        // Consulta de tickets con columnas correctas
         const ticketsResult = await supabase
           .from('tickets')
-          .select('id, title, created_at')
+          .select('id, asunto, status, prioridad, created_at, user_id')
           .limit(10);
         
         if (ticketsResult.error) {
           console.warn('⚠️ Error obteniendo tickets:', ticketsResult.error);
-          // Intentar consulta aún más simple
-          const simpleTicketsResult = await supabase
+          // Fallback a consulta simple
+          const simpleResult = await supabase
             .from('tickets')
-            .select('id, title')
+            .select('id, asunto')
             .limit(5);
           
-          if (simpleTicketsResult.error) {
-            console.warn('⚠️ Error en consulta simple de tickets:', simpleTicketsResult.error);
+          if (simpleResult.error) {
+            console.warn('⚠️ Error en consulta simple de tickets:', simpleResult.error);
+            tickets = [];
           } else {
-            tickets = simpleTicketsResult.data || [];
+            tickets = simpleResult.data || [];
             console.log('✅ Tickets obtenidos (consulta simple):', tickets.length);
           }
         } else {
@@ -110,6 +113,7 @@ export const useGeminiAI = ({ apiKey, temperature = 0.7, maxTokens = 2048 }: Use
         }
       } catch (error) {
         console.warn('⚠️ Error en consulta de tickets:', error);
+        tickets = [];
       }
 
       const context = {
