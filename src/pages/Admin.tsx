@@ -873,16 +873,16 @@ const Admin = React.memo(() => {
             {/* Resto de las secciones mantienen su funcionalidad pero con diseño moderno */}
             {activeSection === 'usuarios' && (
                 <div className="h-full flex flex-col">
-                  <Card className="bg-card rounded-2xl shadow-lg hover:shadow-xl transition-all duration-300 border border-border/50 flex-1">
-                <CardHeader className="bg-gradient-to-r from-slate-50 to-slate-100 rounded-t-2xl">
+                  <Card className="bg-card dark:bg-slate-800/50 rounded-2xl shadow-lg hover:shadow-xl transition-all duration-300 border border-border/50 dark:border-slate-700/50 flex-1">
+                <CardHeader className="bg-gradient-to-r from-slate-50 to-slate-100 dark:from-slate-800 dark:to-slate-700 rounded-t-2xl">
                       <div className="flex flex-col sm:flex-row sm:items-center justify-between space-y-3 sm:space-y-0">
                         <div className="flex items-center space-x-3">
                           <div className="w-10 h-10 sm:w-12 sm:h-12 bg-gradient-to-br from-blue-500 to-indigo-600 rounded-2xl flex items-center justify-center shadow-lg">
                             <Users size={20} className="sm:w-6 sm:h-6 text-white" />
                           </div>
                           <div>
-                            <span className="text-xl sm:text-2xl font-bold text-card-foreground">Gestión de Usuarios</span>
-                            <p className="text-slate-600 text-xs sm:text-sm mt-1">Administra usuarios del sistema y sus roles</p>
+                            <span className="text-xl sm:text-2xl font-bold text-card-foreground dark:text-slate-100">Gestión de Usuarios</span>
+                            <p className="text-slate-600 dark:text-slate-400 text-xs sm:text-sm mt-1">Administra usuarios del sistema y sus roles</p>
                           </div>
                         </div>
                         <div className="flex items-center space-x-3">
@@ -890,7 +890,7 @@ const Admin = React.memo(() => {
                             onClick={refreshData}
                             variant="outline"
                             size="sm"
-                            className="bg-gradient-to-r from-emerald-50 to-teal-50 border-emerald-200 hover:from-emerald-100 hover:to-teal-100 text-emerald-700 hover:text-emerald-800 font-medium transition-all duration-200 shadow-sm hover:shadow-md px-3 sm:px-4 py-2 text-xs sm:text-sm"
+                            className="bg-gradient-to-r from-emerald-50 to-teal-50 dark:from-emerald-900/30 dark:to-teal-900/30 border-emerald-200 dark:border-emerald-700 hover:from-emerald-100 hover:to-teal-100 dark:hover:from-emerald-800/40 dark:hover:to-teal-800/40 text-emerald-700 dark:text-emerald-400 hover:text-emerald-800 dark:hover:text-emerald-300 font-medium transition-all duration-200 shadow-sm hover:shadow-md px-3 sm:px-4 py-2 text-xs sm:text-sm"
                           >
                             <RefreshCw className="h-3 w-3 sm:h-4 sm:w-4 mr-2" />
                             Actualizar Datos
@@ -902,20 +902,20 @@ const Admin = React.memo(() => {
                     {loading ? (
                       <div className="text-center py-12">
                         <div className="animate-spin rounded-full h-16 w-16 border-b-2 border-blue-500 mx-auto mb-4"></div>
-                        <p className="text-slate-600 text-lg font-medium">Cargando usuarios...</p>
-                        <p className="text-slate-400 text-sm mt-2">Obteniendo información del sistema</p>
+                        <p className="text-slate-600 dark:text-slate-300 text-lg font-medium">Cargando usuarios...</p>
+                        <p className="text-slate-400 dark:text-slate-500 text-sm mt-2">Obteniendo información del sistema</p>
                       </div>
                     ) : usuarios.length === 0 ? (
                       <div className="text-center py-12">
-                        <div className="w-20 h-20 bg-gradient-to-br from-slate-100 to-slate-200 rounded-full flex items-center justify-center mx-auto mb-4">
-                          <Users className="h-10 w-10 text-slate-400" />
+                        <div className="w-20 h-20 bg-gradient-to-br from-slate-100 to-slate-200 dark:from-slate-700 dark:to-slate-600 rounded-full flex items-center justify-center mx-auto mb-4">
+                          <Users className="h-10 w-10 text-slate-400 dark:text-slate-500" />
                         </div>
-                        <h3 className="text-lg font-semibold text-slate-700 mb-2">No hay usuarios registrados</h3>
-                        <p className="text-slate-500 mb-6">Los usuarios aparecerán aquí una vez que se carguen desde la base de datos</p>
+                        <h3 className="text-lg font-semibold text-slate-700 dark:text-slate-300 mb-2">No hay usuarios registrados</h3>
+                        <p className="text-slate-500 dark:text-slate-400 mb-6">Los usuarios aparecerán aquí una vez que se carguen desde la base de datos</p>
                         <Button 
                           onClick={refreshData}
                           variant="outline"
-                          className="bg-gradient-to-r from-blue-50 to-indigo-50 border-blue-200 hover:from-blue-100 hover:to-indigo-100 text-blue-700 hover:text-blue-800 px-6 py-2"
+                          className="bg-gradient-to-r from-blue-50 to-indigo-50 dark:from-blue-900/30 dark:to-indigo-900/30 border-blue-200 dark:border-blue-700 hover:from-blue-100 hover:to-indigo-100 dark:hover:from-blue-800/40 dark:hover:to-indigo-800/40 text-blue-700 dark:text-blue-400 hover:text-blue-800 dark:hover:text-blue-300 px-6 py-2"
                         >
                           <RefreshCw className="h-4 w-4 mr-2" />
                           Intentar cargar usuarios
@@ -924,15 +924,15 @@ const Admin = React.memo(() => {
                     ) : (
                   <div className="space-y-4">
                         {/* Header de la lista */}
-                        <div className="bg-gradient-to-r from-slate-50 to-slate-100 p-4 rounded-xl border border-border/50">
+                        <div className="bg-gradient-to-r from-slate-50 to-slate-100 dark:from-slate-700 dark:to-slate-600 p-4 rounded-xl border border-border/50 dark:border-slate-600/50">
                           <div className="flex items-center justify-between">
                             <div className="flex items-center space-x-3">
                               <div className="w-8 h-8 bg-gradient-to-br from-blue-500 to-indigo-600 rounded-lg flex items-center justify-center">
                                 <Users size={16} className="text-white" />
                               </div>
-                              <span className="font-semibold text-slate-700">Lista de Usuarios ({usuarios.length})</span>
+                              <span className="font-semibold text-slate-700 dark:text-slate-200">Lista de Usuarios ({usuarios.length})</span>
                             </div>
-                            <Badge className="bg-blue-100 text-blue-700 border-blue-200 px-3 py-1">
+                            <Badge className="bg-blue-100 dark:bg-blue-900/30 text-blue-700 dark:text-blue-400 border-blue-200 dark:border-blue-700 px-3 py-1">
                               {usuarios.filter(u => u.role === 'admin').length} Admin • {usuarios.filter(u => u.role !== 'admin').length} Usuarios
                             </Badge>
                           </div>
@@ -940,7 +940,7 @@ const Admin = React.memo(() => {
                         
                         {/* Lista de usuarios */}
                         {usuarios.map((usuario, index) => (
-                          <div key={usuario.id} className="bg-gradient-to-r from-slate-50 to-white p-6 rounded-2xl hover:from-slate-100 hover:to-slate-50 transition-all duration-300 border border-border/50 hover:border-border/50 hover:shadow-lg group">
+                          <div key={usuario.id} className="bg-gradient-to-r from-slate-50 to-white dark:from-slate-700 dark:to-slate-600 p-6 rounded-2xl hover:from-slate-100 hover:to-slate-50 dark:hover:from-slate-600 dark:hover:to-slate-500 transition-all duration-300 border border-border/50 dark:border-slate-600/50 hover:border-border/50 dark:hover:border-slate-500/50 hover:shadow-lg group">
                             <div className="flex items-center justify-between">
                         <div className="flex items-center space-x-4">
                                 <div className="relative">
@@ -975,10 +975,10 @@ const Admin = React.memo(() => {
                                   )}
                           </div>
                           <div>
-                                  <div className="font-bold text-card-foreground text-lg group-hover:text-slate-900 transition-colors duration-300">
+                                  <div className="font-bold text-card-foreground dark:text-slate-100 text-lg group-hover:text-slate-900 dark:group-hover:text-slate-50 transition-colors duration-300">
                                     {usuario.full_name || 'Sin nombre'}
                           </div>
-                                  <div className="text-slate-500 text-sm group-hover:text-slate-600 transition-colors duration-300">
+                                  <div className="text-slate-500 dark:text-slate-400 text-sm group-hover:text-slate-600 dark:group-hover:text-slate-300 transition-colors duration-300">
                                     {usuario.email}
                         </div>
                                   <div className="flex items-center space-x-2 mt-2">
@@ -988,7 +988,7 @@ const Admin = React.memo(() => {
                                     >
                                       {usuario.role === 'admin' ? '👑 Administrador' : '👤 Cliente'}
                           </Badge>
-                                    <span className="text-xs text-slate-400">
+                                    <span className="text-xs text-slate-400 dark:text-slate-500">
                                       ID: {usuario.id.slice(0, 8)}...
                                     </span>
                                   </div>
@@ -998,12 +998,12 @@ const Admin = React.memo(() => {
                               <div className="flex items-center space-x-4">
                                 {/* Selector de rol */}
                                 <div className="flex items-center space-x-3">
-                                  <span className="text-sm font-medium text-slate-600">Rol:</span>
+                                  <span className="text-sm font-medium text-slate-600 dark:text-slate-300">Rol:</span>
                                   <Select 
                                     value={usuario.role || 'cliente'} 
                                     onValueChange={(value) => updateUserRole(usuario.id, value)}
                                   >
-                                    <SelectTrigger className="w-32 bg-white border-border hover:border-border transition-colors duration-200 text-card-foreground font-medium">
+                                    <SelectTrigger className="w-32 bg-white dark:bg-slate-700 border-border dark:border-slate-600 hover:border-border dark:hover:border-slate-500 transition-colors duration-200 text-card-foreground dark:text-slate-200 font-medium">
                                       <SelectValue>
                                         {usuario.role === 'admin' ? '👑 Admin' : '👤 Cliente'}
                                       </SelectValue>
@@ -1027,7 +1027,7 @@ const Admin = React.memo(() => {
                                     variant="outline" 
                                     size="sm" 
                                     onClick={() => handleEditUser(usuario)}
-                                    className="bg-gradient-to-r from-blue-50 to-indigo-50 border-blue-200 hover:from-blue-100 hover:to-indigo-100 text-blue-700 hover:text-blue-800 transition-all duration-200 px-3 py-2 h-9"
+                                    className="bg-gradient-to-r from-blue-50 to-indigo-50 dark:from-blue-900/30 dark:to-indigo-900/30 border-blue-200 dark:border-blue-700 hover:from-blue-100 hover:to-indigo-100 dark:hover:from-blue-800/40 dark:hover:to-indigo-800/40 text-blue-700 dark:text-blue-400 hover:text-blue-800 dark:hover:text-blue-300 transition-all duration-200 px-3 py-2 h-9"
                                   >
                                     <Edit size={14} className="mr-1" />
                                     Editar
@@ -1036,7 +1036,7 @@ const Admin = React.memo(() => {
                                     variant="outline" 
                                     size="sm" 
                                     onClick={() => handleDeleteUser(usuario.id)}
-                                    className="bg-gradient-to-r from-red-50 to-pink-50 border-red-200 hover:from-red-100 hover:to-pink-100 text-red-700 hover:text-red-800 transition-all duration-200 px-3 py-2 h-9"
+                                    className="bg-gradient-to-r from-red-50 to-pink-50 dark:from-red-900/30 dark:to-pink-900/30 border-red-200 dark:border-red-700 hover:from-red-100 hover:to-pink-100 dark:hover:from-red-800/40 dark:hover:to-pink-800/40 text-red-700 dark:text-red-400 hover:text-red-800 dark:hover:text-red-300 transition-all duration-200 px-3 py-2 h-9"
                                   >
                                     <Trash2 size={14} className="mr-1" />
                                     Eliminar
@@ -1053,17 +1053,17 @@ const Admin = React.memo(() => {
                     <div className="mt-8">
                       <Button 
                         variant="outline" 
-                        className="w-full justify-start p-8 rounded-2xl hover:bg-gradient-to-r hover:from-blue-50 hover:to-indigo-50 transition-all duration-300 cursor-pointer group border-2 border-dashed border-blue-200 hover:border-blue-300 hover:shadow-lg bg-gradient-to-r from-blue-50/30 to-indigo-50/30"
+                        className="w-full justify-start p-8 rounded-2xl hover:bg-gradient-to-r hover:from-blue-50 hover:to-indigo-50 dark:hover:from-blue-900/20 dark:hover:to-indigo-900/20 transition-all duration-300 cursor-pointer group border-2 border-dashed border-blue-200 dark:border-blue-700 hover:border-blue-300 dark:hover:border-blue-600 hover:shadow-lg bg-gradient-to-r from-blue-50/30 to-indigo-50/30 dark:from-blue-900/10 dark:to-indigo-900/10"
                         onClick={() => setShowAddUserModal(true)}
                       >
                         <div className="flex items-center justify-center w-20 h-20 rounded-2xl transition-all duration-300 group-hover:scale-110 bg-gradient-to-br from-blue-500 to-indigo-600 text-white shadow-lg group-hover:from-blue-600 group-hover:to-indigo-700 mr-8">
                           <Plus size={32} />
                         </div>
                         <div className="text-left">
-                          <span className="text-slate-700 font-bold text-xl group-hover:text-slate-900 transition-colors duration-300 block mb-2">
+                          <span className="text-slate-700 dark:text-slate-200 font-bold text-xl group-hover:text-slate-900 dark:group-hover:text-slate-100 transition-colors duration-300 block mb-2">
                             Agregar Nuevo Usuario
                           </span>
-                          <span className="text-slate-500 group-hover:text-slate-600 transition-colors duration-300">
+                          <span className="text-slate-500 dark:text-slate-400 group-hover:text-slate-600 dark:group-hover:text-slate-300 transition-colors duration-300">
                             Crear un nuevo usuario en el sistema con permisos específicos
                           </span>
                         </div>
