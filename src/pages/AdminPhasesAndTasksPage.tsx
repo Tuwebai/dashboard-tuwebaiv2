@@ -35,7 +35,8 @@ import {
   Eye,
   Edit,
   Trash2,
-  MoreHorizontal
+  MoreHorizontal,
+  X
 } from 'lucide-react';
 import PhasesAndTasks from '@/components/PhasesAndTasks';
 import { motion, AnimatePresence } from '@/components/OptimizedMotion';
@@ -58,6 +59,14 @@ const AdminPhasesAndTasksPage: React.FC = () => {
   const [calendarView, setCalendarView] = useState<'month' | 'week' | 'day'>('month');
   const [clients, setClients] = useState<any[]>([]);
   const [allProjects, setAllProjects] = useState<any[]>([]);
+  const [selectedDate, setSelectedDate] = useState<Date | null>(null);
+  const [showDateModal, setShowDateModal] = useState(false);
+  const [dateTasks, setDateTasks] = useState<any[]>([]);
+  const [newTaskTitle, setNewTaskTitle] = useState('');
+  const [newTaskDescription, setNewTaskDescription] = useState('');
+  const [newTaskProject, setNewTaskProject] = useState('');
+  const [newTaskPriority, setNewTaskPriority] = useState<'low' | 'medium' | 'high'>('medium');
+  const [newTaskStatus, setNewTaskStatus] = useState<'pending' | 'in_progress' | 'completed'>('pending');
 
   // =====================================================
   // REAL-TIME UPDATES PARA ADMIN
@@ -303,6 +312,146 @@ const AdminPhasesAndTasksPage: React.FC = () => {
   const handleRefresh = async () => {
     setLoading(true);
     await loadAllData();
+  };
+
+  // =====================================================
+  // FUNCIONES DEL MODAL DE FECHA
+  // =====================================================
+
+  const handleDateClick = async (date: Date) => {
+    setSelectedDate(date);
+    setShowDateModal(true);
+    await loadTasksForDate(date);
+  };
+
+  const loadTasksForDate = async (date: Date) => {
+    try {
+      const dateStr = date.toISOString().split('T')[0];
+      
+      // Cargar tareas específicas del día
+      const { data: tasksData, error: tasksError } = await supabase
+        .from('daily_tasks')
+        .select(`
+          *,
+          projects (
+            id,
+            name,
+            users (
+              full_name,
+              email
+            )
+          )
+        `)
+        .eq('task_date', dateStr)
+        .order('created_at', { ascending: false });
+
+      if (tasksError) throw tasksError;
+
+      setDateTasks(tasksData || []);
+    } catch (error) {
+      console.error('Error cargando tareas del día:', error);
+      setDateTasks([]);
+    }
+  };
+
+  const createTaskForDate = async () => {
+    if (!selectedDate || !newTaskTitle.trim() || !newTaskProject) return;
+
+    try {
+      const { data, error } = await supabase
+        .from('daily_tasks')
+        .insert({
+          title: newTaskTitle,
+          description: newTaskDescription,
+          task_date: selectedDate.toISOString().split('T')[0],
+          project_id: newTaskProject,
+          priority: newTaskPriority,
+          status: newTaskStatus,
+          created_by: user?.id,
+          created_at: new Date().toISOString()
+        })
+        .select();
+
+      if (error) throw error;
+
+      // Limpiar formulario
+      setNewTaskTitle('');
+      setNewTaskDescription('');
+      setNewTaskProject('');
+      setNewTaskPriority('medium');
+      setNewTaskStatus('pending');
+
+      // Recargar tareas del día
+      await loadTasksForDate(selectedDate);
+
+      toast({
+        title: "Tarea creada",
+        description: "La tarea se ha creado exitosamente para este día",
+      });
+    } catch (error) {
+      console.error('Error creando tarea:', error);
+      toast({
+        title: "Error",
+        description: "No se pudo crear la tarea",
+        variant: "destructive",
+      });
+    }
+  };
+
+  const updateTaskStatus = async (taskId: string, newStatus: string) => {
+    try {
+      const { error } = await supabase
+        .from('daily_tasks')
+        .update({ status: newStatus })
+        .eq('id', taskId);
+
+      if (error) throw error;
+
+      // Recargar tareas del día
+      if (selectedDate) {
+        await loadTasksForDate(selectedDate);
+      }
+
+      toast({
+        title: "Tarea actualizada",
+        description: "El estado de la tarea se ha actualizado",
+      });
+    } catch (error) {
+      console.error('Error actualizando tarea:', error);
+      toast({
+        title: "Error",
+        description: "No se pudo actualizar la tarea",
+        variant: "destructive",
+      });
+    }
+  };
+
+  const deleteTask = async (taskId: string) => {
+    try {
+      const { error } = await supabase
+        .from('daily_tasks')
+        .delete()
+        .eq('id', taskId);
+
+      if (error) throw error;
+
+      // Recargar tareas del día
+      if (selectedDate) {
+        await loadTasksForDate(selectedDate);
+      }
+
+      toast({
+        title: "Tarea eliminada",
+        description: "La tarea se ha eliminado exitosamente",
+      });
+    } catch (error) {
+      console.error('Error eliminando tarea:', error);
+      toast({
+        title: "Error",
+        description: "No se pudo eliminar la tarea",
+        variant: "destructive",
+      });
+    }
   };
 
   // Verificar permisos de admin
@@ -711,12 +860,13 @@ const AdminPhasesAndTasksPage: React.FC = () => {
                         return (
                           <motion.div
                             key={index}
-                            className={`min-h-[120px] border-r border-b border-gray-200 dark:border-gray-700 p-2 ${
+                            className={`min-h-[120px] border-r border-b border-gray-200 dark:border-gray-700 p-2 cursor-pointer hover:bg-gray-50 dark:hover:bg-gray-800 transition-colors ${
                               isCurrentMonth ? 'bg-white dark:bg-gray-900' : 'bg-gray-50 dark:bg-gray-800'
                             } ${isToday ? 'bg-blue-50 dark:bg-blue-900/20' : ''}`}
                             initial={{ opacity: 0 }}
                             animate={{ opacity: 1 }}
                             transition={{ delay: index * 0.01 }}
+                            onClick={() => handleDateClick(day)}
                           >
                             <div className={`text-sm font-medium mb-2 ${
                               isCurrentMonth ? 'text-gray-900 dark:text-white' : 'text-gray-400'
@@ -736,7 +886,8 @@ const AdminPhasesAndTasksPage: React.FC = () => {
                                       ? 'bg-blue-100 text-blue-800 dark:bg-blue-500/20 dark:text-blue-300'
                                       : 'bg-gray-100 text-gray-800 dark:bg-gray-500/20 dark:text-gray-300'
                                   }`}
-                                  onClick={() => {
+                                  onClick={(e) => {
+                                    e.stopPropagation();
                                     setSelectedProjectId(event.projectId);
                                     setActiveTab('detailed');
                                   }}
@@ -750,6 +901,11 @@ const AdminPhasesAndTasksPage: React.FC = () => {
                                   +{events.length - 3} más
                                 </div>
                               )}
+                            </div>
+                            
+                            {/* Indicador de clic */}
+                            <div className="mt-2 text-xs text-gray-400 dark:text-gray-500 text-center">
+                              Click para gestionar
                             </div>
                           </motion.div>
                         );
@@ -931,6 +1087,240 @@ const AdminPhasesAndTasksPage: React.FC = () => {
           </div>
         )}
       </div>
+
+      {/* Modal de Gestión por Fecha */}
+      {showDateModal && selectedDate && (
+        <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50 p-4">
+          <motion.div
+            initial={{ opacity: 0, scale: 0.95 }}
+            animate={{ opacity: 1, scale: 1 }}
+            exit={{ opacity: 0, scale: 0.95 }}
+            className="bg-white dark:bg-gray-800 rounded-lg shadow-xl w-full max-w-4xl max-h-[90vh] overflow-hidden"
+          >
+            {/* Header del Modal */}
+            <div className="flex items-center justify-between p-6 border-b border-gray-200 dark:border-gray-700">
+              <div className="flex items-center gap-3">
+                <div className="p-2 bg-purple-100 dark:bg-purple-500/20 rounded-lg">
+                  <Calendar className="h-6 w-6 text-purple-600 dark:text-purple-400" />
+                </div>
+                <div>
+                  <h2 className="text-xl font-bold text-gray-900 dark:text-white">
+                    Gestión del {selectedDate.toLocaleDateString('es-ES', { 
+                      weekday: 'long', 
+                      year: 'numeric', 
+                      month: 'long', 
+                      day: 'numeric' 
+                    })}
+                  </h2>
+                  <p className="text-sm text-gray-600 dark:text-gray-400">
+                    Administra las fases y tareas específicas de este día
+                  </p>
+                </div>
+              </div>
+              <Button
+                variant="ghost"
+                size="sm"
+                onClick={() => setShowDateModal(false)}
+                className="text-gray-500 hover:text-gray-700"
+              >
+                <X className="h-5 w-5" />
+              </Button>
+            </div>
+
+            {/* Contenido del Modal */}
+            <div className="p-6 overflow-y-auto max-h-[calc(90vh-120px)]">
+              <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
+                {/* Formulario para Nueva Tarea */}
+                <Card>
+                  <CardHeader>
+                    <CardTitle className="flex items-center gap-2">
+                      <Plus className="h-5 w-5" />
+                      Nueva Tarea
+                    </CardTitle>
+                  </CardHeader>
+                  <CardContent className="space-y-4">
+                    <div>
+                      <Label htmlFor="task-title">Título de la tarea</Label>
+                      <Input
+                        id="task-title"
+                        value={newTaskTitle}
+                        onChange={(e) => setNewTaskTitle(e.target.value)}
+                        placeholder="Ej: Revisar diseño del proyecto X"
+                      />
+                    </div>
+
+                    <div>
+                      <Label htmlFor="task-description">Descripción</Label>
+                      <Textarea
+                        id="task-description"
+                        value={newTaskDescription}
+                        onChange={(e) => setNewTaskDescription(e.target.value)}
+                        placeholder="Detalles adicionales de la tarea..."
+                        rows={3}
+                      />
+                    </div>
+
+                    <div>
+                      <Label htmlFor="task-project">Proyecto</Label>
+                      <Select value={newTaskProject} onValueChange={setNewTaskProject}>
+                        <SelectTrigger>
+                          <SelectValue placeholder="Seleccionar proyecto" />
+                        </SelectTrigger>
+                        <SelectContent>
+                          {allProjects.map((project) => (
+                            <SelectItem key={project.id} value={project.id}>
+                              {project.name} - {project.users?.full_name || 'Cliente desconocido'}
+                            </SelectItem>
+                          ))}
+                        </SelectContent>
+                      </Select>
+                    </div>
+
+                    <div className="grid grid-cols-2 gap-4">
+                      <div>
+                        <Label htmlFor="task-priority">Prioridad</Label>
+                        <Select value={newTaskPriority} onValueChange={(value: any) => setNewTaskPriority(value)}>
+                          <SelectTrigger>
+                            <SelectValue />
+                          </SelectTrigger>
+                          <SelectContent>
+                            <SelectItem value="low">Baja</SelectItem>
+                            <SelectItem value="medium">Media</SelectItem>
+                            <SelectItem value="high">Alta</SelectItem>
+                          </SelectContent>
+                        </Select>
+                      </div>
+
+                      <div>
+                        <Label htmlFor="task-status">Estado</Label>
+                        <Select value={newTaskStatus} onValueChange={(value: any) => setNewTaskStatus(value)}>
+                          <SelectTrigger>
+                            <SelectValue />
+                          </SelectTrigger>
+                          <SelectContent>
+                            <SelectItem value="pending">Pendiente</SelectItem>
+                            <SelectItem value="in_progress">En Progreso</SelectItem>
+                            <SelectItem value="completed">Completado</SelectItem>
+                          </SelectContent>
+                        </Select>
+                      </div>
+                    </div>
+
+                    <Button 
+                      onClick={createTaskForDate}
+                      disabled={!newTaskTitle.trim() || !newTaskProject}
+                      className="w-full"
+                    >
+                      <Plus className="h-4 w-4 mr-2" />
+                      Crear Tarea
+                    </Button>
+                  </CardContent>
+                </Card>
+
+                {/* Lista de Tareas del Día */}
+                <Card>
+                  <CardHeader>
+                    <CardTitle className="flex items-center gap-2">
+                      <Target className="h-5 w-5" />
+                      Tareas del Día ({dateTasks.length})
+                    </CardTitle>
+                  </CardHeader>
+                  <CardContent>
+                    {dateTasks.length === 0 ? (
+                      <div className="text-center py-8">
+                        <Calendar className="h-12 w-12 text-gray-400 mx-auto mb-4" />
+                        <p className="text-gray-500 dark:text-gray-400">
+                          No hay tareas programadas para este día
+                        </p>
+                      </div>
+                    ) : (
+                      <div className="space-y-3">
+                        {dateTasks.map((task, index) => (
+                          <motion.div
+                            key={task.id}
+                            initial={{ opacity: 0, y: 20 }}
+                            animate={{ opacity: 1, y: 0 }}
+                            transition={{ delay: index * 0.1 }}
+                            className="p-4 border border-gray-200 dark:border-gray-700 rounded-lg hover:shadow-md transition-shadow"
+                          >
+                            <div className="flex items-start justify-between">
+                              <div className="flex-1">
+                                <h4 className="font-medium text-gray-900 dark:text-white mb-1">
+                                  {task.title}
+                                </h4>
+                                {task.description && (
+                                  <p className="text-sm text-gray-600 dark:text-gray-400 mb-2">
+                                    {task.description}
+                                  </p>
+                                )}
+                                <div className="flex items-center gap-4 text-xs text-gray-500 dark:text-gray-400">
+                                  <span>Proyecto: {task.projects?.name}</span>
+                                  <span>Cliente: {task.projects?.users?.full_name || task.projects?.users?.email}</span>
+                                </div>
+                              </div>
+                              
+                              <div className="flex items-center gap-2 ml-4">
+                                <Select
+                                  value={task.status}
+                                  onValueChange={(value) => updateTaskStatus(task.id, value)}
+                                >
+                                  <SelectTrigger className="w-32">
+                                    <SelectValue />
+                                  </SelectTrigger>
+                                  <SelectContent>
+                                    <SelectItem value="pending">Pendiente</SelectItem>
+                                    <SelectItem value="in_progress">En Progreso</SelectItem>
+                                    <SelectItem value="completed">Completado</SelectItem>
+                                  </SelectContent>
+                                </Select>
+                                
+                                <Button
+                                  variant="ghost"
+                                  size="sm"
+                                  onClick={() => deleteTask(task.id)}
+                                  className="text-red-500 hover:text-red-700"
+                                >
+                                  <Trash2 className="h-4 w-4" />
+                                </Button>
+                              </div>
+                            </div>
+                            
+                            <div className="flex items-center gap-2 mt-3">
+                              <Badge 
+                                className={
+                                  task.priority === 'high' 
+                                    ? 'bg-red-100 text-red-800 dark:bg-red-500/20 dark:text-red-300'
+                                    : task.priority === 'medium'
+                                    ? 'bg-yellow-100 text-yellow-800 dark:bg-yellow-500/20 dark:text-yellow-300'
+                                    : 'bg-green-100 text-green-800 dark:bg-green-500/20 dark:text-green-300'
+                                }
+                              >
+                                {task.priority === 'high' ? 'Alta' : task.priority === 'medium' ? 'Media' : 'Baja'}
+                              </Badge>
+                              
+                              <Badge 
+                                className={
+                                  task.status === 'completed' 
+                                    ? 'bg-green-100 text-green-800 dark:bg-green-500/20 dark:text-green-300'
+                                    : task.status === 'in_progress'
+                                    ? 'bg-blue-100 text-blue-800 dark:bg-blue-500/20 dark:text-blue-300'
+                                    : 'bg-gray-100 text-gray-800 dark:bg-gray-500/20 dark:text-gray-300'
+                                }
+                              >
+                                {task.status === 'completed' ? 'Completado' : task.status === 'in_progress' ? 'En Progreso' : 'Pendiente'}
+                              </Badge>
+                            </div>
+                          </motion.div>
+                        ))}
+                      </div>
+                    )}
+                  </CardContent>
+                </Card>
+              </div>
+            </div>
+          </motion.div>
+        </div>
+      )}
     </div>
   );
 };
