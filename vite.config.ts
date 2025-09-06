@@ -24,7 +24,7 @@ export default defineConfig({
     cors: true,
     strictPort: true
   },
-  envPrefix: 'VITE_',
+  envPrefix: ['VITE_', 'REACT_APP_'],
   build: {
     rollupOptions: {
       output: {

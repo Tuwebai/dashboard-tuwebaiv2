@@ -31,21 +31,78 @@ export const useGeminiAI = ({ apiKey, temperature = 0.7, maxTokens = 2048 }: Use
   // Obtener contexto de la base de datos
   const getDatabaseContext = useCallback(async () => {
     try {
-      const [projectsResult, usersResult, ticketsResult] = await Promise.all([
-        supabase.from('projects').select('id, name, status, progress, created_at, updated_at, created_by'),
-        supabase.from('users').select('id, full_name, email, role, created_at'),
-        supabase.from('tickets').select('id, title, status, priority, created_at, user_id')
-      ]);
+      console.log('📊 Obteniendo contexto de base de datos...');
+      
+      // Intentar obtener datos de manera individual para manejar errores específicos
+      let projects = [];
+      let users = [];
+      let tickets = [];
 
-      return {
-        projects: projectsResult.data || [],
-        users: usersResult.data || [],
-        tickets: ticketsResult.data || [],
+      try {
+        const projectsResult = await supabase
+          .from('projects')
+          .select('id, name, status, progress, created_at, updated_at, created_by')
+          .limit(10);
+        
+        if (projectsResult.error) {
+          console.warn('⚠️ Error obteniendo proyectos:', projectsResult.error);
+        } else {
+          projects = projectsResult.data || [];
+          console.log('✅ Proyectos obtenidos:', projects.length);
+        }
+      } catch (error) {
+        console.warn('⚠️ Error en consulta de proyectos:', error);
+      }
+
+      try {
+        const usersResult = await supabase
+          .from('users')
+          .select('id, full_name, email, role, created_at')
+          .limit(10);
+        
+        if (usersResult.error) {
+          console.warn('⚠️ Error obteniendo usuarios:', usersResult.error);
+        } else {
+          users = usersResult.data || [];
+          console.log('✅ Usuarios obtenidos:', users.length);
+        }
+      } catch (error) {
+        console.warn('⚠️ Error en consulta de usuarios:', error);
+      }
+
+      try {
+        const ticketsResult = await supabase
+          .from('tickets')
+          .select('id, title, status, priority, created_at, user_id')
+          .limit(10);
+        
+        if (ticketsResult.error) {
+          console.warn('⚠️ Error obteniendo tickets:', ticketsResult.error);
+        } else {
+          tickets = ticketsResult.data || [];
+          console.log('✅ Tickets obtenidos:', tickets.length);
+        }
+      } catch (error) {
+        console.warn('⚠️ Error en consulta de tickets:', error);
+      }
+
+      const context = {
+        projects,
+        users,
+        tickets,
         timestamp: new Date().toISOString()
       };
+
+      console.log('📊 Contexto de BD preparado:', context);
+      return context;
     } catch (error) {
-      console.error('Error getting database context:', error);
-      return null;
+      console.error('❌ Error general obteniendo contexto de BD:', error);
+      return {
+        projects: [],
+        users: [],
+        tickets: [],
+        timestamp: new Date().toISOString()
+      };
     }
   }, []);
 

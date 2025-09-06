@@ -42,22 +42,35 @@ export const useAISettings = () => {
     setError(null);
 
     try {
+      console.log('⚙️ Cargando configuraciones de AI para usuario:', user.id);
+      
       const { data, error: fetchError } = await supabase
         .from('ai_settings')
         .select('settings')
         .eq('user_id', user.id)
         .single();
 
-      if (fetchError && fetchError.code !== 'PGRST116') { // PGRST116 = no rows found
-        throw fetchError;
-      }
-
-      if (data?.settings) {
+      if (fetchError) {
+        if (fetchError.code === 'PGRST116') { // No rows found
+          console.log('ℹ️ No hay configuraciones guardadas, usando valores por defecto');
+          setSettings(defaultSettings);
+        } else {
+          console.warn('⚠️ Error cargando configuraciones:', fetchError);
+          // Continuar con configuraciones por defecto en caso de error
+          setSettings(defaultSettings);
+        }
+      } else if (data?.settings) {
+        console.log('✅ Configuraciones cargadas:', data.settings);
         setSettings({ ...defaultSettings, ...data.settings });
+      } else {
+        console.log('ℹ️ Configuraciones vacías, usando valores por defecto');
+        setSettings(defaultSettings);
       }
     } catch (error) {
-      console.error('Error loading AI settings:', error);
+      console.error('❌ Error cargando configuraciones de AI:', error);
       setError(error instanceof Error ? error.message : 'Error cargando configuraciones');
+      // En caso de error, usar configuraciones por defecto
+      setSettings(defaultSettings);
     } finally {
       setLoading(false);
     }
