@@ -6,6 +6,7 @@ import LoadingSpinner from '@/components/LoadingSpinner';
 import { Plus, FolderOpen } from 'lucide-react';
 import { useProjects } from '@/hooks/useProjects';
 import { useApp } from '@/contexts/AppContext';
+import { useTheme } from '@/contexts/ThemeContext';
 import { Project, CreateProjectData, UpdateProjectData } from '@/types/project.types';
 import { ProjectForm } from './ProjectForm';
 import { ProjectFiltersComponent } from './ProjectFilters';
@@ -15,6 +16,7 @@ import { ProjectPagination } from './ProjectPagination';
 
 export const ProjectsManagement: React.FC = () => {
   const { user } = useApp();
+  const { theme } = useTheme();
   const {
     projects,
     loading,
@@ -172,12 +174,12 @@ export const ProjectsManagement: React.FC = () => {
       {/* Header */}
       <div className="flex items-center justify-between">
         <div>
-          <h1 className="text-3xl font-bold text-slate-800">Gestión de Proyectos</h1>
-          <p className="text-slate-600">Administra los proyectos del sistema</p>
+          <h1 className="text-3xl font-bold text-slate-800 dark:text-slate-100">Gestión de Proyectos</h1>
+          <p className="text-slate-600 dark:text-slate-400">Administra los proyectos del sistema</p>
         </div>
         <Button
           onClick={() => setShowForm(true)}
-          className="bg-blue-600 hover:bg-blue-700 text-white"
+          className="bg-blue-600 hover:bg-blue-700 dark:bg-blue-700 dark:hover:bg-blue-800 text-white"
         >
           <Plus className="h-4 w-4 mr-2" />
           Nuevo Proyecto
@@ -195,28 +197,28 @@ export const ProjectsManagement: React.FC = () => {
 
       {/* Error */}
       {error && (
-        <Card className="bg-red-50 border-red-200">
+        <Card className="bg-red-50 dark:bg-red-900/20 border-red-200 dark:border-red-800">
           <CardContent className="p-4">
-            <p className="text-red-700">{error}</p>
+            <p className="text-red-700 dark:text-red-400">{error}</p>
           </CardContent>
         </Card>
       )}
 
       {/* Lista de proyectos */}
       {projects.length === 0 ? (
-        <Card className="bg-white border-slate-200">
+        <Card className="bg-white dark:bg-slate-800 border-slate-200 dark:border-slate-700">
           <CardContent className="p-8">
             <div className="text-center">
-              <FolderOpen className="h-16 w-16 text-slate-400 mx-auto mb-4" />
-              <h3 className="text-lg font-medium text-slate-700 mb-2">
+              <FolderOpen className="h-16 w-16 text-slate-400 dark:text-slate-500 mx-auto mb-4" />
+              <h3 className="text-lg font-medium text-slate-700 dark:text-slate-200 mb-2">
                 No hay proyectos registrados
               </h3>
-              <p className="text-slate-600 mb-4">
+              <p className="text-slate-600 dark:text-slate-400 mb-4">
                 Comienza creando tu primer proyecto para gestionar tus desarrollos.
               </p>
               <Button
                 onClick={() => setShowForm(true)}
-                className="bg-blue-600 hover:bg-blue-700 text-white"
+                className="bg-blue-600 hover:bg-blue-700 dark:bg-blue-700 dark:hover:bg-blue-800 text-white"
               >
                 <Plus className="h-4 w-4 mr-2" />
                 Crear Primer Proyecto
@@ -256,7 +258,7 @@ export const ProjectsManagement: React.FC = () => {
       {/* Formulario de proyecto */}
       {(showForm || editingProject) && (
         <div className="fixed inset-0 bg-black/50 flex items-center justify-center z-50 p-4">
-          <div className="bg-white border border-slate-200 rounded-lg max-w-2xl w-full max-h-[90vh] overflow-y-auto shadow-xl">
+          <div className="bg-white dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-lg max-w-2xl w-full max-h-[90vh] overflow-y-auto shadow-xl">
             <ProjectForm
               project={editingProject || undefined}
               onSubmit={editingProject ? handleUpdateProject : handleCreateProject}
@@ -279,9 +281,9 @@ export const ProjectsManagement: React.FC = () => {
       {/* Modal de confirmación de eliminación */}
       {showConfirmDelete && projectToDelete && (
         <div className="fixed inset-0 bg-black/50 flex items-center justify-center z-[9999]">
-          <div className="bg-white border border-slate-200 rounded-lg p-4 max-w-sm mx-4 shadow-xl">
-            <h3 className="text-slate-800 font-semibold mb-2">Confirmar eliminación</h3>
-            <p className="text-slate-600 text-sm mb-4">
+          <div className="bg-white dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-lg p-4 max-w-sm mx-4 shadow-xl">
+            <h3 className="text-slate-800 dark:text-slate-200 font-semibold mb-2">Confirmar eliminación</h3>
+            <p className="text-slate-600 dark:text-slate-400 text-sm mb-4">
               ¿Estás seguro de que quieres eliminar el proyecto "{projectToDelete.name}"? Esta acción no se puede deshacer.
             </p>
             <div className="flex gap-2 justify-end">
@@ -289,7 +291,7 @@ export const ProjectsManagement: React.FC = () => {
                 variant="outline"
                 size="sm"
                 onClick={cancelDelete}
-                className="bg-white border-slate-200 text-slate-700 hover:bg-slate-50"
+                className="bg-white dark:bg-slate-700 border-slate-200 dark:border-slate-600 text-slate-700 dark:text-slate-200 hover:bg-slate-50 dark:hover:bg-slate-600"
               >
                 Cancelar
               </Button>
