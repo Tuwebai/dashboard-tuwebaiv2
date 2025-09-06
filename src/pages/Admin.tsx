@@ -1,6 +1,7 @@
 import React, { useState, useEffect, useCallback, useMemo } from 'react';
 import { useNavigate, useLocation } from 'react-router-dom';
 import { useApp } from '@/contexts/AppContext';
+import { useTheme } from '@/contexts/ThemeContext';
 import { useTranslation } from 'react-i18next';
 import { toast } from '@/hooks/use-toast';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
@@ -11,6 +12,7 @@ import { Textarea } from '@/components/ui/textarea';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import { Label } from '@/components/ui/label';
 import { Dialog, DialogContent, DialogDescription, DialogHeader, DialogTitle } from '@/components/ui/dialog';
+import { ThemeToggle } from '@/components/ThemeToggle';
 
 
 import { 
@@ -59,6 +61,7 @@ import { ChartDashboard, RealTimeCharts } from '@/components/AdvancedCharts';
 const Admin = React.memo(() => {
   const { t } = useTranslation();
   const { user } = useApp();
+  const { theme } = useTheme();
   const navigate = useNavigate();
   const location = useLocation();
   
@@ -518,10 +521,10 @@ const Admin = React.memo(() => {
 
   if (loading) {
     return (
-      <div className="h-screen bg-gradient-to-br from-slate-50 via-blue-50/30 to-indigo-50/30 flex items-center justify-center">
+      <div className="h-screen bg-gradient-to-br from-background via-background/95 to-background/90 dark:from-slate-900 dark:via-slate-800 dark:to-slate-900 transition-all duration-300 flex items-center justify-center">
         <div className="text-center">
           <div className="animate-spin rounded-full h-16 w-16 border-b-2 border-blue-600 mx-auto mb-4"></div>
-          <p className="text-slate-600 text-lg">Cargando panel de administración...</p>
+          <p className="text-muted-foreground text-lg">Cargando panel de administración...</p>
         </div>
       </div>
     );
@@ -529,14 +532,35 @@ const Admin = React.memo(() => {
 
   return (
     <>
-    <div className="min-h-screen bg-gradient-to-br from-slate-50 via-blue-50/30 to-indigo-50/30">
+    <div className="min-h-screen bg-gradient-to-br from-background via-background/95 to-background/90 dark:from-slate-900 dark:via-slate-800 dark:to-slate-900 transition-all duration-300">
       <div className="flex-1 overflow-hidden">
            <div className="h-full">
              
  
  
+                           {/* Header con Toggle de Tema */}
+              <div className="bg-card/50 dark:bg-slate-800/50 backdrop-blur-sm border-b border-border/50 dark:border-slate-700/50 px-4 sm:px-6 lg:px-8 py-4">
+                <div className="flex items-center justify-between">
+                  <div className="flex items-center gap-4">
+                    <div className="p-2 bg-gradient-to-br from-blue-500 to-indigo-600 rounded-lg shadow-lg">
+                      <Users className="h-6 w-6 text-white" />
+                    </div>
+                    <div>
+                      <h1 className="text-2xl font-bold text-foreground">Panel de Administración</h1>
+                      <p className="text-muted-foreground text-sm">Gestión completa del sistema</p>
+                    </div>
+                  </div>
+                  <div className="flex items-center gap-3">
+                    <div className="text-sm text-muted-foreground">
+                      Última actualización: {lastUpdate.toLocaleTimeString()}
+                    </div>
+                    <ThemeToggle variant="outline" size="sm" />
+                  </div>
+                </div>
+              </div>
+
                            {/* Contenido Principal */}
-              <div className="px-4 sm:px-6 lg:px-8 py-4 sm:py-6 space-y-4 sm:space-y-6 min-h-[calc(100vh-120px)]">
+              <div className="px-4 sm:px-6 lg:px-8 py-4 sm:py-6 space-y-4 sm:space-y-6 min-h-[calc(100vh-200px)]">
 
               {activeSection === 'dashboard' && (
                 <>
@@ -545,18 +569,18 @@ const Admin = React.memo(() => {
             
             {/* Card Usuarios */}
             <div className="relative group cursor-pointer">
-                      <div className="bg-card rounded-2xl p-4 sm:p-6 shadow-lg hover:shadow-2xl transition-all duration-500 transform hover:-translate-y-2 border border-border/50 backdrop-blur-sm overflow-hidden bg-gradient-to-br from-primary/5 via-primary/10 to-primary/15">
+                      <div className="bg-card dark:bg-slate-800/50 rounded-2xl p-4 sm:p-6 shadow-lg hover:shadow-2xl transition-all duration-500 transform hover:-translate-y-2 border border-border/50 dark:border-slate-700/50 backdrop-blur-sm overflow-hidden bg-gradient-to-br from-primary/5 via-primary/10 to-primary/15 dark:from-blue-500/10 dark:via-blue-500/5 dark:to-indigo-500/10">
                         <div className="flex items-center justify-center w-12 h-12 sm:w-14 sm:h-14 rounded-2xl mb-3 sm:mb-4 shadow-lg group-hover:scale-110 transition-transform duration-300 bg-gradient-to-br from-blue-500 to-blue-600 text-white">
                           <Users size={24} className="sm:w-7 sm:h-7" />
                 </div>
                         <div className="text-2xl sm:text-3xl lg:text-4xl font-bold text-card-foreground mb-2 group-hover:scale-105 transition-transform duration-300">
                   {usuariosActivos}
                 </div>
-                        <div className="text-sm sm:text-lg font-semibold text-slate-600 mb-1">
+                        <div className="text-sm sm:text-lg font-semibold text-muted-foreground mb-1">
                   Usuarios Activos
                 </div>
-                        <div className="text-xs sm:text-sm text-slate-500 flex items-center space-x-1">
-                  <span className="text-green-600 font-semibold">+{usuariosNuevos}</span>
+                        <div className="text-xs sm:text-sm text-muted-foreground flex items-center space-x-1">
+                  <span className="text-green-600 dark:text-green-400 font-semibold">+{usuariosNuevos}</span>
                   <span>este mes ({crecimientoUsuarios}%)</span>
                 </div>
                 <div className="absolute inset-0 bg-gradient-to-r from-transparent via-white/10 to-transparent opacity-0 group-hover:opacity-100 transform -skew-x-12 -translate-x-full group-hover:translate-x-full transition-all duration-1000"></div>
@@ -565,18 +589,18 @@ const Admin = React.memo(() => {
 
             {/* Card Proyectos */}
             <div className="relative group cursor-pointer">
-                      <div className="bg-card rounded-2xl p-4 sm:p-6 shadow-lg hover:shadow-2xl transition-all duration-500 transform hover:-translate-y-2 border border-border/50 backdrop-blur-sm overflow-hidden bg-gradient-to-br from-emerald-500/5 via-emerald-500/10 to-teal-500/15">
+                      <div className="bg-card dark:bg-slate-800/50 rounded-2xl p-4 sm:p-6 shadow-lg hover:shadow-2xl transition-all duration-500 transform hover:-translate-y-2 border border-border/50 dark:border-slate-700/50 backdrop-blur-sm overflow-hidden bg-gradient-to-br from-emerald-500/5 via-emerald-500/10 to-teal-500/15 dark:from-emerald-500/10 dark:via-emerald-500/5 dark:to-teal-500/10">
                         <div className="flex items-center justify-center w-12 h-12 sm:w-14 sm:h-14 rounded-2xl mb-3 sm:mb-4 shadow-lg group-hover:scale-110 transition-transform duration-300 bg-gradient-to-br from-emerald-500 to-emerald-600 text-white">
                           <FolderOpen size={24} className="sm:w-7 sm:h-7" />
                 </div>
                         <div className="text-2xl sm:text-3xl lg:text-4xl font-bold text-card-foreground mb-2 group-hover:scale-105 transition-transform duration-300">
                   {proyectosTotales}
                 </div>
-                        <div className="text-sm sm:text-lg font-semibold text-slate-600 mb-1">
+                        <div className="text-sm sm:text-lg font-semibold text-muted-foreground mb-1">
                   Proyectos Totales
                 </div>
-                        <div className="text-xs sm:text-sm text-slate-500 flex items-center space-x-1">
-                  <span className="text-green-600 font-semibold">+{proyectosNuevos}</span>
+                        <div className="text-xs sm:text-sm text-muted-foreground flex items-center space-x-1">
+                  <span className="text-green-600 dark:text-green-400 font-semibold">+{proyectosNuevos}</span>
                   <span>este mes</span>
                 </div>
                 <div className="absolute inset-0 bg-gradient-to-r from-transparent via-white/10 to-transparent opacity-0 group-hover:opacity-100 transform -skew-x-12 -translate-x-full group-hover:translate-x-full transition-all duration-1000"></div>
@@ -585,20 +609,20 @@ const Admin = React.memo(() => {
 
             {/* Card Tickets */}
             <div className="relative group cursor-pointer">
-                      <div className="bg-card rounded-2xl p-4 sm:p-6 shadow-lg hover:shadow-2xl transition-all duration-500 transform hover:-translate-y-2 border border-border/50 backdrop-blur-sm overflow-hidden bg-gradient-to-br from-amber-500/5 via-amber-500/10 to-orange-500/15">
+                      <div className="bg-card dark:bg-slate-800/50 rounded-2xl p-4 sm:p-6 shadow-lg hover:shadow-2xl transition-all duration-500 transform hover:-translate-y-2 border border-border/50 dark:border-slate-700/50 backdrop-blur-sm overflow-hidden bg-gradient-to-br from-amber-500/5 via-amber-500/10 to-orange-500/15 dark:from-amber-500/10 dark:via-amber-500/5 dark:to-orange-500/10">
                         <div className="flex items-center justify-center w-12 h-12 sm:w-14 sm:h-14 rounded-2xl mb-3 sm:mb-4 shadow-lg group-hover:scale-110 transition-transform duration-300 bg-gradient-to-br from-amber-500 to-amber-600 text-white">
                           <Ticket size={24} className="sm:w-7 sm:h-7" />
                 </div>
                         <div className="text-2xl sm:text-3xl lg:text-4xl font-bold text-card-foreground mb-2 group-hover:scale-105 transition-transform duration-300">
                   {ticketsAbiertos}
                 </div>
-                        <div className="text-sm sm:text-lg font-semibold text-slate-600 mb-1">
+                        <div className="text-sm sm:text-lg font-semibold text-muted-foreground mb-1">
                   Tickets Abiertos
                 </div>
-                        <div className="text-xs sm:text-sm text-slate-500 flex items-center space-x-1">
-                  <span className="text-red-600 font-semibold">{ticketsUrgentes}</span>
+                        <div className="text-xs sm:text-sm text-muted-foreground flex items-center space-x-1">
+                  <span className="text-red-600 dark:text-red-400 font-semibold">{ticketsUrgentes}</span>
                   <span>urgentes, </span>
-                  <span className="text-blue-600 font-semibold">{ticketsEnProgreso}</span>
+                  <span className="text-blue-600 dark:text-blue-400 font-semibold">{ticketsEnProgreso}</span>
                   <span>en progreso</span>
                 </div>
                 <div className="absolute inset-0 bg-gradient-to-r from-transparent via-white/10 to-transparent opacity-0 group-hover:opacity-100 transform -skew-x-12 -translate-x-full group-hover:translate-x-full transition-all duration-1000"></div>
@@ -607,18 +631,18 @@ const Admin = React.memo(() => {
 
             {/* Card Ingresos */}
             <div className="relative group cursor-pointer">
-                      <div className="bg-card rounded-2xl p-4 sm:p-6 shadow-lg hover:shadow-2xl transition-all duration-500 transform hover:-translate-y-2 border border-border/50 backdrop-blur-sm overflow-hidden bg-gradient-to-br from-violet-500/5 via-violet-500/10 to-purple-500/15">
+                      <div className="bg-card dark:bg-slate-800/50 rounded-2xl p-4 sm:p-6 shadow-lg hover:shadow-2xl transition-all duration-500 transform hover:-translate-y-2 border border-border/50 dark:border-slate-700/50 backdrop-blur-sm overflow-hidden bg-gradient-to-br from-violet-500/5 via-violet-500/10 to-purple-500/15 dark:from-violet-500/10 dark:via-violet-500/5 dark:to-purple-500/10">
                         <div className="flex items-center justify-center w-12 h-12 sm:w-14 sm:h-14 rounded-2xl mb-3 sm:mb-4 shadow-lg group-hover:scale-110 transition-transform duration-300 bg-gradient-to-br from-violet-500 to-violet-600 text-white">
                           <DollarSign size={24} className="sm:w-7 sm:h-7" />
                 </div>
                         <div className="text-2xl sm:text-3xl lg:text-4xl font-bold text-card-foreground mb-2 group-hover:scale-105 transition-transform duration-300">
                   ${ingresosTotales.toLocaleString()}
                 </div>
-                        <div className="text-sm sm:text-lg font-semibold text-slate-600 mb-1">
+                        <div className="text-sm sm:text-lg font-semibold text-muted-foreground mb-1">
                   Ingresos Totales
                 </div>
-                        <div className="text-xs sm:text-sm text-slate-500 flex items-center space-x-1">
-                  <span className="text-green-600 font-semibold">${ingresosEsteMes.toLocaleString()}</span>
+                        <div className="text-xs sm:text-sm text-muted-foreground flex items-center space-x-1">
+                  <span className="text-green-600 dark:text-green-400 font-semibold">${ingresosEsteMes.toLocaleString()}</span>
                   <span>este mes</span>
                 </div>
                 <div className="absolute inset-0 bg-gradient-to-r from-transparent via-white/10 to-transparent opacity-0 group-hover:opacity-100 transform -skew-x-12 -translate-x-full group-hover:translate-x-full transition-all duration-1000"></div>
@@ -630,84 +654,84 @@ const Admin = React.memo(() => {
                   <div className="grid grid-cols-1 xl:grid-cols-2 gap-6 lg:gap-8">
                 
                 {/* Card Estadísticas Rápidas */}
-                <div className="bg-card rounded-2xl p-8 shadow-lg hover:shadow-xl transition-all duration-300 border border-border/50">
+                <div className="bg-card dark:bg-slate-800/50 rounded-2xl p-8 shadow-lg hover:shadow-xl transition-all duration-300 border border-border/50 dark:border-slate-700/50">
                   <div className="text-2xl font-bold text-card-foreground mb-2 flex items-center space-x-3">
                     <BarChart3 size={24} className="text-blue-600" />
                     <span>Estadísticas Rápidas</span>
                   </div>
-                  <p className="text-slate-500 text-base mb-8">
+                  <p className="text-muted-foreground text-base mb-8">
                     Vista general de la actividad del sistema
                   </p>
                   <div className="space-y-4">
                     <div className="flex items-center justify-between py-4 border-b border-border last:border-b-0 group hover:bg-muted/50 rounded-lg transition-all duration-200 px-4">
-                      <span className="text-slate-600 font-medium flex items-center space-x-3">
+                      <span className="text-muted-foreground font-medium flex items-center space-x-3">
                         <Users size={16} className="text-blue-500" />
                         <span>Usuarios totales:</span>
                       </span>
-                      <Badge className="px-5 py-3 rounded-2xl text-base font-bold transition-all duration-200 bg-blue-500 text-white shadow-lg group-hover:bg-blue-600 group-hover:scale-105">
+                      <Badge className="px-5 py-3 rounded-2xl text-base font-bold transition-all duration-200 bg-blue-500 dark:bg-blue-600 text-white shadow-lg group-hover:bg-blue-600 dark:group-hover:bg-blue-700 group-hover:scale-105">
                         {usuariosActivos}
                       </Badge>
                     </div>
                     <div className="flex items-center justify-between py-4 border-b border-border last:border-b-0 group hover:bg-muted/50 rounded-lg transition-all duration-200 px-4">
-                      <span className="text-slate-600 font-medium flex items-center space-x-3">
+                      <span className="text-muted-foreground font-medium flex items-center space-x-3">
                         <Users size={16} className="text-green-500" />
                         <span>Nuevos este mes:</span>
                       </span>
-                      <Badge className="px-5 py-3 rounded-2xl text-base font-bold transition-all duration-200 bg-emerald-500 text-white shadow-lg group-hover:bg-emerald-600 group-hover:scale-105">
+                      <Badge className="px-5 py-3 rounded-2xl text-base font-bold transition-all duration-200 bg-emerald-500 dark:bg-emerald-600 text-white shadow-lg group-hover:bg-emerald-600 dark:group-hover:bg-emerald-700 group-hover:scale-105">
                         +{usuariosNuevos}
                       </Badge>
                     </div>
                     <div className="flex items-center justify-between py-4 border-b border-border last:border-b-0 group hover:bg-muted/50 rounded-lg transition-all duration-200 px-4">
-                      <span className="text-slate-600 font-medium flex items-center space-x-3">
+                      <span className="text-muted-foreground font-medium flex items-center space-x-3">
                         <FolderOpen size={16} className="text-emerald-500" />
                         <span>Proyectos activos:</span>
                       </span>
-                      <Badge className="px-5 py-3 rounded-2xl text-base font-bold transition-all duration-200 bg-emerald-500 text-white shadow-lg group-hover:bg-emerald-600 group-hover:scale-105">
+                      <Badge className="px-5 py-3 rounded-2xl text-base font-bold transition-all duration-200 bg-emerald-500 dark:bg-emerald-600 text-white shadow-lg group-hover:bg-emerald-600 dark:group-hover:bg-emerald-700 group-hover:scale-105">
                         {proyectosEnCurso}
                       </Badge>
                     </div>
                     <div className="flex items-center justify-between py-4 border-b border-border last:border-b-0 group hover:bg-muted/50 rounded-lg transition-all duration-200 px-4">
-                      <span className="text-slate-600 font-medium flex items-center space-x-3">
+                      <span className="text-muted-foreground font-medium flex items-center space-x-3">
                         <CheckCircle size={16} className="text-green-500" />
                         <span>Tasa éxito:</span>
                       </span>
-                      <Badge className="px-5 py-3 rounded-2xl text-base font-bold transition-all duration-200 bg-green-500 text-white shadow-lg group-hover:bg-green-600 group-hover:scale-105">
+                      <Badge className="px-5 py-3 rounded-2xl text-base font-bold transition-all duration-200 bg-green-500 dark:bg-green-600 text-white shadow-lg group-hover:bg-green-600 dark:group-hover:bg-green-700 group-hover:scale-105">
                         {tasaCompletacionProyectos}%
                       </Badge>
                     </div>
                     <div className="flex items-center justify-between py-4 border-b border-border last:border-b-0 group hover:bg-muted/50 rounded-lg transition-all duration-200 px-4">
-                      <span className="text-slate-600 font-medium flex items-center space-x-3">
+                      <span className="text-muted-foreground font-medium flex items-center space-x-3">
                         <Ticket size={16} className="text-amber-500" />
                         <span>Tickets abiertos:</span>
                       </span>
-                      <Badge className="px-5 py-3 rounded-2xl text-base font-bold transition-all duration-200 bg-amber-500 text-white shadow-lg group-hover:bg-amber-600 group-hover:scale-105">
+                      <Badge className="px-5 py-3 rounded-2xl text-base font-bold transition-all duration-200 bg-amber-500 dark:bg-amber-600 text-white shadow-lg group-hover:bg-amber-600 dark:group-hover:bg-amber-700 group-hover:scale-105">
                         {ticketsAbiertos}
                       </Badge>
                     </div>
                     <div className="flex items-center justify-between py-4 border-b border-border last:border-b-0 group hover:bg-muted/50 rounded-lg transition-all duration-200 px-4">
-                      <span className="text-slate-600 font-medium flex items-center space-x-3">
+                      <span className="text-muted-foreground font-medium flex items-center space-x-3">
                         <Eye size={16} className="text-red-500" />
                         <span>Urgentes:</span>
                       </span>
-                      <Badge className="px-5 py-3 rounded-2xl text-base font-bold transition-all duration-200 bg-red-500 text-white shadow-lg group-hover:bg-red-600 group-hover:scale-105">
+                      <Badge className="px-5 py-3 rounded-2xl text-base font-bold transition-all duration-200 bg-red-500 dark:bg-red-600 text-white shadow-lg group-hover:bg-red-600 dark:group-hover:bg-red-700 group-hover:scale-105">
                         {ticketsUrgentes}
                       </Badge>
                     </div>
                     <div className="flex items-center justify-between py-4 border-b border-border last:border-b-0 group hover:bg-muted/50 rounded-lg transition-all duration-200 px-4">
-                      <span className="text-slate-600 font-medium flex items-center space-x-3">
+                      <span className="text-muted-foreground font-medium flex items-center space-x-3">
                         <DollarSign size={16} className="text-violet-500" />
                         <span>Ingresos totales:</span>
                       </span>
-                      <Badge className="px-5 py-3 rounded-2xl text-base font-bold transition-all duration-200 bg-violet-500 text-white shadow-lg group-hover:bg-violet-600 group-hover:scale-105">
+                      <Badge className="px-5 py-3 rounded-2xl text-base font-bold transition-all duration-200 bg-violet-500 dark:bg-violet-600 text-white shadow-lg group-hover:bg-violet-600 dark:group-hover:bg-violet-700 group-hover:scale-105">
                         ${ingresosTotales.toLocaleString()}
                       </Badge>
                     </div>
                     <div className="flex items-center justify-between py-4 border-b border-border last:border-b-0 group hover:bg-muted/50 rounded-lg transition-all duration-200 px-4">
-                      <span className="text-slate-600 font-medium flex items-center space-x-3">
+                      <span className="text-muted-foreground font-medium flex items-center space-x-3">
                         <Calendar size={16} className="text-blue-500" />
                         <span>Este mes:</span>
                       </span>
-                      <Badge className="px-5 py-3 rounded-2xl text-base font-bold transition-all duration-200 bg-blue-500 text-white shadow-lg group-hover:bg-blue-600 group-hover:scale-105">
+                      <Badge className="px-5 py-3 rounded-2xl text-base font-bold transition-all duration-200 bg-blue-500 dark:bg-blue-600 text-white shadow-lg group-hover:bg-blue-600 dark:group-hover:bg-blue-700 group-hover:scale-105">
                         ${ingresosEsteMes.toLocaleString()}
                       </Badge>
                     </div>
@@ -715,18 +739,18 @@ const Admin = React.memo(() => {
                 </div>
 
                 {/* Card Acciones Rápidas */}
-                <div className="bg-card rounded-2xl p-8 shadow-lg hover:shadow-xl transition-all duration-300 border border-border/50">
+                <div className="bg-card dark:bg-slate-800/50 rounded-2xl p-8 shadow-lg hover:shadow-xl transition-all duration-300 border border-border/50 dark:border-slate-700/50">
                   <div className="text-2xl font-bold text-card-foreground mb-2 flex items-center space-x-3">
                     <BarChart3 size={24} className="text-amber-600" />
                     <span>Acciones Rápidas</span>
                   </div>
-                  <p className="text-slate-500 text-base mb-8">
+                  <p className="text-muted-foreground text-base mb-8">
                     Acceso directo a las funciones principales
                   </p>
                   <div className="space-y-10">
                                          <Button 
                        variant="outline" 
-                       className="w-full justify-start p-6 rounded-2xl hover:bg-gradient-to-r hover:from-slate-50 hover:to-slate-100 transition-all duration-300 cursor-pointer group border border-transparent hover:border-border/50 hover:shadow-lg"
+                       className="w-full justify-start p-6 rounded-2xl hover:bg-gradient-to-r hover:from-slate-50 hover:to-slate-100 dark:hover:from-slate-700 dark:hover:to-slate-600 transition-all duration-300 cursor-pointer group border border-transparent hover:border-border/50 dark:hover:border-slate-600 hover:shadow-lg"
                        onClick={() => {
                          setActiveSection('usuarios');
                          window.location.hash = 'usuarios';
@@ -735,16 +759,16 @@ const Admin = React.memo(() => {
                        <div className="flex items-center justify-center w-16 h-16 rounded-2xl transition-all duration-300 group-hover:scale-110 bg-blue-100 text-blue-600 group-hover:bg-blue-500 group-hover:text-white mr-6">
                          <Users size={28} />
                        </div>
-                       <span className="text-slate-700 font-bold text-lg group-hover:text-slate-900 transition-colors duration-300">
+                       <span className="text-foreground font-bold text-lg group-hover:text-foreground transition-colors duration-300">
                          Gestionar Usuarios
                        </span>
-                       <Badge className="ml-auto px-5 py-3 rounded-2xl text-base font-bold transition-all duration-300 bg-blue-500 text-white shadow-lg group-hover:bg-blue-600 group-hover:scale-105">
+                       <Badge className="ml-auto px-5 py-3 rounded-2xl text-base font-bold transition-all duration-300 bg-blue-500 dark:bg-blue-600 text-white shadow-lg group-hover:bg-blue-600 dark:group-hover:bg-blue-700 group-hover:scale-105">
                          {usuariosActivos}
                        </Badge>
                      </Button>
                                            <Button 
                         variant="outline" 
-                        className="w-full justify-start p-6 rounded-2xl hover:bg-gradient-to-r hover:from-slate-50 hover:to-slate-100 transition-all duration-300 cursor-pointer group border border-transparent hover:border-border/50 hover:shadow-lg"
+                        className="w-full justify-start p-6 rounded-2xl hover:bg-gradient-to-r hover:from-slate-50 hover:to-slate-100 dark:hover:from-slate-700 dark:hover:to-slate-600 transition-all duration-300 cursor-pointer group border border-transparent hover:border-border/50 dark:hover:border-slate-600 hover:shadow-lg"
                         onClick={() => {
                           setActiveSection('proyectos');
                           window.location.hash = 'proyectos';
@@ -753,16 +777,16 @@ const Admin = React.memo(() => {
                        <div className="flex items-center justify-center w-16 h-16 rounded-2xl transition-all duration-300 group-hover:scale-110 bg-emerald-100 text-emerald-600 group-hover:bg-emerald-500 group-hover:text-white mr-6">
                          <FolderOpen size={28} />
                        </div>
-                       <span className="text-slate-700 font-bold text-lg group-hover:text-slate-900 transition-colors duration-300">
+                       <span className="text-foreground font-bold text-lg group-hover:text-foreground transition-colors duration-300">
                          Ver Proyectos
                        </span>
-                       <Badge className="ml-auto px-5 py-3 rounded-2xl text-base font-bold transition-all duration-300 bg-emerald-500 text-white shadow-lg group-hover:bg-emerald-600 group-hover:scale-105">
+                       <Badge className="ml-auto px-5 py-3 rounded-2xl text-base font-bold transition-all duration-300 bg-emerald-500 dark:bg-emerald-600 text-white shadow-lg group-hover:bg-emerald-600 dark:group-hover:bg-emerald-700 group-hover:scale-105">
                          {proyectosEnCurso}
                        </Badge>
                      </Button>
                      <Button 
                        variant="outline" 
-                       className="w-full justify-start p-6 rounded-2xl hover:bg-gradient-to-r hover:from-slate-50 hover:to-slate-100 transition-all duration-300 cursor-pointer group border border-transparent hover:border-border/50 hover:shadow-lg"
+                       className="w-full justify-start p-6 rounded-2xl hover:bg-gradient-to-r hover:from-slate-50 hover:to-slate-100 dark:hover:from-slate-700 dark:hover:to-slate-600 transition-all duration-300 cursor-pointer group border border-transparent hover:border-border/50 dark:hover:border-slate-600 hover:shadow-lg"
                        onClick={() => {
                          setActiveSection('tickets');
                          window.location.hash = 'tickets';
@@ -771,16 +795,16 @@ const Admin = React.memo(() => {
                        <div className="flex items-center justify-center w-16 h-16 rounded-2xl transition-all duration-300 group-hover:scale-110 bg-amber-100 text-amber-600 group-hover:bg-amber-500 group-hover:text-white mr-6">
                          <Ticket size={28} />
                        </div>
-                       <span className="text-slate-700 font-bold text-lg group-hover:text-slate-900 transition-colors duration-300">
+                       <span className="text-foreground font-bold text-lg group-hover:text-foreground transition-colors duration-300">
                          Revisar Tickets
                        </span>
-                       <Badge className="ml-auto px-5 py-3 rounded-2xl text-base font-bold transition-all duration-300 bg-amber-500 text-white shadow-lg group-hover:bg-amber-600 group-hover:scale-105">
+                       <Badge className="ml-auto px-5 py-3 rounded-2xl text-base font-bold transition-all duration-300 bg-amber-500 dark:bg-amber-600 text-white shadow-lg group-hover:bg-amber-600 dark:group-hover:bg-amber-700 group-hover:scale-105">
                          {ticketsAbiertos}
                        </Badge>
                      </Button>
                      <Button 
                        variant="outline" 
-                       className="w-full justify-start p-6 rounded-2xl hover:bg-gradient-to-r hover:from-slate-50 hover:to-slate-100 transition-all duration-300 cursor-pointer group border border-transparent hover:border-border/50 hover:shadow-lg"
+                       className="w-full justify-start p-6 rounded-2xl hover:bg-gradient-to-r hover:from-slate-50 hover:to-slate-100 dark:hover:from-slate-700 dark:hover:to-slate-600 transition-all duration-300 cursor-pointer group border border-transparent hover:border-border/50 dark:hover:border-slate-600 hover:shadow-lg"
                        onClick={() => {
                          setActiveSection('pagos');
                          window.location.hash = 'pagos';
@@ -789,16 +813,16 @@ const Admin = React.memo(() => {
                        <div className="flex items-center justify-center w-16 h-16 rounded-2xl transition-all duration-300 group-hover:scale-110 bg-violet-100 text-violet-600 group-hover:bg-violet-500 group-hover:text-white mr-6">
                          <CreditCard size={28} />
                        </div>
-                       <span className="text-slate-700 font-bold text-lg group-hover:text-slate-900 transition-colors duration-300">
+                       <span className="text-foreground font-bold text-lg group-hover:text-foreground transition-colors duration-300">
                          Gestionar Pagos
                        </span>
-                       <Badge className="ml-auto px-5 py-3 rounded-2xl text-base font-bold transition-all duration-300 bg-violet-500 text-white shadow-lg group-hover:bg-violet-600 group-hover:scale-105">
+                       <Badge className="ml-auto px-5 py-3 rounded-2xl text-base font-bold transition-all duration-300 bg-violet-500 dark:bg-violet-600 text-white shadow-lg group-hover:bg-violet-600 dark:group-hover:bg-violet-700 group-hover:scale-105">
                          {pagos.length}
                        </Badge>
                      </Button>
                      <Button 
                        variant="outline" 
-                       className="w-full justify-start p-6 rounded-2xl hover:bg-gradient-to-r hover:from-slate-50 hover:to-slate-100 transition-all duration-300 cursor-pointer group border border-transparent hover:border-border/50 hover:shadow-lg"
+                       className="w-full justify-start p-6 rounded-2xl hover:bg-gradient-to-r hover:from-slate-50 hover:to-slate-100 dark:hover:from-slate-700 dark:hover:to-slate-600 transition-all duration-300 cursor-pointer group border border-transparent hover:border-border/50 dark:hover:border-slate-600 hover:shadow-lg"
                        onClick={() => {
                          setActiveSection('advanced-analytics');
                          window.location.hash = 'advanced-analytics';
@@ -807,10 +831,10 @@ const Admin = React.memo(() => {
                        <div className="flex items-center justify-center w-16 h-16 rounded-2xl transition-all duration-300 group-hover:scale-110 bg-indigo-100 text-indigo-600 group-hover:bg-indigo-500 group-hover:text-white mr-6">
                          <BarChart3 size={28} />
                        </div>
-                       <span className="text-slate-700 font-bold text-lg group-hover:text-slate-900 transition-colors duration-300">
+                       <span className="text-foreground font-bold text-lg group-hover:text-foreground transition-colors duration-300">
                          Analytics Avanzado
                        </span>
-                       <Badge className="ml-auto px-5 py-3 rounded-2xl text-base font-bold transition-all duration-300 bg-indigo-500 text-white shadow-lg group-hover:bg-indigo-600 group-hover:scale-105">
+                       <Badge className="ml-auto px-5 py-3 rounded-2xl text-base font-bold transition-all duration-300 bg-indigo-500 dark:bg-indigo-600 text-white shadow-lg group-hover:bg-indigo-600 dark:group-hover:bg-indigo-700 group-hover:scale-105">
                          <BarChart3 size={16} />
                        </Badge>
                      </Button>
@@ -823,7 +847,7 @@ const Admin = React.memo(() => {
 
                      <Button 
                        variant="outline" 
-                       className="w-full justify-start p-6 rounded-2xl hover:bg-gradient-to-r hover:from-slate-50 hover:to-slate-100 transition-all duration-300 cursor-pointer group border border-transparent hover:border-border/50 hover:shadow-lg"
+                       className="w-full justify-start p-6 rounded-2xl hover:bg-gradient-to-r hover:from-slate-50 hover:to-slate-100 dark:hover:from-slate-700 dark:hover:to-slate-600 transition-all duration-300 cursor-pointer group border border-transparent hover:border-border/50 dark:hover:border-slate-600 hover:shadow-lg"
                        onClick={() => {
                          setActiveSection('advanced-charts');
                          window.location.hash = 'advanced-charts';
@@ -832,10 +856,10 @@ const Admin = React.memo(() => {
                        <div className="flex items-center justify-center w-16 h-16 rounded-2xl transition-all duration-300 group-hover:scale-110 bg-pink-100 text-pink-600 group-hover:bg-pink-500 group-hover:text-white mr-6">
                          <BarChart3 size={28} />
                        </div>
-                       <span className="text-slate-700 font-bold text-lg group-hover:text-slate-900 transition-colors duration-300">
+                       <span className="text-foreground font-bold text-lg group-hover:text-foreground transition-colors duration-300">
                          Gráficos Avanzados
                        </span>
-                       <Badge className="ml-auto px-5 py-3 rounded-2xl text-base font-bold transition-all duration-300 bg-pink-500 text-white shadow-lg group-hover:bg-pink-600 group-hover:scale-105">
+                       <Badge className="ml-auto px-5 py-3 rounded-2xl text-base font-bold transition-all duration-300 bg-pink-500 dark:bg-pink-600 text-white shadow-lg group-hover:bg-pink-600 dark:group-hover:bg-pink-700 group-hover:scale-105">
                          <BarChart3 size={16} />
                        </Badge>
                      </Button>
