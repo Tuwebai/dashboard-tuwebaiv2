@@ -29,7 +29,8 @@ import {
   GitBranch,
   Target,
   Calendar,
-  Bot
+  Bot,
+  Brain
 } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
@@ -411,6 +412,7 @@ export default function Sidebar() {
               <div className="h-px bg-gradient-to-r from-sidebar-border dark:from-slate-700 to-transparent mb-2"></div>
               <div className="space-y-1">
                 {adminNavItem('advanced-analytics', <BarChart size={18} />, t('Analytics Avanzado'))}
+                {adminNavItem('inteligencia-contextual', <Brain size={18} />, 'Inteligencia Contextual')}
               </div>
             </div>
 

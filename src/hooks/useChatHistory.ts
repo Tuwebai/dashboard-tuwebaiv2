@@ -29,6 +29,42 @@ export const useChatHistory = () => {
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
 
+  // Claves para localStorage
+  const STORAGE_KEYS = {
+    currentConversationId: 'websy_ai_current_conversation_id',
+    currentMessages: 'websy_ai_current_messages',
+    conversations: 'websy_ai_conversations'
+  };
+
+  // Funciones para localStorage
+  const saveToStorage = (key: string, data: any) => {
+    try {
+      localStorage.setItem(key, JSON.stringify(data));
+    } catch (error) {
+      console.error('Error saving to localStorage:', error);
+    }
+  };
+
+  const loadFromStorage = (key: string) => {
+    try {
+      const data = localStorage.getItem(key);
+      return data ? JSON.parse(data) : null;
+    } catch (error) {
+      console.error('Error loading from localStorage:', error);
+      return null;
+    }
+  };
+
+  const clearStorage = () => {
+    try {
+      Object.values(STORAGE_KEYS).forEach(key => {
+        localStorage.removeItem(key);
+      });
+    } catch (error) {
+      console.error('Error clearing localStorage:', error);
+    }
+  };
+
   // Cargar conversaciones del usuario
   const loadConversations = useCallback(async () => {
     if (!user) return;
@@ -37,6 +73,12 @@ export const useChatHistory = () => {
     setError(null);
 
     try {
+      // Primero intentar cargar desde localStorage
+      const cachedConversations = loadFromStorage(STORAGE_KEYS.conversations);
+      if (cachedConversations) {
+        setConversations(cachedConversations);
+      }
+
       const { data, error: fetchError } = await supabase
         .from('conversations')
         .select(`
@@ -56,6 +98,7 @@ export const useChatHistory = () => {
       })) || [];
 
       setConversations(conversationsWithCount);
+      saveToStorage(STORAGE_KEYS.conversations, conversationsWithCount);
     } catch (error) {
       console.error('Error loading conversations:', error);
       setError(error instanceof Error ? error.message : 'Error cargando conversaciones');
@@ -72,6 +115,15 @@ export const useChatHistory = () => {
     setError(null);
 
     try {
+      // Primero intentar cargar desde localStorage
+      const cachedMessages = loadFromStorage(STORAGE_KEYS.currentMessages);
+      const cachedConversationId = loadFromStorage(STORAGE_KEYS.currentConversationId);
+      
+      if (cachedMessages && cachedConversationId === conversationId) {
+        setCurrentMessages(cachedMessages);
+        setCurrentConversationId(conversationId);
+      }
+
       const { data, error: fetchError } = await supabase
         .from('conversation_messages')
         .select('*')
@@ -91,6 +143,10 @@ export const useChatHistory = () => {
 
       setCurrentMessages(messages);
       setCurrentConversationId(conversationId);
+      
+      // Guardar en localStorage
+      saveToStorage(STORAGE_KEYS.currentMessages, messages);
+      saveToStorage(STORAGE_KEYS.currentConversationId, conversationId);
     } catch (error) {
       console.error('Error loading messages:', error);
       setError(error instanceof Error ? error.message : 'Error cargando mensajes');
@@ -182,8 +238,13 @@ export const useChatHistory = () => {
         contextData: contextData || {}
       };
 
-      setCurrentMessages(prev => [...prev, newMessage]);
+      const updatedMessages = [...currentMessages, newMessage];
+      setCurrentMessages(updatedMessages);
       setCurrentConversationId(currentConvId);
+
+      // Guardar en localStorage
+      saveToStorage(STORAGE_KEYS.currentMessages, updatedMessages);
+      saveToStorage(STORAGE_KEYS.currentConversationId, currentConvId);
 
       // Actualizar timestamp de la conversación
       await supabase
@@ -257,12 +318,39 @@ export const useChatHistory = () => {
     }
   }, [user]);
 
-  // Cargar conversaciones al montar el componente
+  // Cargar estado inicial desde localStorage
   useEffect(() => {
     if (user) {
+      // Cargar conversación actual desde localStorage
+      const savedConversationId = loadFromStorage(STORAGE_KEYS.currentConversationId);
+      const savedMessages = loadFromStorage(STORAGE_KEYS.currentMessages);
+      
+      if (savedConversationId && savedMessages) {
+        setCurrentConversationId(savedConversationId);
+        setCurrentMessages(savedMessages);
+      }
+      
       loadConversations();
+    } else {
+      // Limpiar localStorage cuando no hay usuario
+      clearStorage();
     }
   }, [user, loadConversations]);
+
+  // Limpiar chat actual
+  const clearCurrentChat = useCallback(() => {
+    setCurrentMessages([]);
+    setCurrentConversationId(null);
+    saveToStorage(STORAGE_KEYS.currentMessages, []);
+    saveToStorage(STORAGE_KEYS.currentConversationId, null);
+  }, []);
+
+  // Limpiar localStorage al desmontar
+  useEffect(() => {
+    return () => {
+      // No limpiar aquí para mantener persistencia entre pestañas
+    };
+  }, []);
 
   return {
     conversations,
@@ -277,6 +365,7 @@ export const useChatHistory = () => {
     deleteConversation,
     searchConversations,
     setCurrentConversationId,
-    setCurrentMessages
+    setCurrentMessages,
+    clearCurrentChat
   };
 };

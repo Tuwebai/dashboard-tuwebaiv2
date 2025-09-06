@@ -36,7 +36,8 @@ import {
   Cog,
   FileText,
   Activity,
-  Download
+  Download,
+  Brain
 } from 'lucide-react';
 import { supabase } from '@/lib/supabase';
 import { notificationService } from '@/lib/notificationService';
@@ -48,6 +49,8 @@ import AutomationSystem from '@/components/admin/AutomationSystem';
 import AdvancedTicketManager from '@/components/AdvancedTicketManager';
 import AutoVersionCreator from '@/components/admin/AutoVersionCreator';
 import AdvancedTools from '@/components/admin/AdvancedTools';
+import { AdvancedAIPanel } from '@/components/admin/AdvancedAIPanel';
+import { TicketAnalysis } from '@/components/admin/TicketAnalysis';
 import { VersionManagement } from '@/components/admin/VersionManagement';
 import ProjectApprovalManager from '@/components/ProjectApprovalManager';
 
@@ -66,6 +69,9 @@ const Admin = React.memo(() => {
   const location = useLocation();
   
   const [activeSection, setActiveSection] = useState('dashboard');
+  const [recentMessages, setRecentMessages] = useState<any[]>([]);
+  const [systemMetrics, setSystemMetrics] = useState<any>({});
+  const [userBehavior, setUserBehavior] = useState<any[]>([]);
   const [loading, setLoading] = useState(true);
   const [usuarios, setUsuarios] = useState<any[]>([]);
   const [proyectos, setProyectos] = useState<any[]>([]);
@@ -117,7 +123,7 @@ const Admin = React.memo(() => {
       }
       setProyectos(projectsData || []);
 
-      // Cargar tickets con prioridades
+      // Cargar tickets
       const { data: ticketsData, error: ticketsError } = await supabase
         .from('tickets')
         .select('*')
@@ -127,7 +133,49 @@ const Admin = React.memo(() => {
         console.error('❌ Error cargando tickets:', ticketsError);
         throw ticketsError;
       }
-      setTickets(ticketsData || []);
+      
+      // Cargar información de usuarios para los tickets
+      const userIds = [...new Set((ticketsData || []).map(ticket => ticket.user_id).filter(Boolean))];
+      let usersMap = new Map();
+      
+      if (userIds.length > 0) {
+        const { data: usersData } = await supabase
+          .from('users')
+          .select('id, name, email, tier')
+          .in('id', userIds);
+        
+        if (usersData) {
+          usersMap = new Map(usersData.map(user => [user.id, user]));
+        }
+      }
+
+      // Transformar tickets para el componente TicketAnalysis
+      const transformedTickets = (ticketsData || []).map(ticket => {
+        const user = usersMap.get(ticket.user_id);
+        return {
+          id: ticket.id,
+          title: ticket.title || 'Sin título',
+          description: ticket.description || 'Sin descripción',
+          priority: ticket.priority || 5,
+          urgency: ticket.urgency || 'low',
+          status: ticket.status || 'open',
+          createdAt: ticket.created_at,
+          customer: user ? {
+            name: user.name || 'Usuario desconocido',
+            email: user.email || '',
+            tier: user.tier || 'standard'
+          } : {
+            name: 'Usuario desconocido',
+            email: '',
+            tier: 'standard'
+          },
+          category: ticket.category || 'general',
+          tags: ticket.tags || [],
+          user_id: ticket.user_id
+        };
+      });
+      
+      setTickets(transformedTickets);
 
       // Cargar pagos con información financiera
       const { data: paymentsData, error: paymentsError } = await supabase
@@ -141,12 +189,67 @@ const Admin = React.memo(() => {
       }
       setPagos(paymentsData || []);
 
+      // Cargar datos para inteligencia contextual
+      await loadIntelligenceData();
+
     } catch (error) {
         console.error('Error fatal cargando datos del admin:', error);
       toast({ title: 'Error', description: 'No se pudieron cargar los datos.', variant: 'destructive' });
     } finally {
       setLoading(false);
       setLastUpdate(new Date());
+    }
+  };
+
+  // Cargar datos para inteligencia contextual
+  const loadIntelligenceData = async () => {
+    try {
+      // Cargar mensajes recientes de chat (usando tickets como ejemplo)
+      const { data: messagesData } = await supabase
+        .from('tickets')
+        .select('*')
+        .order('created_at', { ascending: false })
+        .limit(20);
+      
+      // Transformar tickets a formato de mensajes para el análisis
+      const transformedMessages = (messagesData || []).map(ticket => ({
+        id: ticket.id,
+        content: ticket.description || ticket.title || 'Sin contenido',
+        context: `Ticket: ${ticket.title}`,
+        created_at: ticket.created_at,
+        isAI: false
+      }));
+      
+      setRecentMessages(transformedMessages);
+
+      // Cargar métricas del sistema
+      const systemMetricsData = {
+        totalUsers: usuarios.length,
+        activeProjects: proyectos.filter(p => p.status === 'en_progress').length,
+        completedProjects: proyectos.filter(p => p.status === 'completed').length,
+        openTickets: tickets.filter(t => t.status === 'open').length,
+        resolvedTickets: tickets.filter(t => t.status === 'resolved').length,
+        totalRevenue: pagos.reduce((sum, p) => sum + (p.amount || 0), 0),
+        averageResponseTime: 2.5, // horas
+        customerSatisfaction: 4.2 // de 5
+      };
+      
+      setSystemMetrics(systemMetricsData);
+
+      // Cargar comportamiento de usuarios (simulado)
+      const userBehaviorData = usuarios.map(user => ({
+        userId: user.id,
+        loginCount: Math.floor(Math.random() * 50) + 1,
+        lastActivity: user.last_sign_in_at,
+        projectCount: proyectos.filter(p => p.user_id === user.id).length,
+        ticketCount: tickets.filter(t => t.user_id === user.id).length,
+        avgSessionDuration: Math.floor(Math.random() * 30) + 5 // minutos
+      }));
+      
+      setUserBehavior(userBehaviorData);
+
+    } catch (error) {
+      console.error('Error cargando datos de inteligencia:', error);
     }
   };
 
@@ -1179,6 +1282,65 @@ const Admin = React.memo(() => {
 
             {activeSection === 'notifications' && (
               <AdminNotifications />
+            )}
+
+            {activeSection === 'inteligencia-contextual' && (
+              <div className="space-y-6">
+                <div className="flex items-center gap-3 mb-6">
+                  <div className="flex items-center justify-center w-12 h-12 rounded-xl bg-gradient-to-br from-purple-500 to-indigo-600 text-white shadow-lg">
+                    <Brain className="h-6 w-6" />
+                  </div>
+                  <div>
+                    <h2 className="text-2xl font-bold text-foreground">Inteligencia Contextual Avanzada</h2>
+                    <p className="text-muted-foreground">Análisis de sentimientos, predicción de patrones y sugerencias proactivas</p>
+                  </div>
+                </div>
+                
+                <AdvancedAIPanel 
+                  recentMessages={recentMessages}
+                  systemMetrics={systemMetrics}
+                  userBehavior={userBehavior}
+                />
+                
+                <TicketAnalysis 
+                  tickets={tickets}
+                  onUpdateTicket={async (ticketId, updates) => {
+                    try {
+                      const { error } = await supabase
+                        .from('tickets')
+                        .update(updates)
+                        .eq('id', ticketId);
+                      
+                      if (error) {
+                        console.error('Error actualizando ticket:', error);
+                        toast({
+                          title: "Error",
+                          description: "No se pudo actualizar el ticket.",
+                          variant: "destructive"
+                        });
+                        return;
+                      }
+                      
+                      // Actualizar el estado local
+                      setTickets(prev => prev.map(ticket => 
+                        ticket.id === ticketId ? { ...ticket, ...updates } : ticket
+                      ));
+                      
+                      toast({
+                        title: "Ticket actualizado",
+                        description: "El ticket se ha actualizado correctamente."
+                      });
+                    } catch (error) {
+                      console.error('Error actualizando ticket:', error);
+                      toast({
+                        title: "Error",
+                        description: "No se pudo actualizar el ticket.",
+                        variant: "destructive"
+                      });
+                    }
+                  }}
+                />
+              </div>
             )}
 
             {activeSection === 'settings' && (
