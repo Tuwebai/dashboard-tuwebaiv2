@@ -347,13 +347,14 @@ const ProjectMetrics = React.memo(({ projects, loading = false }: ProjectMetrics
   }
 
   return (
-    <div className="metrics-section">
-      <motion.div
-        initial={{ opacity: 0, y: 30 }}
-        animate={{ opacity: 1, y: 0 }}
-        transition={{ duration: 0.6, ease: "easeOut" }}
-        className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-5 gap-4 sm:gap-6 px-4 sm:px-6 lg:px-8 py-4 sm:py-6"
-      >
+    <div className="w-full">
+      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-5 gap-4 sm:gap-6 px-4 sm:px-6 lg:px-8 py-4 sm:py-6">
+        <motion.div
+          initial={{ opacity: 0, y: 30 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ duration: 0.6, ease: "easeOut" }}
+          className="contents"
+        >
         {/* Proyectos Activos */}
         <motion.div
           initial={{ opacity: 0, y: 20, scale: 0.9 }}
@@ -432,7 +433,8 @@ const ProjectMetrics = React.memo(({ projects, loading = false }: ProjectMetrics
             color="bg-gradient-to-br from-indigo-500 via-blue-600 to-cyan-700"
           />
         </motion.div>
-      </motion.div>
+        </motion.div>
+      </div>
     </div>
   );
 });

@@ -1,4 +1,5 @@
-import { Bell, Search, Menu, Clock, RefreshCw, Lightbulb, TrendingUp, Activity, Zap } from 'lucide-react';
+import { Bell, Search, Menu, Clock, RefreshCw, Lightbulb, TrendingUp, Activity, Zap, Plus } from 'lucide-react';
+import DynamicGreeting from '@/components/DynamicGreeting';
 import { useApp } from '@/contexts/AppContext';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
@@ -101,18 +102,15 @@ export default function Topbar({
           ) : isClientDashboardPage ? (
             /* Client Dashboard Header */
             <div className="flex-1">
-              <h1 className="text-3xl font-bold text-foreground">
-                Mi Dashboard
-              </h1>
-              <p className="text-muted-foreground text-base font-medium mt-1">
-                Gestiona y revisa el progreso de tus proyectos web
-              </p>
-              {lastUpdate && (
-                <div className="text-muted-foreground text-sm flex items-center space-x-2 mt-2">
-                  <Clock size={16} />
-                  <span>Última actualización: {lastUpdate.toLocaleTimeString()}</span>
-                </div>
-              )}
+              <div>
+                <DynamicGreeting userName={user?.full_name?.split(' ')[0] || 'Usuario'} />
+                {lastUpdate && (
+                  <div className="text-muted-foreground text-sm flex items-center space-x-2 mt-2">
+                    <Clock size={16} />
+                    <span>Última actualización: {lastUpdate.toLocaleTimeString()}</span>
+                  </div>
+                )}
+              </div>
             </div>
           ) : (
             /* Regular Search */

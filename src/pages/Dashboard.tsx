@@ -717,379 +717,395 @@ const Dashboard = React.memo(() => {
         <div className="flex-1 overflow-hidden">
           <div className="h-full overflow-y-auto">
           
-
-
-          {/* Cards de Estadísticas Principales */}
-          <div className="metrics-section grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 sm:gap-6 px-4 sm:px-6 lg:px-8 py-4 sm:py-6">
-            
-            {/* Card Proyectos Totales */}
-            <motion.div 
-              className="relative group cursor-pointer card-hover-effect"
-              whileHover={{ scale: 1.02 }}
-              transition={{ duration: 0.3, ease: "easeOut" }}
-            >
-              <div className="bg-card dark:bg-slate-800/50 rounded-2xl p-4 sm:p-6 shadow-xl hover:shadow-2xl dark:shadow-2xl dark:shadow-blue-500/20 dark:hover:shadow-3xl dark:hover:shadow-blue-500/30 transition-all duration-500 transform hover:-translate-y-2 border border-border/50 dark:border-slate-700/50 backdrop-blur-sm overflow-hidden bg-gradient-to-br from-primary/5 via-primary/10 to-primary/15 dark:from-blue-500/30 dark:via-blue-600/35 dark:to-blue-700/40 relative">
-                {/* Efecto de brillo sutil */}
-                <div className="absolute inset-0 bg-gradient-to-br from-transparent via-white/20 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-500"></div>
-                
-                {/* Efecto de brillo adicional para modo oscuro - Azul */}
-                <div className="absolute inset-0 bg-gradient-to-br from-blue-500/20 via-blue-400/30 to-blue-600/20 opacity-0 dark:opacity-100 group-hover:opacity-100 dark:group-hover:opacity-100 transition-opacity duration-500"></div>
-                
-                {/* Icono mejorado con animación flotante */}
-                <div className="flex items-center justify-center w-14 h-14 sm:w-16 sm:h-16 rounded-2xl mb-4 shadow-2xl group-hover:scale-110 transition-all duration-500 bg-gradient-to-br from-sky-500 via-blue-600 to-indigo-700 text-white animate-float relative overflow-hidden">
-                  <Target size={28} className="sm:w-8 sm:h-8 relative z-10" />
-                  <div className="absolute inset-0 bg-gradient-to-r from-transparent via-white/20 to-transparent animate-shimmer"></div>
-                </div>
-                
-                {/* Valor con animación mejorada */}
-                <div className="text-3xl sm:text-4xl lg:text-5xl font-bold text-card-foreground dark:text-white mb-3 group-hover:scale-105 transition-transform duration-300 metric-value-animation bg-gradient-to-r from-primary to-primary/80 dark:from-blue-400 dark:to-blue-600 bg-clip-text text-transparent">
-                  {dashboardStats.totalProjects}
-                </div>
-                
-                {/* Título con mejor tipografía */}
-                <div className="text-lg sm:text-xl font-bold text-card-foreground dark:text-white mb-2 flex items-center gap-2">
-                  Proyectos Activos
-                  <ContextualHelp 
-                    context="proyectos" 
-                    position="top" 
-                    trigger="hover"
-                  />
-                </div>
-                
-                {/* Subtítulo con icono */}
-                <div className="text-sm text-muted-foreground dark:text-slate-300 flex items-center gap-2">
-                  <div className="w-2 h-2 bg-gradient-to-r from-emerald-400 to-teal-500 dark:from-emerald-500 dark:to-teal-400 rounded-full animate-pulse"></div>
-                  <span className="text-emerald-600 dark:text-emerald-400 font-semibold">
-                    {dashboardStats.inProgressProjects}
-                  </span>
-                  <span>en progreso</span>
-                </div>
-                
-                {/* Efecto de partículas flotantes */}
-                <div className="absolute top-4 right-4 opacity-0 group-hover:opacity-100 transition-opacity duration-500">
-                  <div className="w-2 h-2 bg-blue-400 rounded-full animate-bounce" style={{ animationDelay: '0s' }}></div>
-                  <div className="w-1.5 h-1.5 bg-indigo-400 rounded-full animate-bounce mt-1" style={{ animationDelay: '0.2s' }}></div>
-                </div>
-              </div>
-            </motion.div>
-
-            {/* Card En Progreso */}
-            <motion.div 
-              className="relative group cursor-pointer card-hover-effect"
-              whileHover={{ scale: 1.02 }}
-              transition={{ duration: 0.3, ease: "easeOut" }}
-            >
-              <div className="bg-card dark:bg-slate-800/50 rounded-2xl p-4 sm:p-6 shadow-xl hover:shadow-2xl dark:shadow-2xl dark:shadow-emerald-500/20 dark:hover:shadow-3xl dark:hover:shadow-emerald-500/30 transition-all duration-500 transform hover:-translate-y-2 border border-border/50 dark:border-slate-700/50 backdrop-blur-sm overflow-hidden bg-gradient-to-br from-emerald-500/5 via-green-500/10 to-teal-500/15 dark:from-emerald-500/30 dark:via-green-600/35 dark:to-teal-600/40 relative">
-                {/* Efecto de brillo sutil */}
-                <div className="absolute inset-0 bg-gradient-to-br from-transparent via-white/20 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-500"></div>
-                
-                {/* Efecto de brillo adicional para modo oscuro - Verde */}
-                <div className="absolute inset-0 bg-gradient-to-br from-emerald-500/20 via-green-400/30 to-teal-500/20 opacity-0 dark:opacity-100 group-hover:opacity-100 dark:group-hover:opacity-100 transition-opacity duration-500"></div>
-                
-                {/* Icono mejorado con animación de progreso */}
-                <div className="flex items-center justify-center w-14 h-14 sm:w-16 sm:h-16 rounded-2xl mb-4 shadow-2xl group-hover:scale-110 transition-all duration-500 bg-gradient-to-br from-emerald-500 via-green-600 to-teal-700 text-white animate-pulse-glow relative overflow-hidden">
-                  <Activity size={28} className="sm:w-8 sm:h-8 relative z-10" />
-                  <div className="absolute inset-0 bg-gradient-to-r from-transparent via-white/20 to-transparent animate-shimmer"></div>
-                </div>
-                
-                {/* Valor con animación mejorada */}
-                <div className="text-3xl sm:text-4xl lg:text-5xl font-bold text-card-foreground dark:text-white mb-3 group-hover:scale-105 transition-transform duration-300 metric-value-animation bg-gradient-to-r from-emerald-600 to-teal-700 dark:from-emerald-400 dark:to-teal-500 bg-clip-text text-transparent">
-                  {dashboardStats.inProgressProjects}
-                </div>
-                
-                {/* Título con mejor tipografía */}
-                <div className="text-lg sm:text-xl font-bold text-card-foreground dark:text-white mb-2">
-                  En Progreso
-                </div>
-                
-                {/* Subtítulo con icono */}
-                <div className="text-sm text-muted-foreground dark:text-slate-300 flex items-center gap-2">
-                  <div className="w-2 h-2 bg-gradient-to-r from-blue-400 to-indigo-500 dark:from-blue-500 dark:to-indigo-400 rounded-full animate-pulse"></div>
-                  <span className="text-blue-600 dark:text-blue-400 font-semibold">
-                    {dashboardStats.pendingProjects}
-                  </span>
-                  <span>pendientes</span>
-                </div>
-                
-                {/* Indicador de progreso animado */}
-                <div className="absolute bottom-4 right-4 opacity-0 group-hover:opacity-100 transition-opacity duration-500">
-                  <div className="w-8 h-1 bg-gradient-to-r from-emerald-400 to-teal-500 rounded-full overflow-hidden">
-                    <div className="h-full bg-white/30 animate-pulse" style={{ width: '60%' }}></div>
-                  </div>
-                </div>
-              </div>
-            </motion.div>
-
-            {/* Card Comentarios */}
-            <motion.div 
-              className="relative group cursor-pointer card-hover-effect"
-              whileHover={{ scale: 1.02 }}
-              transition={{ duration: 0.3, ease: "easeOut" }}
-            >
-              <div className="bg-card dark:bg-slate-800/50 rounded-2xl p-4 sm:p-6 shadow-xl hover:shadow-2xl dark:shadow-2xl dark:shadow-amber-500/20 dark:hover:shadow-3xl dark:hover:shadow-amber-500/30 transition-all duration-500 transform hover:-translate-y-2 border border-border/50 dark:border-slate-700/50 backdrop-blur-sm overflow-hidden bg-gradient-to-br from-amber-500/5 via-yellow-500/10 to-orange-500/15 dark:from-amber-500/30 dark:via-yellow-600/35 dark:to-orange-600/40 relative">
-                {/* Efecto de brillo sutil */}
-                <div className="absolute inset-0 bg-gradient-to-br from-transparent via-white/20 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-500"></div>
-                
-                {/* Efecto de brillo adicional para modo oscuro - Naranja */}
-                <div className="absolute inset-0 bg-gradient-to-br from-amber-500/20 via-yellow-400/30 to-orange-500/20 opacity-0 dark:opacity-100 group-hover:opacity-100 dark:group-hover:opacity-100 transition-opacity duration-500"></div>
-                
-                {/* Icono mejorado con animación de chat */}
-                <div className="flex items-center justify-center w-14 h-14 sm:w-16 sm:h-16 rounded-2xl mb-4 shadow-2xl group-hover:scale-110 transition-all duration-500 bg-gradient-to-br from-amber-500 via-yellow-600 to-orange-700 text-white animate-float relative overflow-hidden">
-                  <MessageSquare size={28} className="sm:w-8 sm:h-8 relative z-10" />
-                  <div className="absolute inset-0 bg-gradient-to-r from-transparent via-white/20 to-transparent animate-shimmer"></div>
-                  
-                  {/* Indicador de mensaje animado */}
-                  <div className="absolute -top-1 -right-1 w-4 h-4 bg-red-500 rounded-full animate-pulse"></div>
-                </div>
-                
-                {/* Valor con animación mejorada */}
-                <div className="text-3xl sm:text-4xl lg:text-5xl font-bold text-card-foreground dark:text-white mb-3 group-hover:scale-105 transition-transform duration-300 metric-value-animation bg-gradient-to-r from-amber-600 to-orange-700 dark:from-amber-400 dark:to-orange-500 bg-clip-text text-transparent">
-                  {dashboardStats.totalComments}
-                </div>
-                
-                {/* Título con mejor tipografía */}
-                <div className="text-lg sm:text-xl font-bold text-card-foreground dark:text-white mb-2">
-                  Comentarios
-                </div>
-                
-                {/* Subtítulo con icono */}
-                <div className="text-sm text-muted-foreground dark:text-slate-300 flex items-center gap-2">
-                  <div className="w-2 h-2 bg-gradient-to-r from-green-400 to-emerald-500 dark:from-green-500 dark:to-emerald-400 rounded-full animate-pulse"></div>
-                  <span className="text-green-600 dark:text-green-400 font-semibold">
-                    {dashboardStats.completedProjects}
-                  </span>
-                  <span>completados</span>
-                </div>
-                
-                {/* Burbujas de chat flotantes */}
-                <div className="absolute top-4 right-4 opacity-0 group-hover:opacity-100 transition-opacity duration-500 space-y-1">
-                  <div className="w-3 h-3 bg-amber-300 rounded-full animate-bounce" style={{ animationDelay: '0s' }}></div>
-                  <div className="w-2 h-2 bg-orange-300 rounded-full animate-bounce" style={{ animationDelay: '0.1s' }}></div>
-                  <div className="w-2.5 h-2.5 bg-yellow-300 rounded-full animate-bounce" style={{ animationDelay: '0.2s' }}></div>
-                </div>
-              </div>
-            </motion.div>
-
-            {/* Card Progreso General */}
-            <motion.div 
-              className="relative group cursor-pointer card-hover-effect"
-              whileHover={{ scale: 1.02 }}
-              transition={{ duration: 0.3, ease: "easeOut" }}
-            >
-              <div className="bg-card dark:bg-slate-800/50 rounded-2xl p-4 sm:p-6 shadow-xl hover:shadow-2xl dark:shadow-2xl dark:shadow-violet-500/20 dark:hover:shadow-3xl dark:hover:shadow-violet-500/30 transition-all duration-500 transform hover:-translate-y-2 border border-border/50 dark:border-slate-700/50 backdrop-blur-sm overflow-hidden bg-gradient-to-br from-violet-500/5 via-purple-500/10 to-fuchsia-500/15 dark:from-violet-500/30 dark:via-purple-600/35 dark:to-fuchsia-600/40 relative">
-                {/* Efecto de brillo sutil */}
-                <div className="absolute inset-0 bg-gradient-to-br from-transparent via-white/20 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-500"></div>
-                
-                {/* Efecto de brillo adicional para modo oscuro - Violeta */}
-                <div className="absolute inset-0 bg-gradient-to-br from-violet-500/20 via-purple-400/30 to-fuchsia-500/20 opacity-0 dark:opacity-100 group-hover:opacity-100 dark:group-hover:opacity-100 transition-opacity duration-500"></div>
-                
-                {/* Icono mejorado con animación de crecimiento */}
-                <div className="flex items-center justify-center w-14 h-14 sm:w-16 sm:h-16 rounded-2xl mb-4 shadow-2xl group-hover:scale-110 transition-all duration-500 bg-gradient-to-br from-violet-500 via-purple-600 to-fuchsia-700 text-white animate-pulse-glow relative overflow-hidden">
-                  <TrendingUp size={28} className="sm:w-8 sm:h-8 relative z-10" />
-                  <div className="absolute inset-0 bg-gradient-to-r from-transparent via-white/20 to-transparent animate-shimmer"></div>
-                  
-                  {/* Líneas de tendencia animadas */}
-                  <div className="absolute inset-0 flex items-end justify-center space-x-1 opacity-20">
-                    <div className="w-1 h-3 bg-white rounded-full animate-pulse" style={{ animationDelay: '0s' }}></div>
-                    <div className="w-1 h-5 bg-white rounded-full animate-pulse" style={{ animationDelay: '0.2s' }}></div>
-                    <div className="w-1 h-7 bg-white rounded-full animate-pulse" style={{ animationDelay: '0.4s' }}></div>
-                    <div className="w-1 h-4 bg-white rounded-full animate-pulse" style={{ animationDelay: '0.6s' }}></div>
-                  </div>
-                </div>
-                
-                {/* Valor con animación mejorada */}
-                <div className="text-3xl sm:text-4xl lg:text-5xl font-bold text-card-foreground dark:text-white mb-3 group-hover:scale-105 transition-transform duration-300 metric-value-animation bg-gradient-to-r from-violet-600 to-fuchsia-700 dark:from-violet-400 dark:to-fuchsia-500 bg-clip-text text-transparent">
-                  {dashboardStats.averageProgress}%
-                </div>
-                
-                {/* Título con mejor tipografía */}
-                <div className="text-lg sm:text-xl font-bold text-card-foreground dark:text-white mb-2">
-                  Progreso General
-                </div>
-                
-                {/* Subtítulo con icono */}
-                <div className="text-sm text-muted-foreground dark:text-slate-300 flex items-center gap-2">
-                  <div className="w-2 h-2 bg-gradient-to-r from-green-400 to-emerald-500 dark:from-green-500 dark:to-emerald-400 rounded-full animate-pulse"></div>
-                  <span className="text-green-600 dark:text-green-400 font-semibold">
-                    {dashboardStats.completedProjects}
-                  </span>
-                  <span>finalizados</span>
-                </div>
-                
-                {/* Barra de progreso circular */}
-                <div className="absolute bottom-4 right-4 opacity-0 group-hover:opacity-100 transition-opacity duration-500">
-                  <div className="w-8 h-8 rounded-full border-2 border-violet-300 relative">
-                    <div className="absolute inset-0 rounded-full border-2 border-transparent border-t-violet-500 animate-spin" style={{ animationDuration: '2s' }}></div>
-                  </div>
-                </div>
-              </div>
-            </motion.div>
+          {/* Botón Crear Proyecto */}
+          <div className="px-4 sm:px-6 lg:px-8 py-4">
+            <div className="flex justify-start">
+              <Button
+                onClick={() => navigate('/proyectos/nuevo')}
+                className="bg-gradient-to-r from-blue-500 via-purple-600 to-indigo-600 hover:from-blue-600 hover:to-indigo-700 text-white font-semibold px-8 py-4 shadow-lg hover:shadow-xl transition-all duration-300 text-lg"
+              >
+                <Plus className="h-6 w-6 mr-3" />
+                Crear Proyecto
+              </Button>
+            </div>
           </div>
 
+
+          {/* Layout en 3 Columnas - Nuevo Dashboard del Cliente */}
+          <div className="px-4 sm:px-6 lg:px-8 pb-6">
+            <div className="grid grid-cols-1 lg:grid-cols-12 gap-6">
+              
+              {/* Columna Izquierda - Acciones Rápidas (30%) */}
+              <div className="lg:col-span-3 space-y-6">
+                {/* Acciones Rápidas */}
+                <motion.div
+                  initial={{ opacity: 0, x: -20 }}
+                  animate={{ opacity: 1, x: 0 }}
+                  transition={{ duration: 0.5, delay: 0.1 }}
+                >
+                  <Card className="bg-white/80 dark:bg-slate-800/50 backdrop-blur-sm border border-slate-200/50 dark:border-slate-700/50 shadow-lg">
+                    <CardHeader className="pb-3">
+                      <CardTitle className="text-lg font-semibold text-slate-800 dark:text-white flex items-center gap-2">
+                        <Zap className="h-5 w-5 text-blue-500" />
+                        Acciones Rápidas
+                      </CardTitle>
+                    </CardHeader>
+                    <CardContent className="space-y-3">
+                      <Button
+                        variant="ghost"
+                        className="w-full justify-start text-left h-auto p-4 hover:bg-blue-50 dark:hover:bg-blue-500/10"
+                        onClick={() => navigate('/proyectos/nuevo')}
+                      >
+                        <div className="flex items-center gap-3">
+                          <div className="w-10 h-10 bg-blue-100 dark:bg-blue-500/20 rounded-lg flex items-center justify-center">
+                            <Plus className="h-5 w-5 text-blue-600 dark:text-blue-400" />
+                          </div>
+                          <div>
+                            <p className="font-medium text-slate-800 dark:text-white">Nuevo Proyecto</p>
+                            <p className="text-sm text-slate-500 dark:text-slate-400">Crear un proyecto web</p>
+                          </div>
+                        </div>
+                      </Button>
+                      <Button
+                        variant="ghost"
+                        className="w-full justify-start text-left h-auto p-4 hover:bg-green-50 dark:hover:bg-green-500/10"
+                        onClick={() => navigate('/proyectos')}
+                      >
+                        <div className="flex items-center gap-3">
+                          <div className="w-10 h-10 bg-green-100 dark:bg-green-500/20 rounded-lg flex items-center justify-center">
+                            <FileText className="h-5 w-5 text-green-600 dark:text-green-400" />
+                          </div>
+                          <div>
+                            <p className="font-medium text-slate-800 dark:text-white">Ver Proyectos</p>
+                            <p className="text-sm text-slate-500 dark:text-slate-400">Gestionar existentes</p>
+                          </div>
+                        </div>
+                      </Button>
+                      <Button
+                        variant="ghost"
+                        className="w-full justify-start text-left h-auto p-4 hover:bg-purple-50 dark:hover:bg-purple-500/10"
+                        onClick={() => navigate('/perfil')}
+                      >
+                        <div className="flex items-center gap-3">
+                          <div className="w-10 h-10 bg-purple-100 dark:bg-purple-500/20 rounded-lg flex items-center justify-center">
+                            <User className="h-5 w-5 text-purple-600 dark:text-purple-400" />
+                          </div>
+                          <div>
+                            <p className="font-medium text-slate-800 dark:text-white">Mi Perfil</p>
+                            <p className="text-sm text-slate-500 dark:text-slate-400">Configurar cuenta</p>
+                          </div>
+                        </div>
+                      </Button>
+                    </CardContent>
+                  </Card>
+                </motion.div>
+
+                {/* Estado del Equipo */}
+                <motion.div
+                  initial={{ opacity: 0, x: -20 }}
+                  animate={{ opacity: 1, x: 0 }}
+                  transition={{ duration: 0.5, delay: 0.2 }}
+                >
+                  <Card className="bg-white/80 dark:bg-slate-800/50 backdrop-blur-sm border border-slate-200/50 dark:border-slate-700/50 shadow-lg">
+                    <CardHeader className="pb-3">
+                      <CardTitle className="text-lg font-semibold text-slate-800 dark:text-white flex items-center gap-2">
+                        <Users className="h-5 w-5 text-green-500" />
+                        Estado del Equipo
+                      </CardTitle>
+                    </CardHeader>
+                    <CardContent className="space-y-3">
+                      <div className="flex items-center gap-3">
+                        <div className="w-8 h-8 bg-green-100 dark:bg-green-500/20 rounded-full flex items-center justify-center">
+                          <div className="w-3 h-3 bg-green-500 rounded-full"></div>
+                        </div>
+                        <div>
+                          <p className="font-medium text-slate-800 dark:text-white">Equipo Activo</p>
+                          <p className="text-sm text-slate-500 dark:text-slate-400">Trabajando en tus proyectos</p>
+                        </div>
+                      </div>
+                      <div className="flex items-center gap-3">
+                        <div className="w-8 h-8 bg-blue-100 dark:bg-blue-500/20 rounded-full flex items-center justify-center">
+                          <MessageSquare className="h-4 w-4 text-blue-600 dark:text-blue-400" />
+                        </div>
+                        <div>
+                          <p className="font-medium text-slate-800 dark:text-white">Comunicación</p>
+                          <p className="text-sm text-slate-500 dark:text-slate-400">Respuesta en 2-4 horas</p>
+                        </div>
+                      </div>
+                    </CardContent>
+                  </Card>
+                </motion.div>
+              </div>
+
+              {/* Columna Central - Contenido Principal (50%) */}
+              <div className="lg:col-span-6 space-y-6">
+                {/* Métricas Mejoradas para el Cliente */}
+                <motion.div
+                  initial={{ opacity: 0, y: 20 }}
+                  animate={{ opacity: 1, y: 0 }}
+                  transition={{ duration: 0.6, delay: 0.1 }}
+                  className="grid grid-cols-1 sm:grid-cols-2 gap-4"
+                >
+                  {/* Progreso de Mis Proyectos */}
+                  <Card className="bg-gradient-to-br from-blue-500/10 via-blue-600/15 to-indigo-500/20 dark:from-blue-500/20 dark:via-blue-600/25 dark:to-indigo-500/30 border border-blue-200/50 dark:border-blue-500/30 shadow-lg hover:shadow-xl transition-all duration-300 cursor-pointer group">
+                    <CardContent className="p-6">
+                      <div className="flex items-center justify-between mb-4">
+                        <div className="w-12 h-12 bg-blue-500 rounded-xl flex items-center justify-center shadow-lg group-hover:scale-110 transition-transform duration-300">
+                          <BarChart3 className="h-6 w-6 text-white" />
+                        </div>
+                        <Badge className="bg-blue-100 text-blue-700 dark:bg-blue-500/20 dark:text-blue-300">
+                          {dashboardStats.averageProgress}% Promedio
+                        </Badge>
+                      </div>
+                      <h3 className="text-lg font-semibold text-slate-800 dark:text-white mb-2">
+                        Progreso de Mis Proyectos
+                      </h3>
+                      <div className="space-y-2">
+                        <div className="flex justify-between text-sm text-slate-600 dark:text-slate-300">
+                          <span>Progreso General</span>
+                          <span>{dashboardStats.averageProgress}%</span>
+                        </div>
+                        <Progress value={dashboardStats.averageProgress} className="h-2" />
+                      </div>
+                    </CardContent>
+                  </Card>
+
+                  {/* Próximas Entregas */}
+                  <Card className="bg-gradient-to-br from-orange-500/10 via-orange-600/15 to-red-500/20 dark:from-orange-500/20 dark:via-orange-600/25 dark:to-red-500/30 border border-orange-200/50 dark:border-orange-500/30 shadow-lg hover:shadow-xl transition-all duration-300 cursor-pointer group">
+                    <CardContent className="p-6">
+                      <div className="flex items-center justify-between mb-4">
+                        <div className="w-12 h-12 bg-orange-500 rounded-xl flex items-center justify-center shadow-lg group-hover:scale-110 transition-transform duration-300">
+                          <Calendar className="h-6 w-6 text-white" />
+                        </div>
+                        <Badge className="bg-orange-100 text-orange-700 dark:bg-orange-500/20 dark:text-orange-300">
+                          Próximas
+                        </Badge>
+                      </div>
+                      <h3 className="text-lg font-semibold text-slate-800 dark:text-white mb-2">
+                        Próximas Entregas
+                      </h3>
+                      <div className="space-y-2">
+                        <div className="flex justify-between text-sm text-slate-600 dark:text-slate-300">
+                          <span>En Progreso</span>
+                          <span>{dashboardStats.inProgressProjects} proyectos</span>
+                        </div>
+                        <div className="text-xs text-slate-500 dark:text-slate-400">
+                          Revisa el timeline de cada proyecto
+                        </div>
+                      </div>
+                    </CardContent>
+                  </Card>
+
+                  {/* Comunicación Activa */}
+                  <Card className="bg-gradient-to-br from-green-500/10 via-green-600/15 to-emerald-500/20 dark:from-green-500/20 dark:via-green-600/25 dark:to-emerald-500/30 border border-green-200/50 dark:border-green-500/30 shadow-lg hover:shadow-xl transition-all duration-300 cursor-pointer group">
+                    <CardContent className="p-6">
+                      <div className="flex items-center justify-between mb-4">
+                        <div className="w-12 h-12 bg-green-500 rounded-xl flex items-center justify-center shadow-lg group-hover:scale-110 transition-transform duration-300">
+                          <MessageSquare className="h-6 w-6 text-white" />
+                        </div>
+                        <Badge className="bg-green-100 text-green-700 dark:bg-green-500/20 dark:text-green-300">
+                          {dashboardStats.totalComments} Mensajes
+                        </Badge>
+                      </div>
+                      <h3 className="text-lg font-semibold text-slate-800 dark:text-white mb-2">
+                        Comunicación Activa
+                      </h3>
+                      <div className="space-y-2">
+                        <div className="flex justify-between text-sm text-slate-600 dark:text-slate-300">
+                          <span>Comentarios Totales</span>
+                          <span>{dashboardStats.totalComments}</span>
+                        </div>
+                        <div className="text-xs text-slate-500 dark:text-slate-400">
+                          Mantente al día con el equipo
+                        </div>
+                      </div>
+                    </CardContent>
+                  </Card>
+
+                  {/* Estado de Colaboración */}
+                  <Card className="bg-gradient-to-br from-purple-500/10 via-purple-600/15 to-violet-500/20 dark:from-purple-500/20 dark:via-purple-600/25 dark:to-violet-500/30 border border-purple-200/50 dark:border-purple-500/30 shadow-lg hover:shadow-xl transition-all duration-300 cursor-pointer group">
+                    <CardContent className="p-6">
+                      <div className="flex items-center justify-between mb-4">
+                        <div className="w-12 h-12 bg-purple-500 rounded-xl flex items-center justify-center shadow-lg group-hover:scale-110 transition-transform duration-300">
+                          <Users className="h-6 w-6 text-white" />
+                        </div>
+                        <Badge className="bg-purple-100 text-purple-700 dark:bg-purple-500/20 dark:text-purple-300">
+                          Activo
+                        </Badge>
+                      </div>
+                      <h3 className="text-lg font-semibold text-slate-800 dark:text-white mb-2">
+                        Estado de Colaboración
+                      </h3>
+                      <div className="space-y-2">
+                        <div className="flex justify-between text-sm text-slate-600 dark:text-slate-300">
+                          <span>Proyectos Colaborativos</span>
+                          <span>{dashboardStats.totalProjects}</span>
+                        </div>
+                        <div className="text-xs text-slate-500 dark:text-slate-400">
+                          Trabajo en equipo activo
+                        </div>
+                      </div>
+                    </CardContent>
+                  </Card>
+                </motion.div>
+
+                {/* Timeline de Actividad Reciente */}
+                <motion.div
+                  initial={{ opacity: 0, y: 20 }}
+                  animate={{ opacity: 1, y: 0 }}
+                  transition={{ duration: 0.6, delay: 0.3 }}
+                >
+                  <Card className="bg-white/80 dark:bg-slate-800/50 backdrop-blur-sm border border-slate-200/50 dark:border-slate-700/50 shadow-lg">
+                    <CardHeader>
+                      <CardTitle className="text-lg font-semibold text-slate-800 dark:text-white flex items-center gap-2">
+                        <Activity className="h-5 w-5 text-blue-500" />
+                        Actividad Reciente
+                      </CardTitle>
+                    </CardHeader>
+                    <CardContent>
+                      <div className="space-y-4">
+                        {userProjects.slice(0, 3).map((project, index) => (
+                          <div key={project.id} className="flex items-center gap-4 p-3 rounded-lg hover:bg-slate-50 dark:hover:bg-slate-700/50 transition-colors duration-200">
+                            <div className="w-10 h-10 bg-gradient-to-br from-blue-500 to-indigo-600 rounded-lg flex items-center justify-center shadow-md">
+                              <span className="text-white font-bold text-sm">
+                                {project.name?.charAt(0) || 'P'}
+                              </span>
+                            </div>
+                            <div className="flex-1">
+                              <p className="font-medium text-slate-800 dark:text-white">
+                                {project.name}
+                              </p>
+                              <p className="text-sm text-slate-500 dark:text-slate-400">
+                                Última actualización: {formatDate(project.updated_at)}
+                              </p>
+                            </div>
+                            <Badge variant="outline" className="text-xs">
+                              {getProjectStatus(project)}
+                            </Badge>
+                          </div>
+                        ))}
+                      </div>
+                    </CardContent>
+                  </Card>
+                </motion.div>
+              </div>
+
+              {/* Columna Derecha - Tareas y Notificaciones (20%) */}
+              <div className="lg:col-span-3 space-y-6">
+                {/* Tareas Personales */}
+                <motion.div
+                  initial={{ opacity: 0, x: 20 }}
+                  animate={{ opacity: 1, x: 0 }}
+                  transition={{ duration: 0.5, delay: 0.2 }}
+                >
+                  <Card className="bg-white/80 dark:bg-slate-800/50 backdrop-blur-sm border border-slate-200/50 dark:border-slate-700/50 shadow-lg">
+                    <CardHeader className="pb-3">
+                      <CardTitle className="text-lg font-semibold text-slate-800 dark:text-white flex items-center gap-2">
+                        <CheckCircle className="h-5 w-5 text-green-500" />
+                        Mis Tareas
+                      </CardTitle>
+                    </CardHeader>
+                    <CardContent className="space-y-3">
+                      <div className="space-y-2">
+                        <div className="flex items-center gap-3 p-2 rounded-lg hover:bg-slate-50 dark:hover:bg-slate-700/50 transition-colors duration-200">
+                          <CheckCircle className="h-4 w-4 text-green-500" />
+                          <span className="text-sm text-slate-700 dark:text-slate-300">Revisar propuesta de diseño</span>
+                        </div>
+                        <div className="flex items-center gap-3 p-2 rounded-lg hover:bg-slate-50 dark:hover:bg-slate-700/50 transition-colors duration-200">
+                          <Clock className="h-4 w-4 text-orange-500" />
+                          <span className="text-sm text-slate-700 dark:text-slate-300">Aprobar contenido final</span>
+                        </div>
+                        <div className="flex items-center gap-3 p-2 rounded-lg hover:bg-slate-50 dark:hover:bg-slate-700/50 transition-colors duration-200">
+                          <MessageSquare className="h-4 w-4 text-blue-500" />
+                          <span className="text-sm text-slate-700 dark:text-slate-300">Responder feedback del equipo</span>
+                        </div>
+                      </div>
+                    </CardContent>
+                  </Card>
+                </motion.div>
+
+                {/* Notificaciones Importantes */}
+                <motion.div
+                  initial={{ opacity: 0, x: 20 }}
+                  animate={{ opacity: 1, x: 0 }}
+                  transition={{ duration: 0.5, delay: 0.3 }}
+                >
+                  <Card className="bg-white/80 dark:bg-slate-800/50 backdrop-blur-sm border border-slate-200/50 dark:border-slate-700/50 shadow-lg">
+                    <CardHeader className="pb-3">
+                      <CardTitle className="text-lg font-semibold text-slate-800 dark:text-white flex items-center gap-2">
+                        <Bell className="h-5 w-5 text-blue-500" />
+                        Notificaciones
+                      </CardTitle>
+                    </CardHeader>
+                    <CardContent className="space-y-3">
+                      <div className="space-y-2">
+                        <div className="p-3 bg-blue-50 dark:bg-blue-500/10 rounded-lg border border-blue-200 dark:border-blue-500/20">
+                          <p className="text-sm font-medium text-blue-800 dark:text-blue-300">
+                            Nuevo mensaje del equipo
+                          </p>
+                          <p className="text-xs text-blue-600 dark:text-blue-400 mt-1">
+                            Hace 2 horas
+                          </p>
+                        </div>
+                        <div className="p-3 bg-green-50 dark:bg-green-500/10 rounded-lg border border-green-200 dark:border-green-500/20">
+                          <p className="text-sm font-medium text-green-800 dark:text-green-300">
+                            Proyecto actualizado
+                          </p>
+                          <p className="text-xs text-green-600 dark:text-green-400 mt-1">
+                            Hace 4 horas
+                          </p>
+                        </div>
+                      </div>
+                    </CardContent>
+                  </Card>
+                </motion.div>
+
+                {/* Resumen Semanal */}
+                <motion.div
+                  initial={{ opacity: 0, x: 20 }}
+                  animate={{ opacity: 1, x: 0 }}
+                  transition={{ duration: 0.5, delay: 0.4 }}
+                >
+                  <Card className="bg-gradient-to-br from-indigo-500/10 via-purple-500/15 to-pink-500/20 dark:from-indigo-500/20 dark:via-purple-500/25 dark:to-pink-500/30 border border-indigo-200/50 dark:border-indigo-500/30 shadow-lg">
+                    <CardHeader className="pb-3">
+                      <CardTitle className="text-lg font-semibold text-slate-800 dark:text-white flex items-center gap-2">
+                        <TrendingUp className="h-5 w-5 text-indigo-500" />
+                        Resumen Semanal
+                      </CardTitle>
+                    </CardHeader>
+                    <CardContent className="space-y-4">
+                      <div className="text-center">
+                        <div className="text-3xl font-bold text-indigo-600 dark:text-indigo-400 mb-2">
+                          {dashboardStats.averageProgress}%
+                        </div>
+                        <p className="text-sm text-slate-600 dark:text-slate-300">
+                          Progreso General
+                        </p>
+                      </div>
+                      <div className="space-y-2">
+                        <div className="flex justify-between text-sm">
+                          <span className="text-slate-600 dark:text-slate-300">Proyectos Activos</span>
+                          <span className="font-medium text-slate-800 dark:text-white">{dashboardStats.totalProjects}</span>
+                        </div>
+                        <div className="flex justify-between text-sm">
+                          <span className="text-slate-600 dark:text-slate-300">Comentarios</span>
+                          <span className="font-medium text-slate-800 dark:text-white">{dashboardStats.totalComments}</span>
+                        </div>
+                        <div className="flex justify-between text-sm">
+                          <span className="text-slate-600 dark:text-slate-300">Completados</span>
+                          <span className="font-medium text-slate-800 dark:text-white">{dashboardStats.completedProjects}</span>
+                        </div>
+                      </div>
+                    </CardContent>
+                  </Card>
+                </motion.div>
+              </div>
+            </div>
+          </div>
 
           {/* Contenido Principal */}
           <div className="px-4 sm:px-6 lg:px-8 py-4 sm:py-6 space-y-4 sm:space-y-6">
             
-            {/* Filtros y Controles */}
-            <motion.div 
-              className="bg-card dark:bg-slate-800/50 rounded-2xl p-6 sm:p-8 shadow-xl border border-border/50 dark:border-slate-700/50 relative overflow-hidden"
-              initial={{ opacity: 0, y: 20 }}
-              animate={{ opacity: 1, y: 0 }}
-              transition={{ duration: 0.5 }}
-            >
-              {/* Fondo con gradiente sutil */}
-              <div className="absolute inset-0 bg-gradient-to-br from-muted/20 via-primary/5 to-primary/10"></div>
-              
-              <div className="relative z-10 flex flex-col lg:flex-row items-start lg:items-center justify-between gap-6">
-                <div className="flex flex-col sm:flex-row items-start sm:items-center gap-4 sm:gap-6">
-                  <div className="flex items-center gap-3">
-                    <div className="w-10 h-10 bg-gradient-to-br from-blue-500 to-indigo-600 rounded-xl flex items-center justify-center shadow-lg">
-                      <Filter className="h-5 w-5 text-white" />
-                    </div>
-                    <h2 className="text-xl sm:text-2xl font-bold text-card-foreground dark:text-white bg-gradient-to-r from-primary to-primary/80 dark:from-blue-400 dark:to-blue-600 bg-clip-text text-transparent">
-                      Filtros y Controles
-                    </h2>
-                  </div>
-                  <Button
-                    variant="outline"
-                    size="sm"
-                    onClick={clearFilters}
-                    className="border-border dark:border-slate-600 text-foreground dark:text-slate-300 hover:bg-muted dark:hover:bg-slate-700 hover:border-primary dark:hover:border-blue-500 hover:text-primary dark:hover:text-blue-400 transition-all duration-300 hover:scale-105 shadow-sm hover:shadow-md"
-                  >
-                    <RefreshCw className="h-4 w-4 mr-2" />
-                    Limpiar
-                  </Button>
-                </div>
-
-                {/* Barra de búsqueda */}
-                <div className="flex items-center gap-3 w-full lg:w-auto">
-                  <div className="relative flex-1 lg:flex-none lg:w-80">
-                    <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 h-4 w-4 text-muted-foreground" />
-                    <Input
-                      ref={searchInputRef}
-                      type="text"
-                      placeholder="Buscar proyectos... (Ctrl+F)"
-                      value={searchTerm}
-                      onChange={(e) => setSearchTerm(e.target.value)}
-                      className="pl-10 pr-4 py-2 bg-popover border-border text-slate-800 placeholder-slate-500 focus:border-blue-400 focus:ring-blue-400 transition-all duration-300 shadow-sm hover:shadow-md"
-                    />
-                  </div>
-                </div>
-                
-                <div className="flex flex-col sm:flex-row items-start sm:items-center gap-4 w-full lg:w-auto">
-                  {/* Filtro por estado */}
-                  <div className="flex flex-col sm:flex-row items-start sm:items-center gap-3 w-full sm:w-auto">
-                    <Label className="text-sm font-semibold text-card-foreground flex items-center gap-2">
-                      <div className="w-2 h-2 bg-emerald-500 rounded-full"></div>
-                      Estado:
-                    </Label>
-                    <Select value={statusFilter} onValueChange={setStatusFilter}>
-                      <SelectTrigger className="w-full sm:w-36 bg-input border-border text-foreground hover:border-emerald-400 hover:ring-emerald-400 transition-all duration-300 shadow-sm hover:shadow-md">
-                        <SelectValue />
-                      </SelectTrigger>
-                      <SelectContent className="bg-popover border-border">
-                        <SelectItem value="all">Todos</SelectItem>
-                        <SelectItem value="Sin iniciar">Sin iniciar</SelectItem>
-                        <SelectItem value="En progreso">En progreso</SelectItem>
-                        <SelectItem value="En progreso avanzado">En progreso avanzado</SelectItem>
-                        <SelectItem value="Completado">Completado</SelectItem>
-                      </SelectContent>
-                    </Select>
-                  </div>
-
-                  {/* Ordenamiento */}
-                  <div className="flex flex-col sm:flex-row items-start sm:items-center gap-3 w-full sm:w-auto">
-                    <Label className="text-sm font-semibold text-card-foreground flex items-center gap-2">
-                      <div className="w-2 h-2 bg-violet-500 rounded-full"></div>
-                      Ordenar por:
-                    </Label>
-                    <div className="flex items-center gap-3">
-                      <Select value={sortBy} onValueChange={setSortBy}>
-                        <SelectTrigger className="w-full sm:w-36 bg-input border-border text-foreground hover:border-violet-400 hover:ring-violet-400 transition-all duration-300 shadow-sm hover:shadow-md">
-                          <SelectValue />
-                        </SelectTrigger>
-                        <SelectContent className="bg-popover border-border">
-                          <SelectItem value="recent">Más Recientes</SelectItem>
-                          <SelectItem value="name">Nombre</SelectItem>
-                          <SelectItem value="progress">Progreso</SelectItem>
-                          <SelectItem value="status">Estado</SelectItem>
-                        </SelectContent>
-                      </Select>
-                      
-                      <Button
-                        variant="outline"
-                        size="sm"
-                        onClick={() => setSortOrder(prev => prev === 'asc' ? 'desc' : 'asc')}
-                        className="border-slate-300 text-card-foreground hover:bg-slate-50 hover:border-violet-400 hover:text-violet-700 transition-all duration-300 shadow-sm hover:shadow-md hover:scale-105"
-                      >
-                        {sortOrder === 'asc' ? <SortAsc className="h-4 w-4" /> : <SortDesc className="h-4 w-4" />}
-                      </Button>
-                    </div>
-                  </div>
-
-                  {/* Actualizar */}
-                  <Button
-                    variant="outline"
-                    size="sm"
-                    onClick={refreshProjects}
-                    className="border-border text-foreground hover:bg-muted hover:border-primary hover:text-primary transition-all duration-300 shadow-sm hover:shadow-md hover:scale-105 w-full sm:w-auto"
-                  >
-                    <RefreshCw className="h-4 w-4 mr-2" />
-                    Actualizar
-                  </Button>
-
-                  {/* Exportar */}
-                  <Button
-                    variant="outline"
-                    size="sm"
-                    onClick={exportDashboardData}
-                    className="border-border text-foreground hover:bg-muted hover:border-orange-400 hover:text-orange-700 transition-all duration-300 shadow-sm hover:shadow-md hover:scale-105 w-full sm:w-auto"
-                  >
-                    <Download className="h-4 w-4 mr-2" />
-                    Exportar
-                  </Button>
-                </div>
-              </div>
-              
-              {/* Información de filtros aplicados */}
-              <div className="mt-6 flex flex-wrap items-center gap-3 text-sm text-muted-foreground dark:text-slate-300">
-                <div className="flex items-center gap-2 px-3 py-2 bg-muted/50 dark:bg-slate-700/50 rounded-lg border border-border dark:border-slate-600">
-                  <div className="w-2 h-2 bg-primary dark:bg-blue-400 rounded-full animate-pulse"></div>
-                  <span className="font-medium text-foreground dark:text-white">Mostrando {filteredAndSortedProjects.length} de {userProjects.length} proyectos</span>
-                </div>
-                
-                <div className="flex items-center gap-2 px-3 py-2 bg-green-500/10 dark:bg-green-500/30 rounded-lg border border-green-500/20 dark:border-green-500/50">
-                  <div className="w-2 h-2 bg-green-500 dark:bg-green-400 rounded-full animate-pulse"></div>
-                  <span className="font-medium text-green-600 dark:text-green-300">Actualizaciones en tiempo real activas</span>
-                </div>
-                
-                {searchTerm && (
-                  <Badge variant="outline" className="bg-gradient-to-r from-primary/10 to-primary/20 dark:from-blue-500/30 dark:to-blue-600/40 text-primary dark:text-blue-200 border-primary/30 dark:border-blue-500/60 px-3 py-1.5 shadow-sm hover:shadow-md dark:shadow-blue-500/20 dark:hover:shadow-blue-500/30 transition-all duration-300 hover:scale-105">
-                    <Search className="h-3 w-3 mr-1" />
-                    Búsqueda: "{searchTerm}"
-                  </Badge>
-                )}
-                
-                {statusFilter !== 'all' && (
-                  <Badge variant="outline" className="bg-gradient-to-r from-emerald-50 to-teal-50 dark:from-emerald-500/30 dark:to-teal-500/40 text-emerald-700 dark:text-emerald-200 border-emerald-300 dark:border-emerald-500/60 px-3 py-1.5 shadow-sm hover:shadow-md dark:shadow-emerald-500/20 dark:hover:shadow-emerald-500/30 transition-all duration-300 hover:scale-105">
-                    <Activity className="h-3 w-3 mr-1" />
-                    Estado: {statusFilter}
-                  </Badge>
-                )}
-                
-                <Badge variant="outline" className="bg-gradient-to-r from-violet-50 to-purple-50 dark:from-violet-500/30 dark:to-purple-500/40 text-violet-700 dark:text-violet-200 border-violet-300 dark:border-violet-500/60 px-3 py-1.5 shadow-sm hover:shadow-md dark:shadow-violet-500/20 dark:hover:shadow-violet-500/30 transition-all duration-300 hover:scale-105">
-                  <SortAsc className="h-3 w-3 mr-1" />
-                  Orden: {dragMode ? 'Personalizado' : sortBy === 'recent' ? 'Más Recientes' : sortBy === 'name' ? 'Nombre' : sortBy === 'progress' ? 'Progreso' : 'Estado'}
-                </Badge>
-                
-                {dragMode && (
-                  <Badge variant="outline" className="bg-gradient-to-r from-blue-50 to-indigo-50 dark:from-blue-500/30 dark:to-indigo-500/40 text-blue-700 dark:text-blue-200 border-blue-300 dark:border-blue-500/60 px-3 py-1.5 shadow-sm hover:shadow-md dark:shadow-blue-500/20 dark:hover:shadow-blue-500/30 transition-all duration-300 hover:scale-105 animate-pulse">
-                    <GripVertical className="h-3 w-3 mr-1" />
-                    Modo Arrastrar Activo
-                  </Badge>
-                )}
-              </div>
-            </motion.div>
 
             {/* Barra de Bulk Actions */}
             {bulkActionMode && selectedProjects.size > 0 && (

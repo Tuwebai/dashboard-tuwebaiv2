@@ -361,12 +361,10 @@ const ProjectsPage = React.memo(() => {
         </div>
 
         {/* Métricas de Proyectos */}
-        <div className="bg-card dark:bg-slate-800/50 rounded-2xl shadow-lg border border-border/50 dark:border-slate-700/50">
-          <ProjectMetrics 
-            projects={visibleProjects} 
-            loading={loading}
-          />
-        </div>
+        <ProjectMetrics 
+          projects={visibleProjects} 
+          loading={loading}
+        />
 
         {/* Búsqueda y filtros */}
         <div className="bg-card dark:bg-slate-800/50 rounded-2xl shadow-lg border border-border/50 dark:border-slate-700/50">
