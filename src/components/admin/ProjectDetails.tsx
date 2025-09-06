@@ -42,6 +42,7 @@ import { Progress } from '@/components/ui/progress';
 import { useApp } from '@/contexts/AppContext';
 import { supabase } from '@/lib/supabase';
 import { toast } from '@/hooks/use-toast';
+import { useTheme } from '@/contexts/ThemeContext';
 
 interface ProjectDetailsProps {
   project: Project;
@@ -73,6 +74,7 @@ export const ProjectDetails: React.FC<ProjectDetailsProps> = ({
 }) => {
   // Cast project to any to handle dynamic fases property
   const projectData = project as any;
+  const { theme } = useTheme();
   const { user } = useApp();
   const [creatorInfo, setCreatorInfo] = useState<{ full_name: string; email: string } | null>(null);
   
@@ -180,15 +182,15 @@ export const ProjectDetails: React.FC<ProjectDetailsProps> = ({
   const getStatusColor = (status: string) => {
     switch (status) {
       case 'development':
-        return 'bg-blue-100 text-blue-800 border-blue-200';
+        return 'bg-blue-100 dark:bg-blue-900/30 text-blue-800 dark:text-blue-400 border-blue-200 dark:border-blue-700';
       case 'production':
-        return 'bg-green-100 text-green-800 border-green-200';
+        return 'bg-green-100 dark:bg-green-900/30 text-green-800 dark:text-green-400 border-green-200 dark:border-green-700';
       case 'paused':
-        return 'bg-yellow-100 text-yellow-800 border-yellow-200';
+        return 'bg-yellow-100 dark:bg-yellow-900/30 text-yellow-800 dark:text-yellow-400 border-yellow-200 dark:border-yellow-700';
       case 'maintenance':
-        return 'bg-orange-100 text-orange-800 border-orange-200';
+        return 'bg-orange-100 dark:bg-orange-900/30 text-orange-800 dark:text-orange-400 border-orange-200 dark:border-orange-700';
       default:
-        return 'bg-slate-100 text-slate-800 border-slate-200';
+        return 'bg-slate-100 dark:bg-slate-800 text-slate-800 dark:text-slate-200 border-slate-200 dark:border-slate-600';
     }
   };
 
@@ -733,18 +735,18 @@ export const ProjectDetails: React.FC<ProjectDetailsProps> = ({
 
   return (
     <div className="fixed inset-0 bg-black/50 flex items-center justify-center z-50 p-2 sm:p-4">
-      <div className="bg-white border border-slate-200 rounded-lg w-full max-w-[99vw] sm:max-w-[98vw] md:max-w-[97vw] lg:max-w-[96vw] xl:max-w-[95vw] 2xl:max-w-[94vw] max-h-[98vh] overflow-hidden shadow-xl">
+      <div className="bg-white dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-lg w-full max-w-[99vw] sm:max-w-[98vw] md:max-w-[97vw] lg:max-w-[96vw] xl:max-w-[95vw] 2xl:max-w-[94vw] max-h-[98vh] overflow-hidden shadow-xl">
         {/* Header */}
-        <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between p-4 sm:p-6 border-b border-slate-200 gap-4">
+        <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between p-4 sm:p-6 border-b border-slate-200 dark:border-slate-700 gap-4">
           <div className="flex-1 min-w-0">
-            <h2 className="text-xl sm:text-2xl font-bold text-slate-800 break-words">{project.name}</h2>
-            <p className="text-slate-600 text-sm sm:text-base">Detalles del proyecto</p>
+            <h2 className="text-xl sm:text-2xl font-bold text-slate-800 dark:text-slate-100 break-words">{project.name}</h2>
+            <p className="text-slate-600 dark:text-slate-400 text-sm sm:text-base">Detalles del proyecto</p>
           </div>
           <div className="flex gap-2">
             <Button
               onClick={() => onEdit(project)}
               variant="outline"
-              className="border-slate-200 text-slate-700 hover:bg-slate-50 w-full sm:w-auto"
+              className="border-slate-200 dark:border-slate-600 text-slate-700 dark:text-slate-200 hover:bg-slate-50 dark:hover:bg-slate-700 w-full sm:w-auto"
             >
               <Edit className="h-4 w-4 mr-2" />
               <span className="hidden sm:inline">Editar</span>
@@ -752,7 +754,7 @@ export const ProjectDetails: React.FC<ProjectDetailsProps> = ({
             <Button
               onClick={onClose}
               variant="outline"
-              className="border-slate-200 text-slate-700 hover:bg-slate-50 w-full sm:w-auto"
+              className="border-slate-200 dark:border-slate-600 text-slate-700 dark:text-slate-200 hover:bg-slate-50 dark:hover:bg-slate-700 w-full sm:w-auto"
             >
               <X className="h-4 w-4" />
             </Button>
@@ -762,24 +764,24 @@ export const ProjectDetails: React.FC<ProjectDetailsProps> = ({
         {/* Content */}
         <div className="flex-1 overflow-hidden">
           <Tabs defaultValue="overview" className="h-full">
-            <TabsList className="grid w-full grid-cols-5 bg-white border-b border-slate-200">
-              <TabsTrigger value="overview" className="data-[state=active]:bg-blue-50 data-[state=active]:text-blue-700 data-[state=active]:border-blue-200 text-slate-700 hover:text-slate-900 text-xs sm:text-sm border-r border-slate-200">
+            <TabsList className="grid w-full grid-cols-5 bg-white dark:bg-slate-800 border-b border-slate-200 dark:border-slate-700">
+              <TabsTrigger value="overview" className="data-[state=active]:bg-blue-50 dark:data-[state=active]:bg-blue-900/30 data-[state=active]:text-blue-700 dark:data-[state=active]:text-blue-400 data-[state=active]:border-blue-200 dark:data-[state=active]:border-blue-700 text-slate-700 dark:text-slate-300 hover:text-slate-900 dark:hover:text-slate-100 text-xs sm:text-sm border-r border-slate-200 dark:border-slate-700">
                 <FileText className="h-3 w-3 sm:h-4 sm:w-4 mr-1 sm:mr-2" />
                 <span className="hidden sm:inline">Resumen</span>
               </TabsTrigger>
-              <TabsTrigger value="phases" className="data-[state=active]:bg-blue-50 data-[state=active]:text-blue-700 data-[state=active]:border-blue-200 text-slate-700 hover:text-slate-900 text-xs sm:text-sm border-r border-slate-200">
+              <TabsTrigger value="phases" className="data-[state=active]:bg-blue-50 dark:data-[state=active]:bg-blue-900/30 data-[state=active]:text-blue-700 dark:data-[state=active]:text-blue-400 data-[state=active]:border-blue-200 dark:data-[state=active]:border-blue-700 text-slate-700 dark:text-slate-300 hover:text-slate-900 dark:hover:text-slate-100 text-xs sm:text-sm border-r border-slate-200 dark:border-slate-700">
                 <Activity className="h-3 w-3 sm:h-4 sm:w-4 mr-1 sm:mr-2" />
                 <span className="hidden sm:inline">Fases</span>
               </TabsTrigger>
-              <TabsTrigger value="tasks" className="data-[state=active]:bg-blue-50 data-[state=active]:text-blue-700 data-[state=active]:border-blue-200 text-slate-700 hover:text-slate-900 text-xs sm:text-sm border-r border-slate-200">
+              <TabsTrigger value="tasks" className="data-[state=active]:bg-blue-50 dark:data-[state=active]:bg-blue-900/30 data-[state=active]:text-blue-700 dark:data-[state=active]:text-blue-400 data-[state=active]:border-blue-200 dark:data-[state=active]:border-blue-700 text-slate-700 dark:text-slate-300 hover:text-slate-900 dark:hover:text-slate-100 text-xs sm:text-sm border-r border-slate-200 dark:border-slate-700">
                 <CheckSquare className="h-3 w-3 sm:h-4 sm:w-4 mr-1 sm:mr-2" />
                 <span className="hidden sm:inline">Tareas</span>
               </TabsTrigger>
-              <TabsTrigger value="files" className="data-[state=active]:bg-blue-50 data-[state=active]:text-blue-700 data-[state=active]:border-blue-200 text-slate-700 hover:text-slate-900 text-xs sm:text-sm border-r border-slate-200">
+              <TabsTrigger value="files" className="data-[state=active]:bg-blue-50 dark:data-[state=active]:bg-blue-900/30 data-[state=active]:text-blue-700 dark:data-[state=active]:text-blue-400 data-[state=active]:border-blue-200 dark:data-[state=active]:border-blue-700 text-slate-700 dark:text-slate-300 hover:text-slate-900 dark:hover:text-slate-100 text-xs sm:text-sm border-r border-slate-200 dark:border-slate-700">
                 <Folder className="h-3 w-3 sm:h-4 sm:w-4 mr-1 sm:mr-2" />
                 <span className="hidden sm:inline">Archivos</span>
               </TabsTrigger>
-              <TabsTrigger value="metrics" className="data-[state=active]:bg-blue-50 data-[state=active]:text-blue-700 data-[state=active]:border-blue-200 text-slate-700 hover:text-slate-900 text-xs sm:text-sm">
+              <TabsTrigger value="metrics" className="data-[state=active]:bg-blue-50 dark:data-[state=active]:bg-blue-900/30 data-[state=active]:text-blue-700 dark:data-[state=active]:text-blue-400 data-[state=active]:border-blue-200 dark:data-[state=active]:border-blue-700 text-slate-700 dark:text-slate-300 hover:text-slate-900 dark:hover:text-slate-100 text-xs sm:text-sm">
                 <Rocket className="h-3 w-3 sm:h-4 sm:w-4 mr-1 sm:mr-2" />
                 <span className="hidden sm:inline">Métricas</span>
               </TabsTrigger>
@@ -789,10 +791,10 @@ export const ProjectDetails: React.FC<ProjectDetailsProps> = ({
             <TabsContent value="overview" className="p-4 sm:p-6 h-full overflow-y-auto">
               <div className="grid grid-cols-1 lg:grid-cols-2 gap-4 sm:gap-6">
                 {/* Información básica */}
-                <Card className="bg-white border-slate-200 shadow-sm">
-                  <CardHeader className="bg-slate-50 border-b border-slate-200">
-                    <CardTitle className="text-slate-800 flex items-center gap-2">
-                      <FileText className="h-5 w-5 text-blue-600" />
+                <Card className="bg-white dark:bg-slate-800 border-slate-200 dark:border-slate-700 shadow-sm">
+                  <CardHeader className="bg-slate-50 dark:bg-slate-700/50 border-b border-slate-200 dark:border-slate-700">
+                    <CardTitle className="text-slate-800 dark:text-slate-100 flex items-center gap-2">
+                      <FileText className="h-5 w-5 text-blue-600 dark:text-blue-400" />
                       Información Básica
                     </CardTitle>
                   </CardHeader>
