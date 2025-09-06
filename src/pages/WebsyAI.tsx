@@ -256,6 +256,62 @@ const WebsyAI: React.FC = () => {
     }
   }, [loadMessages]);
 
+  // Reintentar última respuesta de IA
+  const handleRetryMessage = useCallback(async () => {
+    if (!user || currentMessages.length === 0) return;
+
+    // Encontrar el último mensaje del usuario
+    const lastUserMessage = [...currentMessages].reverse().find(msg => !msg.isAI);
+    if (!lastUserMessage) return;
+
+    try {
+      // Eliminar la última respuesta de IA
+      const messagesWithoutLastAI = currentMessages.filter((msg, index) => {
+        if (msg.isAI && index === currentMessages.length - 1) {
+          return false; // Eliminar el último mensaje de IA
+        }
+        return true;
+      });
+
+      // Actualizar mensajes locales
+      setCurrentMessages(messagesWithoutLastAI);
+
+      // Mostrar indicador de escritura
+      setIsTyping(true);
+
+      // Reenviar el último mensaje del usuario
+      const aiResponse = await sendMessage(
+        lastUserMessage.message,
+        messagesWithoutLastAI,
+        'general',
+        undefined,
+        lastUserMessage.attachments
+      );
+
+      // Guardar nueva respuesta de la IA
+      const aiMessageId = await saveMessage(aiResponse, true, currentConversationId);
+      
+      // Marcar mensaje de IA como nuevo
+      if (aiMessageId) {
+        setNewMessageIds(prev => new Set(prev).add(aiMessageId));
+      }
+
+      setIsTyping(false);
+
+      toast({
+        title: "Respuesta regenerada",
+        description: "Websy AI ha generado una nueva respuesta"
+      });
+    } catch (error) {
+      setIsTyping(false);
+      toast({
+        title: "Error",
+        description: "No se pudo regenerar la respuesta. Inténtalo de nuevo.",
+        variant: "destructive"
+      });
+    }
+  }, [user, currentMessages, sendMessage, saveMessage, currentConversationId, setNewMessageIds]);
+
   // Scroll automático al final
   const scrollToBottom = useCallback(() => {
     if (messagesEndRef.current) {
@@ -327,13 +383,11 @@ const WebsyAI: React.FC = () => {
       }}
     >
       <div 
-        className="flex-shrink-0 px-4 py-4 border-b bg-background dark:bg-slate-900/95 dark:border-slate-700"
+        className="flex-shrink-0 px-4 py-3 border-b bg-background dark:bg-slate-900/95 dark:border-slate-700"
         style={{
           position: 'relative',
           zIndex: 60,
-          height: '90px',
-          minHeight: '90px',
-          maxHeight: '90px'
+          minHeight: '70px'
         }}
       >
         <div className="flex items-center justify-between h-full">
@@ -403,7 +457,7 @@ const WebsyAI: React.FC = () => {
           </div>
         )}
 
-        <div className={`${sidebarCollapsed ? 'w-0 overflow-hidden' : 'w-80'} transition-all duration-300 border-r bg-background flex-shrink-0 flex flex-col`}>
+        <div className={`${sidebarCollapsed ? 'w-0 overflow-hidden' : 'w-80'} transition-all duration-300 border-r bg-background dark:bg-slate-900 flex-shrink-0 flex flex-col`}>
           <div className="flex-shrink-0 px-4 py-3 border-b">
             <div className="flex items-center justify-between">
               <h3 className="text-sm font-medium">Conversaciones</h3>
@@ -487,19 +541,19 @@ const WebsyAI: React.FC = () => {
         </div>
 
         <div 
-          className="flex-1 flex flex-col min-w-0"
-          style={{ height: 'calc(100vh - 90px)' }}
+          className="flex-1 flex flex-col min-w-0 bg-background dark:bg-slate-900"
+          style={{ height: 'calc(100vh - 70px)' }}
         >
           <div 
-            className="flex-1 overflow-y-auto"
+            className="flex-1 overflow-y-auto bg-background dark:bg-slate-900"
             style={{ 
-              height: 'calc(100vh - 170px)',
+              height: 'calc(100vh - 150px)',
               overflowY: 'auto'
             }}
           >
-            <div className="max-w-4xl mx-auto px-4 py-6">
+            <div className="max-w-4xl mx-auto px-4 py-6 bg-background dark:bg-slate-900">
               {currentMessages.length === 0 && !isTyping && (
-                <div className="text-center text-muted-foreground py-12">
+                <div className="text-center text-muted-foreground dark:text-slate-300 py-12">
                   <div className="flex justify-center mb-6">
                     <img 
                       src={websyAvatarSrc} 
@@ -507,8 +561,8 @@ const WebsyAI: React.FC = () => {
                       className="h-16 w-16 rounded-full object-cover"
                     />
                   </div>
-                  <h2 className="text-2xl font-semibold mb-3">¡Hola! Soy Websy AI</h2>
-                  <p className="text-lg">
+                  <h2 className="text-2xl font-semibold mb-3 text-foreground dark:text-slate-100">¡Hola! Soy Websy AI</h2>
+                  <p className="text-lg text-foreground dark:text-slate-200">
                     Puedo ayudarte a analizar proyectos, gestionar recursos y generar reportes.
                     <br />
                     ¿En qué puedo ayudarte hoy?
@@ -529,6 +583,7 @@ const WebsyAI: React.FC = () => {
                         description: "Mensaje copiado al portapapeles"
                       });
                     }}
+                    onRetry={message.isAI ? handleRetryMessage : undefined}
                   />
                 ))}
                 
@@ -539,14 +594,12 @@ const WebsyAI: React.FC = () => {
           </div>
           
           <div 
-            className="flex-shrink-0 border-t bg-background w-full"
+            className="flex-shrink-0 w-full"
             style={{ 
-              height: '90px',
-              minHeight: '90px',
-              maxHeight: '90px'
+              minHeight: '80px'
             }}
           >
-            <div className="w-full px-4 py-4">
+            <div className="w-full h-full flex items-center">
               <ChatInput
                 onSendMessage={handleSendMessage}
                 disabled={isLoading}

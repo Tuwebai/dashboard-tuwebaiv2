@@ -9,6 +9,7 @@ import { es } from 'date-fns/locale';
 import { ChatMessage } from '@/hooks/useChatHistory';
 import { TypewriterText } from './TypewriterText';
 import { FormattedMessage } from './FormattedMessage';
+import { MessageActions } from './MessageActions';
 import { useApp } from '@/contexts/AppContext';
 import { useTheme } from '@/contexts/ThemeContext';
 import websyAvatar from '@/assets/websyavatar.png';
@@ -18,6 +19,7 @@ interface MessageBubbleProps {
   message: ChatMessage;
   onCopy?: (text: string) => void;
   onDownload?: (attachment: any) => void;
+  onRetry?: () => void;
   isNewMessage?: boolean;
 }
 
@@ -25,6 +27,7 @@ export const MessageBubble: React.FC<MessageBubbleProps> = ({
   message,
   onCopy,
   onDownload,
+  onRetry,
   isNewMessage = false
 }) => {
   const { user } = useApp();
@@ -105,7 +108,7 @@ export const MessageBubble: React.FC<MessageBubbleProps> = ({
   };
 
   return (
-    <div className={`flex gap-3 ${isAI ? 'justify-start' : 'justify-end'}`}>
+    <div className={`flex gap-3 group ${isAI ? 'justify-start' : 'justify-end'}`}>
       {isAI && (
         <Avatar className="h-8 w-8 flex-shrink-0">
           <AvatarImage src={websyAvatarSrc} alt="Websy AI" />
@@ -139,21 +142,24 @@ export const MessageBubble: React.FC<MessageBubbleProps> = ({
           </CardContent>
         </Card>
         
-        <div className="flex items-center gap-2 mt-1 text-xs text-muted-foreground">
-          <span>{timestamp}</span>
+        <div className="flex items-center justify-between mt-1">
+          <div className="flex items-center gap-2 text-xs text-muted-foreground">
+            <span>{timestamp}</span>
+            {isAI && (
+              <Badge variant="secondary" className="text-xs">
+                Websy AI
+              </Badge>
+            )}
+          </div>
+          
           {isAI && (
-            <Badge variant="secondary" className="text-xs">
-              Websy AI
-            </Badge>
+            <MessageActions
+              message={message.message}
+              onCopy={() => onCopy?.(message.message)}
+              onRetry={onRetry}
+              className="ml-2"
+            />
           )}
-          <Button
-            variant="ghost"
-            size="sm"
-            onClick={handleCopy}
-            className="h-6 w-6 p-0 opacity-0 group-hover:opacity-100 transition-opacity"
-          >
-            <Copy className="h-3 w-3" />
-          </Button>
         </div>
       </div>
       
