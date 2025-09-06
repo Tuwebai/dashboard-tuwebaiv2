@@ -1,6 +1,7 @@
 import React, { useState, useEffect, useCallback } from 'react';
 import { useApp } from '@/contexts/AppContext';
 import { useNavigate } from 'react-router-dom';
+import { useTheme } from '@/contexts/ThemeContext';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
@@ -46,6 +47,7 @@ import { supabase } from '@/lib/supabase';
 import { toast } from '@/hooks/use-toast';
 
 const AdminPhasesAndTasksPage: React.FC = () => {
+  const { theme } = useTheme();
   const { user, projects } = useApp();
   const navigate = useNavigate();
   const [selectedProjectId, setSelectedProjectId] = useState<string>('');
@@ -479,9 +481,9 @@ const AdminPhasesAndTasksPage: React.FC = () => {
   const selectedProject = allProjects.find(p => p.id === selectedProjectId);
 
   return (
-    <div className="min-h-screen bg-gray-50 dark:bg-gray-900">
+    <div className="min-h-screen bg-gray-50 dark:bg-slate-900">
       {/* Header */}
-      <div className="bg-white dark:bg-gray-800 border-b border-gray-200 dark:border-gray-700">
+      <div className="bg-white dark:bg-slate-800 border-b border-gray-200 dark:border-slate-700">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="flex items-center justify-between h-16">
             <div className="flex items-center gap-4">
@@ -489,23 +491,23 @@ const AdminPhasesAndTasksPage: React.FC = () => {
                 variant="ghost"
                 size="sm"
                 onClick={() => navigate('/admin')}
-                className="flex items-center gap-2"
+                className="flex items-center gap-2 text-slate-700 dark:text-slate-200 hover:bg-slate-100 dark:hover:bg-slate-700"
               >
                 <ArrowLeft className="h-4 w-4" />
                 Volver al Admin
               </Button>
               
-              <div className="h-6 w-px bg-gray-300 dark:bg-gray-600" />
+              <div className="h-6 w-px bg-gray-300 dark:bg-slate-600" />
               
               <div className="flex items-center gap-3">
                 <div className="p-2 bg-purple-100 dark:bg-purple-500/20 rounded-lg">
                   <Shield className="h-6 w-6 text-purple-600 dark:text-purple-400" />
                 </div>
                 <div>
-                  <h1 className="text-xl font-bold text-gray-900 dark:text-white">
+                  <h1 className="text-xl font-bold text-gray-900 dark:text-slate-100">
                     Gestión de Fases y Tareas
                   </h1>
-                  <p className="text-sm text-gray-600 dark:text-gray-400">
+                  <p className="text-sm text-gray-600 dark:text-slate-400">
                     Administración completa de proyectos de todos los clientes
                   </p>
                 </div>
@@ -514,8 +516,8 @@ const AdminPhasesAndTasksPage: React.FC = () => {
 
             <div className="flex items-center gap-3">
               {/* Indicador de última actualización */}
-              <div className="flex items-center gap-2 text-sm text-gray-500 dark:text-gray-400">
-                <div className={`w-2 h-2 rounded-full ${lastUpdate > new Date(Date.now() - 60000) ? 'bg-green-500' : 'bg-gray-400'}`} />
+              <div className="flex items-center gap-2 text-sm text-gray-500 dark:text-slate-400">
+                <div className={`w-2 h-2 rounded-full ${lastUpdate > new Date(Date.now() - 60000) ? 'bg-green-500' : 'bg-gray-400 dark:bg-slate-500'}`} />
                 <span>Última actualización: {lastUpdate.toLocaleTimeString()}</span>
               </div>
               
@@ -524,7 +526,7 @@ const AdminPhasesAndTasksPage: React.FC = () => {
                 size="sm"
                 onClick={handleRefresh}
                 disabled={loading}
-                className="flex items-center gap-2"
+                className="flex items-center gap-2 border-slate-200 dark:border-slate-600 text-slate-700 dark:text-slate-200 hover:bg-slate-50 dark:hover:bg-slate-700"
               >
                 <RefreshCw className={`h-4 w-4 ${loading ? 'animate-spin' : ''}`} />
                 Actualizar
@@ -565,20 +567,20 @@ const AdminPhasesAndTasksPage: React.FC = () => {
           <div className="space-y-6">
             {/* Tabs de Navegación */}
             <Tabs value={activeTab} onValueChange={setActiveTab} className="w-full">
-              <TabsList className="grid w-full grid-cols-4">
-                <TabsTrigger value="overview" className="flex items-center gap-2">
+              <TabsList className="grid w-full grid-cols-4 bg-white dark:bg-slate-800 border-slate-200 dark:border-slate-700">
+                <TabsTrigger value="overview" className="flex items-center gap-2 data-[state=active]:bg-blue-50 dark:data-[state=active]:bg-blue-900/30 data-[state=active]:text-blue-700 dark:data-[state=active]:text-blue-400 text-slate-700 dark:text-slate-300 hover:text-slate-900 dark:hover:text-slate-100">
                   <BarChart3 className="h-4 w-4" />
                   Vista General
                 </TabsTrigger>
-                <TabsTrigger value="calendar" className="flex items-center gap-2">
+                <TabsTrigger value="calendar" className="flex items-center gap-2 data-[state=active]:bg-blue-50 dark:data-[state=active]:bg-blue-900/30 data-[state=active]:text-blue-700 dark:data-[state=active]:text-blue-400 text-slate-700 dark:text-slate-300 hover:text-slate-900 dark:hover:text-slate-100">
                   <CalendarDays className="h-4 w-4" />
                   Calendario
                 </TabsTrigger>
-                <TabsTrigger value="clients" className="flex items-center gap-2">
+                <TabsTrigger value="clients" className="flex items-center gap-2 data-[state=active]:bg-blue-50 dark:data-[state=active]:bg-blue-900/30 data-[state=active]:text-blue-700 dark:data-[state=active]:text-blue-400 text-slate-700 dark:text-slate-300 hover:text-slate-900 dark:hover:text-slate-100">
                   <Users className="h-4 w-4" />
                   Por Cliente
                 </TabsTrigger>
-                <TabsTrigger value="detailed" className="flex items-center gap-2">
+                <TabsTrigger value="detailed" className="flex items-center gap-2 data-[state=active]:bg-blue-50 dark:data-[state=active]:bg-blue-900/30 data-[state=active]:text-blue-700 dark:data-[state=active]:text-blue-400 text-slate-700 dark:text-slate-300 hover:text-slate-900 dark:hover:text-slate-100">
                   <Target className="h-4 w-4" />
                   Detalle
                 </TabsTrigger>
@@ -589,17 +591,17 @@ const AdminPhasesAndTasksPage: React.FC = () => {
                 {/* Filtros Avanzados */}
                 <div className="grid grid-cols-1 md:grid-cols-4 gap-4">
                   <div className="relative">
-                    <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 h-4 w-4 text-gray-400" />
+                    <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 h-4 w-4 text-gray-400 dark:text-slate-500" />
                     <Input
                       placeholder="Buscar proyectos..."
                       value={searchTerm}
                       onChange={(e) => setSearchTerm(e.target.value)}
-                      className="pl-10"
+                      className="pl-10 bg-white dark:bg-slate-700 border-slate-200 dark:border-slate-600 text-slate-800 dark:text-slate-200"
                     />
                   </div>
                   
                   <Select value={clientFilter} onValueChange={setClientFilter}>
-                    <SelectTrigger>
+                    <SelectTrigger className="bg-white dark:bg-slate-700 border-slate-200 dark:border-slate-600 text-slate-800 dark:text-slate-200">
                       <Users className="h-4 w-4 mr-2" />
                       <SelectValue placeholder="Filtrar por cliente" />
                     </SelectTrigger>
@@ -614,7 +616,7 @@ const AdminPhasesAndTasksPage: React.FC = () => {
                   </Select>
 
                   <Select value={statusFilter} onValueChange={setStatusFilter}>
-                    <SelectTrigger>
+                    <SelectTrigger className="bg-white dark:bg-slate-700 border-slate-200 dark:border-slate-600 text-slate-800 dark:text-slate-200">
                       <Filter className="h-4 w-4 mr-2" />
                       <SelectValue placeholder="Filtrar por estado" />
                     </SelectTrigger>
@@ -633,7 +635,7 @@ const AdminPhasesAndTasksPage: React.FC = () => {
                       setClientFilter('all');
                       setStatusFilter('all');
                     }}
-                    className="flex items-center gap-2"
+                    className="flex items-center gap-2 border-slate-200 dark:border-slate-600 text-slate-700 dark:text-slate-200 hover:bg-slate-50 dark:hover:bg-slate-700"
                   >
                     <RefreshCw className="h-4 w-4" />
                     Limpiar Filtros
@@ -642,7 +644,7 @@ const AdminPhasesAndTasksPage: React.FC = () => {
 
                 {/* Estadísticas Generales Admin */}
                 <div className="grid grid-cols-1 md:grid-cols-4 gap-6">
-                  <Card className="bg-gradient-to-r from-blue-50 to-indigo-50 dark:from-blue-900/20 dark:to-indigo-900/20 border-blue-200 dark:border-blue-800">
+                  <Card className="bg-gradient-to-r from-blue-50 to-indigo-50 dark:from-blue-900/20 dark:to-indigo-900/20 border-blue-200 dark:border-blue-800 shadow-sm">
                     <CardContent className="p-6">
                       <div className="flex items-center justify-between">
                         <div>
@@ -724,7 +726,7 @@ const AdminPhasesAndTasksPage: React.FC = () => {
                         animate={{ opacity: 1, y: 0 }}
                         transition={{ delay: index * 0.1 }}
                       >
-                        <Card className="hover:shadow-lg transition-all duration-300 cursor-pointer"
+                        <Card className="hover:shadow-lg transition-all duration-300 cursor-pointer bg-white dark:bg-slate-800 border-slate-200 dark:border-slate-700"
                               onClick={() => {
                                 setSelectedProjectId(project.id);
                                 setActiveTab('detailed');
@@ -981,7 +983,7 @@ const AdminPhasesAndTasksPage: React.FC = () => {
 
               {/* Vista por Cliente */}
               <TabsContent value="clients" className="space-y-6">
-                <h2 className="text-xl font-bold text-gray-900 dark:text-white">Proyectos por Cliente</h2>
+                <h2 className="text-xl font-bold text-gray-900 dark:text-slate-100">Proyectos por Cliente</h2>
                 
                 <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
                   {clients.map((client, index) => {
@@ -996,10 +998,10 @@ const AdminPhasesAndTasksPage: React.FC = () => {
                         animate={{ opacity: 1, y: 0 }}
                         transition={{ delay: index * 0.1 }}
                       >
-                        <Card className="hover:shadow-lg transition-all duration-300">
-                          <CardHeader>
-                            <CardTitle className="flex items-center gap-2">
-                              <Users className="h-5 w-5 text-purple-500" />
+                        <Card className="hover:shadow-lg transition-all duration-300 bg-white dark:bg-slate-800 border-slate-200 dark:border-slate-700">
+                          <CardHeader className="bg-slate-50 dark:bg-slate-700/50 border-b border-slate-200 dark:border-slate-700">
+                            <CardTitle className="flex items-center gap-2 text-slate-800 dark:text-slate-100">
+                              <Users className="h-5 w-5 text-purple-500 dark:text-purple-400" />
                               {client.full_name || client.email}
                             </CardTitle>
                           </CardHeader>
@@ -1007,27 +1009,27 @@ const AdminPhasesAndTasksPage: React.FC = () => {
                             <div className="space-y-4">
                               <div className="grid grid-cols-2 gap-4 text-center">
                                 <div>
-                                  <p className="text-2xl font-bold text-green-600">{completedProjects}</p>
-                                  <p className="text-sm text-gray-500">Completados</p>
+                                  <p className="text-2xl font-bold text-green-600 dark:text-green-400">{completedProjects}</p>
+                                  <p className="text-sm text-gray-500 dark:text-slate-400">Completados</p>
                                 </div>
                                 <div>
-                                  <p className="text-2xl font-bold text-blue-600">{inProgressProjects}</p>
-                                  <p className="text-sm text-gray-500">En Progreso</p>
+                                  <p className="text-2xl font-bold text-blue-600 dark:text-blue-400">{inProgressProjects}</p>
+                                  <p className="text-sm text-gray-500 dark:text-slate-400">En Progreso</p>
                                 </div>
                               </div>
                               
                               <div>
-                                <p className="text-sm text-gray-500 mb-2">Total: {clientProjects.length} proyectos</p>
+                                <p className="text-sm text-gray-500 dark:text-slate-400 mb-2">Total: {clientProjects.length} proyectos</p>
                                 <Progress 
                                   value={clientProjects.length > 0 ? (completedProjects / clientProjects.length) * 100 : 0} 
-                                  className="h-2" 
+                                  className="h-2"
                                 />
                               </div>
                               
                               <Button 
                                 variant="outline" 
                                 size="sm" 
-                                className="w-full"
+                                className="w-full border-slate-200 dark:border-slate-600 text-slate-700 dark:text-slate-200 hover:bg-slate-50 dark:hover:bg-slate-700"
                                 onClick={() => {
                                   setClientFilter(client.id);
                                   setActiveTab('overview');
@@ -1108,16 +1110,16 @@ const AdminPhasesAndTasksPage: React.FC = () => {
               initial={{ opacity: 0, scale: 0.95 }}
               animate={{ opacity: 1, scale: 1 }}
               exit={{ opacity: 0, scale: 0.95 }}
-              className="bg-white dark:bg-gray-800 rounded-lg shadow-xl w-full max-w-4xl max-h-[90vh] overflow-hidden"
+              className="bg-white dark:bg-slate-800 rounded-lg shadow-xl w-full max-w-4xl max-h-[90vh] overflow-hidden"
             >
             {/* Header del Modal */}
-            <div className="flex items-center justify-between p-6 border-b border-gray-200 dark:border-gray-700">
+            <div className="flex items-center justify-between p-6 border-b border-gray-200 dark:border-slate-700">
               <div className="flex items-center gap-3">
                 <div className="p-2 bg-purple-100 dark:bg-purple-500/20 rounded-lg">
                   <Calendar className="h-6 w-6 text-purple-600 dark:text-purple-400" />
                 </div>
                 <div>
-                  <h2 className="text-xl font-bold text-gray-900 dark:text-white">
+                  <h2 className="text-xl font-bold text-gray-900 dark:text-slate-100">
                     Gestión del {selectedDate.toLocaleDateString('es-ES', { 
                       weekday: 'long', 
                       year: 'numeric', 
@@ -1134,7 +1136,7 @@ const AdminPhasesAndTasksPage: React.FC = () => {
                 variant="ghost"
                 size="sm"
                 onClick={() => setShowDateModal(false)}
-                className="text-gray-500 hover:text-gray-700"
+                className="text-gray-500 dark:text-slate-400 hover:text-gray-700 dark:hover:text-slate-200"
               >
                 <X className="h-5 w-5" />
               </Button>
@@ -1144,39 +1146,41 @@ const AdminPhasesAndTasksPage: React.FC = () => {
             <div className="p-6 overflow-y-auto max-h-[calc(90vh-120px)]">
               <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
                 {/* Formulario para Nueva Tarea */}
-                <Card>
-                  <CardHeader>
-                    <CardTitle className="flex items-center gap-2">
-                      <Plus className="h-5 w-5" />
+                <Card className="bg-white dark:bg-slate-800 border-slate-200 dark:border-slate-700">
+                  <CardHeader className="bg-slate-50 dark:bg-slate-700/50 border-b border-slate-200 dark:border-slate-600">
+                    <CardTitle className="flex items-center gap-2 text-slate-800 dark:text-slate-100">
+                      <Plus className="h-5 w-5 text-green-600 dark:text-green-400" />
                       Nueva Tarea
                     </CardTitle>
                   </CardHeader>
                   <CardContent className="space-y-4">
                     <div>
-                      <Label htmlFor="task-title">Título de la tarea</Label>
+                      <Label htmlFor="task-title" className="text-slate-700 dark:text-slate-300">Título de la tarea</Label>
                       <Input
                         id="task-title"
                         value={newTaskTitle}
                         onChange={(e) => setNewTaskTitle(e.target.value)}
                         placeholder="Ej: Revisar diseño del proyecto X"
+                        className="bg-white dark:bg-slate-700 border-slate-200 dark:border-slate-600 text-slate-800 dark:text-slate-200"
                       />
                     </div>
 
                     <div>
-                      <Label htmlFor="task-description">Descripción</Label>
+                      <Label htmlFor="task-description" className="text-slate-700 dark:text-slate-300">Descripción</Label>
                       <Textarea
                         id="task-description"
                         value={newTaskDescription}
                         onChange={(e) => setNewTaskDescription(e.target.value)}
                         placeholder="Detalles adicionales de la tarea..."
                         rows={3}
+                        className="bg-white dark:bg-slate-700 border-slate-200 dark:border-slate-600 text-slate-800 dark:text-slate-200"
                       />
                     </div>
 
                     <div>
-                      <Label htmlFor="task-project">Proyecto</Label>
+                      <Label htmlFor="task-project" className="text-slate-700 dark:text-slate-300">Proyecto</Label>
                       <Select value={newTaskProject} onValueChange={setNewTaskProject}>
-                        <SelectTrigger>
+                        <SelectTrigger className="bg-white dark:bg-slate-700 border-slate-200 dark:border-slate-600 text-slate-800 dark:text-slate-200">
                           <SelectValue placeholder="Seleccionar proyecto" />
                         </SelectTrigger>
                         <SelectContent>
@@ -1191,9 +1195,9 @@ const AdminPhasesAndTasksPage: React.FC = () => {
 
                     <div className="grid grid-cols-2 gap-4">
                       <div>
-                        <Label htmlFor="task-priority">Prioridad</Label>
+                        <Label htmlFor="task-priority" className="text-slate-700 dark:text-slate-300">Prioridad</Label>
                         <Select value={newTaskPriority} onValueChange={(value: any) => setNewTaskPriority(value)}>
-                          <SelectTrigger>
+                          <SelectTrigger className="bg-white dark:bg-slate-700 border-slate-200 dark:border-slate-600 text-slate-800 dark:text-slate-200">
                             <SelectValue />
                           </SelectTrigger>
                           <SelectContent>
@@ -1205,9 +1209,9 @@ const AdminPhasesAndTasksPage: React.FC = () => {
                       </div>
 
                       <div>
-                        <Label htmlFor="task-status">Estado</Label>
+                        <Label htmlFor="task-status" className="text-slate-700 dark:text-slate-300">Estado</Label>
                         <Select value={newTaskStatus} onValueChange={(value: any) => setNewTaskStatus(value)}>
-                          <SelectTrigger>
+                          <SelectTrigger className="bg-white dark:bg-slate-700 border-slate-200 dark:border-slate-600 text-slate-800 dark:text-slate-200">
                             <SelectValue />
                           </SelectTrigger>
                           <SelectContent>
@@ -1222,7 +1226,7 @@ const AdminPhasesAndTasksPage: React.FC = () => {
                     <Button 
                       onClick={createTaskForDate}
                       disabled={!newTaskTitle.trim() || !newTaskProject}
-                      className="w-full"
+                      className="w-full bg-green-600 hover:bg-green-700 text-white"
                     >
                       <Plus className="h-4 w-4 mr-2" />
                       Crear Tarea
@@ -1231,18 +1235,18 @@ const AdminPhasesAndTasksPage: React.FC = () => {
                 </Card>
 
                 {/* Lista de Tareas del Día */}
-                <Card>
-                  <CardHeader>
-                    <CardTitle className="flex items-center gap-2">
-                      <Target className="h-5 w-5" />
+                <Card className="bg-white dark:bg-slate-800 border-slate-200 dark:border-slate-700">
+                  <CardHeader className="bg-slate-50 dark:bg-slate-700/50 border-b border-slate-200 dark:border-slate-600">
+                    <CardTitle className="flex items-center gap-2 text-slate-800 dark:text-slate-100">
+                      <Target className="h-5 w-5 text-green-600 dark:text-green-400" />
                       Tareas del Día ({dateTasks.length})
                     </CardTitle>
                   </CardHeader>
                   <CardContent>
                     {dateTasks.length === 0 ? (
                       <div className="text-center py-8">
-                        <Calendar className="h-12 w-12 text-gray-400 mx-auto mb-4" />
-                        <p className="text-gray-500 dark:text-gray-400">
+                        <Calendar className="h-12 w-12 text-gray-400 dark:text-slate-500 mx-auto mb-4" />
+                        <p className="text-gray-500 dark:text-slate-400">
                           No hay tareas programadas para este día
                         </p>
                       </div>
@@ -1254,19 +1258,19 @@ const AdminPhasesAndTasksPage: React.FC = () => {
                             initial={{ opacity: 0, y: 20 }}
                             animate={{ opacity: 1, y: 0 }}
                             transition={{ delay: index * 0.1 }}
-                            className="p-4 border border-gray-200 dark:border-gray-700 rounded-lg hover:shadow-md transition-shadow"
+                            className="p-4 border border-gray-200 dark:border-slate-600 rounded-lg hover:shadow-md transition-shadow bg-gray-50 dark:bg-slate-700/50"
                           >
                             <div className="flex items-start justify-between">
                               <div className="flex-1">
-                                <h4 className="font-medium text-gray-900 dark:text-white mb-1">
+                                <h4 className="font-medium text-gray-900 dark:text-slate-100 mb-1">
                                   {task.title}
                                 </h4>
                                 {task.description && (
-                                  <p className="text-sm text-gray-600 dark:text-gray-400 mb-2">
+                                  <p className="text-sm text-gray-600 dark:text-slate-400 mb-2">
                                     {task.description}
                                   </p>
                                 )}
-                                <div className="flex items-center gap-4 text-xs text-gray-500 dark:text-gray-400">
+                                <div className="flex items-center gap-4 text-xs text-gray-500 dark:text-slate-400">
                                   <span>Proyecto: {task.projects?.name}</span>
                                   <span>Cliente: {task.projects?.users?.full_name || task.projects?.users?.email}</span>
                                 </div>
@@ -1277,7 +1281,7 @@ const AdminPhasesAndTasksPage: React.FC = () => {
                                   value={task.status}
                                   onValueChange={(value) => updateTaskStatus(task.id, value)}
                                 >
-                                  <SelectTrigger className="w-32">
+                                  <SelectTrigger className="w-32 bg-white dark:bg-slate-700 border-slate-200 dark:border-slate-600 text-slate-800 dark:text-slate-200">
                                     <SelectValue />
                                   </SelectTrigger>
                                   <SelectContent>
@@ -1291,7 +1295,7 @@ const AdminPhasesAndTasksPage: React.FC = () => {
                                   variant="ghost"
                                   size="sm"
                                   onClick={() => deleteTask(task.id)}
-                                  className="text-red-500 hover:text-red-700"
+                                  className="text-red-500 dark:text-red-400 hover:text-red-700 dark:hover:text-red-300 hover:bg-red-50 dark:hover:bg-red-900/20"
                                 >
                                   <Trash2 className="h-4 w-4" />
                                 </Button>

@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { motion } from '@/components/OptimizedMotion';
+import { useTheme } from '@/contexts/ThemeContext';
 import { 
   Bell, 
   Calendar, 
@@ -89,6 +90,7 @@ interface NotificationAnalytics {
 // =====================================================
 
 export default function AdminNotifications() {
+  const { theme } = useTheme();
   const [stats, setStats] = useState<NotificationStats>({
     total: 0, sent: 0, delivered: 0, opened: 0, clicked: 0, failed: 0, bounce: 0
   });
@@ -526,14 +528,14 @@ export default function AdminNotifications() {
       animate={{ opacity: 1, y: 0 }}
       transition={{ duration: 0.5 }}
     >
-      <Card className="hover:shadow-lg transition-shadow">
+      <Card className="hover:shadow-lg transition-shadow bg-white dark:bg-slate-800 border-slate-200 dark:border-slate-700">
         <CardContent className="p-6">
           <div className="flex items-center justify-between">
             <div>
-              <p className="text-sm font-medium text-muted-foreground">{title}</p>
+              <p className="text-sm font-medium text-muted-foreground dark:text-slate-400">{title}</p>
               <p className="text-3xl font-bold" style={{ color }}>{value.toLocaleString()}</p>
               {change !== undefined && (
-                <p className={`text-sm ${change >= 0 ? 'text-green-600' : 'text-red-600'}`}>
+                <p className={`text-sm ${change >= 0 ? 'text-green-600 dark:text-green-400' : 'text-red-600 dark:text-red-400'}`}>
                   {change >= 0 ? '+' : ''}{change}% desde ayer
                 </p>
               )}
@@ -553,7 +555,7 @@ export default function AdminNotifications() {
       animate={{ opacity: 1, scale: 1 }}
       transition={{ duration: 0.3 }}
     >
-      <Card className="hover:shadow-md transition-shadow">
+      <Card className="hover:shadow-md transition-shadow bg-white dark:bg-slate-800 border-slate-200 dark:border-slate-700">
         <CardHeader className="pb-3">
           <div className="flex items-center justify-between">
             <div className="flex items-center space-x-2">
@@ -561,14 +563,18 @@ export default function AdminNotifications() {
                 notification.status === 'pending' ? 'default' :
                 notification.status === 'sent' ? 'secondary' :
                 notification.status === 'failed' ? 'destructive' : 'outline'
+              } className={
+                notification.status === 'pending' ? 'bg-yellow-100 dark:bg-yellow-900/30 text-yellow-800 dark:text-yellow-400 border-yellow-200 dark:border-yellow-700' :
+                notification.status === 'sent' ? 'bg-green-100 dark:bg-green-900/30 text-green-800 dark:text-green-400 border-green-200 dark:border-green-700' :
+                notification.status === 'failed' ? 'bg-red-100 dark:bg-red-900/30 text-red-800 dark:text-red-400 border-red-200 dark:border-red-700' : 'bg-slate-100 dark:bg-slate-800 text-slate-800 dark:text-slate-200 border-slate-200 dark:border-slate-600'
               }>
                 {notification.status === 'pending' ? 'Pendiente' :
                  notification.status === 'sent' ? 'Enviada' :
                  notification.status === 'failed' ? 'Fallida' : 'Cancelada'}
               </Badge>
-              <Badge variant="outline">{notification.channels.join(', ')}</Badge>
+              <Badge variant="outline" className="bg-slate-100 dark:bg-slate-800 text-slate-800 dark:text-slate-200 border-slate-200 dark:border-slate-600">{notification.channels.join(', ')}</Badge>
               {notification.variables?.is_broadcast && (
-                <Badge variant="secondary">Broadcast</Badge>
+                <Badge variant="secondary" className="bg-blue-100 dark:bg-blue-900/30 text-blue-800 dark:text-blue-400 border-blue-200 dark:border-blue-700">Broadcast</Badge>
               )}
             </div>
                          <div className="flex space-x-2">
@@ -577,6 +583,7 @@ export default function AdminNotifications() {
                  variant="outline"
                  onClick={() => editScheduledNotification(notification)}
                  disabled={notification.status !== 'pending'}
+                 className="border-slate-200 dark:border-slate-600 text-slate-700 dark:text-slate-200 hover:bg-slate-50 dark:hover:bg-slate-700"
                >
                  <Edit className="w-4 h-4" />
                </Button>
@@ -585,6 +592,7 @@ export default function AdminNotifications() {
                  variant="outline"
                  onClick={() => rescheduleNotification(notification.id, new Date().toISOString())}
                  disabled={notification.status !== 'pending'}
+                 className="border-slate-200 dark:border-slate-600 text-slate-700 dark:text-slate-200 hover:bg-slate-50 dark:hover:bg-slate-700"
                >
                  <Clock className="w-4 h-4" />
                </Button>
@@ -593,6 +601,7 @@ export default function AdminNotifications() {
                  variant="outline"
                  onClick={() => cancelScheduledNotification(notification.id)}
                  disabled={notification.status !== 'pending'}
+                 className="border-slate-200 dark:border-slate-600 text-slate-700 dark:text-slate-200 hover:bg-slate-50 dark:hover:bg-slate-700"
                >
                  <XCircle className="w-4 h-4" />
                </Button>
@@ -600,6 +609,7 @@ export default function AdminNotifications() {
                  size="sm"
                  variant="destructive"
                  onClick={() => deleteScheduledNotification(notification.id)}
+                 className="bg-red-600 hover:bg-red-700 dark:bg-red-700 dark:hover:bg-red-800 text-white"
                >
                  <Trash2 className="w-4 h-4" />
                </Button>
@@ -609,13 +619,13 @@ export default function AdminNotifications() {
         <CardContent>
           <div className="space-y-3">
             <div>
-              <h4 className="font-semibold">{notification.subject || 'Sin asunto'}</h4>
-              <p className="text-sm text-muted-foreground line-clamp-2">{notification.content}</p>
+              <h4 className="font-semibold text-slate-800 dark:text-slate-100">{notification.subject || 'Sin asunto'}</h4>
+              <p className="text-sm text-muted-foreground dark:text-slate-400 line-clamp-2">{notification.content}</p>
             </div>
             <div className="grid grid-cols-2 gap-4 text-sm">
                              <div>
-                 <span className="text-muted-foreground">Destinatarios:</span>
-                 <p className="font-medium">
+                 <span className="text-muted-foreground dark:text-slate-400">Destinatarios:</span>
+                 <p className="font-medium text-slate-800 dark:text-slate-100">
                    {notification.variables?.is_broadcast 
                      ? `${notification.variables?.original_user_count || notification.variables?.target_users?.length || 0} usuarios`
                      : notification.users?.full_name || notification.users?.email || 'N/A'
@@ -623,8 +633,8 @@ export default function AdminNotifications() {
                  </p>
                </div>
                              <div>
-                 <span className="text-muted-foreground">Programado para:</span>
-                 <p className="font-medium">
+                 <span className="text-muted-foreground dark:text-slate-400">Programado para:</span>
+                 <p className="font-medium text-slate-800 dark:text-slate-100">
                    {(() => {
                      try {
                        const date = new Date(notification.scheduled_for);
@@ -749,19 +759,19 @@ export default function AdminNotifications() {
 
   if (loading) {
     return (
-      <div className="flex items-center justify-center min-h-screen">
+      <div className="flex items-center justify-center min-h-screen bg-slate-50 dark:bg-slate-900">
         <motion.div
-          animate={{ rotate: 360 }}
-          transition={{ duration: 1, repeat: Infinity, ease: "linear" }}
+          animate={{ scale: 1.1 }}
+          transition={{ duration: 0.5, ease: "easeInOut" }}
         >
-          <RefreshCw className="w-8 h-8 text-blue-600" />
+          <RefreshCw className="w-8 h-8 text-blue-600 dark:text-blue-400" />
         </motion.div>
       </div>
     );
   }
 
   return (
-    <div className="container mx-auto p-6 space-y-6">
+    <div className="container mx-auto p-6 space-y-6 min-h-screen bg-slate-50 dark:bg-slate-900">
       {/* Header */}
       <motion.div
         initial={{ opacity: 0, y: -20 }}
@@ -770,11 +780,11 @@ export default function AdminNotifications() {
         className="flex items-center justify-between"
       >
         <div>
-          <h1 className="text-3xl font-bold text-gray-900">Sistema de Notificaciones</h1>
-          <p className="text-gray-600">Gestión avanzada de notificaciones y analytics</p>
+          <h1 className="text-3xl font-bold text-gray-900 dark:text-slate-100">Sistema de Notificaciones</h1>
+          <p className="text-gray-600 dark:text-slate-400">Gestión avanzada de notificaciones y analytics</p>
         </div>
                  <div className="flex space-x-2">
-           <Button onClick={loadData} variant="outline">
+           <Button onClick={loadData} variant="outline" className="border-slate-200 dark:border-slate-600 text-slate-700 dark:text-slate-200 hover:bg-slate-50 dark:hover:bg-slate-700">
              <RefreshCw className="w-4 h-4 mr-2" />
              Actualizar
            </Button>
@@ -784,7 +794,7 @@ export default function AdminNotifications() {
                setWorkerStatus(notificationWorker.getStatus());
              }} 
              variant="outline"
-             className="bg-green-50 text-green-700 border-green-200 hover:bg-green-100"
+             className="bg-green-50 dark:bg-green-900/30 text-green-700 dark:text-green-400 border-green-200 dark:border-green-700 hover:bg-green-100 dark:hover:bg-green-800/40"
              disabled={workerStatus.isRunning}
            >
              🚀 Iniciar Worker
@@ -795,14 +805,14 @@ export default function AdminNotifications() {
                setWorkerStatus(notificationWorker.getStatus());
              }} 
              variant="outline"
-             className="bg-red-50 text-red-700 border-red-200 hover:bg-red-100"
+             className="bg-red-50 dark:bg-red-900/30 text-red-700 dark:text-red-400 border-red-200 dark:border-red-700 hover:bg-red-100 dark:hover:bg-red-800/40"
              disabled={!workerStatus.isRunning}
            >
              🛑 Detener Worker
            </Button>
-           <div className="flex items-center space-x-2 px-3 py-2 bg-gray-50 rounded-lg">
+           <div className="flex items-center space-x-2 px-3 py-2 bg-gray-50 dark:bg-slate-700 rounded-lg">
              <div className={`w-2 h-2 rounded-full ${workerStatus.isRunning ? 'bg-green-500' : 'bg-red-500'}`} />
-             <span className="text-sm text-gray-600">
+             <span className="text-sm text-gray-600 dark:text-slate-400">
                Worker: {workerStatus.isRunning ? 'Activo' : 'Inactivo'}
              </span>
            </div>
@@ -839,33 +849,33 @@ export default function AdminNotifications() {
 
       {/* Main Content Tabs */}
       <Tabs value={activeTab} onValueChange={setActiveTab} className="space-y-6">
-        <TabsList className="grid w-full grid-cols-4">
-          <TabsTrigger value="overview">Vista General</TabsTrigger>
-          <TabsTrigger value="scheduled">Programadas</TabsTrigger>
-          <TabsTrigger value="analytics">Analytics</TabsTrigger>
-          <TabsTrigger value="templates">Plantillas</TabsTrigger>
+        <TabsList className="grid w-full grid-cols-4 bg-white dark:bg-slate-800 border-slate-200 dark:border-slate-700">
+          <TabsTrigger value="overview" className="data-[state=active]:bg-blue-50 dark:data-[state=active]:bg-blue-900/30 data-[state=active]:text-blue-700 dark:data-[state=active]:text-blue-400 text-slate-700 dark:text-slate-300 hover:text-slate-900 dark:hover:text-slate-100">Vista General</TabsTrigger>
+          <TabsTrigger value="scheduled" className="data-[state=active]:bg-blue-50 dark:data-[state=active]:bg-blue-900/30 data-[state=active]:text-blue-700 dark:data-[state=active]:text-blue-400 text-slate-700 dark:text-slate-300 hover:text-slate-900 dark:hover:text-slate-100">Programadas</TabsTrigger>
+          <TabsTrigger value="analytics" className="data-[state=active]:bg-blue-50 dark:data-[state=active]:bg-blue-900/30 data-[state=active]:text-blue-700 dark:data-[state=active]:text-blue-400 text-slate-700 dark:text-slate-300 hover:text-slate-900 dark:hover:text-slate-100">Analytics</TabsTrigger>
+          <TabsTrigger value="templates" className="data-[state=active]:bg-blue-50 dark:data-[state=active]:bg-blue-900/30 data-[state=active]:text-blue-700 dark:data-[state=active]:text-blue-400 text-slate-700 dark:text-slate-300 hover:text-slate-900 dark:hover:text-slate-100">Plantillas</TabsTrigger>
         </TabsList>
 
         {/* Vista General */}
         <TabsContent value="overview" className="space-y-6">
           <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
-            <Card>
+            <Card className="bg-white dark:bg-slate-800 border-slate-200 dark:border-slate-700">
               <CardHeader>
-                <CardTitle>Actividad Reciente</CardTitle>
-                <CardDescription>Últimas notificaciones del sistema</CardDescription>
+                <CardTitle className="text-slate-800 dark:text-slate-100">Actividad Reciente</CardTitle>
+                <CardDescription className="text-slate-600 dark:text-slate-400">Últimas notificaciones del sistema</CardDescription>
               </CardHeader>
               <CardContent>
                 <div className="space-y-4">
                   {scheduledNotifications.slice(0, 5).map(notification => (
-                    <div key={notification.id} className="flex items-center space-x-3 p-3 bg-gray-50 rounded-lg">
+                    <div key={notification.id} className="flex items-center space-x-3 p-3 bg-gray-50 dark:bg-slate-700 rounded-lg">
                       <div className={`w-3 h-3 rounded-full ${
                         notification.status === 'pending' ? 'bg-yellow-500' :
                         notification.status === 'sent' ? 'bg-green-500' :
                         notification.status === 'failed' ? 'bg-red-500' : 'bg-gray-500'
                       }`} />
                       <div className="flex-1">
-                        <p className="font-medium text-sm">{notification.subject || 'Sin asunto'}</p>
-                                                 <p className="text-xs text-gray-500">
+                        <p className="font-medium text-sm text-slate-800 dark:text-slate-100">{notification.subject || 'Sin asunto'}</p>
+                                                 <p className="text-xs text-gray-500 dark:text-slate-400">
                            {notification.variables?.is_broadcast 
                              ? `${notification.variables?.original_user_count || notification.variables?.target_users?.length || 0} usuarios`
                              : notification.users?.full_name || notification.users?.email
@@ -894,10 +904,10 @@ export default function AdminNotifications() {
               </CardContent>
             </Card>
 
-            <Card>
+            <Card className="bg-white dark:bg-slate-800 border-slate-200 dark:border-slate-700">
               <CardHeader>
-                <CardTitle>Rendimiento por Canal</CardTitle>
-                <CardDescription>Métricas de entrega por tipo de notificación</CardDescription>
+                <CardTitle className="text-slate-800 dark:text-slate-100">Rendimiento por Canal</CardTitle>
+                <CardDescription className="text-slate-600 dark:text-slate-400">Métricas de entrega por tipo de notificación</CardDescription>
               </CardHeader>
               <CardContent>
                 <div className="space-y-4">
@@ -922,26 +932,26 @@ export default function AdminNotifications() {
                      return (
                        <>
                          <div className="flex items-center justify-between">
-                           <span className="text-sm">Email</span>
-                           <span className="text-sm font-medium">{emailRate.toFixed(1)}%</span>
+                           <span className="text-sm text-slate-700 dark:text-slate-300">Email</span>
+                           <span className="text-sm font-medium text-slate-800 dark:text-slate-100">{emailRate.toFixed(1)}%</span>
                          </div>
-                         <div className="w-full bg-gray-200 rounded-full h-2">
+                         <div className="w-full bg-gray-200 dark:bg-slate-600 rounded-full h-2">
                            <div className="bg-blue-600 h-2 rounded-full" style={{ width: `${emailRate}%` }} />
                          </div>
                          
                          <div className="flex items-center justify-between">
-                           <span className="text-sm">Push</span>
-                           <span className="text-sm font-medium">{pushRate.toFixed(1)}%</span>
+                           <span className="text-sm text-slate-700 dark:text-slate-300">Push</span>
+                           <span className="text-sm font-medium text-slate-800 dark:text-slate-100">{pushRate.toFixed(1)}%</span>
                          </div>
-                         <div className="w-full bg-gray-200 rounded-full h-2">
+                         <div className="w-full bg-gray-200 dark:bg-slate-600 rounded-full h-2">
                            <div className="bg-green-600 h-2 rounded-full" style={{ width: `${pushRate}%` }} />
                          </div>
                          
                          <div className="flex items-center justify-between">
-                           <span className="text-sm">In-App</span>
-                           <span className="text-sm font-medium">{inAppRate.toFixed(1)}%</span>
+                           <span className="text-sm text-slate-700 dark:text-slate-300">In-App</span>
+                           <span className="text-sm font-medium text-slate-800 dark:text-slate-100">{inAppRate.toFixed(1)}%</span>
                          </div>
-                         <div className="w-full bg-gray-200 rounded-full h-2">
+                         <div className="w-full bg-gray-200 dark:bg-slate-600 rounded-full h-2">
                            <div className="bg-purple-600 h-2 rounded-full" style={{ width: `${inAppRate}%` }} />
                          </div>
                        </>
@@ -957,8 +967,8 @@ export default function AdminNotifications() {
         <TabsContent value="scheduled" className="space-y-6">
           <div className="flex items-center justify-between">
              <div>
-               <h2 className="text-2xl font-bold">Notificaciones Programadas</h2>
-               <p className="text-gray-600">Gestiona las notificaciones programadas para envío futuro</p>
+               <h2 className="text-2xl font-bold text-slate-800 dark:text-slate-100">Notificaciones Programadas</h2>
+               <p className="text-gray-600 dark:text-slate-400">Gestiona las notificaciones programadas para envío futuro</p>
              </div>
              <div className="flex space-x-2">
                <Button 
@@ -980,42 +990,43 @@ export default function AdminNotifications() {
                      alert('No hay notificaciones vencidas para procesar');
                    }
                  }}
-                 className="bg-blue-50 text-blue-700 border-blue-200 hover:bg-blue-100"
+                 className="bg-blue-50 dark:bg-blue-900/30 text-blue-700 dark:text-blue-400 border-blue-200 dark:border-blue-700 hover:bg-blue-100 dark:hover:bg-blue-800/40"
                >
                  ⚡ Procesar Ahora
                </Button>
                <Dialog open={isScheduleModalOpen} onOpenChange={setIsScheduleModalOpen}>
                <DialogTrigger asChild>
-                 <Button onClick={() => setIsScheduleModalOpen(true)}>
+                 <Button onClick={() => setIsScheduleModalOpen(true)} className="bg-blue-600 hover:bg-blue-700 dark:bg-blue-700 dark:hover:bg-blue-800 text-white">
                    <Plus className="w-4 h-4 mr-2" />
                    Programar Notificación
                  </Button>
                </DialogTrigger>
-               <DialogContent className="max-w-2xl">
+               <DialogContent className="max-w-2xl bg-white dark:bg-slate-800 border-slate-200 dark:border-slate-700">
                  <DialogHeader>
-                   <DialogTitle>Programar Nueva Notificación</DialogTitle>
-                   <DialogDescription>
+                   <DialogTitle className="text-slate-800 dark:text-slate-100">Programar Nueva Notificación</DialogTitle>
+                   <DialogDescription className="text-slate-600 dark:text-slate-400">
                      Crea una notificación programada para envío futuro
                    </DialogDescription>
                  </DialogHeader>
                  <div className="space-y-4">
                    <div className="grid grid-cols-2 gap-4">
                      <div>
-                       <Label htmlFor="subject">Asunto</Label>
+                       <Label htmlFor="subject" className="text-slate-700 dark:text-slate-300">Asunto</Label>
                        <Input 
                          id="subject" 
                          placeholder="Asunto de la notificación"
                          value={scheduleForm.subject}
                          onChange={(e) => setScheduleForm(prev => ({ ...prev, subject: e.target.value }))}
+                         className="bg-white dark:bg-slate-700 border-slate-200 dark:border-slate-600 text-slate-800 dark:text-slate-200"
                        />
                      </div>
                      <div>
-                       <Label htmlFor="channels">Canales</Label>
+                       <Label htmlFor="channels" className="text-slate-700 dark:text-slate-300">Canales</Label>
                        <Select 
                          value={scheduleForm.channels[0]} 
                          onValueChange={(value) => setScheduleForm(prev => ({ ...prev, channels: [value] }))}
                        >
-                         <SelectTrigger>
+                         <SelectTrigger className="bg-white dark:bg-slate-700 border-slate-200 dark:border-slate-600 text-slate-800 dark:text-slate-200">
                            <SelectValue placeholder="Seleccionar canales" />
                          </SelectTrigger>
                          <SelectContent>
@@ -1027,18 +1038,19 @@ export default function AdminNotifications() {
                      </div>
                    </div>
                    <div>
-                     <Label htmlFor="content">Contenido</Label>
+                     <Label htmlFor="content" className="text-slate-700 dark:text-slate-300">Contenido</Label>
                      <Textarea 
                        id="content" 
                        placeholder="Contenido de la notificación" 
                        rows={4}
                        value={scheduleForm.content}
                        onChange={(e) => setScheduleForm(prev => ({ ...prev, content: e.target.value }))}
+                       className="bg-white dark:bg-slate-700 border-slate-200 dark:border-slate-600 text-slate-800 dark:text-slate-200"
                      />
                    </div>
                    <div className="grid grid-cols-2 gap-4">
                      <div>
-                       <Label htmlFor="scheduledFor">Programar para (Hora Argentina)</Label>
+                       <Label htmlFor="scheduledFor" className="text-slate-700 dark:text-slate-300">Programar para (Hora Argentina)</Label>
                        <Input 
                          id="scheduledFor" 
                          type="datetime-local"
@@ -1047,18 +1059,19 @@ export default function AdminNotifications() {
                             // El valor ya está en formato YYYY-MM-DDTHH:MM
                             setScheduleForm(prev => ({ ...prev, scheduledFor: e.target.value }));
                           }}
+                         className="bg-white dark:bg-slate-700 border-slate-200 dark:border-slate-600 text-slate-800 dark:text-slate-200"
                        />
-                       <p className="text-xs text-gray-500 mt-1">
+                       <p className="text-xs text-gray-500 dark:text-slate-400 mt-1">
                          La hora se guarda en tu zona horaria local (Argentina)
                        </p>
                      </div>
                      <div>
-                       <Label htmlFor="users">Usuarios</Label>
+                       <Label htmlFor="users" className="text-slate-700 dark:text-slate-300">Usuarios</Label>
                        <Select 
                          value={scheduleForm.users} 
                          onValueChange={(value) => setScheduleForm(prev => ({ ...prev, users: value }))}
                        >
-                         <SelectTrigger>
+                         <SelectTrigger className="bg-white dark:bg-slate-700 border-slate-200 dark:border-slate-600 text-slate-800 dark:text-slate-200">
                            <SelectValue placeholder="Seleccionar usuarios" />
                          </SelectTrigger>
                          <SelectContent>
@@ -1073,12 +1086,14 @@ export default function AdminNotifications() {
                        variant="outline" 
                        onClick={() => setIsScheduleModalOpen(false)}
                        disabled={scheduleLoading}
+                       className="border-slate-200 dark:border-slate-600 text-slate-700 dark:text-slate-200 hover:bg-slate-50 dark:hover:bg-slate-700"
                      >
                        Cancelar
                      </Button>
                      <Button 
                        onClick={handleScheduleNotification}
                        disabled={scheduleLoading}
+                       className="bg-blue-600 hover:bg-blue-700 dark:bg-blue-700 dark:hover:bg-blue-800 text-white"
                      >
                        {scheduleLoading ? 'Programando...' : 'Programar'}
                      </Button>
@@ -1089,10 +1104,10 @@ export default function AdminNotifications() {
 
               {/* Modal de Edición */}
               <Dialog open={isEditModalOpen} onOpenChange={setIsEditModalOpen}>
-                <DialogContent className="max-w-2xl">
+                <DialogContent className="max-w-2xl bg-white dark:bg-slate-800 border-slate-200 dark:border-slate-700">
                   <DialogHeader>
-                    <DialogTitle>Editar Notificación Programada</DialogTitle>
-                    <DialogDescription>
+                    <DialogTitle className="text-slate-800 dark:text-slate-100">Editar Notificación Programada</DialogTitle>
+                    <DialogDescription className="text-slate-600 dark:text-slate-400">
                       Modifica los detalles de la notificación programada
                     </DialogDescription>
                   </DialogHeader>
@@ -1177,11 +1192,11 @@ export default function AdminNotifications() {
               <ScheduledNotificationCard key={notification.id} notification={notification} />
             ))}
             {scheduledNotifications.length === 0 && (
-              <Card>
+              <Card className="bg-white dark:bg-slate-800 border-slate-200 dark:border-slate-700">
                 <CardContent className="p-8 text-center">
-                  <Bell className="w-12 h-12 text-gray-400 mx-auto mb-4" />
-                  <h3 className="text-lg font-medium text-gray-900 mb-2">No hay notificaciones programadas</h3>
-                  <p className="text-gray-600">Programa tu primera notificación para comenzar</p>
+                  <Bell className="w-12 h-12 text-gray-400 dark:text-slate-500 mx-auto mb-4" />
+                  <h3 className="text-lg font-medium text-gray-900 dark:text-slate-100 mb-2">No hay notificaciones programadas</h3>
+                  <p className="text-gray-600 dark:text-slate-400">Programa tu primera notificación para comenzar</p>
                 </CardContent>
               </Card>
             )}
@@ -1191,39 +1206,39 @@ export default function AdminNotifications() {
         {/* Analytics */}
         <TabsContent value="analytics" className="space-y-6">
           <div>
-            <h2 className="text-2xl font-bold mb-2">Analytics de Notificaciones</h2>
-            <p className="text-gray-600">Métricas detalladas del rendimiento del sistema</p>
+            <h2 className="text-2xl font-bold mb-2 text-slate-800 dark:text-slate-100">Analytics de Notificaciones</h2>
+            <p className="text-gray-600 dark:text-slate-400">Métricas detalladas del rendimiento del sistema</p>
           </div>
 
           <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
             <AnalyticsChart data={analytics} />
             
-            <Card>
+            <Card className="bg-white dark:bg-slate-800 border-slate-200 dark:border-slate-700">
               <CardHeader>
-                <CardTitle>Resumen de Actividad</CardTitle>
-                <CardDescription>Últimos 30 días</CardDescription>
+                <CardTitle className="text-slate-800 dark:text-slate-100">Resumen de Actividad</CardTitle>
+                <CardDescription className="text-slate-600 dark:text-slate-400">Últimos 30 días</CardDescription>
               </CardHeader>
               <CardContent>
                 <div className="space-y-4">
                   <div className="flex items-center justify-between">
-                    <span className="text-sm">Total enviadas</span>
-                    <span className="font-medium">{analytics.reduce((sum, item) => sum + item.sent_count, 0).toLocaleString()}</span>
+                    <span className="text-sm text-slate-700 dark:text-slate-300">Total enviadas</span>
+                    <span className="font-medium text-slate-800 dark:text-slate-100">{analytics.reduce((sum, item) => sum + item.sent_count, 0).toLocaleString()}</span>
                   </div>
                   <div className="flex items-center justify-between">
-                    <span className="text-sm">Total entregadas</span>
-                    <span className="font-medium">{analytics.reduce((sum, item) => sum + item.delivered_count, 0).toLocaleString()}</span>
+                    <span className="text-sm text-slate-700 dark:text-slate-300">Total entregadas</span>
+                    <span className="font-medium text-slate-800 dark:text-slate-100">{analytics.reduce((sum, item) => sum + item.delivered_count, 0).toLocaleString()}</span>
                   </div>
                   <div className="flex items-center justify-between">
-                    <span className="text-sm">Total abiertas</span>
-                    <span className="font-medium">{analytics.reduce((sum, item) => sum + item.opened_count, 0).toLocaleString()}</span>
+                    <span className="text-sm text-slate-700 dark:text-slate-300">Total abiertas</span>
+                    <span className="font-medium text-slate-800 dark:text-slate-100">{analytics.reduce((sum, item) => sum + item.opened_count, 0).toLocaleString()}</span>
                   </div>
                   <div className="flex items-center justify-between">
-                    <span className="text-sm">Total clics</span>
-                    <span className="font-medium">{analytics.reduce((sum, item) => sum + item.clicked_count, 0).toLocaleString()}</span>
+                    <span className="text-sm text-slate-700 dark:text-slate-300">Total clics</span>
+                    <span className="font-medium text-slate-800 dark:text-slate-100">{analytics.reduce((sum, item) => sum + item.clicked_count, 0).toLocaleString()}</span>
                   </div>
                   <div className="flex items-center justify-between">
-                    <span className="text-sm">Tasa de entrega</span>
-                    <span className="font-medium text-green-600">
+                    <span className="text-sm text-slate-700 dark:text-slate-300">Tasa de entrega</span>
+                    <span className="font-medium text-green-600 dark:text-green-400">
                       {(() => {
                         const totalSent = analytics.reduce((sum, item) => sum + item.sent_count, 0);
                         const totalDelivered = analytics.reduce((sum, item) => sum + item.delivered_count, 0);

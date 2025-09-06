@@ -1,6 +1,7 @@
 import { useState, useEffect, useRef } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
 import { useApp } from '@/contexts/AppContext';
+import { useTheme } from '@/contexts/ThemeContext';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Textarea } from '@/components/ui/textarea';
@@ -93,6 +94,7 @@ interface CollaborationStats {
 }
 
 export default function AdminCollaborationPage() {
+  const { theme } = useTheme();
   const { projectId } = useParams<{ projectId: string }>();
   const { user, projects } = useApp();
   const navigate = useNavigate();
@@ -630,30 +632,30 @@ export default function AdminCollaborationPage() {
 
   const getPriorityColor = (priority: string) => {
     switch (priority) {
-      case 'urgent': return 'bg-red-100 text-red-800 border-red-200';
-      case 'high': return 'bg-orange-100 text-orange-800 border-orange-200';
-      case 'medium': return 'bg-yellow-100 text-yellow-800 border-yellow-200';
-      case 'low': return 'bg-green-100 text-green-800 border-green-200';
-      default: return 'bg-slate-100 text-slate-800 border-slate-200';
+      case 'urgent': return 'bg-red-100 dark:bg-red-900/30 text-red-800 dark:text-red-400 border-red-200 dark:border-red-700';
+      case 'high': return 'bg-orange-100 dark:bg-orange-900/30 text-orange-800 dark:text-orange-400 border-orange-200 dark:border-orange-700';
+      case 'medium': return 'bg-yellow-100 dark:bg-yellow-900/30 text-yellow-800 dark:text-yellow-400 border-yellow-200 dark:border-yellow-700';
+      case 'low': return 'bg-green-100 dark:bg-green-900/30 text-green-800 dark:text-green-400 border-green-200 dark:border-green-700';
+      default: return 'bg-slate-100 dark:bg-slate-800 text-slate-800 dark:text-slate-200 border-slate-200 dark:border-slate-600';
     }
   };
 
   const getStatusColor = (status: string) => {
     switch (status) {
-      case 'completed': return 'bg-green-100 text-green-800 border-green-200';
-      case 'in-progress': return 'bg-blue-100 text-blue-800 border-blue-200';
-      case 'pending': return 'bg-yellow-100 text-yellow-800 border-yellow-200';
-      case 'cancelled': return 'bg-red-100 text-red-800 border-red-200';
-      default: return 'bg-slate-100 text-slate-800 border-slate-200';
+      case 'completed': return 'bg-green-100 dark:bg-green-900/30 text-green-800 dark:text-green-400 border-green-200 dark:border-green-700';
+      case 'in-progress': return 'bg-blue-100 dark:bg-blue-900/30 text-blue-800 dark:text-blue-400 border-blue-200 dark:border-blue-700';
+      case 'pending': return 'bg-yellow-100 dark:bg-yellow-900/30 text-yellow-800 dark:text-yellow-400 border-yellow-200 dark:border-yellow-700';
+      case 'cancelled': return 'bg-red-100 dark:bg-red-900/30 text-red-800 dark:text-red-400 border-red-200 dark:border-red-700';
+      default: return 'bg-slate-100 dark:bg-slate-800 text-slate-800 dark:text-slate-200 border-slate-200 dark:border-slate-600';
     }
   };
 
   if (loading) {
     return (
-      <div className="flex items-center justify-center h-screen">
+      <div className="flex items-center justify-center h-screen bg-slate-50 dark:bg-slate-900">
         <div className="text-center">
-          <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-blue-600 mx-auto mb-4"></div>
-          <p className="text-slate-600">Cargando colaboración...</p>
+          <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-blue-600 dark:border-blue-400 mx-auto mb-4"></div>
+          <p className="text-slate-600 dark:text-slate-400">Cargando colaboración...</p>
         </div>
       </div>
     );
@@ -661,12 +663,12 @@ export default function AdminCollaborationPage() {
 
   if (!project) {
     return (
-      <div className="flex items-center justify-center h-screen">
+      <div className="flex items-center justify-center h-screen bg-slate-50 dark:bg-slate-900">
         <div className="text-center">
-          <AlertCircle className="h-12 w-12 text-red-500 mx-auto mb-4" />
-          <h2 className="text-xl font-semibold text-slate-800 mb-2">Proyecto no encontrado</h2>
-          <p className="text-slate-600 mb-4">El proyecto que buscas no existe o no tienes acceso.</p>
-          <Button onClick={() => navigate('/admin')} variant="outline">
+          <AlertCircle className="h-12 w-12 text-red-500 dark:text-red-400 mx-auto mb-4" />
+          <h2 className="text-xl font-semibold text-slate-800 dark:text-slate-100 mb-2">Proyecto no encontrado</h2>
+          <p className="text-slate-600 dark:text-slate-400 mb-4">El proyecto que buscas no existe o no tienes acceso.</p>
+          <Button onClick={() => navigate('/admin')} variant="outline" className="border-slate-200 dark:border-slate-600 text-slate-700 dark:text-slate-200 hover:bg-slate-50 dark:hover:bg-slate-700">
             <ArrowLeft className="h-4 w-4 mr-2" />
             Volver al Admin
           </Button>
@@ -676,9 +678,9 @@ export default function AdminCollaborationPage() {
   }
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-slate-50 via-blue-50/30 to-indigo-50/30">
+    <div className="min-h-screen bg-gradient-to-br from-slate-50 via-blue-50/30 to-indigo-50/30 dark:from-slate-900 dark:via-slate-800 dark:to-slate-900">
       {/* Header */}
-      <div className="bg-white border-b border-slate-200 shadow-sm">
+      <div className="bg-white dark:bg-slate-800 border-b border-slate-200 dark:border-slate-700 shadow-sm">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="flex items-center justify-between h-16">
             <div className="flex items-center gap-4">
@@ -686,27 +688,27 @@ export default function AdminCollaborationPage() {
                 variant="ghost"
                 size="sm"
                 onClick={() => navigate('/admin')}
-                className="text-slate-600 hover:text-slate-800"
+                className="text-slate-600 dark:text-slate-300 hover:text-slate-800 dark:hover:text-slate-100"
               >
                 <ArrowLeft className="h-4 w-4 mr-2" />
                 Volver al Admin
               </Button>
-              <div className="h-6 w-px bg-slate-300"></div>
+              <div className="h-6 w-px bg-slate-300 dark:bg-slate-600"></div>
               <div>
-                <h1 className="text-xl font-semibold text-slate-800">
+                <h1 className="text-xl font-semibold text-slate-800 dark:text-slate-100">
                   Colaboración: {project.name}
                 </h1>
-                <p className="text-sm text-slate-600">
+                <p className="text-sm text-slate-600 dark:text-slate-400">
                   Colaborando con {clientInfo?.full_name || clientInfo?.email || 'Cliente'}
                 </p>
               </div>
             </div>
             <div className="flex items-center gap-2">
-              <Badge variant="outline" className="border-blue-200 text-blue-700">
+              <Badge variant="outline" className="border-blue-200 dark:border-blue-700 text-blue-700 dark:text-blue-400">
                 <Crown className="h-3 w-3 mr-1" />
                 Admin
               </Badge>
-              <Badge className="bg-blue-100 text-blue-800 border-blue-200">
+              <Badge className="bg-blue-100 dark:bg-blue-900/30 text-blue-800 dark:text-blue-400 border-blue-200 dark:border-blue-700">
                 <Shield className="h-3 w-3 mr-1" />
                 {project.status}
               </Badge>
@@ -770,20 +772,20 @@ export default function AdminCollaborationPage() {
 
         {/* Tabs principales */}
         <Tabs value={activeTab} onValueChange={setActiveTab} className="space-y-6">
-          <TabsList className="grid w-full grid-cols-4 bg-white border border-slate-200">
-            <TabsTrigger value="chat" className="flex items-center gap-2">
+          <TabsList className="grid w-full grid-cols-4 bg-white dark:bg-slate-800 border border-slate-200 dark:border-slate-700">
+            <TabsTrigger value="chat" className="flex items-center gap-2 data-[state=active]:bg-blue-50 dark:data-[state=active]:bg-blue-900/30 data-[state=active]:text-blue-700 dark:data-[state=active]:text-blue-400 text-slate-700 dark:text-slate-300 hover:text-slate-900 dark:hover:text-slate-100">
               <MessageSquare className="h-4 w-4" />
               Chat
             </TabsTrigger>
-            <TabsTrigger value="tasks" className="flex items-center gap-2">
+            <TabsTrigger value="tasks" className="flex items-center gap-2 data-[state=active]:bg-blue-50 dark:data-[state=active]:bg-blue-900/30 data-[state=active]:text-blue-700 dark:data-[state=active]:text-blue-400 text-slate-700 dark:text-slate-300 hover:text-slate-900 dark:hover:text-slate-100">
               <CheckSquare className="h-4 w-4" />
               Tareas
             </TabsTrigger>
-            <TabsTrigger value="files" className="flex items-center gap-2">
+            <TabsTrigger value="files" className="flex items-center gap-2 data-[state=active]:bg-blue-50 dark:data-[state=active]:bg-blue-900/30 data-[state=active]:text-blue-700 dark:data-[state=active]:text-blue-400 text-slate-700 dark:text-slate-300 hover:text-slate-900 dark:hover:text-slate-100">
               <FileText className="h-4 w-4" />
               Archivos
             </TabsTrigger>
-            <TabsTrigger value="overview" className="flex items-center gap-2">
+            <TabsTrigger value="overview" className="flex items-center gap-2 data-[state=active]:bg-blue-50 dark:data-[state=active]:bg-blue-900/30 data-[state=active]:text-blue-700 dark:data-[state=active]:text-blue-400 text-slate-700 dark:text-slate-300 hover:text-slate-900 dark:hover:text-slate-100">
               <BarChart3 className="h-4 w-4" />
               Resumen
             </TabsTrigger>
@@ -791,10 +793,10 @@ export default function AdminCollaborationPage() {
 
           {/* Tab Chat */}
           <TabsContent value="chat" className="space-y-4">
-            <div className="bg-white rounded-lg border border-slate-200 shadow-sm">
-              <div className="p-4 border-b border-slate-200">
-                <h3 className="text-lg font-semibold text-slate-800">Chat de Colaboración</h3>
-                <p className="text-sm text-slate-600">
+            <div className="bg-white dark:bg-slate-800 rounded-lg border border-slate-200 dark:border-slate-700 shadow-sm">
+              <div className="p-4 border-b border-slate-200 dark:border-slate-700">
+                <h3 className="text-lg font-semibold text-slate-800 dark:text-slate-100">Chat de Colaboración</h3>
+                <p className="text-sm text-slate-600 dark:text-slate-400">
                   Comunícate directamente con el cliente sobre el proyecto
                 </p>
               </div>
@@ -803,8 +805,8 @@ export default function AdminCollaborationPage() {
               <div className="h-96 overflow-y-auto p-4 space-y-4">
                 {messages.length === 0 ? (
                   <div className="text-center py-8">
-                    <MessageSquare className="h-12 w-12 text-slate-400 mx-auto mb-4" />
-                    <p className="text-slate-600">No hay mensajes aún. ¡Inicia la conversación!</p>
+                    <MessageSquare className="h-12 w-12 text-slate-400 dark:text-slate-500 mx-auto mb-4" />
+                    <p className="text-slate-600 dark:text-slate-400">No hay mensajes aún. ¡Inicia la conversación!</p>
                   </div>
                 ) : (
                   messages.map((message) => {
@@ -816,7 +818,7 @@ export default function AdminCollaborationPage() {
                         className={`flex items-start gap-3 ${isOwnMessage ? 'flex-row-reverse' : ''}`}
                       >
                         <Avatar 
-                          className={`w-8 h-8 flex-shrink-0 cursor-pointer hover:ring-2 hover:ring-blue-300 transition-all duration-200 ${isOwnMessage ? 'ring-2 ring-blue-500' : 'ring-2 ring-slate-200'}`}
+                          className={`w-8 h-8 flex-shrink-0 cursor-pointer hover:ring-2 hover:ring-blue-300 dark:hover:ring-blue-600 transition-all duration-200 ${isOwnMessage ? 'ring-2 ring-blue-500 dark:ring-blue-400' : 'ring-2 ring-slate-200 dark:ring-slate-600'}`}
                           onClick={() => {
                             if (isOwnMessage) {
                               // Si es el usuario actual, ir a su perfil
@@ -843,16 +845,16 @@ export default function AdminCollaborationPage() {
                         </Avatar>
                         <div className={`flex-1 min-w-0 ${isOwnMessage ? 'text-right' : ''}`}>
                           <div className={`flex items-center gap-2 mb-1 ${isOwnMessage ? 'justify-end' : ''}`}>
-                            <span className="font-medium text-slate-800">{message.sender_name}</span>
-                            <span className="text-xs text-slate-500">
+                            <span className="font-medium text-slate-800 dark:text-slate-100">{message.sender_name}</span>
+                            <span className="text-xs text-slate-500 dark:text-slate-400">
                               {formatDateSafe(message.created_at)}
                             </span>
                             <Badge
                               variant="outline"
                               className={`text-xs ${
                                 isOwnMessage
-                                  ? 'border-blue-200 text-blue-100'
-                                  : 'border-slate-200 text-slate-600'
+                                  ? 'border-blue-200 dark:border-blue-700 text-blue-100 dark:text-blue-400'
+                                  : 'border-slate-200 dark:border-slate-600 text-slate-600 dark:text-slate-400'
                               }`}
                             >
                               {isOwnMessage ? 'Admin' : 'Cliente'}
@@ -861,7 +863,7 @@ export default function AdminCollaborationPage() {
                           <div className={`inline-block max-w-xs lg:max-w-md px-4 py-2 rounded-lg ${
                             isOwnMessage 
                               ? 'bg-blue-500 text-white rounded-br-none' 
-                              : 'bg-slate-100 text-slate-800 rounded-bl-none'
+                              : 'bg-slate-100 dark:bg-slate-700 text-slate-800 dark:text-slate-200 rounded-bl-none'
                           }`}>
                             <p className="text-sm">{message.text}</p>
                           </div>
@@ -874,16 +876,16 @@ export default function AdminCollaborationPage() {
               </div>
 
               {/* Input de mensaje */}
-              <div className="p-4 border-t border-slate-200">
+              <div className="p-4 border-t border-slate-200 dark:border-slate-700">
                 <div className="flex gap-2">
                   <Input
                     value={newMessage}
                     onChange={(e) => setNewMessage(e.target.value)}
                     placeholder="Escribe tu mensaje..."
                     onKeyPress={(e) => e.key === 'Enter' && sendMessage()}
-                    className="flex-1"
+                    className="flex-1 bg-white dark:bg-slate-700 border-slate-200 dark:border-slate-600 text-slate-800 dark:text-slate-200"
                   />
-                  <Button onClick={sendMessage} disabled={!newMessage.trim()}>
+                  <Button onClick={sendMessage} disabled={!newMessage.trim()} className="bg-blue-600 hover:bg-blue-700 text-white">
                     <Send className="h-4 w-4 mr-2" />
                     Enviar
                   </Button>
@@ -894,16 +896,16 @@ export default function AdminCollaborationPage() {
 
           {/* Tab Tareas */}
           <TabsContent value="tasks" className="space-y-4">
-            <div className="bg-white rounded-lg border border-slate-200 shadow-sm">
-              <div className="p-4 border-b border-slate-200">
+            <div className="bg-white dark:bg-slate-800 rounded-lg border border-slate-200 dark:border-slate-700 shadow-sm">
+              <div className="p-4 border-b border-slate-200 dark:border-slate-700">
                 <div className="flex items-center justify-between">
                   <div>
-                    <h3 className="text-lg font-semibold text-slate-800">Gestión de Tareas</h3>
-                    <p className="text-sm text-slate-600">
+                    <h3 className="text-lg font-semibold text-slate-800 dark:text-slate-100">Gestión de Tareas</h3>
+                    <p className="text-sm text-slate-600 dark:text-slate-400">
                       Crea y gestiona tareas para el proyecto
                     </p>
                   </div>
-                  <Button onClick={() => setShowNewTaskForm(true)}>
+                  <Button onClick={() => setShowNewTaskForm(true)} className="bg-blue-600 hover:bg-blue-700 text-white">
                     <Plus className="h-4 w-4 mr-2" />
                     Nueva Tarea
                   </Button>
@@ -914,19 +916,19 @@ export default function AdminCollaborationPage() {
               <div className="p-4 space-y-4">
                 {tasks.length === 0 ? (
                   <div className="text-center py-8">
-                    <CheckSquare className="h-12 w-12 text-slate-400 mx-auto mb-4" />
-                    <p className="text-slate-600">No hay tareas creadas aún.</p>
+                    <CheckSquare className="h-12 w-12 text-slate-400 dark:text-slate-500 mx-auto mb-4" />
+                    <p className="text-slate-600 dark:text-slate-400">No hay tareas creadas aún.</p>
                   </div>
                 ) : (
                   tasks.map((task) => (
                     <div
                       key={task.id}
-                      className="border border-slate-200 rounded-lg p-4 hover:shadow-sm transition-shadow"
+                      className="border border-slate-200 dark:border-slate-600 rounded-lg p-4 hover:shadow-sm transition-shadow bg-white dark:bg-slate-800"
                     >
                       <div className="flex items-start justify-between">
                         <div className="flex-1">
                           <div className="flex items-center gap-2 mb-2">
-                            <h4 className="font-medium text-slate-800">{task.title}</h4>
+                            <h4 className="font-medium text-slate-800 dark:text-slate-100">{task.title}</h4>
                             <Badge className={getPriorityColor(task.priority)}>
                               {task.priority}
                             </Badge>
@@ -934,8 +936,8 @@ export default function AdminCollaborationPage() {
                               {task.status}
                             </Badge>
                           </div>
-                          <p className="text-sm text-slate-600 mb-2">{task.description}</p>
-                          <div className="flex items-center gap-4 text-xs text-slate-500">
+                          <p className="text-sm text-slate-600 dark:text-slate-300 mb-2">{task.description}</p>
+                          <div className="flex items-center gap-4 text-xs text-slate-500 dark:text-slate-400">
                             <span>Asignado: {task.assigneeName}</span>
                             {task.dueDate && (
                               <span>Vence: {formatDateSafe(task.dueDate)}</span>
@@ -947,7 +949,7 @@ export default function AdminCollaborationPage() {
                             <Button
                               size="sm"
                               onClick={() => updateTaskStatus(task.id, 'completed')}
-                              className="bg-green-600 hover:bg-green-700"
+                              className="bg-green-600 hover:bg-green-700 dark:bg-green-700 dark:hover:bg-green-800 text-white"
                             >
                               <CheckCircle className="h-4 w-4" />
                             </Button>
@@ -957,6 +959,7 @@ export default function AdminCollaborationPage() {
                               size="sm"
                               variant="outline"
                               onClick={() => updateTaskStatus(task.id, 'in-progress')}
+                              className="border-slate-200 dark:border-slate-600 text-slate-700 dark:text-slate-200 hover:bg-slate-50 dark:hover:bg-slate-700"
                             >
                               <Clock className="h-4 w-4" />
                             </Button>
@@ -972,12 +975,12 @@ export default function AdminCollaborationPage() {
 
           {/* Tab Archivos */}
           <TabsContent value="files" className="space-y-4">
-            <div className="bg-white rounded-lg border border-slate-200 shadow-sm">
-              <div className="p-4 border-b border-slate-200">
+            <div className="bg-white dark:bg-slate-800 rounded-lg border border-slate-200 dark:border-slate-700 shadow-sm">
+              <div className="p-4 border-b border-slate-200 dark:border-slate-700">
                 <div className="flex items-center justify-between">
                   <div>
-                    <h3 className="text-lg font-semibold text-slate-800">Archivos del Proyecto</h3>
-                    <p className="text-sm text-slate-600">
+                    <h3 className="text-lg font-semibold text-slate-800 dark:text-slate-100">Archivos del Proyecto</h3>
+                    <p className="text-sm text-slate-600 dark:text-slate-400">
                       Comparte archivos y documentos con el cliente
                     </p>
                   </div>
@@ -986,11 +989,11 @@ export default function AdminCollaborationPage() {
                       type="file"
                       onChange={handleFileUpload}
                       disabled={uploading}
-                      className="max-w-xs"
+                      className="max-w-xs bg-white dark:bg-slate-700 border-slate-200 dark:border-slate-600 text-slate-800 dark:text-slate-200"
                     />
                     {uploading && (
-                      <div className="flex items-center gap-2 text-sm text-slate-600">
-                        <div className="animate-spin rounded-full h-4 w-4 border-b-2 border-blue-600"></div>
+                      <div className="flex items-center gap-2 text-sm text-slate-600 dark:text-slate-400">
+                        <div className="animate-spin rounded-full h-4 w-4 border-b-2 border-blue-600 dark:border-blue-400"></div>
                         Subiendo...
                       </div>
                     )}
@@ -1002,26 +1005,26 @@ export default function AdminCollaborationPage() {
               <div className="p-4">
                 {files.length === 0 ? (
                   <div className="text-center py-8">
-                    <FileText className="h-12 w-12 text-slate-400 mx-auto mb-4" />
-                    <p className="text-slate-600">No hay archivos compartidos aún.</p>
+                    <FileText className="h-12 w-12 text-slate-400 dark:text-slate-500 mx-auto mb-4" />
+                    <p className="text-slate-600 dark:text-slate-400">No hay archivos compartidos aún.</p>
                   </div>
                 ) : (
                   <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
                     {files.map((file) => (
                       <div
                         key={file.id}
-                        className="border border-slate-200 rounded-lg p-4 hover:shadow-sm transition-shadow"
+                        className="border border-slate-200 dark:border-slate-600 rounded-lg p-4 hover:shadow-sm transition-shadow bg-white dark:bg-slate-800"
                       >
                         <div className="flex items-start gap-3">
-                          <div className="p-2 bg-slate-100 rounded-lg">
-                            <FileText className="h-5 w-5 text-slate-600" />
+                          <div className="p-2 bg-slate-100 dark:bg-slate-700 rounded-lg">
+                            <FileText className="h-5 w-5 text-slate-600 dark:text-slate-400" />
                           </div>
                           <div className="flex-1 min-w-0">
-                            <h4 className="font-medium text-slate-800 truncate">{file.name}</h4>
-                            <p className="text-xs text-slate-500">
+                            <h4 className="font-medium text-slate-800 dark:text-slate-100 truncate">{file.name}</h4>
+                            <p className="text-xs text-slate-500 dark:text-slate-400">
                               Subido por {file.uploadedByName}
                             </p>
-                            <p className="text-xs text-slate-500">
+                            <p className="text-xs text-slate-500 dark:text-slate-400">
                               {formatDateSafe(file.uploadedAt)}
                             </p>
                           </div>
@@ -1031,6 +1034,7 @@ export default function AdminCollaborationPage() {
                             size="sm"
                             variant="outline"
                             onClick={() => window.open(file.url, '_blank')}
+                            className="border-slate-200 dark:border-slate-600 text-slate-700 dark:text-slate-200 hover:bg-slate-50 dark:hover:bg-slate-700"
                           >
                             <Eye className="h-4 w-4 mr-1" />
                             Ver
@@ -1039,6 +1043,7 @@ export default function AdminCollaborationPage() {
                             size="sm"
                             variant="outline"
                             onClick={() => window.open(file.url, '_blank')}
+                            className="border-slate-200 dark:border-slate-600 text-slate-700 dark:text-slate-200 hover:bg-slate-50 dark:hover:bg-slate-700"
                           >
                             <Download className="h-4 w-4 mr-1" />
                             Descargar
@@ -1056,46 +1061,46 @@ export default function AdminCollaborationPage() {
           <TabsContent value="overview" className="space-y-4">
             <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
               {/* Progreso del proyecto */}
-              <div className="bg-white rounded-lg border border-slate-200 shadow-sm p-6">
-                <h3 className="text-lg font-semibold text-slate-800 mb-4">Progreso del Proyecto</h3>
+              <div className="bg-white dark:bg-slate-800 rounded-lg border border-slate-200 dark:border-slate-700 shadow-sm p-6">
+                <h3 className="text-lg font-semibold text-slate-800 dark:text-slate-100 mb-4">Progreso del Proyecto</h3>
                 <div className="space-y-4">
                   <div>
                     <div className="flex items-center justify-between mb-2">
-                      <span className="text-sm font-medium text-slate-700">Progreso General</span>
-                      <span className="text-sm text-slate-600">{project.progress || 0}%</span>
+                      <span className="text-sm font-medium text-slate-700 dark:text-slate-300">Progreso General</span>
+                      <span className="text-sm text-slate-600 dark:text-slate-400">{project.progress || 0}%</span>
                     </div>
                     <Progress value={project.progress || 0} className="h-2" />
                   </div>
                   
                   <div className="grid grid-cols-2 gap-4">
-                    <div className="text-center p-3 bg-slate-50 rounded-lg">
-                      <p className="text-2xl font-bold text-slate-800">{collaborationStats.totalTasks}</p>
-                      <p className="text-xs text-slate-600">Total Tareas</p>
+                    <div className="text-center p-3 bg-slate-50 dark:bg-slate-700 rounded-lg">
+                      <p className="text-2xl font-bold text-slate-800 dark:text-slate-100">{collaborationStats.totalTasks}</p>
+                      <p className="text-xs text-slate-600 dark:text-slate-400">Total Tareas</p>
                     </div>
-                    <div className="text-center p-3 bg-slate-50 rounded-lg">
-                      <p className="text-2xl font-bold text-slate-800">{collaborationStats.completedTasks}</p>
-                      <p className="text-xs text-slate-600">Completadas</p>
+                    <div className="text-center p-3 bg-slate-50 dark:bg-slate-700 rounded-lg">
+                      <p className="text-2xl font-bold text-slate-800 dark:text-slate-100">{collaborationStats.completedTasks}</p>
+                      <p className="text-xs text-slate-600 dark:text-slate-400">Completadas</p>
                     </div>
                   </div>
                 </div>
               </div>
 
               {/* Actividad reciente */}
-              <div className="bg-white rounded-lg border border-slate-200 shadow-sm p-6">
-                <h3 className="text-lg font-semibold text-slate-800 mb-4">Actividad Reciente</h3>
+              <div className="bg-white dark:bg-slate-800 rounded-lg border border-slate-200 dark:border-slate-700 shadow-sm p-6">
+                <h3 className="text-lg font-semibold text-slate-800 dark:text-slate-100 mb-4">Actividad Reciente</h3>
                 <div className="space-y-3">
                   {messages.slice(-3).reverse().map((message) => (
-                    <div key={message.id} className="flex items-center gap-3 p-2 bg-slate-50 rounded-lg">
-                      <div className="p-1 bg-blue-100 rounded-full">
-                        <MessageSquare className="h-3 w-3 text-blue-600" />
+                    <div key={message.id} className="flex items-center gap-3 p-2 bg-slate-50 dark:bg-slate-700 rounded-lg">
+                      <div className="p-1 bg-blue-100 dark:bg-blue-900/30 rounded-full">
+                        <MessageSquare className="h-3 w-3 text-blue-600 dark:text-blue-400" />
                       </div>
                       <div className="flex-1 min-w-0">
-                        <p className="text-sm font-medium text-slate-800 truncate">
+                        <p className="text-sm font-medium text-slate-800 dark:text-slate-100 truncate">
                           {message.sender_name}
                         </p>
-                        <p className="text-xs text-slate-600 truncate">{message.text}</p>
+                        <p className="text-xs text-slate-600 dark:text-slate-300 truncate">{message.text}</p>
                       </div>
-                      <span className="text-xs text-slate-500">
+                      <span className="text-xs text-slate-500 dark:text-slate-400">
                         {formatDateSafe(message.created_at)}
                       </span>
                     </div>
@@ -1110,39 +1115,41 @@ export default function AdminCollaborationPage() {
       {/* Modal Nueva Tarea */}
       {showNewTaskForm && (
         <div className="fixed inset-0 bg-black/50 flex items-center justify-center z-50 p-4">
-          <div className="bg-white rounded-lg max-w-md w-full p-6 shadow-xl">
-            <h3 className="text-lg font-semibold text-slate-800 mb-4">Crear Nueva Tarea</h3>
+          <div className="bg-white dark:bg-slate-800 rounded-lg max-w-md w-full p-6 shadow-xl">
+            <h3 className="text-lg font-semibold text-slate-800 dark:text-slate-100 mb-4">Crear Nueva Tarea</h3>
             
             <div className="space-y-4">
               <div>
-                <Label htmlFor="task-title">Título</Label>
+                <Label htmlFor="task-title" className="text-slate-700 dark:text-slate-300">Título</Label>
                 <Input
                   id="task-title"
                   value={newTask.title}
                   onChange={(e) => setNewTask(prev => ({ ...prev, title: e.target.value }))}
                   placeholder="Título de la tarea"
+                  className="bg-white dark:bg-slate-700 border-slate-200 dark:border-slate-600 text-slate-800 dark:text-slate-200"
                 />
               </div>
               
               <div>
-                <Label htmlFor="task-description">Descripción</Label>
+                <Label htmlFor="task-description" className="text-slate-700 dark:text-slate-300">Descripción</Label>
                 <Textarea
                   id="task-description"
                   value={newTask.description}
                   onChange={(e) => setNewTask(prev => ({ ...prev, description: e.target.value }))}
                   placeholder="Descripción de la tarea"
                   rows={3}
+                  className="bg-white dark:bg-slate-700 border-slate-200 dark:border-slate-600 text-slate-800 dark:text-slate-200"
                 />
               </div>
               
               <div className="grid grid-cols-2 gap-4">
                 <div>
-                  <Label htmlFor="task-priority">Prioridad</Label>
+                  <Label htmlFor="task-priority" className="text-slate-700 dark:text-slate-300">Prioridad</Label>
                   <Select
                     value={newTask.priority}
                     onValueChange={(value: any) => setNewTask(prev => ({ ...prev, priority: value }))}
                   >
-                    <SelectTrigger>
+                    <SelectTrigger className="bg-white dark:bg-slate-700 border-slate-200 dark:border-slate-600 text-slate-800 dark:text-slate-200">
                       <SelectValue />
                     </SelectTrigger>
                     <SelectContent>
@@ -1155,12 +1162,13 @@ export default function AdminCollaborationPage() {
                 </div>
                 
                 <div>
-                  <Label htmlFor="task-due-date">Fecha de vencimiento</Label>
+                  <Label htmlFor="task-due-date" className="text-slate-700 dark:text-slate-300">Fecha de vencimiento</Label>
                   <Input
                     id="task-due-date"
                     type="date"
                     value={newTask.dueDate}
                     onChange={(e) => setNewTask(prev => ({ ...prev, dueDate: e.target.value }))}
+                    className="bg-white dark:bg-slate-700 border-slate-200 dark:border-slate-600 text-slate-800 dark:text-slate-200"
                   />
                 </div>
               </div>
@@ -1170,12 +1178,14 @@ export default function AdminCollaborationPage() {
               <Button
                 variant="outline"
                 onClick={() => setShowNewTaskForm(false)}
+                className="border-slate-200 dark:border-slate-600 text-slate-700 dark:text-slate-200 hover:bg-slate-50 dark:hover:bg-slate-700"
               >
                 Cancelar
               </Button>
               <Button
                 onClick={createTask}
                 disabled={!newTask.title.trim()}
+                className="bg-blue-600 hover:bg-blue-700 dark:bg-blue-700 dark:hover:bg-blue-800 text-white"
               >
                 Crear Tarea
               </Button>

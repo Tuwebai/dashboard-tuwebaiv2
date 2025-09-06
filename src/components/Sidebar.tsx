@@ -28,7 +28,8 @@ import {
   Search,
   GitBranch,
   Target,
-  Calendar
+  Calendar,
+  Bot
 } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
@@ -290,6 +291,38 @@ export default function Sidebar() {
                 {adminNavItem('dashboard', <BarChart3 size={18} />, t('Dashboard'))}
                 {adminNavItem('usuarios', <Users size={18} />, t('Usuarios'), counts.users)}
                 {adminNavItem('proyectos', <FolderKanban size={18} />, t('Proyectos'), counts.projects)}
+                <NavLink
+                  to="/admin/websy-ai"
+                  className={({ isActive }) =>
+                    `relative group cursor-pointer transition-all duration-300 ease-out hover:bg-sidebar-accent dark:hover:bg-slate-700 w-full
+                    ${isActive ? 'bg-gradient-to-r from-sidebar-primary/10 to-sidebar-primary/5 dark:from-blue-900/20 dark:to-blue-800/10' : ''}`
+                  }
+                >
+                  {({ isActive }) => (
+                    <>
+                      <div className="flex items-center px-4 py-3.5 space-x-4">
+                        <div className={`relative p-2 rounded-xl transition-all duration-300 ${
+                          isActive 
+                            ? 'bg-gradient-to-br from-blue-500 to-purple-600 text-white shadow-lg shadow-blue-500/25' 
+                            : 'bg-sidebar-accent dark:bg-slate-700 text-sidebar-foreground/70 dark:text-slate-300 group-hover:bg-sidebar-primary/10 dark:group-hover:bg-blue-900/30 group-hover:text-sidebar-primary dark:group-hover:text-blue-400'
+                        }`}>
+                          <Bot size={18} />
+                          {isActive && (
+                            <div className="absolute -left-2 top-1/2 transform -translate-y-1/2 w-1 h-6 bg-sidebar-primary rounded-r-full"></div>
+                          )}
+                        </div>
+                        <div className="flex-1 min-w-0">
+                          <span className="text-sm font-medium text-sidebar-foreground dark:text-slate-200 group-hover:text-sidebar-primary dark:group-hover:text-blue-400 transition-colors duration-200">
+                            Websy AI
+                          </span>
+                        </div>
+                        <Badge variant="secondary" className="text-xs bg-gradient-to-r from-blue-500 to-purple-600 text-white">
+                          AI
+                        </Badge>
+                      </div>
+                    </>
+                  )}
+                </NavLink>
                 <NavLink
                   to="/admin/fases-tareas"
                   className={({ isActive }) =>

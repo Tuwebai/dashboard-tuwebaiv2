@@ -540,91 +540,97 @@ const Admin = React.memo(() => {
  
 
                            {/* Contenido Principal */}
-              <div className="px-4 sm:px-6 lg:px-8 py-4 sm:py-6 space-y-4 sm:space-y-6 min-h-[calc(100vh-200px)]">
+              <div className="px-3 sm:px-4 lg:px-8 py-3 sm:py-4 lg:py-6 space-y-3 sm:space-y-4 lg:space-y-6 min-h-[calc(100vh-200px)]">
 
               {activeSection === 'dashboard' && (
                 <>
                   {/* Cards de Estadísticas Principales - Solo en Dashboard */}
-                  <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 sm:gap-6 mb-6 sm:mb-8">
+                  <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-3 sm:gap-4 lg:gap-6 mb-4 sm:mb-6 lg:mb-8">
             
             {/* Card Usuarios */}
             <div className="relative group cursor-pointer">
-                      <div className="bg-card dark:bg-slate-800/50 rounded-2xl p-4 sm:p-6 shadow-lg hover:shadow-2xl transition-all duration-500 transform hover:-translate-y-2 border border-border/50 dark:border-slate-700/50 backdrop-blur-sm overflow-hidden bg-gradient-to-br from-primary/5 via-primary/10 to-primary/15 dark:from-blue-500/10 dark:via-blue-500/5 dark:to-indigo-500/10">
-                        <div className="flex items-center justify-center w-12 h-12 sm:w-14 sm:h-14 rounded-2xl mb-3 sm:mb-4 shadow-lg group-hover:scale-110 transition-transform duration-300 bg-gradient-to-br from-blue-500 to-blue-600 text-white">
-                          <Users size={24} className="sm:w-7 sm:h-7" />
-                </div>
-                        <div className="text-2xl sm:text-3xl lg:text-4xl font-bold text-card-foreground mb-2 group-hover:scale-105 transition-transform duration-300">
-                  {usuariosActivos}
-                </div>
-                        <div className="text-sm sm:text-lg font-semibold text-muted-foreground mb-1">
-                  Usuarios Activos
-                </div>
+                      <div className="bg-card dark:bg-slate-800/50 rounded-xl sm:rounded-2xl p-3 sm:p-4 lg:p-6 shadow-lg hover:shadow-2xl transition-all duration-500 transform hover:-translate-y-2 border border-border/50 dark:border-slate-700/50 backdrop-blur-sm overflow-hidden bg-gradient-to-br from-primary/5 via-primary/10 to-primary/15 dark:from-blue-500/10 dark:via-blue-500/5 dark:to-indigo-500/10">
+                        <div className="flex items-center justify-center w-10 h-10 sm:w-12 sm:h-12 lg:w-14 lg:h-14 rounded-xl sm:rounded-2xl mb-2 sm:mb-3 lg:mb-4 shadow-lg group-hover:scale-110 transition-transform duration-300 bg-gradient-to-br from-blue-500 to-blue-600 text-white">
+                          <Users size={20} className="sm:w-6 sm:h-6 lg:w-7 lg:h-7" />
+                        </div>
+                        <div className="text-xl sm:text-2xl lg:text-3xl xl:text-4xl font-bold text-card-foreground mb-1 sm:mb-2 group-hover:scale-105 transition-transform duration-300">
+                          {usuariosActivos}
+                        </div>
+                        <div className="text-xs sm:text-sm lg:text-lg font-semibold text-muted-foreground mb-1">
+                          <span className="hidden sm:inline">Usuarios Activos</span>
+                          <span className="sm:hidden">Usuarios</span>
+                        </div>
                         <div className="text-xs sm:text-sm text-muted-foreground flex items-center space-x-1">
-                  <span className="text-green-600 dark:text-green-400 font-semibold">+{usuariosNuevos}</span>
-                  <span>este mes ({crecimientoUsuarios}%)</span>
-                </div>
+                          <span className="text-green-600 dark:text-green-400 font-semibold">+{usuariosNuevos}</span>
+                          <span className="hidden sm:inline">este mes ({crecimientoUsuarios}%)</span>
+                          <span className="sm:hidden">({crecimientoUsuarios}%)</span>
+                        </div>
                 <div className="absolute inset-0 bg-gradient-to-r from-transparent via-white/10 to-transparent opacity-0 group-hover:opacity-100 transform -skew-x-12 -translate-x-full group-hover:translate-x-full transition-all duration-1000"></div>
               </div>
             </div>
 
             {/* Card Proyectos */}
             <div className="relative group cursor-pointer">
-                      <div className="bg-card dark:bg-slate-800/50 rounded-2xl p-4 sm:p-6 shadow-lg hover:shadow-2xl transition-all duration-500 transform hover:-translate-y-2 border border-border/50 dark:border-slate-700/50 backdrop-blur-sm overflow-hidden bg-gradient-to-br from-emerald-500/5 via-emerald-500/10 to-teal-500/15 dark:from-emerald-500/10 dark:via-emerald-500/5 dark:to-teal-500/10">
-                        <div className="flex items-center justify-center w-12 h-12 sm:w-14 sm:h-14 rounded-2xl mb-3 sm:mb-4 shadow-lg group-hover:scale-110 transition-transform duration-300 bg-gradient-to-br from-emerald-500 to-emerald-600 text-white">
-                          <FolderOpen size={24} className="sm:w-7 sm:h-7" />
-                </div>
-                        <div className="text-2xl sm:text-3xl lg:text-4xl font-bold text-card-foreground mb-2 group-hover:scale-105 transition-transform duration-300">
-                  {proyectosTotales}
-                </div>
-                        <div className="text-sm sm:text-lg font-semibold text-muted-foreground mb-1">
-                  Proyectos Totales
-                </div>
+                      <div className="bg-card dark:bg-slate-800/50 rounded-xl sm:rounded-2xl p-3 sm:p-4 lg:p-6 shadow-lg hover:shadow-2xl transition-all duration-500 transform hover:-translate-y-2 border border-border/50 dark:border-slate-700/50 backdrop-blur-sm overflow-hidden bg-gradient-to-br from-emerald-500/5 via-emerald-500/10 to-teal-500/15 dark:from-emerald-500/10 dark:via-emerald-500/5 dark:to-teal-500/10">
+                        <div className="flex items-center justify-center w-10 h-10 sm:w-12 sm:h-12 lg:w-14 lg:h-14 rounded-xl sm:rounded-2xl mb-2 sm:mb-3 lg:mb-4 shadow-lg group-hover:scale-110 transition-transform duration-300 bg-gradient-to-br from-emerald-500 to-emerald-600 text-white">
+                          <FolderOpen size={20} className="sm:w-6 sm:h-6 lg:w-7 lg:h-7" />
+                        </div>
+                        <div className="text-xl sm:text-2xl lg:text-3xl xl:text-4xl font-bold text-card-foreground mb-1 sm:mb-2 group-hover:scale-105 transition-transform duration-300">
+                          {proyectosTotales}
+                        </div>
+                        <div className="text-xs sm:text-sm lg:text-lg font-semibold text-muted-foreground mb-1">
+                          <span className="hidden sm:inline">Proyectos Totales</span>
+                          <span className="sm:hidden">Proyectos</span>
+                        </div>
                         <div className="text-xs sm:text-sm text-muted-foreground flex items-center space-x-1">
-                  <span className="text-green-600 dark:text-green-400 font-semibold">+{proyectosNuevos}</span>
-                  <span>este mes</span>
-                </div>
+                          <span className="text-green-600 dark:text-green-400 font-semibold">+{proyectosNuevos}</span>
+                          <span className="hidden sm:inline">este mes</span>
+                        </div>
                 <div className="absolute inset-0 bg-gradient-to-r from-transparent via-white/10 to-transparent opacity-0 group-hover:opacity-100 transform -skew-x-12 -translate-x-full group-hover:translate-x-full transition-all duration-1000"></div>
               </div>
             </div>
 
             {/* Card Tickets */}
             <div className="relative group cursor-pointer">
-                      <div className="bg-card dark:bg-slate-800/50 rounded-2xl p-4 sm:p-6 shadow-lg hover:shadow-2xl transition-all duration-500 transform hover:-translate-y-2 border border-border/50 dark:border-slate-700/50 backdrop-blur-sm overflow-hidden bg-gradient-to-br from-amber-500/5 via-amber-500/10 to-orange-500/15 dark:from-amber-500/10 dark:via-amber-500/5 dark:to-orange-500/10">
-                        <div className="flex items-center justify-center w-12 h-12 sm:w-14 sm:h-14 rounded-2xl mb-3 sm:mb-4 shadow-lg group-hover:scale-110 transition-transform duration-300 bg-gradient-to-br from-amber-500 to-amber-600 text-white">
-                          <Ticket size={24} className="sm:w-7 sm:h-7" />
-                </div>
-                        <div className="text-2xl sm:text-3xl lg:text-4xl font-bold text-card-foreground mb-2 group-hover:scale-105 transition-transform duration-300">
-                  {ticketsAbiertos}
-                </div>
-                        <div className="text-sm sm:text-lg font-semibold text-muted-foreground mb-1">
-                  Tickets Abiertos
-                </div>
+                      <div className="bg-card dark:bg-slate-800/50 rounded-xl sm:rounded-2xl p-3 sm:p-4 lg:p-6 shadow-lg hover:shadow-2xl transition-all duration-500 transform hover:-translate-y-2 border border-border/50 dark:border-slate-700/50 backdrop-blur-sm overflow-hidden bg-gradient-to-br from-amber-500/5 via-amber-500/10 to-orange-500/15 dark:from-amber-500/10 dark:via-amber-500/5 dark:to-orange-500/10">
+                        <div className="flex items-center justify-center w-10 h-10 sm:w-12 sm:h-12 lg:w-14 lg:h-14 rounded-xl sm:rounded-2xl mb-2 sm:mb-3 lg:mb-4 shadow-lg group-hover:scale-110 transition-transform duration-300 bg-gradient-to-br from-amber-500 to-amber-600 text-white">
+                          <Ticket size={20} className="sm:w-6 sm:h-6 lg:w-7 lg:h-7" />
+                        </div>
+                        <div className="text-xl sm:text-2xl lg:text-3xl xl:text-4xl font-bold text-card-foreground mb-1 sm:mb-2 group-hover:scale-105 transition-transform duration-300">
+                          {ticketsAbiertos}
+                        </div>
+                        <div className="text-xs sm:text-sm lg:text-lg font-semibold text-muted-foreground mb-1">
+                          <span className="hidden sm:inline">Tickets Abiertos</span>
+                          <span className="sm:hidden">Tickets</span>
+                        </div>
                         <div className="text-xs sm:text-sm text-muted-foreground flex items-center space-x-1">
-                  <span className="text-red-600 dark:text-red-400 font-semibold">{ticketsUrgentes}</span>
-                  <span>urgentes, </span>
-                  <span className="text-blue-600 dark:text-blue-400 font-semibold">{ticketsEnProgreso}</span>
-                  <span>en progreso</span>
-                </div>
+                          <span className="text-red-600 dark:text-red-400 font-semibold">{ticketsUrgentes}</span>
+                          <span className="hidden sm:inline">urgentes, </span>
+                          <span className="text-blue-600 dark:text-blue-400 font-semibold">{ticketsEnProgreso}</span>
+                          <span className="hidden sm:inline">en progreso</span>
+                        </div>
                 <div className="absolute inset-0 bg-gradient-to-r from-transparent via-white/10 to-transparent opacity-0 group-hover:opacity-100 transform -skew-x-12 -translate-x-full group-hover:translate-x-full transition-all duration-1000"></div>
               </div>
             </div>
 
             {/* Card Ingresos */}
             <div className="relative group cursor-pointer">
-                      <div className="bg-card dark:bg-slate-800/50 rounded-2xl p-4 sm:p-6 shadow-lg hover:shadow-2xl transition-all duration-500 transform hover:-translate-y-2 border border-border/50 dark:border-slate-700/50 backdrop-blur-sm overflow-hidden bg-gradient-to-br from-violet-500/5 via-violet-500/10 to-purple-500/15 dark:from-violet-500/10 dark:via-violet-500/5 dark:to-purple-500/10">
-                        <div className="flex items-center justify-center w-12 h-12 sm:w-14 sm:h-14 rounded-2xl mb-3 sm:mb-4 shadow-lg group-hover:scale-110 transition-transform duration-300 bg-gradient-to-br from-violet-500 to-violet-600 text-white">
-                          <DollarSign size={24} className="sm:w-7 sm:h-7" />
-                </div>
-                        <div className="text-2xl sm:text-3xl lg:text-4xl font-bold text-card-foreground mb-2 group-hover:scale-105 transition-transform duration-300">
-                  ${ingresosTotales.toLocaleString()}
-                </div>
-                        <div className="text-sm sm:text-lg font-semibold text-muted-foreground mb-1">
-                  Ingresos Totales
-                </div>
+                      <div className="bg-card dark:bg-slate-800/50 rounded-xl sm:rounded-2xl p-3 sm:p-4 lg:p-6 shadow-lg hover:shadow-2xl transition-all duration-500 transform hover:-translate-y-2 border border-border/50 dark:border-slate-700/50 backdrop-blur-sm overflow-hidden bg-gradient-to-br from-violet-500/5 via-violet-500/10 to-purple-500/15 dark:from-violet-500/10 dark:via-violet-500/5 dark:to-purple-500/10">
+                        <div className="flex items-center justify-center w-10 h-10 sm:w-12 sm:h-12 lg:w-14 lg:h-14 rounded-xl sm:rounded-2xl mb-2 sm:mb-3 lg:mb-4 shadow-lg group-hover:scale-110 transition-transform duration-300 bg-gradient-to-br from-violet-500 to-violet-600 text-white">
+                          <DollarSign size={20} className="sm:w-6 sm:h-6 lg:w-7 lg:h-7" />
+                        </div>
+                        <div className="text-lg sm:text-xl lg:text-2xl xl:text-3xl font-bold text-card-foreground mb-1 sm:mb-2 group-hover:scale-105 transition-transform duration-300">
+                          <span className="hidden sm:inline">${ingresosTotales.toLocaleString()}</span>
+                          <span className="sm:hidden">${ingresosTotales.toLocaleString().slice(0, 6)}...</span>
+                        </div>
+                        <div className="text-xs sm:text-sm lg:text-lg font-semibold text-muted-foreground mb-1">
+                          <span className="hidden sm:inline">Ingresos Totales</span>
+                          <span className="sm:hidden">Ingresos</span>
+                        </div>
                         <div className="text-xs sm:text-sm text-muted-foreground flex items-center space-x-1">
-                  <span className="text-green-600 dark:text-green-400 font-semibold">${ingresosEsteMes.toLocaleString()}</span>
-                  <span>este mes</span>
-                </div>
+                          <span className="text-green-600 dark:text-green-400 font-semibold">${ingresosEsteMes.toLocaleString()}</span>
+                          <span className="hidden sm:inline">este mes</span>
+                        </div>
                 <div className="absolute inset-0 bg-gradient-to-r from-transparent via-white/10 to-transparent opacity-0 group-hover:opacity-100 transform -skew-x-12 -translate-x-full group-hover:translate-x-full transition-all duration-1000"></div>
               </div>
             </div>

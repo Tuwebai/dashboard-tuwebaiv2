@@ -98,6 +98,11 @@ export default function DashboardLayout({ children, dashboardProps }: DashboardL
     announceToScreenReader(`Navegando a ${pageTitle}`, 'polite');
   }, [location.pathname, announceToScreenReader]);
 
+  // Cerrar sidebar móvil al cambiar de página
+  useEffect(() => {
+    setIsMobileMenuOpen(false);
+  }, [location.pathname]);
+
   // Mostrar loading mientras se verifica la autenticación
   if (loading) {
     return (

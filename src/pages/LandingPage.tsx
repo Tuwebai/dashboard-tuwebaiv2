@@ -8,6 +8,7 @@ import { Label } from '@/components/ui/label';
 import { Card } from '@/components/ui/card';
 import { toast } from '@/hooks/use-toast';
 import ThemeToggle from '@/components/ThemeToggle';
+import { useLandingStats } from '@/hooks/useLandingStats';
 import { 
   Eye, 
   EyeOff, 
@@ -25,7 +26,8 @@ import {
   Clock,
   Star,
   RefreshCw,
-  X
+  X,
+  MessageSquare
 } from 'lucide-react';
 
 const LandingPage = React.memo(() => {
@@ -40,6 +42,7 @@ const LandingPage = React.memo(() => {
   const { login, loginWithGoogle, loginWithGithub } = useApp();
   const { theme, toggleTheme } = useTheme();
   const navigate = useNavigate();
+  const { stats, loading: statsLoading, error: statsError } = useLandingStats();
 
   // Estilos CSS optimizados con useMemo
   const cssStyles = useMemo(() => `
@@ -262,34 +265,46 @@ const LandingPage = React.memo(() => {
     }}>
       {/* Header fijo */}
       <header className="fixed top-0 left-0 right-0 z-50 bg-background/95 backdrop-blur-md border-b border-border" style={{ zIndex: 9999 }}>
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-          <div className="header-container">
+        <div className="max-w-7xl mx-auto px-3 sm:px-4 lg:px-8">
+          <div className="flex items-center justify-between py-3">
             {/* Logo y nombre - IZQUIERDA */}
-            <div className="header-left space-x-3">
-              <div className="bg-gradient-to-r from-cyan-500 to-emerald-600 rounded-xl p-2">
-                <img src="/logoweb.jpg" alt="TuWebAI" className="h-8 w-8 object-contain rounded-lg" loading="eager" />
+            <div className="flex items-center space-x-2 sm:space-x-3 flex-shrink-0">
+              <div className="bg-gradient-to-r from-cyan-500 to-emerald-600 rounded-lg sm:rounded-xl p-1.5 sm:p-2">
+                <img src="/logoweb.jpg" alt="TuWebAI" className="h-6 w-6 sm:h-8 sm:w-8 object-contain rounded" loading="eager" />
               </div>
-              <span className="text-xl font-bold bg-gradient-to-r from-foreground to-muted-foreground bg-clip-text text-transparent">
+              <span className="text-sm sm:text-lg lg:text-xl font-bold bg-gradient-to-r from-foreground to-muted-foreground bg-clip-text text-transparent hidden sm:block">
                 TuWebAI - Dashboard Profesional
+              </span>
+              <span className="text-sm font-bold bg-gradient-to-r from-foreground to-muted-foreground bg-clip-text text-transparent sm:hidden">
+                TuWebAI
               </span>
             </div>
 
-            {/* Social proof - CENTRO */}
-            <div className="header-center">
-              <div className="hidden lg:flex items-center space-x-2 text-sm text-muted-foreground bg-muted/50 px-4 py-2 rounded-full">
+            {/* Social proof - CENTRO (solo en desktop) */}
+            <div className="hidden lg:flex items-center justify-center flex-1">
+              <div className="flex items-center space-x-2 text-sm text-muted-foreground bg-muted/50 px-4 py-2 rounded-full">
                 <div className="w-2 h-2 bg-green-500 rounded-full animate-pulse"></div>
-                <span className="font-medium">Más de 1,500 equipos confían en nosotros</span>
+                <span className="font-medium">
+                  {statsLoading ? (
+                    <div className="flex items-center space-x-2">
+                      <RefreshCw className="h-3 w-3 animate-spin" />
+                      <span>Cargando...</span>
+                    </div>
+                  ) : (
+                    `Más de ${stats.totalTeams.toLocaleString()} equipos confían en nosotros`
+                  )}
+                </span>
               </div>
             </div>
 
             {/* Botones - DERECHA */}
-            <div className="header-right space-x-3">
-              <ThemeToggle variant="outline" size="sm" />
-              <div className="hidden sm:flex items-center space-x-2">
+            <div className="flex items-center space-x-1 sm:space-x-2 lg:space-x-3">
+              <ThemeToggle variant="outline" size="sm" className="hidden sm:flex" />
+              <div className="hidden md:flex items-center space-x-2">
                 <Button 
                   variant="ghost" 
                   size="sm"
-                  className="text-muted-foreground hover:text-foreground"
+                  className="text-muted-foreground hover:text-foreground text-xs sm:text-sm"
                   onClick={() => navigate('/login')}
                 >
                   Iniciar Sesión
@@ -297,6 +312,7 @@ const LandingPage = React.memo(() => {
                 <Button 
                   variant="outline"
                   size="sm"
+                  className="text-xs sm:text-sm"
                   onClick={() => navigate('/pricing')}
                 >
                   Planes
@@ -304,10 +320,11 @@ const LandingPage = React.memo(() => {
               </div>
               <Button 
                 size="sm"
-                className="bg-gradient-to-r from-cyan-500 to-emerald-600 hover:from-cyan-600 hover:to-emerald-700"
+                className="bg-gradient-to-r from-cyan-500 to-emerald-600 hover:from-cyan-600 hover:to-emerald-700 text-xs sm:text-sm px-2 sm:px-4"
                 onClick={() => setActiveDemo('dashboard')}
               >
-                Demo Gratuito
+                <span className="hidden sm:inline">Demo Gratuito</span>
+                <span className="sm:hidden">Demo</span>
               </Button>
             </div>
           </div>
@@ -315,57 +332,60 @@ const LandingPage = React.memo(() => {
       </header>
 
       {/* Hero Section */}
-      <section className="pt-20 pb-20 bg-gradient-to-br from-muted/50 to-background min-h-screen flex items-center">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 w-full">
-          <div className="grid lg:grid-cols-2 gap-12 items-center w-full">
+      <section className="pt-16 sm:pt-20 pb-12 sm:pb-20 bg-gradient-to-br from-muted/50 to-background min-h-screen flex items-center">
+        <div className="max-w-7xl mx-auto px-3 sm:px-4 lg:px-8 w-full">
+          <div className="grid lg:grid-cols-2 gap-8 lg:gap-12 items-center w-full">
             {/* Contenido del hero */}
-            <div className="space-y-8">
-              <div className="space-y-6">
+            <div className="space-y-6 sm:space-y-8 order-2 lg:order-1">
+              <div className="space-y-4 sm:space-y-6">
                 {/* Value Props Badges */}
-                <div className="flex flex-wrap gap-3">
-                  <div className="inline-flex items-center px-4 py-2 rounded-full bg-green-100 text-green-800 text-sm font-medium">
-                    <Zap className="h-4 w-4 mr-2" />
-                    Setup en 5 minutos
+                <div className="flex flex-wrap gap-2 sm:gap-3">
+                  <div className="inline-flex items-center px-3 sm:px-4 py-1.5 sm:py-2 rounded-full bg-green-100 text-green-800 text-xs sm:text-sm font-medium">
+                    <Zap className="h-3 w-3 sm:h-4 sm:w-4 mr-1.5 sm:mr-2" />
+                    <span className="hidden sm:inline">Setup en 5 minutos</span>
+                    <span className="sm:hidden">5 min setup</span>
                   </div>
-                  <div className="inline-flex items-center px-4 py-2 rounded-full bg-blue-100 text-blue-800 text-sm font-medium">
-                    <CheckCircle className="h-4 w-4 mr-2" />
-                    Prueba gratuita 14 días
+                  <div className="inline-flex items-center px-3 sm:px-4 py-1.5 sm:py-2 rounded-full bg-blue-100 text-blue-800 text-xs sm:text-sm font-medium">
+                    <CheckCircle className="h-3 w-3 sm:h-4 sm:w-4 mr-1.5 sm:mr-2" />
+                    <span className="hidden sm:inline">Prueba gratuita 14 días</span>
+                    <span className="sm:hidden">14 días gratis</span>
                   </div>
-                  <div className="inline-flex items-center px-4 py-2 rounded-full bg-purple-100 text-purple-800 text-sm font-medium">
-                    <Shield className="h-4 w-4 mr-2" />
-                    Sin tarjeta de crédito
+                  <div className="inline-flex items-center px-3 sm:px-4 py-1.5 sm:py-2 rounded-full bg-purple-100 text-purple-800 text-xs sm:text-sm font-medium">
+                    <Shield className="h-3 w-3 sm:h-4 sm:w-4 mr-1.5 sm:mr-2" />
+                    <span className="hidden sm:inline">Sin tarjeta de crédito</span>
+                    <span className="sm:hidden">Sin tarjeta</span>
                   </div>
                 </div>
 
-                <h1 className="text-5xl lg:text-6xl font-bold text-foreground leading-tight">
+                <h1 className="text-3xl sm:text-4xl md:text-5xl lg:text-6xl font-bold text-foreground leading-tight">
                   El dashboard que necesitas para{' '}
                   <span className="bg-gradient-to-r from-cyan-500 to-emerald-600 bg-clip-text text-transparent">
                     escalar tu negocio
                   </span>
                 </h1>
-                <p className="text-xl text-muted-foreground leading-relaxed max-w-2xl">
+                <p className="text-base sm:text-lg lg:text-xl text-muted-foreground leading-relaxed max-w-2xl">
                   Gestiona proyectos, equipos y métricas desde una sola plataforma. Sin complicaciones, sin curvas de aprendizaje.
                 </p>
 
                 {/* Social Proof */}
-                <div className="flex items-center space-x-6">
+                <div className="flex items-center space-x-4 sm:space-x-6">
                   <div className="flex items-center space-x-2">
-                    <div className="flex -space-x-2">
-                      <div className="w-8 h-8 bg-gradient-to-r from-blue-500 to-blue-600 rounded-full border-2 border-white flex items-center justify-center">
+                    <div className="flex -space-x-1 sm:-space-x-2">
+                      <div className="w-6 h-6 sm:w-8 sm:h-8 bg-gradient-to-r from-blue-500 to-blue-600 rounded-full border-2 border-white flex items-center justify-center">
                         <span className="text-white text-xs font-bold">A</span>
                       </div>
-                      <div className="w-8 h-8 bg-gradient-to-r from-green-500 to-green-600 rounded-full border-2 border-white flex items-center justify-center">
+                      <div className="w-6 h-6 sm:w-8 sm:h-8 bg-gradient-to-r from-green-500 to-green-600 rounded-full border-2 border-white flex items-center justify-center">
                         <span className="text-white text-xs font-bold">B</span>
                       </div>
-                      <div className="w-8 h-8 bg-gradient-to-r from-purple-500 to-purple-600 rounded-full border-2 border-white flex items-center justify-center">
+                      <div className="w-6 h-6 sm:w-8 sm:h-8 bg-gradient-to-r from-purple-500 to-purple-600 rounded-full border-2 border-white flex items-center justify-center">
                         <span className="text-white text-xs font-bold">C</span>
                       </div>
-                      <div className="w-8 h-8 bg-gradient-to-r from-orange-500 to-orange-600 rounded-full border-2 border-white flex items-center justify-center">
+                      <div className="w-6 h-6 sm:w-8 sm:h-8 bg-gradient-to-r from-orange-500 to-orange-600 rounded-full border-2 border-white flex items-center justify-center">
                         <span className="text-white text-xs font-bold">+</span>
                       </div>
                     </div>
                     <div>
-                      <p className="text-sm font-medium text-foreground">Usado por 127+ equipos</p>
+                      <p className="text-xs sm:text-sm font-medium text-foreground">Usado por {stats.totalTeams}+ equipos</p>
                       <p className="text-xs text-muted-foreground">Empresas que confían en nosotros</p>
                     </div>
                   </div>
@@ -373,39 +393,41 @@ const LandingPage = React.memo(() => {
               </div>
 
               {/* CTAs principales */}
-              <div className="flex flex-col sm:flex-row gap-4">
+              <div className="flex flex-col sm:flex-row gap-3 sm:gap-4">
                 <Button 
                   size="lg"
-                  className="h-14 px-8 bg-gradient-to-r from-cyan-500 to-emerald-600 hover:from-cyan-600 hover:to-emerald-700 text-white font-semibold"
+                  className="h-12 sm:h-14 px-6 sm:px-8 bg-gradient-to-r from-cyan-500 to-emerald-600 hover:from-cyan-600 hover:to-emerald-700 text-white font-semibold text-sm sm:text-base"
                   onClick={() => navigate('/register')}
                 >
                   <div className="flex items-center space-x-2">
-                    <Zap className="h-5 w-5" />
-                    <span>Probar gratis por 14 días</span>
+                    <Zap className="h-4 w-4 sm:h-5 sm:w-5" />
+                    <span className="hidden sm:inline">Probar gratis por 14 días</span>
+                    <span className="sm:hidden">Probar gratis</span>
                   </div>
                 </Button>
                 <Button 
                   size="lg"
                   variant="outline"
-                  className="h-14 px-8 border-2"
+                  className="h-12 sm:h-14 px-6 sm:px-8 border-2 text-sm sm:text-base"
                   onClick={() => setActiveDemo('dashboard')}
                 >
                   <div className="flex items-center space-x-2">
-                    <Eye className="h-5 w-5" />
-                    <span>Ver demo en vivo</span>
+                    <Eye className="h-4 w-4 sm:h-5 sm:w-5" />
+                    <span className="hidden sm:inline">Ver demo en vivo</span>
+                    <span className="sm:hidden">Ver demo</span>
                   </div>
                 </Button>
               </div>
 
               {/* Formulario de login compacto */}
-              <div className="mt-8">
-                <Card className="p-6 shadow-xl border-0 bg-card/80 backdrop-blur-sm">
-                  <div className="space-y-4">
-                    <h3 className="text-lg font-semibold text-card-foreground text-center">¿Ya tienes cuenta?</h3>
-                    <form onSubmit={handleSubmit} className="space-y-4">
-                      <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+              <div className="mt-6 sm:mt-8">
+                <Card className="p-4 sm:p-6 shadow-xl border-0 bg-card/80 backdrop-blur-sm">
+                  <div className="space-y-3 sm:space-y-4">
+                    <h3 className="text-base sm:text-lg font-semibold text-card-foreground text-center">¿Ya tienes cuenta?</h3>
+                    <form onSubmit={handleSubmit} className="space-y-3 sm:space-y-4">
+                      <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 sm:gap-4">
                         <div>
-                          <Label htmlFor="email" className="text-sm font-medium text-card-foreground">Email</Label>
+                          <Label htmlFor="email" className="text-xs sm:text-sm font-medium text-card-foreground">Email</Label>
                           <Input
                             id="email"
                             type="email"
@@ -413,11 +435,11 @@ const LandingPage = React.memo(() => {
                             value={email}
                             onChange={(e) => setEmail(e.target.value)}
                             required
-                            className="mt-1 h-10 bg-input text-foreground border-border"
+                            className="mt-1 h-9 sm:h-10 bg-input text-foreground border-border text-sm"
                           />
                         </div>
                         <div>
-                          <Label htmlFor="password" className="text-sm font-medium text-card-foreground">Contraseña</Label>
+                          <Label htmlFor="password" className="text-xs sm:text-sm font-medium text-card-foreground">Contraseña</Label>
                           <div className="relative mt-1">
                             <Input
                               id="password"
@@ -426,33 +448,34 @@ const LandingPage = React.memo(() => {
                               value={password}
                               onChange={(e) => setPassword(e.target.value)}
                               required
-                              className="h-10 pr-12 bg-input text-foreground border-border"
+                              className="h-9 sm:h-10 pr-12 bg-input text-foreground border-border text-sm"
                             />
                             <Button
                               type="button"
                               variant="ghost"
                               size="sm"
-                              className="absolute right-0 top-0 h-full px-3"
+                              className="absolute right-0 top-0 h-full px-2 sm:px-3"
                               onClick={() => setShowPassword(!showPassword)}
                             >
-                              {showPassword ? <EyeOff className="h-4 w-4" /> : <Eye className="h-4 w-4" />}
+                              {showPassword ? <EyeOff className="h-3 w-3 sm:h-4 sm:w-4" /> : <Eye className="h-3 w-3 sm:h-4 sm:w-4" />}
                             </Button>
                           </div>
                         </div>
                       </div>
                       <Button 
                         type="submit" 
-                        className="w-full h-10 bg-gradient-to-r from-cyan-500 to-emerald-600 hover:from-cyan-600 hover:to-emerald-700"
+                        className="w-full h-9 sm:h-10 bg-gradient-to-r from-cyan-500 to-emerald-600 hover:from-cyan-600 hover:to-emerald-700 text-sm"
                         disabled={isLoading}
                       >
                         {isLoading ? (
                           <div className="flex items-center space-x-2">
-                            <RefreshCw className="h-4 w-4 animate-spin" />
-                            <span>Iniciando sesión...</span>
+                            <RefreshCw className="h-3 w-3 sm:h-4 sm:w-4 animate-spin" />
+                            <span className="hidden sm:inline">Iniciando sesión...</span>
+                            <span className="sm:hidden">Iniciando...</span>
                           </div>
                         ) : (
                           <div className="flex items-center space-x-2">
-                            <Zap className="h-4 w-4" />
+                            <Zap className="h-3 w-3 sm:h-4 sm:w-4" />
                             <span>Iniciar Sesión</span>
                           </div>
                         )}
@@ -464,19 +487,21 @@ const LandingPage = React.memo(() => {
                         variant="outline" 
                         onClick={handleGoogleLogin}
                         disabled={isLoading}
-                        className="h-10"
+                        className="h-9 sm:h-10 text-xs sm:text-sm"
                       >
-                        <Chrome className="h-4 w-4 mr-2" />
-                        Continuar con Google
+                        <Chrome className="h-3 w-3 sm:h-4 sm:w-4 mr-1 sm:mr-2" />
+                        <span className="hidden sm:inline">Continuar con Google</span>
+                        <span className="sm:hidden">Google</span>
                       </Button>
                       <Button 
                         variant="outline" 
                         onClick={handleGithubLogin}
                         disabled={isLoading}
-                        className="h-10"
+                        className="h-9 sm:h-10 text-xs sm:text-sm"
                       >
-                        <Github className="h-4 w-4 mr-2" />
-                        Continuar con GitHub
+                        <Github className="h-3 w-3 sm:h-4 sm:w-4 mr-1 sm:mr-2" />
+                        <span className="hidden sm:inline">Continuar con GitHub</span>
+                        <span className="sm:hidden">GitHub</span>
                       </Button>
                     </div>
                   </div>
@@ -485,53 +510,171 @@ const LandingPage = React.memo(() => {
             </div>
 
             {/* Mockup 3D del dashboard */}
-            <div className="relative w-full">
-              <div className="relative transform rotate-3 hover:rotate-0 transition-transform duration-700 ease-out max-w-md mx-auto">
-                <div className="bg-gradient-to-br from-neutral-800 to-neutral-900 rounded-2xl p-6 shadow-2xl">
-                  <div className="bg-card rounded-xl p-4 shadow-lg">
-                    <div className="flex items-center justify-between mb-4">
+            <div className="relative w-full order-1 lg:order-2">
+              <div className="relative transform rotate-1 sm:rotate-2 lg:rotate-3 hover:rotate-0 transition-transform duration-700 ease-out max-w-sm sm:max-w-md mx-auto">
+                <div className="bg-gradient-to-br from-neutral-800 to-neutral-900 rounded-xl sm:rounded-2xl p-4 sm:p-6 shadow-2xl">
+                  <div className="bg-card rounded-lg sm:rounded-xl p-3 sm:p-4 shadow-lg">
+                    <div className="flex items-center justify-between mb-3 sm:mb-4">
                       <div className="flex items-center space-x-2">
-                        <div className="w-8 h-8 bg-gradient-to-r from-cyan-500 to-emerald-600 rounded-lg"></div>
-                        <span className="font-semibold text-card-foreground">Dashboard</span>
+                        <div className="w-6 h-6 sm:w-8 sm:h-8 bg-gradient-to-r from-cyan-500 to-emerald-600 rounded-lg"></div>
+                        <span className="font-semibold text-card-foreground text-sm sm:text-base">Dashboard</span>
                       </div>
-                      <div className="flex space-x-2">
-                        <div className="w-3 h-3 bg-red-500 rounded-full"></div>
-                        <div className="w-3 h-3 bg-yellow-500 rounded-full"></div>
-                        <div className="w-3 h-3 bg-green-500 rounded-full"></div>
+                      <div className="flex space-x-1 sm:space-x-2">
+                        <div className="w-2 h-2 sm:w-3 sm:h-3 bg-red-500 rounded-full"></div>
+                        <div className="w-2 h-2 sm:w-3 sm:h-3 bg-yellow-500 rounded-full"></div>
+                        <div className="w-2 h-2 sm:w-3 sm:h-3 bg-green-500 rounded-full"></div>
                       </div>
                     </div>
-                    <div className="grid grid-cols-2 gap-4">
-                      <div className="bg-blue-500/10 rounded-lg p-3">
-                        <div className="flex items-center space-x-2 mb-2">
-                          <Users className="h-4 w-4 text-blue-600" />
-                          <span className="text-sm font-medium text-card-foreground">Usuarios</span>
+                    {/* Métricas Principales */}
+                    <div className="grid grid-cols-2 gap-2 sm:gap-4 mb-4 sm:mb-6">
+                      <div className="bg-gradient-to-br from-blue-500/20 to-blue-600/20 rounded-lg sm:rounded-xl p-3 sm:p-4 border border-blue-200/50 shadow-lg hover:shadow-xl transition-all duration-300 group">
+                        <div className="flex items-center justify-between mb-2 sm:mb-3">
+                          <div className="w-8 h-8 sm:w-10 sm:h-10 bg-gradient-to-br from-blue-500 to-blue-600 rounded-lg flex items-center justify-center shadow-md group-hover:scale-110 transition-transform duration-300">
+                            <Users className="h-4 w-4 sm:h-5 sm:w-5 text-white" />
+                          </div>
+                          <div className="text-right">
+                            <span className="text-xs font-medium text-green-600 bg-green-100 px-1.5 sm:px-2 py-0.5 sm:py-1 rounded-full">+12%</span>
+                          </div>
                         </div>
-                        <div className="text-2xl font-bold text-card-foreground">6</div>
-                        <div className="text-xs text-muted-foreground">+0 este mes</div>
+                        <div className="text-xl sm:text-2xl lg:text-3xl font-bold text-gray-900 mb-1">2,847</div>
+                        <div className="text-xs sm:text-sm font-medium text-gray-600 mb-1">Usuarios Activos</div>
+                        <div className="text-xs text-gray-500">+342 este mes</div>
                       </div>
-                      <div className="bg-green-500/10 rounded-lg p-3">
-                        <div className="flex items-center space-x-2 mb-2">
-                          <Target className="h-4 w-4 text-green-600" />
-                          <span className="text-sm font-medium text-card-foreground">Proyectos</span>
+                      <div className="bg-gradient-to-br from-green-500/20 to-green-600/20 rounded-lg sm:rounded-xl p-3 sm:p-4 border border-green-200/50 shadow-lg hover:shadow-xl transition-all duration-300 group">
+                        <div className="flex items-center justify-between mb-2 sm:mb-3">
+                          <div className="w-8 h-8 sm:w-10 sm:h-10 bg-gradient-to-br from-green-500 to-green-600 rounded-lg flex items-center justify-center shadow-md group-hover:scale-110 transition-transform duration-300">
+                            <Target className="h-4 w-4 sm:h-5 sm:w-5 text-white" />
+                          </div>
+                          <div className="text-right">
+                            <span className="text-xs font-medium text-green-600 bg-green-100 px-1.5 sm:px-2 py-0.5 sm:py-1 rounded-full">+8%</span>
+                          </div>
                         </div>
-                        <div className="text-2xl font-bold text-card-foreground">5</div>
-                        <div className="text-xs text-muted-foreground">+0 este mes</div>
+                        <div className="text-xl sm:text-2xl lg:text-3xl font-bold text-gray-900 mb-1">127</div>
+                        <div className="text-xs sm:text-sm font-medium text-gray-600 mb-1">Proyectos Activos</div>
+                        <div className="text-xs text-gray-500">+15 este mes</div>
                       </div>
-                      <div className="bg-orange-500/10 rounded-lg p-3">
-                        <div className="flex items-center space-x-2 mb-2">
-                          <Activity className="h-4 w-4 text-orange-600" />
-                          <span className="text-sm font-medium text-card-foreground">Tickets</span>
+                      <div className="bg-gradient-to-br from-orange-500/20 to-orange-600/20 rounded-lg sm:rounded-xl p-3 sm:p-4 border border-orange-200/50 shadow-lg hover:shadow-xl transition-all duration-300 group">
+                        <div className="flex items-center justify-between mb-2 sm:mb-3">
+                          <div className="w-8 h-8 sm:w-10 sm:h-10 bg-gradient-to-br from-orange-500 to-orange-600 rounded-lg flex items-center justify-center shadow-md group-hover:scale-110 transition-transform duration-300">
+                            <Activity className="h-4 w-4 sm:h-5 sm:w-5 text-white" />
+                          </div>
+                          <div className="text-right">
+                            <span className="text-xs font-medium text-red-600 bg-red-100 px-1.5 sm:px-2 py-0.5 sm:py-1 rounded-full">-5%</span>
+                          </div>
                         </div>
-                        <div className="text-2xl font-bold text-card-foreground">1</div>
-                        <div className="text-xs text-muted-foreground">0 urgentes</div>
+                        <div className="text-xl sm:text-2xl lg:text-3xl font-bold text-gray-900 mb-1">23</div>
+                        <div className="text-xs sm:text-sm font-medium text-gray-600 mb-1">Tickets Abiertos</div>
+                        <div className="text-xs text-gray-500">3 urgentes</div>
                       </div>
-                      <div className="bg-purple-500/10 rounded-lg p-3">
-                        <div className="flex items-center space-x-2 mb-2">
-                          <TrendingUp className="h-4 w-4 text-purple-600" />
-                          <span className="text-sm font-medium text-card-foreground">Ingresos</span>
+                      <div className="bg-gradient-to-br from-purple-500/20 to-purple-600/20 rounded-lg sm:rounded-xl p-3 sm:p-4 border border-purple-200/50 shadow-lg hover:shadow-xl transition-all duration-300 group">
+                        <div className="flex items-center justify-between mb-2 sm:mb-3">
+                          <div className="w-8 h-8 sm:w-10 sm:h-10 bg-gradient-to-br from-purple-500 to-purple-600 rounded-lg flex items-center justify-center shadow-md group-hover:scale-110 transition-transform duration-300">
+                            <TrendingUp className="h-4 w-4 sm:h-5 sm:w-5 text-white" />
+                          </div>
+                          <div className="text-right">
+                            <span className="text-xs font-medium text-green-600 bg-green-100 px-1.5 sm:px-2 py-0.5 sm:py-1 rounded-full">+24%</span>
+                          </div>
                         </div>
-                        <div className="text-2xl font-bold text-card-foreground">$0</div>
-                        <div className="text-xs text-muted-foreground">$0 este mes</div>
+                        <div className="text-xl sm:text-2xl lg:text-3xl font-bold text-gray-900 mb-1">$47.2K</div>
+                        <div className="text-xs sm:text-sm font-medium text-gray-600 mb-1">Ingresos Mensuales</div>
+                        <div className="text-xs text-gray-500">+$9.1K este mes</div>
+                      </div>
+                    </div>
+
+                    {/* Progreso de Proyectos */}
+                    <div className="bg-white/80 backdrop-blur-sm rounded-lg sm:rounded-xl p-3 sm:p-4 border border-gray-200/50 shadow-lg mb-3 sm:mb-4">
+                      <div className="flex items-center gap-2 mb-3 sm:mb-4">
+                        <BarChart3 className="h-4 w-4 sm:h-5 sm:w-5 text-blue-500" />
+                        <h3 className="text-sm sm:text-base lg:text-lg font-semibold text-gray-800">Progreso de Proyectos</h3>
+                        <span className="text-xs bg-blue-100 text-blue-700 px-1.5 sm:px-2 py-0.5 sm:py-1 rounded-full ml-auto">87%</span>
+                      </div>
+                      <div className="space-y-2 sm:space-y-3">
+                        <div>
+                          <div className="flex justify-between text-xs sm:text-sm text-gray-600 mb-1">
+                            <span className="truncate">Dashboard Admin</span>
+                            <span>78%</span>
+                          </div>
+                          <div className="w-full bg-gray-200 rounded-full h-1.5 sm:h-2">
+                            <div className="bg-gradient-to-r from-orange-500 to-orange-600 h-1.5 sm:h-2 rounded-full" style={{width: '78%'}}></div>
+                          </div>
+                        </div>
+                        <div>
+                          <div className="flex justify-between text-xs sm:text-sm text-gray-600 mb-1">
+                            <span className="truncate">API Backend</span>
+                            <span>92%</span>
+                          </div>
+                          <div className="w-full bg-gray-200 rounded-full h-1.5 sm:h-2">
+                            <div className="bg-gradient-to-r from-blue-500 to-blue-600 h-1.5 sm:h-2 rounded-full" style={{width: '92%'}}></div>
+                          </div>
+                        </div>
+                        <div>
+                          <div className="flex justify-between text-xs sm:text-sm text-gray-600 mb-1">
+                            <span className="truncate">Frontend React</span>
+                            <span>95%</span>
+                          </div>
+                          <div className="w-full bg-gray-200 rounded-full h-1.5 sm:h-2">
+                            <div className="bg-gradient-to-r from-green-500 to-green-600 h-1.5 sm:h-2 rounded-full" style={{width: '95%'}}></div>
+                          </div>
+                        </div>
+                      </div>
+                    </div>
+
+                    {/* Actividad Reciente */}
+                    <div className="bg-white/80 backdrop-blur-sm rounded-lg sm:rounded-xl p-3 sm:p-4 border border-gray-200/50 shadow-lg mb-3 sm:mb-4">
+                      <div className="flex items-center gap-2 mb-3 sm:mb-4">
+                        <Activity className="h-4 w-4 sm:h-5 sm:w-5 text-green-500" />
+                        <h3 className="text-sm sm:text-base lg:text-lg font-semibold text-gray-800">Actividad Reciente</h3>
+                      </div>
+                      <div className="space-y-2 sm:space-y-3">
+                        <div className="flex items-center gap-2 sm:gap-3 p-1.5 sm:p-2 rounded-lg hover:bg-gray-50 transition-colors">
+                          <div className="w-1.5 h-1.5 sm:w-2 sm:h-2 bg-green-500 rounded-full flex-shrink-0"></div>
+                          <div className="flex-1 min-w-0">
+                            <p className="text-xs sm:text-sm font-medium text-gray-800 truncate">Tarea completada</p>
+                            <p className="text-xs text-gray-500 truncate">Implementar autenticación JWT - hace 2 min</p>
+                          </div>
+                        </div>
+                        <div className="flex items-center gap-2 sm:gap-3 p-1.5 sm:p-2 rounded-lg hover:bg-gray-50 transition-colors">
+                          <div className="w-1.5 h-1.5 sm:w-2 sm:h-2 bg-blue-500 rounded-full flex-shrink-0"></div>
+                          <div className="flex-1 min-w-0">
+                            <p className="text-xs sm:text-sm font-medium text-gray-800 truncate">Proyecto actualizado</p>
+                            <p className="text-xs text-gray-500 truncate">Dashboard Admin v2.1 - hace 15 min</p>
+                          </div>
+                        </div>
+                        <div className="flex items-center gap-2 sm:gap-3 p-1.5 sm:p-2 rounded-lg hover:bg-gray-50 transition-colors">
+                          <div className="w-1.5 h-1.5 sm:w-2 sm:h-2 bg-purple-500 rounded-full flex-shrink-0"></div>
+                          <div className="flex-1 min-w-0">
+                            <p className="text-xs sm:text-sm font-medium text-gray-800 truncate">Nuevo miembro</p>
+                            <p className="text-xs text-gray-500 truncate">Ana García se unió al equipo - hace 1 hora</p>
+                          </div>
+                        </div>
+                      </div>
+                    </div>
+
+                    {/* Estado del Equipo */}
+                    <div className="bg-white/80 backdrop-blur-sm rounded-lg sm:rounded-xl p-3 sm:p-4 border border-gray-200/50 shadow-lg">
+                      <div className="flex items-center gap-2 mb-3 sm:mb-4">
+                        <Users className="h-4 w-4 sm:h-5 sm:w-5 text-purple-500" />
+                        <h3 className="text-sm sm:text-base lg:text-lg font-semibold text-gray-800">Estado del Equipo</h3>
+                      </div>
+                      <div className="space-y-2 sm:space-y-3">
+                        <div className="flex items-center gap-2 sm:gap-3">
+                          <div className="w-6 h-6 sm:w-8 sm:h-8 bg-green-100 rounded-full flex items-center justify-center flex-shrink-0">
+                            <div className="w-2 h-2 sm:w-3 sm:h-3 bg-green-500 rounded-full"></div>
+                          </div>
+                          <div className="min-w-0">
+                            <p className="text-xs sm:text-sm font-medium text-gray-800">Equipo Activo</p>
+                            <p className="text-xs text-gray-500">Trabajando en tus proyectos</p>
+                          </div>
+                        </div>
+                        <div className="flex items-center gap-2 sm:gap-3">
+                          <div className="w-6 h-6 sm:w-8 sm:h-8 bg-blue-100 rounded-full flex items-center justify-center flex-shrink-0">
+                            <MessageSquare className="h-3 w-3 sm:h-4 sm:w-4 text-blue-600" />
+                          </div>
+                          <div className="min-w-0">
+                            <p className="text-xs sm:text-sm font-medium text-gray-800">Comunicación</p>
+                            <p className="text-xs text-gray-500">Respuesta en 2-4 horas</p>
+                          </div>
+                        </div>
                       </div>
                     </div>
                   </div>
@@ -580,78 +723,79 @@ const LandingPage = React.memo(() => {
             </div>
 
             {/* TEXTO - DERECHA */}
-            <div className="space-y-8 order-2 lg:order-2">
-              <div className="space-y-4">
-                <div className="inline-flex items-center px-4 py-2 rounded-full bg-green-100 text-green-800 text-sm font-medium">
-                  <Zap className="h-4 w-4 mr-2" />
-                  Productividad 10x
+            <div className="space-y-6 sm:space-y-8 order-2 lg:order-2">
+              <div className="space-y-3 sm:space-y-4">
+                <div className="inline-flex items-center px-3 sm:px-4 py-1.5 sm:py-2 rounded-full bg-green-100 text-green-800 text-xs sm:text-sm font-medium">
+                  <Zap className="h-3 w-3 sm:h-4 sm:w-4 mr-1.5 sm:mr-2" />
+                  <span className="hidden sm:inline">Productividad 10x</span>
+                  <span className="sm:hidden">10x Productividad</span>
                 </div>
-                <h2 className="text-5xl font-bold text-foreground leading-tight">
+                <h2 className="text-3xl sm:text-4xl lg:text-5xl font-bold text-foreground leading-tight">
                   Todo tu equipo sincronizado{' '}
                   <span className="bg-gradient-to-r from-blue-600 to-purple-600 bg-clip-text text-transparent">en tiempo real</span>
                 </h2>
-                <p className="text-xl text-muted-foreground leading-relaxed">
+                <p className="text-base sm:text-lg lg:text-xl text-muted-foreground leading-relaxed">
                   Elimina el caos de proyectos dispersos. Centraliza tareas, deadlines y comunicación en un solo lugar.
                 </p>
               </div>
               
-              <div className="grid sm:grid-cols-2 gap-6">
-                <div className="space-y-4">
-                  <div className="flex items-start space-x-3">
-                    <div className="flex-shrink-0 w-8 h-8 bg-blue-100 rounded-lg flex items-center justify-center">
-                      <Target className="h-5 w-5 text-blue-600" />
+              <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 sm:gap-6">
+                <div className="space-y-3 sm:space-y-4">
+                  <div className="flex items-start space-x-2 sm:space-x-3">
+                    <div className="flex-shrink-0 w-7 h-7 sm:w-8 sm:h-8 bg-blue-100 rounded-lg flex items-center justify-center">
+                      <Target className="h-4 w-4 sm:h-5 sm:w-5 text-blue-600" />
                     </div>
-                    <div>
-                      <h3 className="font-semibold text-foreground">Tableros Kanban personalizables</h3>
-                      <p className="text-sm text-muted-foreground">Organiza tareas como prefieras</p>
+                    <div className="min-w-0">
+                      <h3 className="text-sm sm:text-base font-semibold text-foreground">Tableros Kanban personalizables</h3>
+                      <p className="text-xs sm:text-sm text-muted-foreground">Organiza tareas como prefieras</p>
                     </div>
                   </div>
-                  <div className="flex items-start space-x-3">
-                    <div className="flex-shrink-0 w-8 h-8 bg-purple-100 rounded-lg flex items-center justify-center">
-                      <Activity className="h-5 w-5 text-purple-600" />
+                  <div className="flex items-start space-x-2 sm:space-x-3">
+                    <div className="flex-shrink-0 w-7 h-7 sm:w-8 sm:h-8 bg-purple-100 rounded-lg flex items-center justify-center">
+                      <Activity className="h-4 w-4 sm:h-5 sm:w-5 text-purple-600" />
                     </div>
-                    <div>
-                      <h3 className="font-semibold text-foreground">Notificaciones inteligentes</h3>
-                      <p className="text-sm text-muted-foreground">Solo lo que realmente importa</p>
+                    <div className="min-w-0">
+                      <h3 className="text-sm sm:text-base font-semibold text-foreground">Notificaciones inteligentes</h3>
+                      <p className="text-xs sm:text-sm text-muted-foreground">Solo lo que realmente importa</p>
                     </div>
                   </div>
                 </div>
-                <div className="space-y-4">
-                  <div className="flex items-start space-x-3">
-                    <div className="flex-shrink-0 w-8 h-8 bg-green-100 rounded-lg flex items-center justify-center">
-                      <Settings className="h-5 w-5 text-green-600" />
+                <div className="space-y-3 sm:space-y-4">
+                  <div className="flex items-start space-x-2 sm:space-x-3">
+                    <div className="flex-shrink-0 w-7 h-7 sm:w-8 sm:h-8 bg-green-100 rounded-lg flex items-center justify-center">
+                      <Settings className="h-4 w-4 sm:h-5 sm:w-5 text-green-600" />
                     </div>
-                    <div>
-                      <h3 className="font-semibold text-foreground">Integraciones con 50+ herramientas</h3>
-                      <p className="text-sm text-muted-foreground">Conecta todo tu stack tecnológico</p>
+                    <div className="min-w-0">
+                      <h3 className="text-sm sm:text-base font-semibold text-foreground">Integraciones con 50+ herramientas</h3>
+                      <p className="text-xs sm:text-sm text-muted-foreground">Conecta todo tu stack tecnológico</p>
                     </div>
                   </div>
-                  <div className="flex items-start space-x-3">
-                    <div className="flex-shrink-0 w-8 h-8 bg-orange-100 rounded-lg flex items-center justify-center">
-                      <Clock className="h-5 w-5 text-orange-600" />
+                  <div className="flex items-start space-x-2 sm:space-x-3">
+                    <div className="flex-shrink-0 w-7 h-7 sm:w-8 sm:h-8 bg-orange-100 rounded-lg flex items-center justify-center">
+                      <Clock className="h-4 w-4 sm:h-5 sm:w-5 text-orange-600" />
                     </div>
-                    <div>
-                      <h3 className="font-semibold text-foreground">Automatizaciones que ahorran 5 horas/semana</h3>
-                      <p className="text-sm text-muted-foreground">Tareas repetitivas eliminadas</p>
+                    <div className="min-w-0">
+                      <h3 className="text-sm sm:text-base font-semibold text-foreground">Automatizaciones que ahorran 5 horas/semana</h3>
+                      <p className="text-xs sm:text-sm text-muted-foreground">Tareas repetitivas eliminadas</p>
                     </div>
                   </div>
                 </div>
               </div>
 
               {/* Métricas destacadas */}
-              <div className="bg-gradient-to-r from-blue-50 to-purple-50 dark:from-blue-900/20 dark:to-purple-900/20 rounded-2xl p-6 border border-blue-200 dark:border-blue-800">
-                <div className="grid grid-cols-3 gap-6 text-center">
+              <div className="bg-gradient-to-r from-blue-50 to-purple-50 dark:from-blue-900/20 dark:to-purple-900/20 rounded-xl sm:rounded-2xl p-4 sm:p-6 border border-blue-200 dark:border-blue-800">
+                <div className="grid grid-cols-3 gap-3 sm:gap-6 text-center">
                   <div>
-                    <div className="text-3xl font-bold text-blue-600">85%</div>
-                    <div className="text-sm text-muted-foreground">Menos tiempo en reuniones</div>
+                    <div className="text-xl sm:text-2xl lg:text-3xl font-bold text-blue-600">{stats.meetingTimeReduction}%</div>
+                    <div className="text-xs sm:text-sm text-muted-foreground">Menos tiempo en reuniones</div>
                   </div>
                   <div>
-                    <div className="text-3xl font-bold text-green-600">40%</div>
-                    <div className="text-sm text-muted-foreground">Aumento en productividad</div>
+                    <div className="text-xl sm:text-2xl lg:text-3xl font-bold text-green-600">{stats.productivityIncrease}%</div>
+                    <div className="text-xs sm:text-sm text-muted-foreground">Aumento en productividad</div>
                   </div>
                   <div>
-                    <div className="text-3xl font-bold text-purple-600">12h</div>
-                    <div className="text-sm text-muted-foreground">Ahorradas por semana</div>
+                    <div className="text-xl sm:text-2xl lg:text-3xl font-bold text-purple-600">{stats.timeSaved}h</div>
+                    <div className="text-xs sm:text-sm text-muted-foreground">Ahorradas por semana</div>
                   </div>
                 </div>
               </div>
@@ -660,85 +804,86 @@ const LandingPage = React.memo(() => {
         </div>
       </section>
 
-      <section className="py-24 bg-gradient-to-br from-muted/30 to-muted/50">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-          <div className="grid lg:grid-cols-2 gap-20 items-center">
-            <div className="space-y-8 order-1 lg:order-1">
-              <div className="space-y-4">
-                <div className="inline-flex items-center px-4 py-2 rounded-full bg-green-100 text-green-800 text-sm font-medium">
-                  <BarChart3 className="h-4 w-4 mr-2" />
-                  Insights Accionables
+      <section className="py-16 sm:py-20 lg:py-24 bg-gradient-to-br from-muted/30 to-muted/50">
+        <div className="max-w-7xl mx-auto px-3 sm:px-4 lg:px-8">
+          <div className="grid lg:grid-cols-2 gap-12 lg:gap-20 items-center">
+            <div className="space-y-6 sm:space-y-8 order-1 lg:order-1">
+              <div className="space-y-3 sm:space-y-4">
+                <div className="inline-flex items-center px-3 sm:px-4 py-1.5 sm:py-2 rounded-full bg-green-100 text-green-800 text-xs sm:text-sm font-medium">
+                  <BarChart3 className="h-3 w-3 sm:h-4 sm:w-4 mr-1.5 sm:mr-2" />
+                  <span className="hidden sm:inline">Insights Accionables</span>
+                  <span className="sm:hidden">Insights</span>
                 </div>
-                <h2 className="text-5xl font-bold text-foreground leading-tight">
+                <h2 className="text-3xl sm:text-4xl lg:text-5xl font-bold text-foreground leading-tight">
                   Decisiones basadas en datos,{' '}
                   <span className="bg-gradient-to-r from-green-600 to-cyan-600 bg-clip-text text-transparent">no en intuición</span>
                 </h2>
-                <p className="text-xl text-muted-foreground leading-relaxed">
+                <p className="text-base sm:text-lg lg:text-xl text-muted-foreground leading-relaxed">
                   Visualiza el rendimiento real de tus proyectos y equipos con métricas que realmente importan para tu negocio.
                 </p>
               </div>
               
-              <div className="grid sm:grid-cols-2 gap-6">
-                <div className="space-y-4">
-                  <div className="flex items-start space-x-3">
-                    <div className="flex-shrink-0 w-8 h-8 bg-green-100 rounded-lg flex items-center justify-center">
-                      <Target className="h-5 w-5 text-green-600" />
+              <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 sm:gap-6">
+                <div className="space-y-3 sm:space-y-4">
+                  <div className="flex items-start space-x-2 sm:space-x-3">
+                    <div className="flex-shrink-0 w-7 h-7 sm:w-8 sm:h-8 bg-green-100 rounded-lg flex items-center justify-center">
+                      <Target className="h-4 w-4 sm:h-5 sm:w-5 text-green-600" />
                     </div>
-                    <div>
-                      <h3 className="font-semibold text-foreground">Dashboards personalizables por rol</h3>
-                      <p className="text-sm text-muted-foreground">Cada miembro ve lo que necesita</p>
+                    <div className="min-w-0">
+                      <h3 className="text-sm sm:text-base font-semibold text-foreground">Dashboards personalizables por rol</h3>
+                      <p className="text-xs sm:text-sm text-muted-foreground">Cada miembro ve lo que necesita</p>
                     </div>
                   </div>
-                  <div className="flex items-start space-x-3">
-                    <div className="flex-shrink-0 w-8 h-8 bg-blue-100 rounded-lg flex items-center justify-center">
-                      <Activity className="h-5 w-5 text-blue-600" />
+                  <div className="flex items-start space-x-2 sm:space-x-3">
+                    <div className="flex-shrink-0 w-7 h-7 sm:w-8 sm:h-8 bg-blue-100 rounded-lg flex items-center justify-center">
+                      <Activity className="h-4 w-4 sm:h-5 sm:w-5 text-blue-600" />
                     </div>
-                    <div>
-                      <h3 className="font-semibold text-foreground">Reportes automáticos por email/Slack</h3>
-                      <p className="text-sm text-muted-foreground">Información clave sin esfuerzo</p>
+                    <div className="min-w-0">
+                      <h3 className="text-sm sm:text-base font-semibold text-foreground">Reportes automáticos por email/Slack</h3>
+                      <p className="text-xs sm:text-sm text-muted-foreground">Información clave sin esfuerzo</p>
                     </div>
                   </div>
                 </div>
-                <div className="space-y-4">
-                  <div className="flex items-start space-x-3">
-                    <div className="flex-shrink-0 w-8 h-8 bg-purple-100 rounded-lg flex items-center justify-center">
-                      <TrendingUp className="h-5 w-5 text-purple-600" />
+                <div className="space-y-3 sm:space-y-4">
+                  <div className="flex items-start space-x-2 sm:space-x-3">
+                    <div className="flex-shrink-0 w-7 h-7 sm:w-8 sm:h-8 bg-purple-100 rounded-lg flex items-center justify-center">
+                      <TrendingUp className="h-4 w-4 sm:h-5 sm:w-5 text-purple-600" />
                     </div>
-                    <div>
-                      <h3 className="font-semibold text-foreground">Predicciones de entrega con IA</h3>
-                      <p className="text-sm text-muted-foreground">Anticipa retrasos antes de que ocurran</p>
+                    <div className="min-w-0">
+                      <h3 className="text-sm sm:text-base font-semibold text-foreground">Predicciones de entrega con IA</h3>
+                      <p className="text-xs sm:text-sm text-muted-foreground">Anticipa retrasos antes de que ocurran</p>
                     </div>
                   </div>
-                  <div className="flex items-start space-x-3">
-                    <div className="flex-shrink-0 w-8 h-8 bg-orange-100 rounded-lg flex items-center justify-center">
-                      <BarChart3 className="h-5 w-5 text-orange-600" />
+                  <div className="flex items-start space-x-2 sm:space-x-3">
+                    <div className="flex-shrink-0 w-7 h-7 sm:w-8 sm:h-8 bg-orange-100 rounded-lg flex items-center justify-center">
+                      <BarChart3 className="h-4 w-4 sm:h-5 sm:w-5 text-orange-600" />
                     </div>
-                    <div>
-                      <h3 className="font-semibold text-foreground">ROI tracking por proyecto</h3>
-                      <p className="text-sm text-muted-foreground">Mide el retorno real de cada inversión</p>
+                    <div className="min-w-0">
+                      <h3 className="text-sm sm:text-base font-semibold text-foreground">ROI tracking por proyecto</h3>
+                      <p className="text-xs sm:text-sm text-muted-foreground">Mide el retorno real de cada inversión</p>
                     </div>
                   </div>
                 </div>
               </div>
 
               {/* Métricas de impacto */}
-              <div className="bg-gradient-to-r from-green-50 to-cyan-50 dark:from-green-900/20 dark:to-cyan-900/20 rounded-2xl p-6 border border-green-200 dark:border-green-800">
-                <div className="grid grid-cols-2 md:grid-cols-4 gap-6 text-center">
+              <div className="bg-gradient-to-r from-green-50 to-cyan-50 dark:from-green-900/20 dark:to-cyan-900/20 rounded-xl sm:rounded-2xl p-4 sm:p-6 border border-green-200 dark:border-green-800">
+                <div className="grid grid-cols-2 md:grid-cols-4 gap-3 sm:gap-6 text-center">
                   <div>
-                    <div className="text-2xl font-bold text-green-600">92%</div>
-                    <div className="text-sm text-muted-foreground">Precisión en predicciones</div>
+                    <div className="text-lg sm:text-xl lg:text-2xl font-bold text-green-600">{stats.predictionAccuracy}%</div>
+                    <div className="text-xs sm:text-sm text-muted-foreground">Precisión en predicciones</div>
                   </div>
                   <div>
-                    <div className="text-2xl font-bold text-blue-600">3x</div>
-                    <div className="text-sm text-muted-foreground">Más rápido en decisiones</div>
+                    <div className="text-lg sm:text-xl lg:text-2xl font-bold text-blue-600">{stats.decisionSpeed}x</div>
+                    <div className="text-xs sm:text-sm text-muted-foreground">Más rápido en decisiones</div>
                   </div>
                   <div>
-                    <div className="text-2xl font-bold text-purple-600">67%</div>
-                    <div className="text-sm text-muted-foreground">Menos proyectos retrasados</div>
+                    <div className="text-lg sm:text-xl lg:text-2xl font-bold text-purple-600">{stats.projectDelayReduction}%</div>
+                    <div className="text-xs sm:text-sm text-muted-foreground">Menos proyectos retrasados</div>
                   </div>
                   <div>
-                    <div className="text-2xl font-bold text-orange-600">+45%</div>
-                    <div className="text-sm text-muted-foreground">ROI promedio</div>
+                    <div className="text-lg sm:text-xl lg:text-2xl font-bold text-orange-600">+{stats.averageROI}%</div>
+                    <div className="text-xs sm:text-sm text-muted-foreground">ROI promedio</div>
                   </div>
                 </div>
               </div>
@@ -777,85 +922,86 @@ const LandingPage = React.memo(() => {
         </div>
       </section>
 
-      <section className="py-24 bg-gradient-to-br from-neutral-900 to-neutral-800 text-white">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-          <div className="grid lg:grid-cols-2 gap-20 items-center">
-            <div className="space-y-8">
-              <div className="space-y-4">
-                <div className="inline-flex items-center px-4 py-2 rounded-full bg-green-100 text-green-800 text-sm font-medium">
-                  <Shield className="h-4 w-4 mr-2" />
-                  Seguridad Nivel Empresarial
+      <section className="py-16 sm:py-20 lg:py-24 bg-gradient-to-br from-neutral-900 to-neutral-800 text-white">
+        <div className="max-w-7xl mx-auto px-3 sm:px-4 lg:px-8">
+          <div className="grid lg:grid-cols-2 gap-12 lg:gap-20 items-center">
+            <div className="space-y-6 sm:space-y-8">
+              <div className="space-y-3 sm:space-y-4">
+                <div className="inline-flex items-center px-3 sm:px-4 py-1.5 sm:py-2 rounded-full bg-green-100 text-green-800 text-xs sm:text-sm font-medium">
+                  <Shield className="h-3 w-3 sm:h-4 sm:w-4 mr-1.5 sm:mr-2" />
+                  <span className="hidden sm:inline">Seguridad Nivel Empresarial</span>
+                  <span className="sm:hidden">Seguridad Empresarial</span>
                 </div>
-                <h2 className="text-5xl font-bold text-white leading-tight">
+                <h2 className="text-3xl sm:text-4xl lg:text-5xl font-bold text-white leading-tight">
                   Tus datos más seguros que{' '}
                   <span className="bg-gradient-to-r from-green-400 to-blue-400 bg-clip-text text-transparent">en un banco</span>
                 </h2>
-                <p className="text-xl text-gray-300 leading-relaxed">
+                <p className="text-base sm:text-lg lg:text-xl text-gray-300 leading-relaxed">
                   Cumplimos con las regulaciones más estrictas. Tu información está protegida 24/7 con los más altos estándares de seguridad.
                 </p>
               </div>
               
-              <div className="grid sm:grid-cols-2 gap-6">
-                <div className="space-y-4">
-                  <div className="flex items-start space-x-3">
-                    <div className="flex-shrink-0 w-8 h-8 bg-green-100 rounded-lg flex items-center justify-center">
-                      <Shield className="h-5 w-5 text-green-600" />
+              <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 sm:gap-6">
+                <div className="space-y-3 sm:space-y-4">
+                  <div className="flex items-start space-x-2 sm:space-x-3">
+                    <div className="flex-shrink-0 w-7 h-7 sm:w-8 sm:h-8 bg-green-100 rounded-lg flex items-center justify-center">
+                      <Shield className="h-4 w-4 sm:h-5 sm:w-5 text-green-600" />
                     </div>
-                    <div>
-                      <h3 className="font-semibold text-white">Certificación SOC2 + ISO 27001</h3>
-                      <p className="text-sm text-gray-300">Estándares de seguridad más exigentes</p>
+                    <div className="min-w-0">
+                      <h3 className="text-sm sm:text-base font-semibold text-white">Certificación SOC2 + ISO 27001</h3>
+                      <p className="text-xs sm:text-sm text-gray-300">Estándares de seguridad más exigentes</p>
                     </div>
                   </div>
-                  <div className="flex items-start space-x-3">
-                    <div className="flex-shrink-0 w-8 h-8 bg-blue-100 rounded-lg flex items-center justify-center">
-                      <Activity className="h-5 w-5 text-blue-600" />
+                  <div className="flex items-start space-x-2 sm:space-x-3">
+                    <div className="flex-shrink-0 w-7 h-7 sm:w-8 sm:h-8 bg-blue-100 rounded-lg flex items-center justify-center">
+                      <Activity className="h-4 w-4 sm:h-5 sm:w-5 text-blue-600" />
                     </div>
-                    <div>
-                      <h3 className="font-semibold text-white">Encriptación AES-256</h3>
-                      <p className="text-sm text-gray-300">Protección militar de tus datos</p>
+                    <div className="min-w-0">
+                      <h3 className="text-sm sm:text-base font-semibold text-white">Encriptación AES-256</h3>
+                      <p className="text-xs sm:text-sm text-gray-300">Protección militar de tus datos</p>
                     </div>
                   </div>
                 </div>
-                <div className="space-y-4">
-                  <div className="flex items-start space-x-3">
-                    <div className="flex-shrink-0 w-8 h-8 bg-purple-100 rounded-lg flex items-center justify-center">
-                      <Clock className="h-5 w-5 text-purple-600" />
+                <div className="space-y-3 sm:space-y-4">
+                  <div className="flex items-start space-x-2 sm:space-x-3">
+                    <div className="flex-shrink-0 w-7 h-7 sm:w-8 sm:h-8 bg-purple-100 rounded-lg flex items-center justify-center">
+                      <Clock className="h-4 w-4 sm:h-5 sm:w-5 text-purple-600" />
                     </div>
-                    <div>
-                      <h3 className="font-semibold text-white">Backup diario automático</h3>
-                      <p className="text-sm text-gray-300">Nunca pierdas información importante</p>
+                    <div className="min-w-0">
+                      <h3 className="text-sm sm:text-base font-semibold text-white">Backup diario automático</h3>
+                      <p className="text-xs sm:text-sm text-gray-300">Nunca pierdas información importante</p>
                     </div>
                   </div>
-                  <div className="flex items-start space-x-3">
-                    <div className="flex-shrink-0 w-8 h-8 bg-orange-100 rounded-lg flex items-center justify-center">
-                      <Star className="h-5 w-5 text-orange-600" />
+                  <div className="flex items-start space-x-2 sm:space-x-3">
+                    <div className="flex-shrink-0 w-7 h-7 sm:w-8 sm:h-8 bg-orange-100 rounded-lg flex items-center justify-center">
+                      <Star className="h-4 w-4 sm:h-5 sm:w-5 text-orange-600" />
                     </div>
-                    <div>
-                      <h3 className="font-semibold text-white">SLA 99.9% uptime garantizado</h3>
-                      <p className="text-sm text-gray-300">Disponibilidad casi perfecta</p>
+                    <div className="min-w-0">
+                      <h3 className="text-sm sm:text-base font-semibold text-white">SLA 99.9% uptime garantizado</h3>
+                      <p className="text-xs sm:text-sm text-gray-300">Disponibilidad casi perfecta</p>
                     </div>
                   </div>
                 </div>
               </div>
 
               {/* Certificaciones destacadas */}
-              <div className="bg-gradient-to-r from-green-900/30 to-blue-900/30 rounded-2xl p-6 border border-green-700">
-                <div className="grid grid-cols-2 md:grid-cols-4 gap-6 text-center">
+              <div className="bg-gradient-to-r from-green-900/30 to-blue-900/30 rounded-xl sm:rounded-2xl p-4 sm:p-6 border border-green-700">
+                <div className="grid grid-cols-2 md:grid-cols-4 gap-3 sm:gap-6 text-center">
                   <div>
-                    <div className="text-2xl font-bold text-green-400">SOC2</div>
-                    <div className="text-sm text-gray-300">Certificado</div>
+                    <div className="text-lg sm:text-xl lg:text-2xl font-bold text-green-400">SOC2</div>
+                    <div className="text-xs sm:text-sm text-gray-300">Certificado</div>
                   </div>
                   <div>
-                    <div className="text-2xl font-bold text-blue-400">ISO 27001</div>
-                    <div className="text-sm text-gray-300">Certificado</div>
+                    <div className="text-lg sm:text-xl lg:text-2xl font-bold text-blue-400">ISO 27001</div>
+                    <div className="text-xs sm:text-sm text-gray-300">Certificado</div>
                   </div>
                   <div>
-                    <div className="text-2xl font-bold text-purple-400">AES-256</div>
-                    <div className="text-sm text-gray-300">Encriptación</div>
+                    <div className="text-lg sm:text-xl lg:text-2xl font-bold text-purple-400">AES-256</div>
+                    <div className="text-xs sm:text-sm text-gray-300">Encriptación</div>
                   </div>
                   <div>
-                    <div className="text-2xl font-bold text-orange-400">99.9%</div>
-                    <div className="text-sm text-gray-300">Uptime SLA</div>
+                    <div className="text-lg sm:text-xl lg:text-2xl font-bold text-orange-400">99.9%</div>
+                    <div className="text-xs sm:text-sm text-gray-300">Uptime SLA</div>
                   </div>
                 </div>
               </div>
@@ -953,31 +1099,37 @@ const LandingPage = React.memo(() => {
             </p>
             <div className="inline-flex items-center px-4 py-2 rounded-full bg-green-100 text-green-800 text-sm font-medium">
               <div className="w-2 h-2 bg-green-500 rounded-full animate-pulse mr-2"></div>
-              Demo usada 2,847 veces esta semana
+              Demo usada {stats.demoUsage.toLocaleString()} veces esta semana
             </div>
           </div>
 
-          {/* Dashboard Interactivo */}
-          <div className={`rounded-2xl overflow-hidden transition-all duration-300 ${demoTheme === 'dark' ? 'bg-slate-900 border-2 border-slate-700 shadow-2xl shadow-slate-900/50' : 'bg-white border border-gray-200 shadow-2xl'}`}>
+          {/* Dashboard Interactivo 3D Profesional */}
+          <div className={`rounded-2xl overflow-hidden transition-all duration-500 transform hover:scale-105 ${demoTheme === 'dark' ? 'bg-gradient-to-br from-slate-900 via-slate-800 to-slate-900 border-2 border-slate-700 shadow-2xl shadow-slate-900/50' : 'bg-gradient-to-br from-white via-gray-50 to-white border border-gray-200 shadow-2xl shadow-gray-900/20'}`}>
             {/* Header del Dashboard */}
-            <div className={`px-6 py-4 transition-colors duration-300 ${demoTheme === 'dark' ? 'bg-gradient-to-r from-slate-800 to-slate-700 border-b border-slate-600' : 'bg-gradient-to-r from-gray-900 to-gray-800'}`}>
+            <div className={`px-6 py-5 transition-colors duration-300 ${demoTheme === 'dark' ? 'bg-gradient-to-r from-slate-800 to-slate-700 border-b border-slate-600' : 'bg-gradient-to-r from-gray-900 to-gray-800'}`}>
               <div className="flex items-center justify-between">
-                <div className="flex items-center space-x-3">
-                  <div className="w-8 h-8 bg-gradient-to-r from-cyan-500 to-emerald-600 rounded-lg flex items-center justify-center shadow-lg">
-                    <span className="text-white font-bold text-sm">T</span>
+                <div className="flex items-center space-x-4">
+                  <div className="w-12 h-12 bg-gradient-to-r from-cyan-500 to-emerald-600 rounded-xl flex items-center justify-center shadow-lg">
+                    <BarChart3 className="h-6 w-6 text-white" />
                   </div>
                   <div>
-                    <h3 className={`font-semibold transition-colors duration-300 ${demoTheme === 'dark' ? 'text-white' : 'text-white'}`}>TuWebAI Dashboard</h3>
-                    <p className={`text-sm transition-colors duration-300 ${demoTheme === 'dark' ? 'text-slate-300' : 'text-gray-300'}`}>Demo Interactivo</p>
+                    <h3 className={`text-xl font-bold transition-colors duration-300 ${demoTheme === 'dark' ? 'text-white' : 'text-white'}`}>TuWebAI Dashboard</h3>
+                    <p className={`text-sm transition-colors duration-300 ${demoTheme === 'dark' ? 'text-cyan-300' : 'text-gray-300'}`}>Demo Interactivo • Actualizado hace 2 min</p>
                   </div>
                 </div>
-                <div className="flex items-center space-x-3">
+                <div className="flex items-center space-x-4">
+                  <div className={`px-3 py-1 rounded-full text-xs font-medium transition-colors duration-300 ${demoTheme === 'dark' ? 'bg-green-900 text-green-300' : 'bg-green-100 text-green-700'}`}>
+                    <div className="flex items-center space-x-1">
+                      <div className="w-2 h-2 bg-green-500 rounded-full animate-pulse"></div>
+                      <span>En vivo</span>
+                    </div>
+                  </div>
                   <button
                     onClick={toggleDemoTheme}
-                    className={`px-3 py-1 rounded-full text-xs font-medium transition-all duration-200 ${
+                    className={`px-4 py-2 rounded-lg text-sm font-medium transition-all duration-200 ${
                       demoTheme === 'dark' 
-                        ? 'bg-slate-700 text-slate-300 hover:bg-slate-600' 
-                        : 'bg-gray-200 text-gray-700 hover:bg-gray-300'
+                        ? 'bg-slate-700 text-slate-300 hover:bg-slate-600 border border-slate-600' 
+                        : 'bg-gray-200 text-gray-700 hover:bg-gray-300 border border-gray-300'
                     }`}
                   >
                     {demoTheme === 'dark' ? '🌙 Oscuro' : '☀️ Claro'}
@@ -1052,46 +1204,70 @@ const LandingPage = React.memo(() => {
                       <p className={`transition-colors duration-300 ${demoTheme === 'dark' ? 'text-gray-300' : 'text-gray-600'}`}>Gestiona y revisa el progreso de tus proyectos web</p>
                     </div>
 
-                    {/* Stats Cards */}
-                    <div className="grid grid-cols-2 lg:grid-cols-4 gap-4">
-                      <div className={`rounded-lg p-4 hover:shadow-lg transition-all duration-300 ${demoTheme === 'dark' ? 'bg-gradient-to-br from-blue-900/30 to-blue-800/30 border border-blue-700/50 shadow-lg shadow-blue-900/20' : 'bg-gradient-to-br from-blue-50 to-blue-100'}`}>
-                        <div className="flex items-center justify-between mb-2">
-                          <Target className={`h-6 w-6 transition-colors duration-300 ${demoTheme === 'dark' ? 'text-blue-400' : 'text-blue-600'}`} />
-                          <div className="w-3 h-3 bg-green-500 rounded-full animate-pulse shadow-sm"></div>
+                    {/* Stats Cards Profesionales */}
+                    <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
+                      <div className={`rounded-xl p-6 hover:shadow-xl transition-all duration-300 group ${demoTheme === 'dark' ? 'bg-gradient-to-br from-blue-900/40 to-blue-800/40 border border-blue-700/50 shadow-lg shadow-blue-900/20' : 'bg-gradient-to-br from-blue-50 to-blue-100 border border-blue-200'}`}>
+                        <div className="flex items-center justify-between mb-4">
+                          <div className={`w-12 h-12 rounded-xl flex items-center justify-center transition-colors duration-300 ${demoTheme === 'dark' ? 'bg-blue-600' : 'bg-blue-100'}`}>
+                            <Target className="h-6 w-6 text-blue-600" />
+                          </div>
+                          <div className={`text-right transition-colors duration-300 ${demoTheme === 'dark' ? 'text-green-400' : 'text-green-600'}`}>
+                            <span className="text-sm font-medium">+12%</span>
+                          </div>
                         </div>
-                        <div className={`text-2xl font-bold transition-colors duration-300 ${demoTheme === 'dark' ? 'text-white' : 'text-blue-900'}`}>12</div>
-                        <div className={`text-sm transition-colors duration-300 ${demoTheme === 'dark' ? 'text-blue-300' : 'text-blue-700'}`}>Proyectos Activos</div>
-                        <div className={`text-xs mt-1 transition-colors duration-300 ${demoTheme === 'dark' ? 'text-blue-400' : 'text-blue-600'}`}>+3 este mes</div>
+                        <div>
+                          <p className={`text-sm font-medium transition-colors duration-300 ${demoTheme === 'dark' ? 'text-gray-400' : 'text-gray-600'}`}>Proyectos Activos</p>
+                          <p className={`text-3xl font-bold transition-colors duration-300 ${demoTheme === 'dark' ? 'text-white' : 'text-gray-900'}`}>24</p>
+                          <p className={`text-xs mt-1 transition-colors duration-300 ${demoTheme === 'dark' ? 'text-gray-500' : 'text-gray-400'}`}>+3 este mes</p>
+                        </div>
                       </div>
 
-                      <div className={`rounded-lg p-4 hover:shadow-lg transition-all duration-300 ${demoTheme === 'dark' ? 'bg-gradient-to-br from-green-900/30 to-green-800/30 border border-green-700/50 shadow-lg shadow-green-900/20' : 'bg-gradient-to-br from-green-50 to-green-100'}`}>
-                        <div className="flex items-center justify-between mb-2">
-                          <TrendingUp className={`h-6 w-6 transition-colors duration-300 ${demoTheme === 'dark' ? 'text-green-400' : 'text-green-600'}`} />
-                          <div className="w-3 h-3 bg-green-500 rounded-full animate-pulse"></div>
+                      <div className={`rounded-xl p-6 hover:shadow-xl transition-all duration-300 group ${demoTheme === 'dark' ? 'bg-gradient-to-br from-green-900/40 to-green-800/40 border border-green-700/50 shadow-lg shadow-green-900/20' : 'bg-gradient-to-br from-green-50 to-green-100 border border-green-200'}`}>
+                        <div className="flex items-center justify-between mb-4">
+                          <div className={`w-12 h-12 rounded-xl flex items-center justify-center transition-colors duration-300 ${demoTheme === 'dark' ? 'bg-green-600' : 'bg-green-100'}`}>
+                            <CheckCircle className="h-6 w-6 text-green-600" />
+                          </div>
+                          <div className={`text-right transition-colors duration-300 ${demoTheme === 'dark' ? 'text-green-400' : 'text-green-600'}`}>
+                            <span className="text-sm font-medium">+18%</span>
+                          </div>
                         </div>
-                        <div className={`text-2xl font-bold transition-colors duration-300 ${demoTheme === 'dark' ? 'text-white' : 'text-green-900'}`}>8</div>
-                        <div className={`text-sm transition-colors duration-300 ${demoTheme === 'dark' ? 'text-green-300' : 'text-green-700'}`}>En Progreso</div>
-                        <div className={`text-xs mt-1 transition-colors duration-300 ${demoTheme === 'dark' ? 'text-green-400' : 'text-green-600'}`}>+2 esta semana</div>
+                        <div>
+                          <p className={`text-sm font-medium transition-colors duration-300 ${demoTheme === 'dark' ? 'text-gray-400' : 'text-gray-600'}`}>Tareas Completadas</p>
+                          <p className={`text-3xl font-bold transition-colors duration-300 ${demoTheme === 'dark' ? 'text-white' : 'text-gray-900'}`}>1,247</p>
+                          <p className={`text-xs mt-1 transition-colors duration-300 ${demoTheme === 'dark' ? 'text-gray-500' : 'text-gray-400'}`}>+156 esta semana</p>
+                        </div>
                       </div>
 
-                      <div className={`rounded-lg p-4 hover:shadow-lg transition-all duration-300 ${demoTheme === 'dark' ? 'bg-gradient-to-br from-orange-900/30 to-orange-800/30 border border-orange-700/50 shadow-lg shadow-orange-900/20' : 'bg-gradient-to-br from-orange-50 to-orange-100'}`}>
-                        <div className="flex items-center justify-between mb-2">
-                          <Users className={`h-6 w-6 transition-colors duration-300 ${demoTheme === 'dark' ? 'text-orange-400' : 'text-orange-600'}`} />
-                          <div className="w-3 h-3 bg-green-500 rounded-full animate-pulse"></div>
+                      <div className={`rounded-xl p-6 hover:shadow-xl transition-all duration-300 group ${demoTheme === 'dark' ? 'bg-gradient-to-br from-purple-900/40 to-purple-800/40 border border-purple-700/50 shadow-lg shadow-purple-900/20' : 'bg-gradient-to-br from-purple-50 to-purple-100 border border-purple-200'}`}>
+                        <div className="flex items-center justify-between mb-4">
+                          <div className={`w-12 h-12 rounded-xl flex items-center justify-center transition-colors duration-300 ${demoTheme === 'dark' ? 'bg-purple-600' : 'bg-purple-100'}`}>
+                            <Users className="h-6 w-6 text-purple-600" />
+                          </div>
+                          <div className={`text-right transition-colors duration-300 ${demoTheme === 'dark' ? 'text-green-400' : 'text-green-600'}`}>
+                            <span className="text-sm font-medium">+2</span>
+                          </div>
                         </div>
-                        <div className={`text-2xl font-bold transition-colors duration-300 ${demoTheme === 'dark' ? 'text-white' : 'text-orange-900'}`}>24</div>
-                        <div className={`text-sm transition-colors duration-300 ${demoTheme === 'dark' ? 'text-orange-300' : 'text-orange-700'}`}>Comentarios</div>
-                        <div className={`text-xs mt-1 transition-colors duration-300 ${demoTheme === 'dark' ? 'text-orange-400' : 'text-orange-600'}`}>+5 hoy</div>
+                        <div>
+                          <p className={`text-sm font-medium transition-colors duration-300 ${demoTheme === 'dark' ? 'text-gray-400' : 'text-gray-600'}`}>Equipo Activo</p>
+                          <p className={`text-3xl font-bold transition-colors duration-300 ${demoTheme === 'dark' ? 'text-white' : 'text-gray-900'}`}>18</p>
+                          <p className={`text-xs mt-1 transition-colors duration-300 ${demoTheme === 'dark' ? 'text-gray-500' : 'text-gray-400'}`}>100% online</p>
+                        </div>
                       </div>
 
-                      <div className={`rounded-lg p-4 hover:shadow-lg transition-all duration-300 ${demoTheme === 'dark' ? 'bg-gradient-to-br from-purple-900/30 to-purple-800/30 border border-purple-700/50 shadow-lg shadow-purple-900/20' : 'bg-gradient-to-br from-purple-50 to-purple-100'}`}>
-                        <div className="flex items-center justify-between mb-2">
-                          <Activity className={`h-6 w-6 transition-colors duration-300 ${demoTheme === 'dark' ? 'text-purple-400' : 'text-purple-600'}`} />
-                          <div className="w-3 h-3 bg-green-500 rounded-full animate-pulse"></div>
+                      <div className={`rounded-xl p-6 hover:shadow-xl transition-all duration-300 group ${demoTheme === 'dark' ? 'bg-gradient-to-br from-orange-900/40 to-orange-800/40 border border-orange-700/50 shadow-lg shadow-orange-900/20' : 'bg-gradient-to-br from-orange-50 to-orange-100 border border-orange-200'}`}>
+                        <div className="flex items-center justify-between mb-4">
+                          <div className={`w-12 h-12 rounded-xl flex items-center justify-center transition-colors duration-300 ${demoTheme === 'dark' ? 'bg-orange-600' : 'bg-orange-100'}`}>
+                            <TrendingUp className="h-6 w-6 text-orange-600" />
+                          </div>
+                          <div className={`text-right transition-colors duration-300 ${demoTheme === 'dark' ? 'text-green-400' : 'text-green-600'}`}>
+                            <span className="text-sm font-medium">+8%</span>
+                          </div>
                         </div>
-                        <div className={`text-2xl font-bold transition-colors duration-300 ${demoTheme === 'dark' ? 'text-white' : 'text-purple-900'}`}>85%</div>
-                        <div className={`text-sm transition-colors duration-300 ${demoTheme === 'dark' ? 'text-purple-300' : 'text-purple-700'}`}>Progreso General</div>
-                        <div className={`text-xs mt-1 transition-colors duration-300 ${demoTheme === 'dark' ? 'text-purple-400' : 'text-purple-600'}`}>+12% este mes</div>
+                        <div>
+                          <p className={`text-sm font-medium transition-colors duration-300 ${demoTheme === 'dark' ? 'text-gray-400' : 'text-gray-600'}`}>Progreso General</p>
+                          <p className={`text-3xl font-bold transition-colors duration-300 ${demoTheme === 'dark' ? 'text-white' : 'text-gray-900'}`}>87%</p>
+                          <p className={`text-xs mt-1 transition-colors duration-300 ${demoTheme === 'dark' ? 'text-gray-500' : 'text-gray-400'}`}>+12% este mes</p>
+                        </div>
                       </div>
                     </div>
 
@@ -1540,7 +1716,7 @@ const LandingPage = React.memo(() => {
                         ¿Te gustó? ¡Créate una cuenta gratuita!
                       </h3>
                       <p className="mb-6 text-muted-foreground">
-                        Únete a 127+ equipos que ya optimizaron su workflow. Sin tarjeta de crédito, sin compromisos.
+                        Únete a {stats.totalTeams}+ equipos que ya optimizaron su workflow. Sin tarjeta de crédito, sin compromisos.
                       </p>
                       <div className="flex flex-col sm:flex-row gap-4 justify-center">
                         <Button 
@@ -1581,7 +1757,7 @@ const LandingPage = React.memo(() => {
               <span className="bg-gradient-to-r from-cyan-600 to-blue-600 bg-clip-text text-transparent">necesites</span>
             </h2>
             <p className="text-xl text-muted-foreground">
-              Sin tarjeta de crédito. Cancela cuando quieras. Únete a 127+ equipos que ya optimizaron su workflow.
+              Sin tarjeta de crédito. Cancela cuando quieras. Únete a {stats.totalTeams}+ equipos que ya optimizaron su workflow.
             </p>
           </div>
 
@@ -1719,7 +1895,7 @@ const LandingPage = React.memo(() => {
               <span className="bg-gradient-to-r from-cyan-600 to-blue-600 bg-clip-text text-transparent">clientes</span>
             </h2>
             <p className="text-xl text-muted-foreground">
-              Más de 1,500 equipos confían en nosotros para gestionar sus proyectos
+              Más de {stats.totalTeams.toLocaleString()} equipos confían en nosotros para gestionar sus proyectos
             </p>
           </div>
 
@@ -1736,7 +1912,7 @@ const LandingPage = React.memo(() => {
                 </div>
               </div>
               <p className="text-muted-foreground mb-4">
-                "Ahorramos 12 horas por semana desde que implementamos TuWebAI. La productividad de nuestro equipo aumentó un 40%."
+                "Ahorramos {stats.timeSaved} horas por semana desde que implementamos TuWebAI. La productividad de nuestro equipo aumentó un {stats.productivityIncrease}%."
               </p>
               <div className="flex items-center">
                 <div className="flex text-yellow-400">
@@ -1760,7 +1936,7 @@ const LandingPage = React.memo(() => {
                 </div>
               </div>
               <p className="text-muted-foreground mb-4">
-                "Las predicciones de entrega con IA son increíbles. Redujimos los retrasos en proyectos un 67%."
+                "Las predicciones de entrega con IA son increíbles. Redujimos los retrasos en proyectos un {stats.projectDelayReduction}%."
               </p>
               <div className="flex items-center">
                 <div className="flex text-yellow-400">
@@ -1784,7 +1960,7 @@ const LandingPage = React.memo(() => {
                 </div>
               </div>
               <p className="text-muted-foreground mb-4">
-                "La integración con 50+ herramientas nos ahorró meses de configuración. ROI del 45% en el primer trimestre."
+                "La integración con 50+ herramientas nos ahorró meses de configuración. ROI del {stats.averageROI}% en el primer trimestre."
               </p>
               <div className="flex items-center">
                 <div className="flex text-yellow-400">
@@ -1801,19 +1977,19 @@ const LandingPage = React.memo(() => {
           <div className="mt-16 text-center">
             <div className="grid grid-cols-2 md:grid-cols-4 gap-8">
               <div>
-                <div className="text-4xl font-bold text-cyan-600">4.9/5</div>
+                <div className="text-4xl font-bold text-cyan-600">{stats.satisfactionRating}/5</div>
                 <div className="text-sm text-muted-foreground">Satisfacción promedio</div>
               </div>
               <div>
-                <div className="text-4xl font-bold text-green-600">98%</div>
+                <div className="text-4xl font-bold text-green-600">{stats.satisfiedClients}%</div>
                 <div className="text-sm text-muted-foreground">Clientes satisfechos</div>
               </div>
               <div>
-                <div className="text-4xl font-bold text-blue-600">1,500+</div>
+                <div className="text-4xl font-bold text-blue-600">{stats.activeTeams.toLocaleString()}+</div>
                 <div className="text-sm text-muted-foreground">Equipos activos</div>
               </div>
               <div>
-                <div className="text-4xl font-bold text-purple-600">24/7</div>
+                <div className="text-4xl font-bold text-purple-600">{stats.supportAvailability}</div>
                 <div className="text-sm text-muted-foreground">Soporte disponible</div>
               </div>
             </div>
@@ -1833,7 +2009,7 @@ const LandingPage = React.memo(() => {
                 <span className="text-xl font-bold">TuWebAI - Dashboard Profesional</span>
               </div>
               <p className="text-gray-400 max-w-md">
-                La plataforma de gestión de proyectos más avanzada para equipos modernos. Más de 1,500 equipos confían en nosotros.
+                La plataforma de gestión de proyectos más avanzada para equipos modernos. Más de {stats.totalTeams.toLocaleString()} equipos confían en nosotros.
               </p>
               
               {/* Newsletter */}

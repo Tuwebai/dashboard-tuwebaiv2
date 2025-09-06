@@ -393,46 +393,49 @@ const ProjectsPage = React.memo(() => {
 
   return (
     <div className="min-h-screen bg-gradient-to-br from-slate-50 via-blue-50/30 to-indigo-50/30 dark:from-slate-900 dark:via-slate-800/50 dark:to-slate-900">
-      <div className="p-6 space-y-6">
+      <div className="p-3 sm:p-4 lg:p-6 space-y-4 sm:space-y-6">
         {/* Header con diseño claro */}
-        <div className="bg-card dark:bg-slate-800/50 rounded-2xl p-6 shadow-lg border border-border/50 dark:border-slate-700/50">
-          <div className="flex flex-col lg:flex-row lg:items-center justify-between gap-4">
+        <div className="bg-card dark:bg-slate-800/50 rounded-xl sm:rounded-2xl p-4 sm:p-6 shadow-lg border border-border/50 dark:border-slate-700/50">
+          <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
             <div>
-              <h1 className="text-3xl font-bold text-slate-800 dark:text-white">
+              <h1 className="text-2xl sm:text-3xl font-bold text-slate-800 dark:text-white">
                 {userId ? `Proyectos de ${targetUserName}` : 'Mis Proyectos'}
               </h1>
-              <p className="text-slate-600 dark:text-slate-300 mt-2">
+              <p className="text-sm sm:text-base text-slate-600 dark:text-slate-300 mt-1 sm:mt-2">
                 {userId 
                   ? `Proyectos creados por ${targetUserName}`
                   : 'Gestiona y monitorea todos tus proyectos en un solo lugar'
                 }
               </p>
             </div>
-            <div className="flex flex-wrap items-center gap-3">
+            <div className="flex flex-wrap items-center gap-2 sm:gap-3">
               {userId && (
                 <Button
                   variant="outline"
                   onClick={() => navigate(-1)}
-                  className="border-border text-foreground hover:bg-muted/50"
+                  className="border-border text-foreground hover:bg-muted/50 text-xs sm:text-sm"
                 >
-                  ← Volver
+                  <span className="hidden sm:inline">← Volver</span>
+                  <span className="sm:hidden">←</span>
                 </Button>
               )}
               <Button
                 variant="outline"
                 onClick={handleExportReport}
-                className="border-border text-foreground hover:bg-muted/50"
+                className="border-border text-foreground hover:bg-muted/50 text-xs sm:text-sm"
               >
-                <Download className="h-4 w-4 mr-2" />
-                Exportar Reporte
+                <Download className="h-3 w-3 sm:h-4 sm:w-4 mr-1 sm:mr-2" />
+                <span className="hidden sm:inline">Exportar Reporte</span>
+                <span className="sm:hidden">Exportar</span>
               </Button>
               {!userId && (
                 <Button 
                   onClick={handleOpenNuevoModal}
-                  className="bg-gradient-to-r from-blue-500 via-purple-600 to-fuchsia-600 hover:from-blue-600 hover:to-fuchsia-700 shadow-lg text-white font-medium"
+                  className="bg-gradient-to-r from-blue-500 via-purple-600 to-fuchsia-600 hover:from-blue-600 hover:to-fuchsia-700 shadow-lg text-white font-medium text-xs sm:text-sm"
                 >
-                  <Plus className="h-4 w-4 mr-2" />
-                  Nuevo Proyecto
+                  <Plus className="h-3 w-3 sm:h-4 sm:w-4 mr-1 sm:mr-2" />
+                  <span className="hidden sm:inline">Nuevo Proyecto</span>
+                  <span className="sm:hidden">Nuevo</span>
                 </Button>
               )}
             </div>
@@ -456,30 +459,31 @@ const ProjectsPage = React.memo(() => {
         </div>
 
         {/* Controles de vista */}
-        <div className="bg-card dark:bg-slate-800/50 rounded-2xl p-4 shadow-lg border border-border/50 dark:border-slate-700/50">
-          <div className="flex items-center justify-between">
+        <div className="bg-card dark:bg-slate-800/50 rounded-xl sm:rounded-2xl p-3 sm:p-4 shadow-lg border border-border/50 dark:border-slate-700/50">
+          <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 sm:gap-4">
             <div className="flex items-center gap-2">
               <Button
                 variant={viewMode === 'grid' ? 'default' : 'outline'}
                 size="sm"
                 onClick={handleViewModeGrid}
-                className={viewMode === 'grid' ? 'bg-blue-500 hover:bg-blue-600 text-white' : 'border-border text-foreground hover:bg-muted/50 dark:border-slate-600 dark:text-slate-300 dark:hover:bg-slate-700/50'}
+                className={`${viewMode === 'grid' ? 'bg-blue-500 hover:bg-blue-600 text-white' : 'border-border text-foreground hover:bg-muted/50 dark:border-slate-600 dark:text-slate-300 dark:hover:bg-slate-700/50'} h-8 w-8 sm:h-9 sm:w-9`}
               >
-                <Grid className="h-4 w-4" />
+                <Grid className="h-3 w-3 sm:h-4 sm:w-4" />
               </Button>
               <Button
                 variant={viewMode === 'list' ? 'default' : 'outline'}
                 size="sm"
                 onClick={handleViewModeList}
-                className={viewMode === 'list' ? 'bg-blue-500 hover:bg-blue-600 text-white' : 'border-border text-foreground hover:bg-muted/50 dark:border-slate-600 dark:text-slate-300 dark:hover:bg-slate-700/50'}
+                className={`${viewMode === 'list' ? 'bg-blue-500 hover:bg-blue-600 text-white' : 'border-border text-foreground hover:bg-muted/50 dark:border-slate-600 dark:text-slate-300 dark:hover:bg-slate-700/50'} h-8 w-8 sm:h-9 sm:w-9`}
               >
-                <List className="h-4 w-4" />
+                <List className="h-3 w-3 sm:h-4 sm:w-4" />
               </Button>
             </div>
-            <div className="text-sm text-slate-600 dark:text-slate-300">
-              Mostrando {filteredProjects.length} de {projects.length} proyectos
+            <div className="text-xs sm:text-sm text-slate-600 dark:text-slate-300">
+              <span className="hidden sm:inline">Mostrando {filteredProjects.length} de {projects.length} proyectos</span>
+              <span className="sm:hidden">{filteredProjects.length}/{projects.length}</span>
               {Object.keys(urlFilters).length > 0 && (
-                <div className="mt-2 flex flex-wrap gap-2">
+                <div className="mt-2 flex flex-wrap gap-1 sm:gap-2">
                   {Object.entries(urlFilters).map(([key, value]) => (
                     <Badge key={key} variant="secondary" className="text-xs">
                       {key}: {value}
@@ -493,12 +497,12 @@ const ProjectsPage = React.memo(() => {
 
         {/* Lista de proyectos */}
         {filteredProjects.length === 0 ? (
-          <div className="bg-card dark:bg-slate-800/50 rounded-2xl p-12 text-center shadow-lg border border-border/50 dark:border-slate-700/50">
-            <div className="w-16 h-16 bg-muted dark:bg-slate-700 rounded-full flex items-center justify-center mx-auto mb-4">
-              <FileText className="h-8 w-8 text-slate-400 dark:text-slate-500" />
+          <div className="bg-card dark:bg-slate-800/50 rounded-xl sm:rounded-2xl p-8 sm:p-12 text-center shadow-lg border border-border/50 dark:border-slate-700/50">
+            <div className="w-12 h-12 sm:w-16 sm:h-16 bg-muted dark:bg-slate-700 rounded-full flex items-center justify-center mx-auto mb-3 sm:mb-4">
+              <FileText className="h-6 w-6 sm:h-8 sm:w-8 text-slate-400 dark:text-slate-500" />
             </div>
-            <h3 className="text-lg font-semibold mb-2 text-slate-800 dark:text-white">No hay proyectos</h3>
-            <p className="text-slate-600 dark:text-slate-300 mb-4">
+            <h3 className="text-base sm:text-lg font-semibold mb-2 text-slate-800 dark:text-white">No hay proyectos</h3>
+            <p className="text-sm sm:text-base text-slate-600 dark:text-slate-300 mb-3 sm:mb-4">
               {projects.length === 0 
                 ? 'Comienza creando tu primer proyecto'
                 : 'No se encontraron proyectos con los filtros aplicados'
@@ -507,15 +511,16 @@ const ProjectsPage = React.memo(() => {
             {projects.length === 0 && (
               <Button 
                 onClick={handleOpenNuevoModal}
-                className="bg-gradient-to-r from-blue-500 via-purple-600 hover:to-fuchsia-700 shadow-lg text-white font-medium"
+                className="bg-gradient-to-r from-blue-500 via-purple-600 hover:to-fuchsia-700 shadow-lg text-white font-medium text-sm sm:text-base"
               >
-                <Plus className="h-4 w-4 mr-2" />
-                Crear primer proyecto
+                <Plus className="h-3 w-3 sm:h-4 sm:w-4 mr-1 sm:mr-2" />
+                <span className="hidden sm:inline">Crear primer proyecto</span>
+                <span className="sm:hidden">Crear proyecto</span>
               </Button>
             )}
           </div>
         ) : (
-          <div className={viewMode === 'grid' ? 'flex flex-wrap gap-6' : 'space-y-4'}>
+          <div className={viewMode === 'grid' ? 'grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-4 sm:gap-6' : 'space-y-3 sm:space-y-4'}>
             {filteredProjects.map((project, index) => (
               <ProjectCard
                 key={project.id}

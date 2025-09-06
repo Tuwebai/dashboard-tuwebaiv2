@@ -9,22 +9,24 @@ export default function TerminosCondiciones() {
     <div className="min-h-screen bg-background flex flex-col">
       {/* Header */}
       <div className="bg-card border-b border-border">
-        <div className="container mx-auto px-4 py-4">
+        <div className="container mx-auto px-3 sm:px-4 py-3 sm:py-4">
           <div className="flex items-center justify-between">
             <div className="flex items-center gap-2">
               <img 
                 src="/logoweb.jpg" 
                 alt="TuWebAI Logo" 
-                className="h-8 w-8 object-contain rounded-lg"
+                className="h-6 w-6 sm:h-8 sm:w-8 object-contain rounded-lg"
               />
-              <h1 className="text-xl font-bold bg-gradient-to-r from-pink-500 to-purple-600 bg-clip-text text-transparent">
-                TuWebAI
+              <h1 className="text-base sm:text-lg lg:text-xl font-bold bg-gradient-to-r from-pink-500 to-purple-600 bg-clip-text text-transparent">
+                <span className="hidden sm:inline">TuWebAI - Dashboard Profesional</span>
+                <span className="sm:hidden">TuWebAI</span>
               </h1>
             </div>
             <Link to="/login">
-              <Button variant="outline" size="sm" className="flex items-center gap-2">
-                <ArrowLeft className="h-4 w-4" />
-                Volver al Login
+              <Button variant="outline" size="sm" className="flex items-center gap-1 sm:gap-2 text-xs sm:text-sm">
+                <ArrowLeft className="h-3 w-3 sm:h-4 sm:w-4" />
+                <span className="hidden sm:inline">Volver al Login</span>
+                <span className="sm:hidden">Volver</span>
               </Button>
             </Link>
           </div>
@@ -32,25 +34,25 @@ export default function TerminosCondiciones() {
       </div>
 
       {/* Contenido principal */}
-      <div className="flex-1 container mx-auto px-4 py-8 max-w-4xl">
+      <div className="flex-1 container mx-auto px-3 sm:px-4 py-4 sm:py-6 lg:py-8 max-w-4xl">
         <div className="relative">
           {/* Fondo azul eléctrico borroso */}
           <div className="absolute inset-0 bg-[#00CCFF] rounded-lg blur-xl opacity-20 -z-10"></div>
           
           <Card className="bg-card border-border shadow-card relative z-10">
-            <CardHeader className="text-center pb-8">
-              <CardTitle className="text-3xl font-bold bg-gradient-to-r from-pink-500 to-purple-600 bg-clip-text text-transparent">
+            <CardHeader className="text-center pb-4 sm:pb-6 lg:pb-8 p-4 sm:p-6">
+              <CardTitle className="text-2xl sm:text-3xl font-bold bg-gradient-to-r from-pink-500 to-purple-600 bg-clip-text text-transparent">
                 Términos y Condiciones
               </CardTitle>
-              <p className="text-muted-foreground mt-2">
+              <p className="text-sm sm:text-base text-muted-foreground mt-2">
                 Última actualización: {new Date().toLocaleDateString('es-ES')}
               </p>
             </CardHeader>
             
-            <CardContent className="space-y-6 text-foreground">
+            <CardContent className="space-y-4 sm:space-y-6 text-foreground p-4 sm:p-6">
               <section>
-                <h2 className="text-xl font-semibold mb-3 text-primary">1. Aceptación de los Términos</h2>
-                <p className="text-muted-foreground leading-relaxed">
+                <h2 className="text-lg sm:text-xl font-semibold mb-2 sm:mb-3 text-primary">1. Aceptación de los Términos</h2>
+                <p className="text-sm sm:text-base text-muted-foreground leading-relaxed">
                   Al acceder y utilizar el dashboard de TuWebAI, usted acepta estar sujeto a estos términos y condiciones. 
                   Si no está de acuerdo con alguna parte de estos términos, no debe utilizar nuestros servicios.
                 </p>

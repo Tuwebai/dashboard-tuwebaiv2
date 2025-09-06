@@ -730,25 +730,26 @@ const Dashboard = React.memo(() => {
           <div className="h-full overflow-y-auto">
           
           {/* Botón Crear Proyecto */}
-          <div className="px-4 sm:px-6 lg:px-8 py-4">
+          <div className="px-3 sm:px-4 lg:px-8 py-3 sm:py-4">
             <div className="flex justify-start">
               <Button
                 onClick={() => navigate('/proyectos/nuevo')}
-                className="bg-gradient-to-r from-blue-500 via-purple-600 to-indigo-600 hover:from-blue-600 hover:to-indigo-700 text-white font-semibold px-8 py-4 shadow-lg hover:shadow-xl transition-all duration-300 text-lg"
+                className="bg-gradient-to-r from-blue-500 via-purple-600 to-indigo-600 hover:from-blue-600 hover:to-indigo-700 text-white font-semibold px-4 sm:px-6 lg:px-8 py-3 sm:py-4 shadow-lg hover:shadow-xl transition-all duration-300 text-sm sm:text-base lg:text-lg"
               >
-                <Plus className="h-6 w-6 mr-3" />
-                Crear Proyecto
+                <Plus className="h-4 w-4 sm:h-5 sm:w-5 lg:h-6 lg:w-6 mr-2 sm:mr-3" />
+                <span className="hidden sm:inline">Crear Proyecto</span>
+                <span className="sm:hidden">Crear</span>
               </Button>
             </div>
           </div>
 
 
           {/* Layout en 3 Columnas - Nuevo Dashboard del Cliente */}
-          <div className="px-4 sm:px-6 lg:px-8 pb-6">
-            <div className="grid grid-cols-1 lg:grid-cols-12 gap-6">
+          <div className="px-3 sm:px-4 lg:px-8 pb-4 sm:pb-6">
+            <div className="grid grid-cols-1 lg:grid-cols-12 gap-4 sm:gap-6">
               
               {/* Columna Izquierda - Acciones Rápidas (30%) */}
-              <div className="lg:col-span-3 space-y-6">
+              <div className="lg:col-span-3 space-y-4 sm:space-y-6">
                 {/* Acciones Rápidas */}
             <motion.div 
                   initial={{ opacity: 0, x: -20 }}
@@ -756,55 +757,56 @@ const Dashboard = React.memo(() => {
                   transition={{ duration: 0.5, delay: 0.1 }}
                 >
                   <Card className="bg-white/80 dark:bg-slate-800/50 backdrop-blur-sm border border-slate-200/50 dark:border-slate-700/50 shadow-lg">
-                    <CardHeader className="pb-3">
-                      <CardTitle className="text-lg font-semibold text-slate-800 dark:text-white flex items-center gap-2">
-                        <Zap className="h-5 w-5 text-blue-500" />
-                        Acciones Rápidas
+                    <CardHeader className="pb-2 sm:pb-3">
+                      <CardTitle className="text-base sm:text-lg font-semibold text-slate-800 dark:text-white flex items-center gap-2">
+                        <Zap className="h-4 w-4 sm:h-5 sm:w-5 text-blue-500" />
+                        <span className="hidden sm:inline">Acciones Rápidas</span>
+                        <span className="sm:hidden">Acciones</span>
                       </CardTitle>
                     </CardHeader>
-                    <CardContent className="space-y-3">
+                    <CardContent className="space-y-2 sm:space-y-3">
                       <Button
                         variant="ghost"
-                        className="w-full justify-start text-left h-auto p-4 hover:bg-blue-50 dark:hover:bg-blue-500/10"
+                        className="w-full justify-start text-left h-auto p-3 sm:p-4 hover:bg-blue-50 dark:hover:bg-blue-500/10"
                         onClick={() => navigate('/proyectos/nuevo')}
                       >
-                        <div className="flex items-center gap-3">
-                          <div className="w-10 h-10 bg-blue-100 dark:bg-blue-500/20 rounded-lg flex items-center justify-center">
-                            <Plus className="h-5 w-5 text-blue-600 dark:text-blue-400" />
-                </div>
-                          <div>
-                            <p className="font-medium text-slate-800 dark:text-white">Nuevo Proyecto</p>
-                            <p className="text-sm text-slate-500 dark:text-slate-400">Crear un proyecto web</p>
-                </div>
-                </div>
+                        <div className="flex items-center gap-2 sm:gap-3">
+                          <div className="w-8 h-8 sm:w-10 sm:h-10 bg-blue-100 dark:bg-blue-500/20 rounded-lg flex items-center justify-center flex-shrink-0">
+                            <Plus className="h-4 w-4 sm:h-5 sm:w-5 text-blue-600 dark:text-blue-400" />
+                          </div>
+                          <div className="min-w-0">
+                            <p className="text-sm sm:text-base font-medium text-slate-800 dark:text-white">Nuevo Proyecto</p>
+                            <p className="text-xs sm:text-sm text-slate-500 dark:text-slate-400">Crear un proyecto web</p>
+                          </div>
+                        </div>
                       </Button>
                       <Button
                         variant="ghost"
-                        className="w-full justify-start text-left h-auto p-4 hover:bg-green-50 dark:hover:bg-green-500/10"
+                        className="w-full justify-start text-left h-auto p-3 sm:p-4 hover:bg-green-50 dark:hover:bg-green-500/10"
                         onClick={() => navigate('/proyectos')}
                       >
-                        <div className="flex items-center gap-3">
-                          <div className="w-10 h-10 bg-green-100 dark:bg-green-500/20 rounded-lg flex items-center justify-center">
-                            <FileText className="h-5 w-5 text-green-600 dark:text-green-400" />
-                </div>
-                          <div>
-                            <p className="font-medium text-slate-800 dark:text-white">Ver Proyectos</p>
-                            <p className="text-sm text-slate-500 dark:text-slate-400">Gestionar existentes</p>
-                </div>
-              </div>
+                        <div className="flex items-center gap-2 sm:gap-3">
+                          <div className="w-8 h-8 sm:w-10 sm:h-10 bg-green-100 dark:bg-green-500/20 rounded-lg flex items-center justify-center flex-shrink-0">
+                            <FileText className="h-4 w-4 sm:h-5 sm:w-5 text-green-600 dark:text-green-400" />
+                          </div>
+                          <div className="min-w-0">
+                            <p className="text-sm sm:text-base font-medium text-slate-800 dark:text-white">Ver Proyectos</p>
+                            <p className="text-xs sm:text-sm text-slate-500 dark:text-slate-400">Gestionar existentes</p>
+                          </div>
+                        </div>
                       </Button>
                       <Button
                         variant="ghost"
-                        className="w-full justify-start text-left h-auto p-4 hover:bg-purple-50 dark:hover:bg-purple-500/10"
+                        className="w-full justify-start text-left h-auto p-3 sm:p-4 hover:bg-purple-50 dark:hover:bg-purple-500/10"
                         onClick={() => navigate('/perfil')}
                       >
-                        <div className="flex items-center gap-3">
-                          <div className="w-10 h-10 bg-purple-100 dark:bg-purple-500/20 rounded-lg flex items-center justify-center">
-                            <User className="h-5 w-5 text-purple-600 dark:text-purple-400" />
+                        <div className="flex items-center gap-2 sm:gap-3">
+                          <div className="w-8 h-8 sm:w-10 sm:h-10 bg-purple-100 dark:bg-purple-500/20 rounded-lg flex items-center justify-center flex-shrink-0">
+                            <User className="h-4 w-4 sm:h-5 sm:w-5 text-purple-600 dark:text-purple-400" />
                           </div>
-                          <div>
-                            <p className="font-medium text-slate-800 dark:text-white">Mi Perfil</p>
-                            <p className="text-sm text-slate-500 dark:text-slate-400">Configurar cuenta</p>
+                          <div className="min-w-0">
+                            <p className="text-sm sm:text-base font-medium text-slate-800 dark:text-white">Mi Perfil</p>
+                            <p className="text-xs sm:text-sm text-slate-500 dark:text-slate-400">Configurar cuenta</p>
                           </div>
                         </div>
                       </Button>
@@ -819,69 +821,72 @@ const Dashboard = React.memo(() => {
                   transition={{ duration: 0.5, delay: 0.2 }}
                 >
                   <Card className="bg-white/80 dark:bg-slate-800/50 backdrop-blur-sm border border-slate-200/50 dark:border-slate-700/50 shadow-lg">
-                    <CardHeader className="pb-3">
-                      <CardTitle className="text-lg font-semibold text-slate-800 dark:text-white flex items-center gap-2">
-                        <Users className="h-5 w-5 text-green-500" />
-                        Estado del Equipo
+                    <CardHeader className="pb-2 sm:pb-3">
+                      <CardTitle className="text-base sm:text-lg font-semibold text-slate-800 dark:text-white flex items-center gap-2">
+                        <Users className="h-4 w-4 sm:h-5 sm:w-5 text-green-500" />
+                        <span className="hidden sm:inline">Estado del Equipo</span>
+                        <span className="sm:hidden">Equipo</span>
                       </CardTitle>
                     </CardHeader>
-                    <CardContent className="space-y-3">
-                      <div className="flex items-center gap-3">
-                        <div className="w-8 h-8 bg-green-100 dark:bg-green-500/20 rounded-full flex items-center justify-center">
-                          <div className="w-3 h-3 bg-green-500 rounded-full"></div>
-                </div>
-                        <div>
-                          <p className="font-medium text-slate-800 dark:text-white">Equipo Activo</p>
-                          <p className="text-sm text-slate-500 dark:text-slate-400">Trabajando en tus proyectos</p>
-                </div>
-                </div>
-                      <div className="flex items-center gap-3">
-                        <div className="w-8 h-8 bg-blue-100 dark:bg-blue-500/20 rounded-full flex items-center justify-center">
-                          <MessageSquare className="h-4 w-4 text-blue-600 dark:text-blue-400" />
-                </div>
-                        <div>
-                          <p className="font-medium text-slate-800 dark:text-white">Comunicación</p>
-                          <p className="text-sm text-slate-500 dark:text-slate-400">Respuesta en 2-4 horas</p>
-                  </div>
-                </div>
+                    <CardContent className="space-y-2 sm:space-y-3">
+                      <div className="flex items-center gap-2 sm:gap-3">
+                        <div className="w-6 h-6 sm:w-8 sm:h-8 bg-green-100 dark:bg-green-500/20 rounded-full flex items-center justify-center flex-shrink-0">
+                          <div className="w-2 h-2 sm:w-3 sm:h-3 bg-green-500 rounded-full"></div>
+                        </div>
+                        <div className="min-w-0">
+                          <p className="text-sm sm:text-base font-medium text-slate-800 dark:text-white">Equipo Activo</p>
+                          <p className="text-xs sm:text-sm text-slate-500 dark:text-slate-400">Trabajando en tus proyectos</p>
+                        </div>
+                      </div>
+                      <div className="flex items-center gap-2 sm:gap-3">
+                        <div className="w-6 h-6 sm:w-8 sm:h-8 bg-blue-100 dark:bg-blue-500/20 rounded-full flex items-center justify-center flex-shrink-0">
+                          <MessageSquare className="h-3 w-3 sm:h-4 sm:w-4 text-blue-600 dark:text-blue-400" />
+                        </div>
+                        <div className="min-w-0">
+                          <p className="text-sm sm:text-base font-medium text-slate-800 dark:text-white">Comunicación</p>
+                          <p className="text-xs sm:text-sm text-slate-500 dark:text-slate-400">Respuesta en 2-4 horas</p>
+                        </div>
+                      </div>
                     </CardContent>
                   </Card>
             </motion.div>
               </div>
 
               {/* Columna Central - Contenido Principal (50%) */}
-              <div className="lg:col-span-6 space-y-6">
+              <div className="lg:col-span-6 space-y-4 sm:space-y-6">
                 {/* Métricas Mejoradas para el Cliente */}
             <motion.div 
                   initial={{ opacity: 0, y: 20 }}
                   animate={{ opacity: 1, y: 0 }}
                   transition={{ duration: 0.6, delay: 0.1 }}
-                  className="grid grid-cols-1 sm:grid-cols-2 gap-4"
+                  className="grid grid-cols-1 sm:grid-cols-2 gap-3 sm:gap-4"
                 >
                   {/* Progreso de Mis Proyectos */}
                   <Card 
                     className="bg-gradient-to-br from-blue-500/10 via-blue-600/15 to-indigo-500/20 dark:from-blue-500/20 dark:via-blue-600/25 dark:to-indigo-500/30 border border-blue-200/50 dark:border-blue-500/30 shadow-lg hover:shadow-xl transition-all duration-300 cursor-pointer group"
                     onClick={() => navigateToProjects('view', 'progress')}
                   >
-                    <CardContent className="p-6">
-                      <div className="flex items-center justify-between mb-4">
-                        <div className="w-12 h-12 bg-blue-500 rounded-xl flex items-center justify-center shadow-lg group-hover:scale-110 transition-transform duration-300">
-                          <BarChart3 className="h-6 w-6 text-white" />
-                </div>
-                        <Badge className="bg-blue-100 text-blue-700 dark:bg-blue-500/20 dark:text-blue-300">
-                          {dashboardStats.averageProgress}% Promedio
+                    <CardContent className="p-4 sm:p-6">
+                      <div className="flex items-center justify-between mb-3 sm:mb-4">
+                        <div className="w-10 h-10 sm:w-12 sm:h-12 bg-blue-500 rounded-lg sm:rounded-xl flex items-center justify-center shadow-lg group-hover:scale-110 transition-transform duration-300">
+                          <BarChart3 className="h-5 w-5 sm:h-6 sm:w-6 text-white" />
+                        </div>
+                        <Badge className="bg-blue-100 text-blue-700 dark:bg-blue-500/20 dark:text-blue-300 text-xs sm:text-sm">
+                          <span className="hidden sm:inline">{dashboardStats.averageProgress}% Promedio</span>
+                          <span className="sm:hidden">{dashboardStats.averageProgress}%</span>
                         </Badge>
-                </div>
-                      <h3 className="text-lg font-semibold text-slate-800 dark:text-white mb-2">
-                        Progreso de Mis Proyectos
+                      </div>
+                      <h3 className="text-base sm:text-lg font-semibold text-slate-800 dark:text-white mb-2">
+                        <span className="hidden sm:inline">Progreso de Mis Proyectos</span>
+                        <span className="sm:hidden">Progreso</span>
                       </h3>
                       <div className="space-y-2">
-                        <div className="flex justify-between text-sm text-slate-600 dark:text-slate-300">
+                        <div className="flex justify-between text-xs sm:text-sm text-slate-600 dark:text-slate-300">
                           <span>Progreso General</span>
                           <span>{dashboardStats.averageProgress}%</span>
-                </div>
-                        <Progress value={dashboardStats.averageProgress} className="h-2" />
-                </div>
+                        </div>
+                        <Progress value={dashboardStats.averageProgress} className="h-1.5 sm:h-2" />
+                      </div>
                     </CardContent>
                   </Card>
 
@@ -890,20 +895,21 @@ const Dashboard = React.memo(() => {
                     className="bg-gradient-to-br from-orange-500/10 via-orange-600/15 to-red-500/20 dark:from-orange-500/20 dark:via-orange-600/25 dark:to-red-500/30 border border-orange-200/50 dark:border-orange-500/30 shadow-lg hover:shadow-xl transition-all duration-300 cursor-pointer group"
                     onClick={() => navigateToProjects('status', 'in_progress')}
                   >
-                    <CardContent className="p-6">
-                      <div className="flex items-center justify-between mb-4">
-                        <div className="w-12 h-12 bg-orange-500 rounded-xl flex items-center justify-center shadow-lg group-hover:scale-110 transition-transform duration-300">
-                          <Calendar className="h-6 w-6 text-white" />
-                </div>
-                        <Badge className="bg-orange-100 text-orange-700 dark:bg-orange-500/20 dark:text-orange-300">
+                    <CardContent className="p-4 sm:p-6">
+                      <div className="flex items-center justify-between mb-3 sm:mb-4">
+                        <div className="w-10 h-10 sm:w-12 sm:h-12 bg-orange-500 rounded-lg sm:rounded-xl flex items-center justify-center shadow-lg group-hover:scale-110 transition-transform duration-300">
+                          <Calendar className="h-5 w-5 sm:h-6 sm:w-6 text-white" />
+                        </div>
+                        <Badge className="bg-orange-100 text-orange-700 dark:bg-orange-500/20 dark:text-orange-300 text-xs sm:text-sm">
                           Próximas
                         </Badge>
-              </div>
-                      <h3 className="text-lg font-semibold text-slate-800 dark:text-white mb-2">
-                        Próximas Entregas
+                      </div>
+                      <h3 className="text-base sm:text-lg font-semibold text-slate-800 dark:text-white mb-2">
+                        <span className="hidden sm:inline">Próximas Entregas</span>
+                        <span className="sm:hidden">Entregas</span>
                       </h3>
                       <div className="space-y-2">
-                        <div className="flex justify-between text-sm text-slate-600 dark:text-slate-300">
+                        <div className="flex justify-between text-xs sm:text-sm text-slate-600 dark:text-slate-300">
                           <span>En Progreso</span>
                           <span>{dashboardStats.inProgressProjects} proyectos</span>
                         </div>
@@ -919,27 +925,29 @@ const Dashboard = React.memo(() => {
                     className="bg-gradient-to-br from-green-500/10 via-green-600/15 to-emerald-500/20 dark:from-green-500/20 dark:via-green-600/25 dark:to-emerald-500/30 border border-green-200/50 dark:border-green-500/30 shadow-lg hover:shadow-xl transition-all duration-300 cursor-pointer group"
                     onClick={() => setShowCollaborationModal(true)}
                   >
-                    <CardContent className="p-6">
-                      <div className="flex items-center justify-between mb-4">
-                        <div className="w-12 h-12 bg-green-500 rounded-xl flex items-center justify-center shadow-lg group-hover:scale-110 transition-transform duration-300">
-                          <MessageSquare className="h-6 w-6 text-white" />
-                  </div>
-                        <Badge className="bg-green-100 text-green-700 dark:bg-green-500/20 dark:text-green-300">
-                          {dashboardStats.totalComments} Mensajes
+                    <CardContent className="p-4 sm:p-6">
+                      <div className="flex items-center justify-between mb-3 sm:mb-4">
+                        <div className="w-10 h-10 sm:w-12 sm:h-12 bg-green-500 rounded-lg sm:rounded-xl flex items-center justify-center shadow-lg group-hover:scale-110 transition-transform duration-300">
+                          <MessageSquare className="h-5 w-5 sm:h-6 sm:w-6 text-white" />
+                        </div>
+                        <Badge className="bg-green-100 text-green-700 dark:bg-green-500/20 dark:text-green-300 text-xs sm:text-sm">
+                          <span className="hidden sm:inline">{dashboardStats.totalComments} Mensajes</span>
+                          <span className="sm:hidden">{dashboardStats.totalComments}</span>
                         </Badge>
-                </div>
-                      <h3 className="text-lg font-semibold text-slate-800 dark:text-white mb-2">
-                        Comunicación Activa
+                      </div>
+                      <h3 className="text-base sm:text-lg font-semibold text-slate-800 dark:text-white mb-2">
+                        <span className="hidden sm:inline">Comunicación Activa</span>
+                        <span className="sm:hidden">Comunicación</span>
                       </h3>
                       <div className="space-y-2">
-                        <div className="flex justify-between text-sm text-slate-600 dark:text-slate-300">
+                        <div className="flex justify-between text-xs sm:text-sm text-slate-600 dark:text-slate-300">
                           <span>Comentarios Totales</span>
                           <span>{dashboardStats.totalComments}</span>
-                </div>
+                        </div>
                         <div className="text-xs text-slate-500 dark:text-slate-400">
                           Mantente al día con el equipo
-                </div>
-                </div>
+                        </div>
+                      </div>
                     </CardContent>
                   </Card>
 
@@ -948,26 +956,27 @@ const Dashboard = React.memo(() => {
                     className="bg-gradient-to-br from-purple-500/10 via-purple-600/15 to-violet-500/20 dark:from-purple-500/20 dark:via-purple-600/25 dark:to-violet-500/30 border border-purple-200/50 dark:border-purple-500/30 shadow-lg hover:shadow-xl transition-all duration-300 cursor-pointer group"
                     onClick={() => navigateToProjects('type', 'collaborative')}
                   >
-                    <CardContent className="p-6">
-                      <div className="flex items-center justify-between mb-4">
-                        <div className="w-12 h-12 bg-purple-500 rounded-xl flex items-center justify-center shadow-lg group-hover:scale-110 transition-transform duration-300">
-                          <Users className="h-6 w-6 text-white" />
-                  </div>
-                        <Badge className="bg-purple-100 text-purple-700 dark:bg-purple-500/20 dark:text-purple-300">
+                    <CardContent className="p-4 sm:p-6">
+                      <div className="flex items-center justify-between mb-3 sm:mb-4">
+                        <div className="w-10 h-10 sm:w-12 sm:h-12 bg-purple-500 rounded-lg sm:rounded-xl flex items-center justify-center shadow-lg group-hover:scale-110 transition-transform duration-300">
+                          <Users className="h-5 w-5 sm:h-6 sm:w-6 text-white" />
+                        </div>
+                        <Badge className="bg-purple-100 text-purple-700 dark:bg-purple-500/20 dark:text-purple-300 text-xs sm:text-sm">
                           Activo
                         </Badge>
-                </div>
-                      <h3 className="text-lg font-semibold text-slate-800 dark:text-white mb-2">
-                        Estado de Colaboración
+                      </div>
+                      <h3 className="text-base sm:text-lg font-semibold text-slate-800 dark:text-white mb-2">
+                        <span className="hidden sm:inline">Estado de Colaboración</span>
+                        <span className="sm:hidden">Colaboración</span>
                       </h3>
                       <div className="space-y-2">
-                        <div className="flex justify-between text-sm text-slate-600 dark:text-slate-300">
+                        <div className="flex justify-between text-xs sm:text-sm text-slate-600 dark:text-slate-300">
                           <span>Proyectos Colaborativos</span>
                           <span>{dashboardStats.totalProjects}</span>
-              </div>
+                        </div>
                         <div className="text-xs text-slate-500 dark:text-slate-400">
                           Trabajo en equipo activo
-          </div>
+                        </div>
                       </div>
                     </CardContent>
                   </Card>

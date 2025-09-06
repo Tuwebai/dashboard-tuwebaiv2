@@ -53,6 +53,7 @@ const PoliticaPrivacidad = createLazyComponent(() => import('./pages/PoliticaPri
 const TerminosCondiciones = createLazyComponent(() => import('./pages/TerminosCondiciones'));
 const Dashboard = createLazyComponent(() => import('./pages/Dashboard'));
 const Admin = createLazyComponent(() => import('./pages/Admin'));
+const WebsyAI = createLazyComponent(() => import('./pages/WebsyAI'));
 const ProjectsPage = createLazyComponent(() => import('./pages/ProjectsPage'));
 const ProyectosNuevo = createLazyComponent(() => import('./pages/ProyectosNuevo'));
 
@@ -171,6 +172,14 @@ function AppRoutes() {
         <ProtectedRoute>
           <DashboardLayout>
             <Admin />
+          </DashboardLayout>
+        </ProtectedRoute>
+      } />
+      
+      <Route path="/admin/websy-ai" element={
+        <ProtectedRoute>
+          <DashboardLayout>
+            <WebsyAI />
           </DashboardLayout>
         </ProtectedRoute>
       } />
