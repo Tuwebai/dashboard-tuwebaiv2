@@ -51,6 +51,7 @@ import AutoVersionCreator from '@/components/admin/AutoVersionCreator';
 import AdvancedTools from '@/components/admin/AdvancedTools';
 import { AdvancedAIPanel } from '@/components/admin/AdvancedAIPanel';
 import { TicketAnalysis } from '@/components/admin/TicketAnalysis';
+import { IntegrationsPanel } from '@/components/admin/IntegrationsPanel';
 import { VersionManagement } from '@/components/admin/VersionManagement';
 import ProjectApprovalManager from '@/components/ProjectApprovalManager';
 
@@ -1341,6 +1342,10 @@ const Admin = React.memo(() => {
                   }}
                 />
               </div>
+            )}
+
+            {activeSection === 'integraciones' && (
+              <IntegrationsPanel />
             )}
 
             {activeSection === 'settings' && (

@@ -14,6 +14,8 @@ import {
   Mic
 } from 'lucide-react';
 import { toast } from '@/hooks/use-toast';
+import { CalendarScheduler } from './CalendarScheduler';
+import { EmailReporter } from './EmailReporter';
 
 interface Attachment {
   id: string;
@@ -47,10 +49,34 @@ export const ChatInput: React.FC<ChatInputProps> = ({
   const fileInputRef = useRef<HTMLInputElement>(null);
   const textareaRef = useRef<HTMLTextAreaElement>(null);
   const recognitionRef = useRef<any>(null);
+  const [showCalendar, setShowCalendar] = useState(false);
+  const [showEmail, setShowEmail] = useState(false);
 
   const handleSend = useCallback(() => {
     if (!message.trim() && attachments.length === 0) return;
     if (disabled) return;
+
+    // Detectar comandos de calendario
+    const calendarCommands = ['programa', 'agenda', 'reunión', 'cita', 'calendario'];
+    const hasCalendarCommand = calendarCommands.some(cmd => 
+      message.toLowerCase().includes(cmd)
+    );
+
+    // Detectar comandos de email
+    const emailCommands = ['envía', 'enviar', 'email', 'correo', 'reporte'];
+    const hasEmailCommand = emailCommands.some(cmd => 
+      message.toLowerCase().includes(cmd)
+    );
+
+    if (hasCalendarCommand) {
+      setShowCalendar(true);
+      return;
+    }
+
+    if (hasEmailCommand) {
+      setShowEmail(true);
+      return;
+    }
 
     onSendMessage(message.trim(), attachments);
     setMessage('');
@@ -494,6 +520,42 @@ export const ChatInput: React.FC<ChatInputProps> = ({
       <div className="text-gray-500 dark:text-slate-400 text-center text-xs py-3 px-4">
         Websy AI puede cometer errores. Considera verificar la información importante.
       </div>
+
+      {/* Modal de Calendario */}
+      {showCalendar && (
+        <div className="fixed inset-0 bg-black/50 flex items-center justify-center z-50 p-4">
+          <div className="bg-background rounded-lg max-w-md w-full max-h-[90vh] overflow-y-auto">
+            <CalendarScheduler
+              onEventCreated={(event) => {
+                setShowCalendar(false);
+                toast({
+                  title: "Evento creado",
+                  description: `"${event.title}" se ha programado exitosamente.`
+                });
+              }}
+              onClose={() => setShowCalendar(false)}
+            />
+          </div>
+        </div>
+      )}
+
+      {/* Modal de Email */}
+      {showEmail && (
+        <div className="fixed inset-0 bg-black/50 flex items-center justify-center z-50 p-4">
+          <div className="bg-background rounded-lg max-w-md w-full max-h-[90vh] overflow-y-auto">
+            <EmailReporter
+              onEmailSent={(recipients) => {
+                setShowEmail(false);
+                toast({
+                  title: "Reporte enviado",
+                  description: `Reporte enviado a ${recipients.length} destinatario(s).`
+                });
+              }}
+              onClose={() => setShowEmail(false)}
+            />
+          </div>
+        </div>
+      )}
     </div>
   );
 };

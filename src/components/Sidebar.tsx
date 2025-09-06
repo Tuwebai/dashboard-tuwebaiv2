@@ -413,6 +413,7 @@ export default function Sidebar() {
               <div className="space-y-1">
                 {adminNavItem('advanced-analytics', <BarChart size={18} />, t('Analytics Avanzado'))}
                 {adminNavItem('inteligencia-contextual', <Brain size={18} />, 'Inteligencia Contextual')}
+                {adminNavItem('integraciones', <Calendar size={18} />, 'Integraciones')}
               </div>
             </div>
 
