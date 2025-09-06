@@ -34,13 +34,13 @@ export const DiagnosticPanel: React.FC = () => {
 
     // 1. Verificar API Key de Gemini
     try {
-      const apiKey = process.env.REACT_APP_GEMINI_API_KEY;
+      const apiKey = import.meta.env.VITE_GEMINI_API_KEY || import.meta.env.REACT_APP_GEMINI_API_KEY;
       if (!apiKey || apiKey.trim() === '') {
         results.push({
           test: 'API Key de Gemini',
           status: 'error',
           message: 'API key no configurada',
-          details: 'Agrega REACT_APP_GEMINI_API_KEY a tu archivo .env'
+          details: 'Agrega VITE_GEMINI_API_KEY o REACT_APP_GEMINI_API_KEY a tu archivo .env'
         });
       } else if (apiKey.length < 20) {
         results.push({

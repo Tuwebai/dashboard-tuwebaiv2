@@ -3,25 +3,10 @@ import * as React from "react"
 import { cn } from "@/lib/utils"
 
 export interface TextareaProps
-  extends React.TextareaHTMLAttributes<HTMLTextAreaElement> {
-  ariaLabel?: string
-  ariaDescribedBy?: string
-  ariaInvalid?: boolean
-  ariaRequired?: boolean
-}
+  extends React.TextareaHTMLAttributes<HTMLTextAreaElement> {}
 
 const Textarea = React.forwardRef<HTMLTextAreaElement, TextareaProps>(
-  ({ className, ariaLabel, ariaDescribedBy, ariaInvalid, ariaRequired, ...props }, ref) => {
-    // Mejorar accesibilidad con ARIA labels y descripciones
-    const accessibilityProps = {
-      ...(ariaLabel && { "aria-label": ariaLabel }),
-      ...(ariaDescribedBy && { "aria-describedby": ariaDescribedBy }),
-      ...(ariaInvalid !== undefined && { "aria-invalid": ariaInvalid }),
-      ...(ariaRequired !== undefined && { "aria-required": ariaRequired }),
-      // Asegurar que el textarea sea accesible por teclado
-      tabIndex: props.tabIndex ?? 0,
-    }
-
+  ({ className, ...props }, ref) => {
     return (
       <textarea
         className={cn(
@@ -29,20 +14,7 @@ const Textarea = React.forwardRef<HTMLTextAreaElement, TextareaProps>(
           className
         )}
         ref={ref}
-        {...accessibilityProps}
         {...props}
-        // Mejorar navegación por teclado
-        onKeyDown={(e) => {
-          // Permitir navegación por teclado estándar
-          if (e.key === 'Tab' || e.key === 'ArrowUp' || e.key === 'ArrowDown' || e.key === 'ArrowLeft' || e.key === 'ArrowRight') {
-            return // Permitir navegación estándar
-          }
-          
-          // Llamar al onKeyDown original si existe
-          if (props.onKeyDown) {
-            props.onKeyDown(e)
-          }
-        }}
       />
     )
   }

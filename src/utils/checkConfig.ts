@@ -13,18 +13,18 @@ export const checkWebsyAIConfig = (): ConfigCheck => {
   const recommendations: string[] = [];
 
   // Verificar API key de Gemini
-  const geminiApiKey = process.env.REACT_APP_GEMINI_API_KEY;
+  const geminiApiKey = import.meta.env.VITE_GEMINI_API_KEY || import.meta.env.REACT_APP_GEMINI_API_KEY;
   if (!geminiApiKey) {
-    errors.push('REACT_APP_GEMINI_API_KEY no está configurada');
+    errors.push('VITE_GEMINI_API_KEY o REACT_APP_GEMINI_API_KEY no está configurada');
   } else if (geminiApiKey.length < 20) {
-    errors.push('REACT_APP_GEMINI_API_KEY parece inválida (muy corta)');
+    errors.push('API key de Gemini parece inválida (muy corta)');
   } else if (!geminiApiKey.startsWith('AIza')) {
-    warnings.push('REACT_APP_GEMINI_API_KEY no tiene el formato esperado de Google AI');
+    warnings.push('API key de Gemini no tiene el formato esperado de Google AI');
   }
 
   // Verificar variables de Supabase
-  const supabaseUrl = process.env.VITE_SUPABASE_URL;
-  const supabaseKey = process.env.VITE_SUPABASE_ANON_KEY;
+  const supabaseUrl = import.meta.env.VITE_SUPABASE_URL;
+  const supabaseKey = import.meta.env.VITE_SUPABASE_ANON_KEY;
   
   if (!supabaseUrl) {
     errors.push('VITE_SUPABASE_URL no está configurada');

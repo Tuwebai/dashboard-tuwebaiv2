@@ -42,7 +42,7 @@ const WebsyAI: React.FC = () => {
 
   // Hooks
   const { sendMessage, isLoading, error } = useGeminiAI({
-    apiKey: process.env.REACT_APP_GEMINI_API_KEY || '',
+    apiKey: import.meta.env.VITE_GEMINI_API_KEY || import.meta.env.REACT_APP_GEMINI_API_KEY || '',
     temperature: 0.7,
     maxTokens: 2048
   });

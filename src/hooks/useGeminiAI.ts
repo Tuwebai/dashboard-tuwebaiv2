@@ -23,6 +23,8 @@ interface UseGeminiAIOptions {
 }
 
 export const useGeminiAI = ({ apiKey, temperature = 0.7, maxTokens = 2048 }: UseGeminiAIOptions) => {
+  // Obtener API key de las variables de entorno de Vite
+  const geminiApiKey = apiKey || import.meta.env.VITE_GEMINI_API_KEY || import.meta.env.REACT_APP_GEMINI_API_KEY;
   const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
 
@@ -59,7 +61,7 @@ export const useGeminiAI = ({ apiKey, temperature = 0.7, maxTokens = 2048 }: Use
 
     try {
       // Validar API key
-      if (!apiKey || apiKey.trim() === '') {
+      if (!geminiApiKey || geminiApiKey.trim() === '') {
         throw new Error('API key de Gemini no configurada. Verifica las variables de entorno.');
       }
 
@@ -139,9 +141,9 @@ Responde en español y sé específico con los datos cuando sea posible.`;
       });
 
       // Llamar a la API de Gemini
-      const apiUrl = `https://generativelanguage.googleapis.com/v1beta/models/gemini-1.5-flash:generateContent?key=${apiKey}`;
+      const apiUrl = `https://generativelanguage.googleapis.com/v1beta/models/gemini-1.5-flash:generateContent?key=${geminiApiKey}`;
       
-      console.log('🌐 Llamando a Gemini API...', { apiUrl: apiUrl.replace(apiKey, '***') });
+      console.log('🌐 Llamando a Gemini API...', { apiUrl: apiUrl.replace(geminiApiKey, '***') });
 
       const response = await fetch(apiUrl, {
         method: 'POST',
@@ -227,7 +229,7 @@ Responde en español y sé específico con los datos cuando sea posible.`;
     } finally {
       setIsLoading(false);
     }
-  }, [apiKey, temperature, maxTokens, getDatabaseContext]);
+  }, [geminiApiKey, temperature, maxTokens, getDatabaseContext]);
 
   return {
     sendMessage,
