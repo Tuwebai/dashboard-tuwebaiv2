@@ -13,6 +13,7 @@ import { environmentService, EnvironmentVariable } from '@/lib/environmentServic
 import { githubService, DetectedInfo } from '@/lib/githubService';
 import { useToast } from '@/hooks/use-toast';
 import { formatBytes } from '@/utils/formatBytes';
+import { useTheme } from '@/contexts/ThemeContext';
 
 interface ProjectFormProps {
   project?: Project;
@@ -27,6 +28,7 @@ export const ProjectForm: React.FC<ProjectFormProps> = ({
   onCancel,
   loading = false
 }) => {
+  const { theme } = useTheme();
   const { toast } = useToast();
   
   const [formData, setFormData] = useState<CreateProjectData>({
@@ -552,9 +554,9 @@ export const ProjectForm: React.FC<ProjectFormProps> = ({
   };
 
   return (
-    <Card className="bg-white border-slate-200">
+    <Card className="bg-white dark:bg-slate-800 border-slate-200 dark:border-slate-700">
       <CardHeader>
-        <CardTitle className="text-slate-800">
+        <CardTitle className="text-slate-800 dark:text-slate-100">
           {project ? 'Editar Proyecto' : 'Nuevo Proyecto'}
         </CardTitle>
       </CardHeader>
@@ -562,38 +564,38 @@ export const ProjectForm: React.FC<ProjectFormProps> = ({
         <form onSubmit={handleSubmit} className="space-y-6">
           {/* Nombre del proyecto */}
           <div className="space-y-2">
-            <Label htmlFor="name" className="text-slate-700">Nombre del Proyecto *</Label>
+            <Label htmlFor="name" className="text-slate-700 dark:text-slate-300">Nombre del Proyecto *</Label>
             <Input
               id="name"
               value={formData.name}
               onChange={(e) => handleInputChange('name', e.target.value)}
               placeholder="Ingresa el nombre del proyecto"
-              className="bg-white border-slate-200 text-slate-800"
+              className="bg-white dark:bg-slate-700 border-slate-200 dark:border-slate-600 text-slate-800 dark:text-slate-200"
               required
             />
           </div>
 
           {/* Descripción */}
           <div className="space-y-2">
-            <Label htmlFor="description" className="text-slate-700">Descripción</Label>
+            <Label htmlFor="description" className="text-slate-700 dark:text-slate-300">Descripción</Label>
             <Textarea
               id="description"
               value={formData.description}
               onChange={(e) => handleInputChange('description', e.target.value)}
               placeholder="Describe el proyecto..."
-              className="bg-white border-slate-200 text-slate-800"
+              className="bg-white dark:bg-slate-700 border-slate-200 dark:border-slate-600 text-slate-800 dark:text-slate-200"
               rows={4}
             />
           </div>
 
           {/* Estado del proyecto */}
           <div className="space-y-2">
-            <Label htmlFor="status" className="text-slate-700">Estado</Label>
+            <Label htmlFor="status" className="text-slate-700 dark:text-slate-300">Estado</Label>
             <Select
               value={formData.status}
               onValueChange={(value) => handleInputChange('status', value)}
             >
-              <SelectTrigger className="bg-white border-slate-200 text-slate-800">
+              <SelectTrigger className="bg-white dark:bg-slate-700 border-slate-200 dark:border-slate-600 text-slate-800 dark:text-slate-200">
                 <SelectValue />
               </SelectTrigger>
               <SelectContent>
@@ -607,7 +609,7 @@ export const ProjectForm: React.FC<ProjectFormProps> = ({
 
           {/* URL de GitHub con Auto-llenado */}
           <div className="space-y-2">
-            <Label htmlFor="github_url" className="text-slate-700 flex items-center gap-2">
+            <Label htmlFor="github_url" className="text-slate-700 dark:text-slate-300 flex items-center gap-2">
               <Github className="h-4 w-4" />
               URL del Repositorio GitHub
             </Label>
@@ -619,7 +621,7 @@ export const ProjectForm: React.FC<ProjectFormProps> = ({
                 onChange={handleGitHubUrlChange}
                 onBlur={handleGitHubUrlBlur}
                 placeholder="https://github.com/usuario/repositorio"
-                className={`bg-white border-slate-200 text-slate-800 pr-10 ${
+                className={`bg-white dark:bg-slate-700 border-slate-200 dark:border-slate-600 text-slate-800 dark:text-slate-200 pr-10 ${
                   githubLoading ? 'border-blue-500' : 
                   detectedInfo ? 'border-green-500' : ''
                 }`}
@@ -637,7 +639,7 @@ export const ProjectForm: React.FC<ProjectFormProps> = ({
               )}
             </div>
             {githubLoading && (
-              <div className="flex items-center gap-2 text-sm text-blue-600">
+              <div className="flex items-center gap-2 text-sm text-blue-600 dark:text-blue-400">
                 <Loader2 className="h-3 w-3 animate-spin" />
                 Analizando repositorio...
               </div>
@@ -646,9 +648,9 @@ export const ProjectForm: React.FC<ProjectFormProps> = ({
 
           {/* Vista Previa de Información Detectada */}
           {showDetectedPreview && detectedInfo && (
-            <div className="bg-slate-50 border border-slate-200 rounded-lg p-4 space-y-4">
+            <div className="bg-slate-50 dark:bg-slate-700/50 border border-slate-200 dark:border-slate-600 rounded-lg p-4 space-y-4">
               <div className="flex items-center justify-between">
-                <h4 className="font-semibold text-slate-800 flex items-center gap-2">
+                <h4 className="font-semibold text-slate-800 dark:text-slate-200 flex items-center gap-2">
                   <CheckCircle className="h-4 w-4 text-green-500" />
                   Información detectada del repositorio
                 </h4>
