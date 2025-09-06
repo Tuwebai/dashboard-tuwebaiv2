@@ -132,7 +132,7 @@ const AdminPhasesAndTasksPage: React.FC = () => {
         .from('projects')
         .select(`
           *,
-          users!projects_created_by_fkey (
+          users (
             id,
             full_name,
             email
