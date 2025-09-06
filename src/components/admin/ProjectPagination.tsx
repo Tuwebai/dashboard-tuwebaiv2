@@ -2,6 +2,7 @@ import React from 'react';
 import { Button } from '@/components/ui/button';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import { ChevronLeft, ChevronRight, ChevronsLeft, ChevronsRight } from 'lucide-react';
+import { useTheme } from '@/contexts/ThemeContext';
 
 interface ProjectPaginationProps {
   currentPage: number;
@@ -20,6 +21,7 @@ export const ProjectPagination: React.FC<ProjectPaginationProps> = ({
   onPageChange,
   onItemsPerPageChange
 }) => {
+  const { theme } = useTheme();
   const startItem = (currentPage - 1) * itemsPerPage + 1;
   const endItem = Math.min(currentPage * itemsPerPage, totalItems);
 
@@ -60,17 +62,17 @@ export const ProjectPagination: React.FC<ProjectPaginationProps> = ({
 
   if (totalPages <= 1) {
     return (
-      <div className="flex items-center justify-between p-4 bg-white border border-slate-200 rounded-lg shadow-sm">
-        <div className="text-sm text-slate-600">
+      <div className="flex items-center justify-between p-4 bg-white dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-lg shadow-sm">
+        <div className="text-sm text-slate-600 dark:text-slate-400">
           Mostrando {totalItems} de {totalItems} proyectos
         </div>
         <div className="flex items-center gap-2">
-          <span className="text-sm text-slate-600">Mostrar:</span>
+          <span className="text-sm text-slate-600 dark:text-slate-400">Mostrar:</span>
           <Select
             value={itemsPerPage.toString()}
             onValueChange={(value) => onItemsPerPageChange(parseInt(value))}
           >
-            <SelectTrigger className="w-20 bg-white border-slate-200 text-slate-800">
+            <SelectTrigger className="w-20 bg-white dark:bg-slate-700 border-slate-200 dark:border-slate-600 text-slate-800 dark:text-slate-200">
               <SelectValue />
             </SelectTrigger>
             <SelectContent>
@@ -80,16 +82,16 @@ export const ProjectPagination: React.FC<ProjectPaginationProps> = ({
               <SelectItem value="50">50</SelectItem>
             </SelectContent>
           </Select>
-          <span className="text-sm text-gray-400">por página</span>
+          <span className="text-sm text-gray-400 dark:text-gray-500">por página</span>
         </div>
       </div>
     );
   }
 
   return (
-            <div className="flex items-center justify-between p-4 bg-white border border-slate-200 rounded-lg shadow-sm">
+            <div className="flex items-center justify-between p-4 bg-white dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-lg shadow-sm">
           {/* Información de elementos mostrados */}
-          <div className="text-sm text-slate-600">
+          <div className="text-sm text-slate-600 dark:text-slate-400">
             Mostrando {startItem}-{endItem} de {totalItems} proyectos
           </div>
 
@@ -102,7 +104,7 @@ export const ProjectPagination: React.FC<ProjectPaginationProps> = ({
             size="sm"
             onClick={() => onPageChange(1)}
             disabled={currentPage === 1}
-            className="bg-white border-slate-200 text-slate-700 hover:bg-slate-50 disabled:opacity-50"
+            className="bg-white dark:bg-slate-700 border-slate-200 dark:border-slate-600 text-slate-700 dark:text-slate-200 hover:bg-slate-50 dark:hover:bg-slate-600 disabled:opacity-50"
           >
             <ChevronsLeft className="h-4 w-4" />
           </Button>
@@ -111,7 +113,7 @@ export const ProjectPagination: React.FC<ProjectPaginationProps> = ({
             size="sm"
             onClick={() => onPageChange(currentPage - 1)}
             disabled={currentPage === 1}
-            className="bg-white border-slate-200 text-slate-700 hover:bg-slate-50 disabled:opacity-50"
+            className="bg-white dark:bg-slate-700 border-slate-200 dark:border-slate-600 text-slate-700 dark:text-slate-200 hover:bg-slate-50 dark:hover:bg-slate-600 disabled:opacity-50"
           >
             <ChevronLeft className="h-4 w-4" />
           </Button>
@@ -121,7 +123,7 @@ export const ProjectPagination: React.FC<ProjectPaginationProps> = ({
             {getPageNumbers().map((page, index) => (
               <React.Fragment key={index}>
                 {page === '...' ? (
-                  <span className="px-2 py-1 text-slate-500">...</span>
+                  <span className="px-2 py-1 text-slate-500 dark:text-slate-400">...</span>
                 ) : (
                   <Button
                     variant={currentPage === page ? 'default' : 'outline'}
@@ -130,7 +132,7 @@ export const ProjectPagination: React.FC<ProjectPaginationProps> = ({
                     className={
                       currentPage === page
                         ? 'bg-blue-600 hover:bg-blue-700 text-white'
-                        : 'bg-white border-slate-200 text-slate-700 hover:bg-slate-50'
+                        : 'bg-white dark:bg-slate-700 border-slate-200 dark:border-slate-600 text-slate-700 dark:text-slate-200 hover:bg-slate-50 dark:hover:bg-slate-600'
                     }
                   >
                     {page}
@@ -145,7 +147,7 @@ export const ProjectPagination: React.FC<ProjectPaginationProps> = ({
             size="sm"
             onClick={() => onPageChange(currentPage + 1)}
             disabled={currentPage === totalPages}
-            className="bg-white border-slate-200 text-slate-700 hover:bg-slate-50 disabled:opacity-50"
+            className="bg-white dark:bg-slate-700 border-slate-200 dark:border-slate-600 text-slate-700 dark:text-slate-200 hover:bg-slate-50 dark:hover:bg-slate-600 disabled:opacity-50"
           >
             <ChevronRight className="h-4 w-4" />
           </Button>
@@ -154,7 +156,7 @@ export const ProjectPagination: React.FC<ProjectPaginationProps> = ({
             size="sm"
             onClick={() => onPageChange(totalPages)}
             disabled={currentPage === totalPages}
-            className="bg-white border-slate-200 text-slate-700 hover:bg-slate-50 disabled:opacity-50"
+            className="bg-white dark:bg-slate-700 border-slate-200 dark:border-slate-600 text-slate-700 dark:text-slate-200 hover:bg-slate-50 dark:hover:bg-slate-600 disabled:opacity-50"
           >
             <ChevronsRight className="h-4 w-4" />
           </Button>
@@ -162,12 +164,12 @@ export const ProjectPagination: React.FC<ProjectPaginationProps> = ({
 
         {/* Selector de elementos por página */}
         <div className="flex items-center gap-2 ml-4">
-          <span className="text-sm text-slate-600">Mostrar:</span>
+          <span className="text-sm text-slate-600 dark:text-slate-400">Mostrar:</span>
           <Select
             value={itemsPerPage.toString()}
             onValueChange={(value) => onItemsPerPageChange(parseInt(value))}
           >
-            <SelectTrigger className="w-20 bg-white border-slate-200 text-slate-800">
+            <SelectTrigger className="w-20 bg-white dark:bg-slate-700 border-slate-200 dark:border-slate-600 text-slate-800 dark:text-slate-200">
               <SelectValue />
             </SelectTrigger>
             <SelectContent>
@@ -177,7 +179,7 @@ export const ProjectPagination: React.FC<ProjectPaginationProps> = ({
               <SelectItem value="50">50</SelectItem>
             </SelectContent>
           </Select>
-          <span className="text-sm text-slate-600">por página</span>
+          <span className="text-sm text-slate-600 dark:text-slate-400">por página</span>
         </div>
       </div>
     </div>
