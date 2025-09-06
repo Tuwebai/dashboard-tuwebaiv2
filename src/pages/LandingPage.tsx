@@ -301,15 +301,15 @@ const LandingPage = React.memo(() => {
             <div className="flex items-center space-x-1 sm:space-x-2 lg:space-x-3">
               <ThemeToggle variant="outline" size="sm" className="hidden sm:flex" />
               <div className="hidden md:flex items-center space-x-2">
-                <Button 
-                  variant="ghost" 
+              <Button 
+                variant="ghost" 
                   size="sm"
                   className="text-muted-foreground hover:text-foreground text-xs sm:text-sm"
-                  onClick={() => navigate('/login')}
-                >
+                onClick={() => navigate('/login')}
+              >
                   Iniciar Sesión
-                </Button>
-                <Button 
+              </Button>
+              <Button 
                   variant="outline"
                   size="sm"
                   className="text-xs sm:text-sm"
@@ -426,86 +426,86 @@ const LandingPage = React.memo(() => {
                     <h3 className="text-base sm:text-lg font-semibold text-card-foreground text-center">¿Ya tienes cuenta?</h3>
                     <form onSubmit={handleSubmit} className="space-y-3 sm:space-y-4">
                       <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 sm:gap-4">
-                        <div>
+                    <div>
                           <Label htmlFor="email" className="text-xs sm:text-sm font-medium text-card-foreground">Email</Label>
-                          <Input
-                            id="email"
-                            type="email"
-                            placeholder="tu@email.com"
-                            value={email}
-                            onChange={(e) => setEmail(e.target.value)}
-                            required
+                      <Input
+                        id="email"
+                        type="email"
+                        placeholder="tu@email.com"
+                        value={email}
+                        onChange={(e) => setEmail(e.target.value)}
+                        required
                             className="mt-1 h-9 sm:h-10 bg-input text-foreground border-border text-sm"
-                          />
-                        </div>
-                        <div>
+                      />
+                    </div>
+                    <div>
                           <Label htmlFor="password" className="text-xs sm:text-sm font-medium text-card-foreground">Contraseña</Label>
-                          <div className="relative mt-1">
-                            <Input
-                              id="password"
-                              type={showPassword ? "text" : "password"}
-                              placeholder="••••••••"
-                              value={password}
-                              onChange={(e) => setPassword(e.target.value)}
-                              required
+                      <div className="relative mt-1">
+                        <Input
+                          id="password"
+                          type={showPassword ? "text" : "password"}
+                          placeholder="••••••••"
+                          value={password}
+                          onChange={(e) => setPassword(e.target.value)}
+                          required
                               className="h-9 sm:h-10 pr-12 bg-input text-foreground border-border text-sm"
-                            />
-                            <Button
-                              type="button"
-                              variant="ghost"
-                              size="sm"
+                        />
+                        <Button
+                          type="button"
+                          variant="ghost"
+                          size="sm"
                               className="absolute right-0 top-0 h-full px-2 sm:px-3"
-                              onClick={() => setShowPassword(!showPassword)}
-                            >
+                          onClick={() => setShowPassword(!showPassword)}
+                        >
                               {showPassword ? <EyeOff className="h-3 w-3 sm:h-4 sm:w-4" /> : <Eye className="h-3 w-3 sm:h-4 sm:w-4" />}
-                            </Button>
+                        </Button>
                           </div>
-                        </div>
                       </div>
-                      <Button 
-                        type="submit" 
+                    </div>
+                    <Button 
+                      type="submit" 
                         className="w-full h-9 sm:h-10 bg-gradient-to-r from-cyan-500 to-emerald-600 hover:from-cyan-600 hover:to-emerald-700 text-sm"
-                        disabled={isLoading}
-                      >
-                        {isLoading ? (
-                          <div className="flex items-center space-x-2">
+                      disabled={isLoading}
+                    >
+                      {isLoading ? (
+                        <div className="flex items-center space-x-2">
                             <RefreshCw className="h-3 w-3 sm:h-4 sm:w-4 animate-spin" />
                             <span className="hidden sm:inline">Iniciando sesión...</span>
                             <span className="sm:hidden">Iniciando...</span>
-                          </div>
-                        ) : (
-                          <div className="flex items-center space-x-2">
+                        </div>
+                      ) : (
+                        <div className="flex items-center space-x-2">
                             <Zap className="h-3 w-3 sm:h-4 sm:w-4" />
-                            <span>Iniciar Sesión</span>
-                          </div>
-                        )}
-                      </Button>
-                    </form>
+                          <span>Iniciar Sesión</span>
+                        </div>
+                      )}
+                    </Button>
+                  </form>
 
                     <div className="flex flex-col space-y-2">
-                      <Button 
-                        variant="outline" 
-                        onClick={handleGoogleLogin}
-                        disabled={isLoading}
+                    <Button 
+                      variant="outline" 
+                      onClick={handleGoogleLogin}
+                      disabled={isLoading}
                         className="h-9 sm:h-10 text-xs sm:text-sm"
-                      >
+                    >
                         <Chrome className="h-3 w-3 sm:h-4 sm:w-4 mr-1 sm:mr-2" />
                         <span className="hidden sm:inline">Continuar con Google</span>
                         <span className="sm:hidden">Google</span>
-                      </Button>
-                      <Button 
-                        variant="outline" 
-                        onClick={handleGithubLogin}
-                        disabled={isLoading}
+                    </Button>
+                    <Button 
+                      variant="outline" 
+                      onClick={handleGithubLogin}
+                      disabled={isLoading}
                         className="h-9 sm:h-10 text-xs sm:text-sm"
-                      >
+                    >
                         <Github className="h-3 w-3 sm:h-4 sm:w-4 mr-1 sm:mr-2" />
                         <span className="hidden sm:inline">Continuar con GitHub</span>
                         <span className="sm:hidden">GitHub</span>
-                      </Button>
-                    </div>
+                    </Button>
                   </div>
-                </Card>
+                </div>
+              </Card>
               </div>
             </div>
 
@@ -531,10 +531,10 @@ const LandingPage = React.memo(() => {
                         <div className="flex items-center justify-between mb-2 sm:mb-3">
                           <div className="w-8 h-8 sm:w-10 sm:h-10 bg-gradient-to-br from-blue-500 to-blue-600 rounded-lg flex items-center justify-center shadow-md group-hover:scale-110 transition-transform duration-300">
                             <Users className="h-4 w-4 sm:h-5 sm:w-5 text-white" />
-                          </div>
+                        </div>
                           <div className="text-right">
                             <span className="text-xs font-medium text-green-600 bg-green-100 px-1.5 sm:px-2 py-0.5 sm:py-1 rounded-full">+12%</span>
-                          </div>
+                      </div>
                         </div>
                         <div className="text-xl sm:text-2xl lg:text-3xl font-bold text-gray-900 mb-1">2,847</div>
                         <div className="text-xs sm:text-sm font-medium text-gray-600 mb-1">Usuarios Activos</div>
@@ -544,10 +544,10 @@ const LandingPage = React.memo(() => {
                         <div className="flex items-center justify-between mb-2 sm:mb-3">
                           <div className="w-8 h-8 sm:w-10 sm:h-10 bg-gradient-to-br from-green-500 to-green-600 rounded-lg flex items-center justify-center shadow-md group-hover:scale-110 transition-transform duration-300">
                             <Target className="h-4 w-4 sm:h-5 sm:w-5 text-white" />
-                          </div>
+                        </div>
                           <div className="text-right">
                             <span className="text-xs font-medium text-green-600 bg-green-100 px-1.5 sm:px-2 py-0.5 sm:py-1 rounded-full">+8%</span>
-                          </div>
+                      </div>
                         </div>
                         <div className="text-xl sm:text-2xl lg:text-3xl font-bold text-gray-900 mb-1">127</div>
                         <div className="text-xs sm:text-sm font-medium text-gray-600 mb-1">Proyectos Activos</div>
@@ -557,7 +557,7 @@ const LandingPage = React.memo(() => {
                         <div className="flex items-center justify-between mb-2 sm:mb-3">
                           <div className="w-8 h-8 sm:w-10 sm:h-10 bg-gradient-to-br from-orange-500 to-orange-600 rounded-lg flex items-center justify-center shadow-md group-hover:scale-110 transition-transform duration-300">
                             <Activity className="h-4 w-4 sm:h-5 sm:w-5 text-white" />
-                          </div>
+                    </div>
                           <div className="text-right">
                             <span className="text-xs font-medium text-red-600 bg-red-100 px-1.5 sm:px-2 py-0.5 sm:py-1 rounded-full">-5%</span>
                           </div>
@@ -785,10 +785,10 @@ const LandingPage = React.memo(() => {
               {/* Métricas destacadas */}
               <div className="bg-gradient-to-r from-blue-50 to-purple-50 dark:from-blue-900/20 dark:to-purple-900/20 rounded-xl sm:rounded-2xl p-4 sm:p-6 border border-blue-200 dark:border-blue-800">
                 <div className="grid grid-cols-3 gap-3 sm:gap-6 text-center">
-                  <div>
+                    <div>
                     <div className="text-xl sm:text-2xl lg:text-3xl font-bold text-blue-600">{stats.meetingTimeReduction}%</div>
                     <div className="text-xs sm:text-sm text-muted-foreground">Menos tiempo en reuniones</div>
-                  </div>
+                    </div>
                   <div>
                     <div className="text-xl sm:text-2xl lg:text-3xl font-bold text-green-600">{stats.productivityIncrease}%</div>
                     <div className="text-xs sm:text-sm text-muted-foreground">Aumento en productividad</div>
@@ -869,10 +869,10 @@ const LandingPage = React.memo(() => {
               {/* Métricas de impacto */}
               <div className="bg-gradient-to-r from-green-50 to-cyan-50 dark:from-green-900/20 dark:to-cyan-900/20 rounded-xl sm:rounded-2xl p-4 sm:p-6 border border-green-200 dark:border-green-800">
                 <div className="grid grid-cols-2 md:grid-cols-4 gap-3 sm:gap-6 text-center">
-                  <div>
+                    <div>
                     <div className="text-lg sm:text-xl lg:text-2xl font-bold text-green-600">{stats.predictionAccuracy}%</div>
                     <div className="text-xs sm:text-sm text-muted-foreground">Precisión en predicciones</div>
-                  </div>
+                    </div>
                   <div>
                     <div className="text-lg sm:text-xl lg:text-2xl font-bold text-blue-600">{stats.decisionSpeed}x</div>
                     <div className="text-xs sm:text-sm text-muted-foreground">Más rápido en decisiones</div>
@@ -987,10 +987,10 @@ const LandingPage = React.memo(() => {
               {/* Certificaciones destacadas */}
               <div className="bg-gradient-to-r from-green-900/30 to-blue-900/30 rounded-xl sm:rounded-2xl p-4 sm:p-6 border border-green-700">
                 <div className="grid grid-cols-2 md:grid-cols-4 gap-3 sm:gap-6 text-center">
-                  <div>
+                    <div>
                     <div className="text-lg sm:text-xl lg:text-2xl font-bold text-green-400">SOC2</div>
                     <div className="text-xs sm:text-sm text-gray-300">Certificado</div>
-                  </div>
+                    </div>
                   <div>
                     <div className="text-lg sm:text-xl lg:text-2xl font-bold text-blue-400">ISO 27001</div>
                     <div className="text-xs sm:text-sm text-gray-300">Certificado</div>
@@ -1210,7 +1210,7 @@ const LandingPage = React.memo(() => {
                         <div className="flex items-center justify-between mb-4">
                           <div className={`w-12 h-12 rounded-xl flex items-center justify-center transition-colors duration-300 ${demoTheme === 'dark' ? 'bg-blue-600' : 'bg-blue-100'}`}>
                             <Target className="h-6 w-6 text-blue-600" />
-                          </div>
+                        </div>
                           <div className={`text-right transition-colors duration-300 ${demoTheme === 'dark' ? 'text-green-400' : 'text-green-600'}`}>
                             <span className="text-sm font-medium">+12%</span>
                           </div>
@@ -1226,7 +1226,7 @@ const LandingPage = React.memo(() => {
                         <div className="flex items-center justify-between mb-4">
                           <div className={`w-12 h-12 rounded-xl flex items-center justify-center transition-colors duration-300 ${demoTheme === 'dark' ? 'bg-green-600' : 'bg-green-100'}`}>
                             <CheckCircle className="h-6 w-6 text-green-600" />
-                          </div>
+                        </div>
                           <div className={`text-right transition-colors duration-300 ${demoTheme === 'dark' ? 'text-green-400' : 'text-green-600'}`}>
                             <span className="text-sm font-medium">+18%</span>
                           </div>
@@ -1242,7 +1242,7 @@ const LandingPage = React.memo(() => {
                         <div className="flex items-center justify-between mb-4">
                           <div className={`w-12 h-12 rounded-xl flex items-center justify-center transition-colors duration-300 ${demoTheme === 'dark' ? 'bg-purple-600' : 'bg-purple-100'}`}>
                             <Users className="h-6 w-6 text-purple-600" />
-                          </div>
+                        </div>
                           <div className={`text-right transition-colors duration-300 ${demoTheme === 'dark' ? 'text-green-400' : 'text-green-600'}`}>
                             <span className="text-sm font-medium">+2</span>
                           </div>
@@ -1258,7 +1258,7 @@ const LandingPage = React.memo(() => {
                         <div className="flex items-center justify-between mb-4">
                           <div className={`w-12 h-12 rounded-xl flex items-center justify-center transition-colors duration-300 ${demoTheme === 'dark' ? 'bg-orange-600' : 'bg-orange-100'}`}>
                             <TrendingUp className="h-6 w-6 text-orange-600" />
-                          </div>
+                        </div>
                           <div className={`text-right transition-colors duration-300 ${demoTheme === 'dark' ? 'text-green-400' : 'text-green-600'}`}>
                             <span className="text-sm font-medium">+8%</span>
                           </div>
@@ -2024,7 +2024,7 @@ const LandingPage = React.memo(() => {
                   <Button className="bg-gradient-to-r from-cyan-500 to-blue-600 hover:from-cyan-600 hover:to-blue-700 px-6">
                     Suscribirse
                   </Button>
-                </div>
+            </div>
                 <p className="text-xs text-gray-500">Sin spam. Cancela cuando quieras.</p>
               </div>
             </div>
