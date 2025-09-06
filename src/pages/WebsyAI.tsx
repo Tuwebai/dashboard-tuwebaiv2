@@ -25,7 +25,9 @@ import { TypingIndicator } from '@/components/websy-ai/TypingIndicator';
 import { ChatInput } from '@/components/websy-ai/ChatInput';
 import { ContextPanel } from '@/components/websy-ai/ContextPanel';
 import { AISettingsModal } from '@/components/websy-ai/AISettingsModal';
+import { DiagnosticPanel } from '@/components/websy-ai/DiagnosticPanel';
 import { supabase } from '@/lib/supabase';
+import { logConfigStatus } from '@/utils/checkConfig';
 
 const WebsyAI: React.FC = () => {
   const { user } = useApp();
@@ -97,16 +99,36 @@ const WebsyAI: React.FC = () => {
 
   // Enviar mensaje
   const handleSendMessage = useCallback(async (message: string, attachments?: any[]) => {
-    if (!user) return;
+    if (!user) {
+      toast({
+        title: "Error de autenticación",
+        description: "No se pudo identificar al usuario. Inicia sesión nuevamente.",
+        variant: "destructive"
+      });
+      return;
+    }
+
+    if (!message || message.trim() === '') {
+      toast({
+        title: "Mensaje vacío",
+        description: "Por favor escribe un mensaje antes de enviar.",
+        variant: "destructive"
+      });
+      return;
+    }
 
     try {
+      console.log('📤 Enviando mensaje:', { message, attachments, currentConversationId });
+
       // Guardar mensaje del usuario
-      await saveMessage(message, false, currentConversationId, attachments);
+      const userMessageId = await saveMessage(message, false, currentConversationId, attachments);
+      console.log('💾 Mensaje del usuario guardado:', userMessageId);
 
       // Mostrar indicador de escritura
       setIsTyping(true);
 
       // Enviar a Gemini AI
+      console.log('🤖 Enviando a Gemini AI...');
       const aiResponse = await sendMessage(
         message,
         currentMessages,
@@ -114,16 +136,29 @@ const WebsyAI: React.FC = () => {
         undefined
       );
 
+      console.log('✅ Respuesta de IA recibida:', aiResponse);
+
       // Guardar respuesta de la IA
-      await saveMessage(aiResponse, true, currentConversationId);
+      const aiMessageId = await saveMessage(aiResponse, true, currentConversationId);
+      console.log('💾 Respuesta de IA guardada:', aiMessageId);
 
       setIsTyping(false);
-    } catch (error) {
-      console.error('Error sending message:', error);
-      setIsTyping(false);
+
+      // Mostrar toast de éxito
       toast({
-        title: "Error",
-        description: "No se pudo enviar el mensaje. Intenta de nuevo.",
+        title: "Mensaje enviado",
+        description: "Websy AI ha respondido exitosamente",
+      });
+
+    } catch (error) {
+      console.error('❌ Error sending message:', error);
+      setIsTyping(false);
+      
+      const errorMessage = error instanceof Error ? error.message : 'Error desconocido';
+      
+      toast({
+        title: "Error al enviar mensaje",
+        description: errorMessage,
         variant: "destructive"
       });
     }
@@ -195,6 +230,9 @@ const WebsyAI: React.FC = () => {
   // Efectos
   useEffect(() => {
     if (user) {
+      // Verificar configuración al montar
+      logConfigStatus();
+      
       loadConversations();
       loadContextData();
     }
@@ -371,12 +409,13 @@ const WebsyAI: React.FC = () => {
           </div>
 
           {/* Panel de contexto */}
-          <div className="lg:col-span-1">
+          <div className="lg:col-span-1 space-y-4">
             <ContextPanel
               contextData={contextData}
               onRefresh={loadContextData}
               loading={loadingContext}
             />
+            <DiagnosticPanel />
           </div>
         </div>
       </div>

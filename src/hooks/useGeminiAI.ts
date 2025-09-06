@@ -1,5 +1,6 @@
 import { useState, useCallback } from 'react';
 import { supabase } from '@/lib/supabase';
+import { toast } from '@/hooks/use-toast';
 
 interface GeminiMessage {
   role: 'user' | 'model';
@@ -57,8 +58,32 @@ export const useGeminiAI = ({ apiKey, temperature = 0.7, maxTokens = 2048 }: Use
     setError(null);
 
     try {
+      // Validar API key
+      if (!apiKey || apiKey.trim() === '') {
+        throw new Error('API key de Gemini no configurada. Verifica las variables de entorno.');
+      }
+
+      // Validar mensaje
+      if (!message || message.trim() === '') {
+        throw new Error('El mensaje no puede estar vacío');
+      }
+
+      console.log('🚀 Enviando mensaje a Gemini AI...', {
+        messageLength: message.length,
+        conversationHistoryLength: conversationHistory.length,
+        contextType,
+        contextId
+      });
+
       // Obtener contexto de la base de datos
-      const dbContext = await getDatabaseContext();
+      let dbContext = null;
+      try {
+        dbContext = await getDatabaseContext();
+        console.log('📊 Contexto de base de datos obtenido:', dbContext ? 'OK' : 'ERROR');
+      } catch (dbError) {
+        console.warn('⚠️ Error obteniendo contexto de BD, continuando sin contexto:', dbError);
+        // Continuar sin contexto si hay error en la BD
+      }
       
       // Construir contexto del sistema
       const systemPrompt = `Eres Websy AI, un asistente de inteligencia artificial especializado en administración de proyectos web y análisis de datos empresariales.
@@ -107,8 +132,18 @@ Responde en español y sé específico con los datos cuando sea posible.`;
         parts: [{ text: message }]
       });
 
+      console.log('📝 Historial preparado:', {
+        totalMessages: geminiHistory.length,
+        systemPromptLength: systemPrompt.length,
+        userMessageLength: message.length
+      });
+
       // Llamar a la API de Gemini
-      const response = await fetch(`https://generativelanguage.googleapis.com/v1beta/models/gemini-1.5-flash:generateContent?key=${apiKey}`, {
+      const apiUrl = `https://generativelanguage.googleapis.com/v1beta/models/gemini-1.5-flash:generateContent?key=${apiKey}`;
+      
+      console.log('🌐 Llamando a Gemini API...', { apiUrl: apiUrl.replace(apiKey, '***') });
+
+      const response = await fetch(apiUrl, {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
@@ -124,23 +159,70 @@ Responde en español y sé específico con los datos cuando sea posible.`;
         })
       });
 
+      console.log('📡 Respuesta de API recibida:', {
+        status: response.status,
+        statusText: response.statusText,
+        ok: response.ok
+      });
+
       if (!response.ok) {
-        throw new Error(`Error de API: ${response.status} ${response.statusText}`);
+        const errorText = await response.text();
+        console.error('❌ Error de API:', {
+          status: response.status,
+          statusText: response.statusText,
+          errorText
+        });
+
+        let errorMessage = `Error de API: ${response.status} ${response.statusText}`;
+        
+        // Mensajes de error específicos
+        if (response.status === 400) {
+          errorMessage = 'Solicitud inválida. Verifica el formato del mensaje.';
+        } else if (response.status === 401) {
+          errorMessage = 'API key inválida o expirada. Verifica tu configuración.';
+        } else if (response.status === 403) {
+          errorMessage = 'Acceso denegado. Verifica los permisos de tu API key.';
+        } else if (response.status === 429) {
+          errorMessage = 'Límite de solicitudes excedido. Intenta de nuevo en unos minutos.';
+        } else if (response.status === 500) {
+          errorMessage = 'Error interno del servidor de Gemini. Intenta de nuevo.';
+        }
+
+        throw new Error(errorMessage);
       }
 
       const data = await response.json();
+      console.log('📄 Datos de respuesta:', data);
       
       if (!data.candidates || !data.candidates[0] || !data.candidates[0].content) {
-        throw new Error('Respuesta inválida de la API');
+        console.error('❌ Respuesta inválida de la API:', data);
+        throw new Error('Respuesta inválida de la API de Gemini');
       }
 
       const aiResponse = data.candidates[0].content.parts[0].text;
       
+      if (!aiResponse || aiResponse.trim() === '') {
+        throw new Error('La respuesta de la IA está vacía');
+      }
+
+      console.log('✅ Respuesta de IA obtenida:', {
+        length: aiResponse.length,
+        preview: aiResponse.substring(0, 100) + '...'
+      });
+      
       return aiResponse;
     } catch (error) {
-      console.error('Error calling Gemini AI:', error);
+      console.error('❌ Error en sendMessage:', error);
       const errorMessage = error instanceof Error ? error.message : 'Error desconocido';
       setError(errorMessage);
+      
+      // Mostrar toast de error
+      toast({
+        title: "Error al enviar mensaje",
+        description: errorMessage,
+        variant: "destructive"
+      });
+      
       throw error;
     } finally {
       setIsLoading(false);
