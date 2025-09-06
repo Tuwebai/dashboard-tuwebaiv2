@@ -538,26 +538,6 @@ const Admin = React.memo(() => {
              
  
  
-                           {/* Header con Toggle de Tema */}
-              <div className="bg-card/50 dark:bg-slate-800/50 backdrop-blur-sm border-b border-border/50 dark:border-slate-700/50 px-4 sm:px-6 lg:px-8 py-4">
-                <div className="flex items-center justify-between">
-                  <div className="flex items-center gap-4">
-                    <div className="p-2 bg-gradient-to-br from-blue-500 to-indigo-600 rounded-lg shadow-lg">
-                      <Users className="h-6 w-6 text-white" />
-                    </div>
-                    <div>
-                      <h1 className="text-2xl font-bold text-foreground">Panel de Administración</h1>
-                      <p className="text-muted-foreground text-sm">Gestión completa del sistema</p>
-                    </div>
-                  </div>
-                  <div className="flex items-center gap-3">
-                    <div className="text-sm text-muted-foreground">
-                      Última actualización: {lastUpdate.toLocaleTimeString()}
-                    </div>
-                    <ThemeToggle variant="outline" size="sm" />
-                  </div>
-                </div>
-              </div>
 
                            {/* Contenido Principal */}
               <div className="px-4 sm:px-6 lg:px-8 py-4 sm:py-6 space-y-4 sm:space-y-6 min-h-[calc(100vh-200px)]">

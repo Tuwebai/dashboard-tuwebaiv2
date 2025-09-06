@@ -23,7 +23,7 @@
 - �� **Checklist** de tareas con sub-tareas
 
 ### 4. **Colaboración Mejorada**
-- 💬 **Chat en tiempo real** por proyecto
+- 💬 **Chat en tiempo real** por proyecto(ya hay un sistema asi,podemos implementar un boton para que lleva al proyecto seleccionado)
 - 👥 **Menciones** y notificaciones
 - 📤 **Compartir enlaces** específicos
 - 🔒 **Permisos granulares** por fase
