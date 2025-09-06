@@ -659,7 +659,7 @@ export const ProjectForm: React.FC<ProjectFormProps> = ({
                   variant="ghost"
                   size="sm"
                   onClick={dismissDetectedInfo}
-                  className="text-slate-500 hover:text-slate-700"
+                  className="text-slate-500 dark:text-slate-400 hover:text-slate-700 dark:hover:text-slate-200"
                 >
                   <X className="h-4 w-4" />
                 </Button>
@@ -667,11 +667,11 @@ export const ProjectForm: React.FC<ProjectFormProps> = ({
               
               <div className="grid grid-cols-1 md:grid-cols-2 gap-4 text-sm">
                 <div>
-                  <span className="text-slate-600">📁 Nombre:</span>
-                  <span className="text-slate-800 ml-2">{detectedInfo.name}</span>
+                  <span className="text-slate-600 dark:text-slate-400">📁 Nombre:</span>
+                  <span className="text-slate-800 dark:text-slate-200 ml-2">{detectedInfo.name}</span>
                 </div>
                 <div>
-                  <span className="text-slate-600">📊 Estado sugerido:</span>
+                  <span className="text-slate-600 dark:text-slate-400">📊 Estado sugerido:</span>
                   <Badge 
                     variant="secondary" 
                     className={`ml-2 ${getStatusColor(detectedInfo.status)}`}
@@ -682,22 +682,22 @@ export const ProjectForm: React.FC<ProjectFormProps> = ({
                   </Badge>
                 </div>
                 <div className="md:col-span-2">
-                  <span className="text-slate-600">📝 Descripción:</span>
-                  <p className="text-slate-800 ml-2 mt-1">{detectedInfo.description}</p>
+                  <span className="text-slate-600 dark:text-slate-400">📝 Descripción:</span>
+                  <p className="text-slate-800 dark:text-slate-200 ml-2 mt-1">{detectedInfo.description}</p>
                 </div>
                 <div className="md:col-span-2">
-                  <span className="text-slate-600">🏷️ Tecnologías detectadas:</span>
+                  <span className="text-slate-600 dark:text-slate-400">🏷️ Tecnologías detectadas:</span>
                   <div className="flex flex-wrap gap-1 mt-1">
                     {detectedInfo.technologies.map((tech, index) => (
-                      <Badge key={index} variant="outline" className="text-xs">
+                      <Badge key={index} variant="outline" className="text-xs border-slate-300 dark:border-slate-600 text-slate-700 dark:text-slate-300">
                         {tech}
                       </Badge>
                     ))}
                   </div>
                 </div>
                 <div className="md:col-span-2">
-                  <span className="text-slate-600">🔧 Variables de entorno encontradas:</span>
-                  <span className="text-slate-800 ml-2">
+                  <span className="text-slate-600 dark:text-slate-400">🔧 Variables de entorno encontradas:</span>
+                  <span className="text-slate-800 dark:text-slate-200 ml-2">
                     {Object.keys(detectedInfo.environment_variables || {}).length} variables
                   </span>
                 </div>
@@ -717,7 +717,7 @@ export const ProjectForm: React.FC<ProjectFormProps> = ({
                   type="button"
                   variant="outline"
                   onClick={dismissDetectedInfo}
-                  className="border-slate-300 text-slate-700 hover:bg-slate-50"
+                  className="border-slate-300 dark:border-slate-600 text-slate-700 dark:text-slate-300 hover:bg-slate-50 dark:hover:bg-slate-700"
                   size="sm"
                 >
                   Ignorar
@@ -728,13 +728,13 @@ export const ProjectForm: React.FC<ProjectFormProps> = ({
 
           {/* Tecnologías */}
           <div className="space-y-2">
-            <Label className="text-slate-700">Tecnologías</Label>
+            <Label className="text-slate-700 dark:text-slate-300">Tecnologías</Label>
             <div className="flex gap-2">
               <Input
                 value={newTechnology}
                 onChange={(e) => setNewTechnology(e.target.value)}
                 placeholder="Agregar tecnología... (Enter o , para agregar)"
-                className="bg-white border-slate-200 text-slate-800"
+                className="bg-white dark:bg-slate-700 border-slate-200 dark:border-slate-600 text-slate-800 dark:text-slate-200"
                 onKeyDown={handleTechnologyKeyPress}
               />
               <Button
@@ -742,7 +742,7 @@ export const ProjectForm: React.FC<ProjectFormProps> = ({
                 onClick={addTechnology}
                 variant="outline"
                 size="sm"
-                className="bg-white border-slate-200 text-slate-700 hover:bg-slate-50"
+                className="bg-white dark:bg-slate-700 border-slate-200 dark:border-slate-600 text-slate-700 dark:text-slate-200 hover:bg-slate-50 dark:hover:bg-slate-600"
               >
                 <Plus className="h-4 w-4" />
               </Button>
@@ -753,13 +753,13 @@ export const ProjectForm: React.FC<ProjectFormProps> = ({
                   <Badge
                     key={index}
                     variant="secondary"
-                    className="bg-blue-600 text-white hover:bg-blue-700"
+                    className="bg-blue-600 dark:bg-blue-700 text-white hover:bg-blue-700 dark:hover:bg-blue-800"
                   >
                     {tech}
                     <button
                       type="button"
                       onClick={() => removeTechnology(tech)}
-                      className="ml-1 hover:text-red-300"
+                      className="ml-1 hover:text-red-300 dark:hover:text-red-400"
                     >
                       <X className="h-3 w-3" />
                     </button>
@@ -772,13 +772,13 @@ export const ProjectForm: React.FC<ProjectFormProps> = ({
           {/* Variables de entorno */}
           <div className="space-y-2">
             <div className="flex items-center justify-between">
-              <Label className="text-slate-700">Variables de Entorno</Label>
+              <Label className="text-slate-700 dark:text-slate-300">Variables de Entorno</Label>
               <Button
                 type="button"
                 onClick={addEnvironmentVariable}
                 variant="outline"
                 size="sm"
-                className="bg-blue-600 border-blue-600 text-white hover:bg-blue-700 hover:border-blue-700"
+                className="bg-blue-600 dark:bg-blue-700 border-blue-600 dark:border-blue-700 text-white hover:bg-blue-700 dark:hover:bg-blue-800 hover:border-blue-700 dark:hover:border-blue-800"
               >
                 <Plus className="h-4 w-4 mr-1" />
                 Agregar Variable
@@ -787,28 +787,28 @@ export const ProjectForm: React.FC<ProjectFormProps> = ({
             
             <div className="space-y-2">
               {envVars.length === 0 && (
-                <div className="text-center py-8 text-slate-500 bg-slate-50 rounded-lg border border-slate-200">
+                <div className="text-center py-8 text-slate-500 dark:text-slate-400 bg-slate-50 dark:bg-slate-700/50 rounded-lg border border-slate-200 dark:border-slate-600">
                   <p>No hay variables de entorno configuradas</p>
                   <p className="text-sm mt-1">Haz clic en "Agregar Variable" para empezar</p>
                 </div>
               )}
               
               {envVars.map((env, index) => (
-                <div key={index} className="grid grid-cols-12 gap-2 p-3 bg-slate-50 rounded-lg border border-slate-200">
+                <div key={index} className="grid grid-cols-12 gap-2 p-3 bg-slate-50 dark:bg-slate-700/50 rounded-lg border border-slate-200 dark:border-slate-600">
                   <div className="col-span-4">
                     <Input
                       value={env.key}
                       onChange={(e) => updateEnvironmentVariable(index, 'key', e.target.value)}
                       onPaste={(e) => handleKeyPaste(e, index)}
                       placeholder="Clave (ej: API_KEY)"
-                      className={`bg-white text-slate-800 ${
+                      className={`bg-white dark:bg-slate-800 text-slate-800 dark:text-slate-200 ${
                         isDuplicateKey(env.key, index) 
-                          ? 'border-red-500 border-2' 
-                          : 'border-slate-200'
+                          ? 'border-red-500 dark:border-red-400 border-2' 
+                          : 'border-slate-200 dark:border-slate-600'
                       }`}
                     />
                     {isDuplicateKey(env.key, index) && (
-                      <div className="text-red-600 text-xs mt-1">⚠️ Clave duplicada</div>
+                      <div className="text-red-600 dark:text-red-400 text-xs mt-1">⚠️ Clave duplicada</div>
                     )}
                   </div>
                   <div className="col-span-7">
@@ -818,14 +818,14 @@ export const ProjectForm: React.FC<ProjectFormProps> = ({
                         onChange={(e) => updateEnvironmentVariable(index, 'value', e.target.value)}
                         placeholder="Valor"
                         type={showEnvValues[`${index}-${env.key}`] ? 'text' : 'password'}
-                        className="bg-white border-slate-200 text-slate-800"
+                        className="bg-white dark:bg-slate-800 border-slate-200 dark:border-slate-600 text-slate-800 dark:text-slate-200"
                       />
                       <Button
                         type="button"
                         variant="ghost"
                         size="sm"
                         onClick={() => toggleEnvValueVisibility(`${index}-${env.key}`)}
-                        className="text-slate-500 hover:text-slate-700 px-2"
+                        className="text-slate-500 dark:text-slate-400 hover:text-slate-700 dark:hover:text-slate-200 px-2"
                       >
                         {showEnvValues[`${index}-${env.key}`] ? <EyeOff className="h-4 w-4" /> : <Eye className="h-4 w-4" />}
                       </Button>
@@ -837,7 +837,7 @@ export const ProjectForm: React.FC<ProjectFormProps> = ({
                       variant="ghost"
                       size="sm"
                       onClick={() => removeEnvironmentVariable(index)}
-                      className="text-red-500 hover:text-red-600 hover:bg-red-50 w-full"
+                      className="text-red-500 dark:text-red-400 hover:text-red-600 dark:hover:text-red-300 hover:bg-red-50 dark:hover:bg-red-900/20 w-full"
                       title="Eliminar variable"
                     >
                       <X className="h-4 w-4" />
@@ -852,16 +852,16 @@ export const ProjectForm: React.FC<ProjectFormProps> = ({
 
           {/* Archivos del proyecto */}
           <div className="space-y-2">
-            <Label className="text-slate-700">Archivos del Proyecto (Opcional)</Label>
-            <div className="border-2 border-dashed border-slate-300 rounded-lg p-6 text-center">
-              <Upload className="h-12 w-12 mx-auto text-slate-400 mb-4" />
-              <p className="text-slate-600 mb-2">Arrastra archivos aquí o haz clic para seleccionar</p>
+            <Label className="text-slate-700 dark:text-slate-300">Archivos del Proyecto (Opcional)</Label>
+            <div className="border-2 border-dashed border-slate-300 dark:border-slate-600 rounded-lg p-6 text-center">
+              <Upload className="h-12 w-12 mx-auto text-slate-400 dark:text-slate-500 mb-4" />
+              <p className="text-slate-600 dark:text-slate-400 mb-2">Arrastra archivos aquí o haz clic para seleccionar</p>
               <Button
                 type="button"
                 onClick={() => fileInputRef.current?.click()}
                 disabled={uploading}
                 variant="outline"
-                className="bg-white border-slate-200 text-slate-700 hover:bg-slate-50"
+                className="bg-white dark:bg-slate-700 border-slate-200 dark:border-slate-600 text-slate-700 dark:text-slate-200 hover:bg-slate-50 dark:hover:bg-slate-600"
               >
                 <Upload className="h-4 w-4 mr-2" />
                 Seleccionar archivos
@@ -878,14 +878,14 @@ export const ProjectForm: React.FC<ProjectFormProps> = ({
             {/* Lista de archivos seleccionados */}
             {selectedFiles.length > 0 && (
               <div className="space-y-2">
-                <h4 className="text-sm font-medium text-slate-700">Archivos seleccionados ({selectedFiles.length})</h4>
+                <h4 className="text-sm font-medium text-slate-700 dark:text-slate-300">Archivos seleccionados ({selectedFiles.length})</h4>
                 <div className="space-y-2">
                   {selectedFiles.map((file, index) => (
-                    <div key={index} className="flex items-center gap-3 p-3 bg-slate-50 rounded-lg border border-slate-200">
+                    <div key={index} className="flex items-center gap-3 p-3 bg-slate-50 dark:bg-slate-700/50 rounded-lg border border-slate-200 dark:border-slate-600">
                       {getFileIcon(file)}
                       <div className="flex-1 min-w-0">
-                        <p className="text-sm font-medium text-slate-800 truncate">{file.name}</p>
-                        <p className="text-xs text-slate-600">{formatBytes(file.size)}</p>
+                        <p className="text-sm font-medium text-slate-800 dark:text-slate-200 truncate">{file.name}</p>
+                        <p className="text-xs text-slate-600 dark:text-slate-400">{formatBytes(file.size)}</p>
                       </div>
                       
                       {/* Vista previa para imágenes */}
@@ -937,7 +937,7 @@ export const ProjectForm: React.FC<ProjectFormProps> = ({
               type="button"
               variant="outline"
               onClick={onCancel}
-              className="bg-white border-slate-200 text-slate-700 hover:bg-slate-50"
+              className="bg-white dark:bg-slate-700 border-slate-200 dark:border-slate-600 text-slate-700 dark:text-slate-200 hover:bg-slate-50 dark:hover:bg-slate-600"
               disabled={loading}
             >
               Cancelar
@@ -945,7 +945,7 @@ export const ProjectForm: React.FC<ProjectFormProps> = ({
             <Button
               type="submit"
               disabled={loading}
-              className="bg-blue-600 hover:bg-blue-700 text-white"
+              className="bg-blue-600 dark:bg-blue-700 hover:bg-blue-700 dark:hover:bg-blue-800 text-white"
             >
               {loading ? 'Guardando...' : (project ? 'Actualizar' : 'Crear')}
             </Button>
