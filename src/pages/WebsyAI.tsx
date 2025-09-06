@@ -78,7 +78,7 @@ const WebsyAI: React.FC = () => {
       const [projectsResult, usersResult, ticketsResult] = await Promise.all([
         supabase.from('projects').select('id, name, status, progress, created_at, updated_at, created_by'),
         supabase.from('users').select('id, full_name, email, role, created_at'),
-        supabase.from('tickets').select('id, title, status, priority, created_at, user_id')
+        supabase.from('tickets').select('id, asunto, status, prioridad, created_at, user_id')
       ]);
 
       setContextData({
