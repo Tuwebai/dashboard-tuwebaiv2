@@ -9,6 +9,7 @@ import { Badge } from '@/components/ui/badge';
 import { Progress } from '@/components/ui/progress';
 import { Input } from '@/components/ui/input';
 import { Textarea } from '@/components/ui/textarea';
+import { Label } from '@/components/ui/label';
 import { 
   Target, 
   Plus, 
@@ -67,6 +68,7 @@ const AdminPhasesAndTasksPage: React.FC = () => {
   const [newTaskProject, setNewTaskProject] = useState('');
   const [newTaskPriority, setNewTaskPriority] = useState<'low' | 'medium' | 'high'>('medium');
   const [newTaskStatus, setNewTaskStatus] = useState<'pending' | 'in_progress' | 'completed'>('pending');
+  const [hoveredDate, setHoveredDate] = useState<Date | null>(null);
 
   // =====================================================
   // REAL-TIME UPDATES PARA ADMIN
@@ -856,21 +858,21 @@ const AdminPhasesAndTasksPage: React.FC = () => {
                         const isCurrentMonth = day.getMonth() === currentDate.getMonth();
                         const isToday = day.toDateString() === new Date().toDateString();
                         const events = getEventsForDate(day);
+                        const isHovered = hoveredDate && hoveredDate.toDateString() === day.toDateString();
                         
                         return (
-                          <motion.div
+                          <div
                             key={index}
-                            className={`min-h-[120px] border-r border-b border-gray-200 dark:border-gray-700 p-2 cursor-pointer hover:bg-gray-50 dark:hover:bg-gray-800 transition-colors ${
+                            className={`min-h-[120px] border-r border-b border-gray-200 dark:border-gray-700 p-2 cursor-pointer hover:bg-gray-50 dark:hover:bg-gray-800 transition-colors relative group ${
                               isCurrentMonth ? 'bg-white dark:bg-gray-900' : 'bg-gray-50 dark:bg-gray-800'
                             } ${isToday ? 'bg-blue-50 dark:bg-blue-900/20' : ''}`}
-                            initial={{ opacity: 0 }}
-                            animate={{ opacity: 1 }}
-                            transition={{ delay: index * 0.01 }}
                             onClick={() => handleDateClick(day)}
+                            onMouseEnter={() => setHoveredDate(day)}
+                            onMouseLeave={() => setHoveredDate(null)}
                           >
                             <div className={`text-sm font-medium mb-2 ${
                               isCurrentMonth ? 'text-gray-900 dark:text-white' : 'text-gray-400'
-                            } ${isToday ? 'text-blue-600 dark:text-blue-400' : ''}`}>
+                            } ${isToday ? 'text-blue-600 dark:text-blue-400 font-bold' : ''}`}>
                               {day.getDate()}
                             </div>
                             
@@ -903,11 +905,21 @@ const AdminPhasesAndTasksPage: React.FC = () => {
                               )}
                             </div>
                             
-                            {/* Indicador de clic */}
-                            <div className="mt-2 text-xs text-gray-400 dark:text-gray-500 text-center">
-                              Click para gestionar
-                            </div>
-                          </motion.div>
+                            {/* Botón de + que aparece solo en hover */}
+                            {isHovered && (
+                              <div
+                                className="absolute top-2 right-2 animate-in fade-in-0 zoom-in-95 duration-200"
+                                onClick={(e) => {
+                                  e.stopPropagation();
+                                  handleDateClick(day);
+                                }}
+                              >
+                                <div className="w-8 h-8 bg-gray-700 dark:bg-gray-600 hover:bg-gray-600 dark:hover:bg-gray-500 rounded-lg flex items-center justify-center cursor-pointer transition-colors shadow-lg">
+                                  <Plus className="h-4 w-4 text-white" />
+                                </div>
+                              </div>
+                            )}
+                          </div>
                         );
                       })}
                     </div>
