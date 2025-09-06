@@ -18,6 +18,7 @@ import {
 import { Project } from '@/types/project.types';
 import { formatDateSafe } from '@/utils/formatDateSafe';
 import { userService } from '@/lib/supabaseService';
+import { useTheme } from '@/contexts/ThemeContext';
 
 interface ProjectCardProps {
   project: Project;
@@ -36,6 +37,7 @@ export const ProjectCard: React.FC<ProjectCardProps> = ({
   onCollaborate,
   onUpdateIcon
 }) => {
+  const { theme } = useTheme();
   const [showIconPicker, setShowIconPicker] = useState(false);
   const [selectedIcon, setSelectedIcon] = useState(project.customicon || 'FolderOpen');
   const [creatorInfo, setCreatorInfo] = useState<{ full_name: string; email: string } | null>(null);
@@ -59,15 +61,15 @@ export const ProjectCard: React.FC<ProjectCardProps> = ({
   const getStatusColor = (status: string) => {
     switch (status) {
       case 'development':
-        return 'bg-blue-100 text-blue-800 border-blue-200';
+        return 'bg-blue-100 dark:bg-blue-900/30 text-blue-800 dark:text-blue-400 border-blue-200 dark:border-blue-700';
       case 'production':
-        return 'bg-green-100 text-green-800 border-green-200';
+        return 'bg-green-100 dark:bg-green-900/30 text-green-800 dark:text-green-400 border-green-200 dark:border-green-700';
       case 'paused':
-        return 'bg-yellow-100 text-yellow-800 border-yellow-200';
+        return 'bg-yellow-100 dark:bg-yellow-900/30 text-yellow-800 dark:text-yellow-400 border-yellow-200 dark:border-yellow-700';
       case 'maintenance':
-        return 'bg-orange-100 text-orange-800 border-orange-200';
+        return 'bg-orange-100 dark:bg-orange-900/30 text-orange-800 dark:text-orange-400 border-orange-200 dark:border-orange-700';
       default:
-        return 'bg-slate-100 text-slate-800 border-slate-200';
+        return 'bg-slate-100 dark:bg-slate-800 text-slate-800 dark:text-slate-200 border-slate-200 dark:border-slate-600';
     }
   };
 
@@ -148,7 +150,7 @@ export const ProjectCard: React.FC<ProjectCardProps> = ({
 
   return (
     <Card 
-      className="bg-white border-slate-200 hover:border-slate-300 transition-colors cursor-pointer group shadow-sm hover:shadow-md flex flex-col h-full"
+      className="bg-white dark:bg-slate-800 border-slate-200 dark:border-slate-700 hover:border-slate-300 dark:hover:border-slate-600 transition-colors cursor-pointer group shadow-sm hover:shadow-md flex flex-col h-full"
       onClick={(e) => {
         // Evitar que se active cuando se hace click en botones
         if (!(e.target as HTMLElement).closest('button')) {
@@ -170,7 +172,7 @@ export const ProjectCard: React.FC<ProjectCardProps> = ({
                {React.createElement(getIconComponent(selectedIcon), { className: "h-5 w-5 text-white" })}
              </button>
             <div className="flex-1 min-w-0">
-              <h3 className="text-lg font-semibold text-slate-800 truncate group-hover:text-blue-600 transition-colors">
+              <h3 className="text-lg font-semibold text-slate-800 dark:text-slate-100 truncate group-hover:text-blue-600 dark:group-hover:text-blue-400 transition-colors">
                 {project.name}
               </h3>
               <div className="flex items-center gap-2 mt-1">
@@ -195,7 +197,7 @@ export const ProjectCard: React.FC<ProjectCardProps> = ({
                 e.stopPropagation();
                 onEdit(project);
               }}
-              className="text-slate-500 hover:text-blue-600 hover:bg-slate-100"
+              className="text-slate-500 dark:text-slate-400 hover:text-blue-600 dark:hover:text-blue-400 hover:bg-slate-100 dark:hover:bg-slate-700"
               title="Editar proyecto"
             >
               <Edit className="h-4 w-4" />
@@ -209,7 +211,7 @@ export const ProjectCard: React.FC<ProjectCardProps> = ({
                   onCollaborate(project);
                 }
               }}
-              className="text-slate-500 hover:text-emerald-600 hover:bg-slate-100"
+              className="text-slate-500 dark:text-slate-400 hover:text-emerald-600 dark:hover:text-emerald-400 hover:bg-slate-100 dark:hover:bg-slate-700"
               title="Colaborar con el cliente"
             >
               <Users className="h-4 w-4" />
@@ -221,7 +223,7 @@ export const ProjectCard: React.FC<ProjectCardProps> = ({
                 e.stopPropagation();
                 onDelete(project);
               }}
-              className="text-slate-500 hover:text-red-600 hover:bg-slate-100"
+              className="text-slate-500 dark:text-slate-400 hover:text-red-600 dark:hover:text-red-400 hover:bg-slate-100 dark:hover:bg-slate-700"
               title="Eliminar proyecto"
             >
               <Trash2 className="h-4 w-4" />
@@ -233,20 +235,20 @@ export const ProjectCard: React.FC<ProjectCardProps> = ({
       <CardContent className="space-y-4 flex-1">
         {/* Descripción */}
         {project.description && (
-          <p className="text-slate-600 text-sm leading-relaxed">
+          <p className="text-slate-600 dark:text-slate-300 text-sm leading-relaxed">
             {truncateText(project.description, 150)}
           </p>
         )}
 
         {/* Información del creador del proyecto */}
         {creatorInfo && (
-          <div className="flex items-center gap-2 p-2 bg-slate-50 rounded-lg border border-slate-200/50">
-            <User className="h-4 w-4 text-slate-500" />
+          <div className="flex items-center gap-2 p-2 bg-slate-50 dark:bg-slate-700/50 rounded-lg border border-slate-200/50 dark:border-slate-600/50">
+            <User className="h-4 w-4 text-slate-500 dark:text-slate-400" />
             <div className="flex flex-col">
-              <span className="text-xs font-medium text-slate-700">
+              <span className="text-xs font-medium text-slate-700 dark:text-slate-300">
                 Creado por: {creatorInfo.full_name}
               </span>
-              <span className="text-xs text-slate-500">
+              <span className="text-xs text-slate-500 dark:text-slate-400">
                 {creatorInfo.email}
               </span>
             </div>
@@ -256,7 +258,7 @@ export const ProjectCard: React.FC<ProjectCardProps> = ({
         {/* Tecnologías */}
         {project.technologies && project.technologies.length > 0 && (
           <div className="space-y-2 group/tech">
-            <h4 className="text-sm font-medium text-slate-600 hover:text-blue-600 transition-colors cursor-pointer">
+            <h4 className="text-sm font-medium text-slate-600 dark:text-slate-400 hover:text-blue-600 dark:hover:text-blue-400 transition-colors cursor-pointer">
               Tecnologías
             </h4>
             <div className="flex flex-wrap gap-1 opacity-0 group-hover/tech:opacity-100 transition-opacity duration-200">
@@ -264,13 +266,13 @@ export const ProjectCard: React.FC<ProjectCardProps> = ({
                 <Badge
                   key={index}
                   variant="secondary"
-                  className="bg-blue-50 text-blue-700 border-blue-200 text-xs"
+                  className="bg-blue-50 dark:bg-blue-900/30 text-blue-700 dark:text-blue-400 border-blue-200 dark:border-blue-700 text-xs"
                 >
                   {tech}
                 </Badge>
               ))}
               {project.technologies.length > 5 && (
-                <Badge variant="secondary" className="bg-slate-100 text-slate-700 border-slate-300 text-xs">
+                <Badge variant="secondary" className="bg-slate-100 dark:bg-slate-700 text-slate-700 dark:text-slate-300 border-slate-300 dark:border-slate-600 text-xs">
                   +{project.technologies.length - 5} más
                 </Badge>
               )}
@@ -281,7 +283,7 @@ export const ProjectCard: React.FC<ProjectCardProps> = ({
         {/* Variables de entorno */}
         {project.environment_variables && Object.keys(project.environment_variables).length > 0 && (
           <div className="space-y-2 group/env">
-            <h4 className="text-sm font-medium text-slate-600 hover:text-purple-600 transition-colors cursor-pointer">
+            <h4 className="text-sm font-medium text-slate-600 dark:text-slate-400 hover:text-purple-600 dark:hover:text-purple-400 transition-colors cursor-pointer">
               Variables de Entorno
             </h4>
             <div className="flex flex-wrap gap-1 opacity-0 group-hover/env:opacity-100 transition-opacity duration-200">
@@ -289,13 +291,13 @@ export const ProjectCard: React.FC<ProjectCardProps> = ({
                 <Badge
                   key={key}
                   variant="secondary"
-                  className="bg-purple-50 text-purple-700 border-purple-200 text-xs"
+                  className="bg-purple-50 dark:bg-purple-900/30 text-purple-700 dark:text-purple-400 border-purple-200 dark:border-purple-700 text-xs"
                 >
                   {key}
                 </Badge>
               ))}
               {Object.keys(project.environment_variables).length > 3 && (
-                <Badge variant="secondary" className="bg-slate-100 text-slate-700 border-slate-300 text-xs">
+                <Badge variant="secondary" className="bg-slate-100 dark:bg-slate-700 text-slate-700 dark:text-slate-300 border-slate-300 dark:border-slate-600 text-xs">
                   +{Object.keys(project.environment_variables).length - 3} más
                 </Badge>
               )}
@@ -307,14 +309,14 @@ export const ProjectCard: React.FC<ProjectCardProps> = ({
 
              {/* Botón GitHub SIEMPRE fijo arriba del footer */}
        {project.github_repository_url && (
-         <div className="px-6 py-3 bg-slate-50/30">
+         <div className="px-6 py-3 bg-slate-50/30 dark:bg-slate-700/30">
            <div className="flex items-center gap-2">
-             <ExternalLink className="h-4 w-4 text-slate-500" />
+             <ExternalLink className="h-4 w-4 text-slate-500 dark:text-slate-400" />
              <a
                href={project.github_repository_url}
                target="_blank"
                rel="noopener noreferrer"
-               className="text-blue-600 hover:text-blue-700 text-sm font-medium hover:underline transition-colors"
+               className="text-blue-600 dark:text-blue-400 hover:text-blue-700 dark:hover:text-blue-300 text-sm font-medium hover:underline transition-colors"
              >
                Ver en GitHub
              </a>
@@ -323,9 +325,9 @@ export const ProjectCard: React.FC<ProjectCardProps> = ({
        )}
 
       {/* Footer fijo con separador - SIEMPRE abajo */}
-      <div className="border-t border-slate-200 bg-slate-50/50 mt-auto">
+      <div className="border-t border-slate-200 dark:border-slate-700 bg-slate-50/50 dark:bg-slate-700/50 mt-auto">
         <div className="px-6 py-3">
-          <div className="flex items-center justify-between text-xs text-slate-500">
+          <div className="flex items-center justify-between text-xs text-slate-500 dark:text-slate-400">
             <div className="flex items-center gap-1">
               <Calendar className="h-3 w-3" />
               <span>Creado: {formatDateSafe(project.created_at)}</span>

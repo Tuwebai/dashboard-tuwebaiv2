@@ -7,6 +7,7 @@ import { Badge } from '@/components/ui/badge';
 import { Search, Filter, X, Calendar } from 'lucide-react';
 import { ProjectFilters, ProjectSort } from '@/types/project.types';
 import { projectService } from '@/lib/projectService';
+import { useTheme } from '@/contexts/ThemeContext';
 
 interface ProjectFiltersProps {
   filters: ProjectFilters;
@@ -23,6 +24,7 @@ export const ProjectFiltersComponent: React.FC<ProjectFiltersProps> = ({
   onSortChange,
   onClearFilters
 }) => {
+  const { theme } = useTheme();
   const [technologies, setTechnologies] = useState<string[]>([]);
   const [showAdvancedFilters, setShowAdvancedFilters] = useState(false);
 
@@ -74,24 +76,24 @@ export const ProjectFiltersComponent: React.FC<ProjectFiltersProps> = ({
   };
 
   return (
-    <Card className="bg-white border-slate-200">
+    <Card className="bg-white dark:bg-slate-800 border-slate-200 dark:border-slate-700">
       <CardContent className="p-4">
         <div className="space-y-4">
           {/* Búsqueda principal */}
           <div className="flex gap-3">
             <div className="flex-1 relative">
-              <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-slate-500 h-4 w-4" />
+              <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-slate-500 dark:text-slate-400 h-4 w-4" />
               <Input
                 value={filters.search || ''}
                 onChange={(e) => handleFilterChange('search', e.target.value)}
                 placeholder="Buscar proyectos por nombre o descripción..."
-                className="pl-10 bg-white border-slate-200 text-slate-800"
+                className="pl-10 bg-white dark:bg-slate-700 border-slate-200 dark:border-slate-600 text-slate-800 dark:text-slate-200"
               />
             </div>
             <Button
               variant="outline"
               onClick={() => setShowAdvancedFilters(!showAdvancedFilters)}
-              className="bg-white border-slate-200 text-slate-700 hover:bg-slate-50"
+              className="bg-white dark:bg-slate-700 border-slate-200 dark:border-slate-600 text-slate-700 dark:text-slate-200 hover:bg-slate-50 dark:hover:bg-slate-600"
             >
               <Filter className="h-4 w-4 mr-2" />
               Filtros
@@ -100,7 +102,7 @@ export const ProjectFiltersComponent: React.FC<ProjectFiltersProps> = ({
               <Button
                 variant="outline"
                 onClick={onClearFilters}
-                className="bg-white border-slate-200 text-slate-700 hover:bg-slate-50"
+                className="bg-white dark:bg-slate-700 border-slate-200 dark:border-slate-600 text-slate-700 dark:text-slate-200 hover:bg-slate-50 dark:hover:bg-slate-600"
               >
                 <X className="h-4 w-4 mr-2" />
                 Limpiar
@@ -110,15 +112,15 @@ export const ProjectFiltersComponent: React.FC<ProjectFiltersProps> = ({
 
           {/* Filtros avanzados */}
           {showAdvancedFilters && (
-            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4 pt-4 border-t border-slate-200">
+            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4 pt-4 border-t border-slate-200 dark:border-slate-600">
               {/* Filtro por estado */}
               <div className="space-y-2">
-                <label className="text-sm font-medium text-slate-700">Estado</label>
+                <label className="text-sm font-medium text-slate-700 dark:text-slate-300">Estado</label>
                 <Select
                   value={filters.status || ''}
                   onValueChange={(value) => handleFilterChange('status', value)}
                 >
-                  <SelectTrigger className="bg-white border-slate-200 text-slate-800">
+                  <SelectTrigger className="bg-white dark:bg-slate-700 border-slate-200 dark:border-slate-600 text-slate-800 dark:text-slate-200">
                     <SelectValue placeholder="Todos los estados" />
                   </SelectTrigger>
                   <SelectContent>
@@ -133,12 +135,12 @@ export const ProjectFiltersComponent: React.FC<ProjectFiltersProps> = ({
 
               {/* Filtro por tecnología */}
               <div className="space-y-2">
-                <label className="text-sm font-medium text-slate-700">Tecnología</label>
+                <label className="text-sm font-medium text-slate-700 dark:text-slate-300">Tecnología</label>
                 <Select
                   value={filters.technology || ''}
                   onValueChange={(value) => handleFilterChange('technology', value)}
                 >
-                  <SelectTrigger className="bg-white border-slate-200 text-slate-800">
+                  <SelectTrigger className="bg-white dark:bg-slate-700 border-slate-200 dark:border-slate-600 text-slate-800 dark:text-slate-200">
                     <SelectValue placeholder="Todas las tecnologías" />
                   </SelectTrigger>
                   <SelectContent>
@@ -154,28 +156,28 @@ export const ProjectFiltersComponent: React.FC<ProjectFiltersProps> = ({
 
               {/* Filtro por fecha desde */}
               <div className="space-y-2">
-                <label className="text-sm font-medium text-slate-700">Desde</label>
+                <label className="text-sm font-medium text-slate-700 dark:text-slate-300">Desde</label>
                 <div className="relative">
-                  <Calendar className="absolute left-3 top-1/2 transform -translate-y-1/2 text-slate-500 h-4 w-4" />
+                  <Calendar className="absolute left-3 top-1/2 transform -translate-y-1/2 text-slate-500 dark:text-slate-400 h-4 w-4" />
                   <Input
                     type="date"
                     value={filters.dateFrom || ''}
                     onChange={(e) => handleFilterChange('dateFrom', e.target.value)}
-                    className="pl-10 bg-white border-slate-200 text-slate-800"
+                    className="pl-10 bg-white dark:bg-slate-700 border-slate-200 dark:border-slate-600 text-slate-800 dark:text-slate-200"
                   />
                 </div>
               </div>
 
               {/* Filtro por fecha hasta */}
               <div className="space-y-2">
-                <label className="text-sm font-medium text-slate-700">Hasta</label>
+                <label className="text-sm font-medium text-slate-700 dark:text-slate-300">Hasta</label>
                 <div className="relative">
-                  <Calendar className="absolute left-3 top-1/2 transform -translate-y-1/2 text-slate-500 h-4 w-4" />
+                  <Calendar className="absolute left-3 top-1/2 transform -translate-y-1/2 text-slate-500 dark:text-slate-400 h-4 w-4" />
                   <Input
                     type="date"
                     value={filters.dateTo || ''}
                     onChange={(e) => handleFilterChange('dateTo', e.target.value)}
-                    className="pl-10 bg-white border-slate-200 text-slate-800"
+                    className="pl-10 bg-white dark:bg-slate-700 border-slate-200 dark:border-slate-600 text-slate-800 dark:text-slate-200"
                   />
                 </div>
               </div>
@@ -183,8 +185,8 @@ export const ProjectFiltersComponent: React.FC<ProjectFiltersProps> = ({
           )}
 
           {/* Ordenamiento */}
-          <div className="flex items-center gap-4 pt-4 border-t border-slate-200">
-            <span className="text-sm font-medium text-slate-700">Ordenar por:</span>
+          <div className="flex items-center gap-4 pt-4 border-t border-slate-200 dark:border-slate-600">
+            <span className="text-sm font-medium text-slate-700 dark:text-slate-300">Ordenar por:</span>
             <div className="flex gap-2">
               {[
                 { field: 'name' as const, label: 'Nombre' },
@@ -200,7 +202,7 @@ export const ProjectFiltersComponent: React.FC<ProjectFiltersProps> = ({
                   className={
                     sort.field === field
                       ? 'bg-blue-600 hover:bg-blue-700 text-white'
-                      : 'bg-white border-slate-200 text-slate-700 hover:bg-slate-50'
+                      : 'bg-white dark:bg-slate-700 border-slate-200 dark:border-slate-600 text-slate-700 dark:text-slate-200 hover:bg-slate-50 dark:hover:bg-slate-600'
                   }
                 >
                   {label}
@@ -217,49 +219,49 @@ export const ProjectFiltersComponent: React.FC<ProjectFiltersProps> = ({
           {/* Filtros activos */}
           {hasActiveFilters && (
             <div className="flex flex-wrap gap-2 pt-2">
-              <span className="text-sm text-slate-600">Filtros activos:</span>
+              <span className="text-sm text-slate-600 dark:text-slate-400">Filtros activos:</span>
               {filters.search && (
-                <Badge variant="secondary" className="bg-blue-50 text-blue-700 border-blue-200">
+                <Badge variant="secondary" className="bg-blue-50 dark:bg-blue-900/30 text-blue-700 dark:text-blue-400 border-blue-200 dark:border-blue-700">
                   Búsqueda: "{filters.search}"
                   <button
                     onClick={() => handleFilterChange('search', '')}
-                    className="ml-1 hover:text-red-600"
+                    className="ml-1 hover:text-red-600 dark:hover:text-red-400"
                   >
                     <X className="h-3 w-3" />
                   </button>
                 </Badge>
               )}
               {filters.status && (
-                <Badge variant="secondary" className="bg-green-50 text-green-700 border-green-200">
+                <Badge variant="secondary" className="bg-green-50 dark:bg-green-900/30 text-green-700 dark:text-green-400 border-green-200 dark:border-green-700">
                   Estado: {getStatusLabel(filters.status)}
                   <button
                     onClick={() => handleFilterChange('status', '')}
-                    className="ml-1 hover:text-red-600"
+                    className="ml-1 hover:text-red-600 dark:hover:text-red-400"
                   >
                     <X className="h-3 w-3" />
                   </button>
                 </Badge>
               )}
               {filters.technology && (
-                <Badge variant="secondary" className="bg-purple-50 text-purple-700 border-purple-200">
+                <Badge variant="secondary" className="bg-purple-50 dark:bg-purple-900/30 text-purple-700 dark:text-purple-400 border-purple-200 dark:border-purple-700">
                   Tecnología: {filters.technology}
                   <button
                     onClick={() => handleFilterChange('technology', '')}
-                    className="ml-1 hover:text-red-600"
+                    className="ml-1 hover:text-red-600 dark:hover:text-red-400"
                   >
                     <X className="h-3 w-3" />
                   </button>
                 </Badge>
               )}
               {(filters.dateFrom || filters.dateTo) && (
-                <Badge variant="secondary" className="bg-orange-50 text-orange-700 border-orange-200">
+                <Badge variant="secondary" className="bg-orange-50 dark:bg-orange-900/30 text-orange-700 dark:text-orange-400 border-orange-200 dark:border-orange-700">
                   Fecha: {filters.dateFrom || 'Inicio'} - {filters.dateTo || 'Fin'}
                   <button
                     onClick={() => {
                       handleFilterChange('dateFrom', '');
                       handleFilterChange('dateTo', '');
                     }}
-                    className="ml-1 hover:text-red-600"
+                    className="ml-1 hover:text-red-600 dark:hover:text-red-400"
                   >
                     <X className="h-3 w-3" />
                   </button>
