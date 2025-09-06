@@ -25,11 +25,7 @@ import { TypingIndicator } from '@/components/websy-ai/TypingIndicator';
 import { ChatInput } from '@/components/websy-ai/ChatInput';
 import { ContextPanel } from '@/components/websy-ai/ContextPanel';
 import { AISettingsModal } from '@/components/websy-ai/AISettingsModal';
-import { DiagnosticPanel } from '@/components/websy-ai/DiagnosticPanel';
-import { EnvDebug } from '@/components/websy-ai/EnvDebug';
-import { ConnectionTest } from '@/components/websy-ai/ConnectionTest';
 import { supabase } from '@/lib/supabase';
-import { logConfigStatus } from '@/utils/checkConfig';
 
 const WebsyAI: React.FC = () => {
   const { user } = useApp();
@@ -88,7 +84,6 @@ const WebsyAI: React.FC = () => {
         timestamp: new Date().toISOString()
       });
     } catch (error) {
-      console.error('Error loading context data:', error);
       toast({
         title: "Error",
         description: "No se pudo cargar el contexto de datos",
@@ -120,17 +115,13 @@ const WebsyAI: React.FC = () => {
     }
 
     try {
-      console.log('📤 Enviando mensaje:', { message, attachments, currentConversationId });
-
       // Guardar mensaje del usuario
-      const userMessageId = await saveMessage(message, false, currentConversationId, attachments);
-      console.log('💾 Mensaje del usuario guardado:', userMessageId);
+      await saveMessage(message, false, currentConversationId, attachments);
 
       // Mostrar indicador de escritura
       setIsTyping(true);
 
       // Enviar a Gemini AI
-      console.log('🤖 Enviando a Gemini AI...');
       const aiResponse = await sendMessage(
         message,
         currentMessages,
@@ -138,22 +129,12 @@ const WebsyAI: React.FC = () => {
         undefined
       );
 
-      console.log('✅ Respuesta de IA recibida:', aiResponse);
-
       // Guardar respuesta de la IA
-      const aiMessageId = await saveMessage(aiResponse, true, currentConversationId);
-      console.log('💾 Respuesta de IA guardada:', aiMessageId);
+      await saveMessage(aiResponse, true, currentConversationId);
 
       setIsTyping(false);
 
-      // Mostrar toast de éxito
-      toast({
-        title: "Mensaje enviado",
-        description: "Websy AI ha respondido exitosamente",
-      });
-
     } catch (error) {
-      console.error('❌ Error sending message:', error);
       setIsTyping(false);
       
       const errorMessage = error instanceof Error ? error.message : 'Error desconocido';
@@ -181,7 +162,6 @@ const WebsyAI: React.FC = () => {
         });
       }
     } catch (error) {
-      console.error('Error creating conversation:', error);
       toast({
         title: "Error",
         description: "No se pudo crear la conversación",
@@ -199,7 +179,6 @@ const WebsyAI: React.FC = () => {
         description: "La conversación ha sido eliminada"
       });
     } catch (error) {
-      console.error('Error deleting conversation:', error);
       toast({
         title: "Error",
         description: "No se pudo eliminar la conversación",
@@ -213,7 +192,6 @@ const WebsyAI: React.FC = () => {
     try {
       await loadMessages(conversationId);
     } catch (error) {
-      console.error('Error loading conversation:', error);
       toast({
         title: "Error",
         description: "No se pudo cargar la conversación",
@@ -232,9 +210,6 @@ const WebsyAI: React.FC = () => {
   // Efectos
   useEffect(() => {
     if (user) {
-      // Verificar configuración al montar
-      logConfigStatus();
-      
       loadConversations();
       loadContextData();
     }
@@ -417,9 +392,6 @@ const WebsyAI: React.FC = () => {
               onRefresh={loadContextData}
               loading={loadingContext}
             />
-            <EnvDebug />
-            <ConnectionTest />
-            <DiagnosticPanel />
           </div>
         </div>
       </div>

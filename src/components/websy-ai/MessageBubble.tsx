@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useState, useEffect } from 'react';
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
 import { Card, CardContent } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
@@ -7,6 +7,7 @@ import { Copy, Download, FileText, Image, MoreHorizontal } from 'lucide-react';
 import { formatDistanceToNow } from 'date-fns';
 import { es } from 'date-fns/locale';
 import { ChatMessage } from '@/hooks/useChatHistory';
+import { TypewriterText } from './TypewriterText';
 
 interface MessageBubbleProps {
   message: ChatMessage;
@@ -20,10 +21,18 @@ export const MessageBubble: React.FC<MessageBubbleProps> = ({
   onDownload
 }) => {
   const isAI = message.isAI;
+  const [showTypewriter, setShowTypewriter] = useState(false);
   const timestamp = formatDistanceToNow(message.timestamp, { 
     addSuffix: true, 
     locale: es 
   });
+
+  // Mostrar efecto de escritura solo para mensajes de IA nuevos
+  useEffect(() => {
+    if (isAI) {
+      setShowTypewriter(true);
+    }
+  }, [isAI]);
 
   const handleCopy = () => {
     if (onCopy) {
@@ -84,7 +93,15 @@ export const MessageBubble: React.FC<MessageBubbleProps> = ({
           <CardContent className="p-3">
             <div className="prose prose-sm max-w-none dark:prose-invert">
               <div className="whitespace-pre-wrap break-words">
-                {message.message}
+                {isAI && showTypewriter ? (
+                  <TypewriterText 
+                    text={message.message} 
+                    speed={30}
+                    onComplete={() => setShowTypewriter(false)}
+                  />
+                ) : (
+                  message.message
+                )}
               </div>
             </div>
             {renderAttachments()}

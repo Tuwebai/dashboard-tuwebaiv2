@@ -20,8 +20,8 @@ export const TypingIndicator: React.FC = () => {
               <div className="w-2 h-2 bg-muted-foreground/60 rounded-full animate-bounce [animation-delay:-0.15s]"></div>
               <div className="w-2 h-2 bg-muted-foreground/60 rounded-full animate-bounce"></div>
             </div>
-            <span className="text-sm text-muted-foreground ml-2">
-              Websy AI está escribiendo...
+            <span className="text-sm text-muted-foreground ml-2 animate-pulse">
+              Websy AI está pensando...
             </span>
           </div>
         </CardContent>
