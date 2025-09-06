@@ -8,8 +8,11 @@ import { formatDistanceToNow } from 'date-fns';
 import { es } from 'date-fns/locale';
 import { ChatMessage } from '@/hooks/useChatHistory';
 import { TypewriterText } from './TypewriterText';
+import { FormattedMessage } from './FormattedMessage';
 import { useApp } from '@/contexts/AppContext';
+import { useTheme } from '@/contexts/ThemeContext';
 import websyAvatar from '@/assets/websyavatar.png';
+import websyAvatarDark from '@/assets/websyparamodooscuro.png';
 
 interface MessageBubbleProps {
   message: ChatMessage;
@@ -25,8 +28,12 @@ export const MessageBubble: React.FC<MessageBubbleProps> = ({
   isNewMessage = false
 }) => {
   const { user } = useApp();
+  const { theme } = useTheme();
   const isAI = message.isAI;
   const [showTypewriter, setShowTypewriter] = useState(false);
+  
+  // Seleccionar avatar según el tema
+  const websyAvatarSrc = theme === 'dark' ? websyAvatarDark : websyAvatar;
   const timestamp = formatDistanceToNow(message.timestamp, { 
     addSuffix: true, 
     locale: es 
@@ -51,26 +58,45 @@ export const MessageBubble: React.FC<MessageBubbleProps> = ({
     if (!message.attachments || message.attachments.length === 0) return null;
 
     return (
-      <div className="mt-2 space-y-2">
+      <div className="mb-2 space-y-2">
         {message.attachments.map((attachment, index) => (
-          <div key={index} className="flex items-center gap-2 p-2 bg-muted rounded-lg">
+          <div key={index} className="space-y-1">
             {attachment.type === 'image' ? (
-              <Image className="h-4 w-4 text-blue-500" />
+              <div className="relative group">
+                {attachment.file && attachment.file instanceof File ? (
+                  <img
+                    src={URL.createObjectURL(attachment.file)}
+                    alt={attachment.name}
+                    className="max-w-xs rounded-lg border border-border/50 shadow-sm"
+                  />
+                ) : attachment.data ? (
+                  <img
+                    src={`data:image/${attachment.mimeType?.split('/')[1] || 'jpeg'};base64,${attachment.data}`}
+                    alt={attachment.name}
+                    className="max-w-xs rounded-lg border border-border/50 shadow-sm"
+                  />
+                ) : null}
+                <div className="mt-1 text-xs text-muted-foreground">
+                  {attachment.name}
+                </div>
+              </div>
             ) : (
-              <FileText className="h-4 w-4 text-green-500" />
-            )}
-            <span className="text-sm text-muted-foreground flex-1 truncate">
-              {attachment.name}
-            </span>
-            {onDownload && (
-              <Button
-                variant="ghost"
-                size="sm"
-                onClick={() => onDownload(attachment)}
-                className="h-6 w-6 p-0"
-              >
-                <Download className="h-3 w-3" />
-              </Button>
+              <div className="flex items-center gap-2 p-2 bg-muted rounded-lg">
+                <FileText className="h-4 w-4 text-green-500" />
+                <span className="text-sm text-muted-foreground flex-1 truncate">
+                  {attachment.name}
+                </span>
+                {onDownload && (
+                  <Button
+                    variant="ghost"
+                    size="sm"
+                    onClick={() => onDownload(attachment)}
+                    className="h-6 w-6 p-0"
+                  >
+                    <Download className="h-3 w-3" />
+                  </Button>
+                )}
+              </div>
             )}
           </div>
         ))}
@@ -82,7 +108,7 @@ export const MessageBubble: React.FC<MessageBubbleProps> = ({
     <div className={`flex gap-3 ${isAI ? 'justify-start' : 'justify-end'}`}>
       {isAI && (
         <Avatar className="h-8 w-8 flex-shrink-0">
-          <AvatarImage src={websyAvatar} alt="Websy AI" />
+          <AvatarImage src={websyAvatarSrc} alt="Websy AI" />
           <AvatarFallback className="bg-gradient-to-br from-blue-500 to-purple-600 text-white text-xs">
             WA
           </AvatarFallback>
@@ -90,6 +116,9 @@ export const MessageBubble: React.FC<MessageBubbleProps> = ({
       )}
       
       <div className={`flex flex-col max-w-[80%] ${isAI ? 'items-start' : 'items-end'}`}>
+        {/* Vista previa de archivos adjuntos - Arriba del mensaje */}
+        {renderAttachments()}
+        
         <Card className={`${
           isAI 
             ? 'bg-muted/50 border-muted-foreground/20' 
@@ -97,19 +126,16 @@ export const MessageBubble: React.FC<MessageBubbleProps> = ({
         }`}>
           <CardContent className="p-3">
             <div className="prose prose-sm max-w-none dark:prose-invert">
-              <div className="whitespace-pre-wrap break-words">
-                {isAI && showTypewriter ? (
-                  <TypewriterText 
-                    text={message.message} 
-                    speed={30}
-                    onComplete={() => setShowTypewriter(false)}
-                  />
-                ) : (
-                  message.message
-                )}
-              </div>
+              {isAI && showTypewriter ? (
+                <TypewriterText 
+                  text={message.message} 
+                  speed={1}
+                  onComplete={() => setShowTypewriter(false)}
+                />
+              ) : (
+                <FormattedMessage content={message.message} />
+              )}
             </div>
-            {renderAttachments()}
           </CardContent>
         </Card>
         

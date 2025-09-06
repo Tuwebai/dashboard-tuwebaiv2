@@ -9,7 +9,7 @@ interface TypewriterTextProps {
 
 export const TypewriterText: React.FC<TypewriterTextProps> = ({
   text,
-  speed = 50,
+  speed = 1,
   className = '',
   onComplete
 }) => {

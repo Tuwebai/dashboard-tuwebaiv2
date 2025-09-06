@@ -46,6 +46,7 @@ import { useAISettings } from '@/hooks/useAISettings';
 import { MessageBubble } from '@/components/websy-ai/MessageBubble';
 import { useNavigate } from 'react-router-dom';
 import websyAvatar from '@/assets/websyavatar.png';
+import websyAvatarDark from '@/assets/websyparamodooscuro.png';
 import { TypingIndicator } from '@/components/websy-ai/TypingIndicator';
 import { ChatInput } from '@/components/websy-ai/ChatInput';
 import { AISettingsModal } from '@/components/websy-ai/AISettingsModal';
@@ -55,6 +56,9 @@ const WebsyAI: React.FC = () => {
   const { user } = useApp();
   const { theme, toggleTheme } = useTheme();
   const navigate = useNavigate();
+  
+  // Seleccionar avatar según el tema
+  const websyAvatarSrc = theme === 'dark' ? websyAvatarDark : websyAvatar;
   const [isTyping, setIsTyping] = useState(false);
   const [searchQuery, setSearchQuery] = useState('');
   const [showSettings, setShowSettings] = useState(false);
@@ -270,6 +274,17 @@ const WebsyAI: React.FC = () => {
     scrollToBottom();
   }, [currentMessages, isTyping, scrollToBottom]);
 
+  // Scroll automático durante la escritura del typewriter
+  useEffect(() => {
+    if (isTyping) {
+      const interval = setInterval(() => {
+        scrollToBottom();
+      }, 100); // Scroll cada 100ms durante la escritura
+      
+      return () => clearInterval(interval);
+    }
+  }, [isTyping, scrollToBottom]);
+
   // Cargar mensajes cuando cambie la conversación
   useEffect(() => {
     if (currentConversationId) {
@@ -332,13 +347,11 @@ const WebsyAI: React.FC = () => {
             >
               <ArrowLeft className="h-4 w-4" />
             </Button>
-            <div className="p-2 bg-gradient-to-br from-blue-500 to-purple-600 rounded-lg">
-              <img 
-                src={websyAvatar} 
-                alt="Websy AI" 
-                className="h-6 w-6 rounded object-cover"
-              />
-            </div>
+            <img 
+              src={websyAvatarSrc} 
+              alt="Websy AI" 
+              className="h-8 w-8 rounded object-cover"
+            />
             <div>
               <h1 className="text-2xl font-bold bg-gradient-to-r from-blue-500 to-purple-600 bg-clip-text text-transparent">
                 Websy AI
@@ -489,7 +502,7 @@ const WebsyAI: React.FC = () => {
                 <div className="text-center text-muted-foreground py-12">
                   <div className="flex justify-center mb-6">
                     <img 
-                      src={websyAvatar} 
+                      src={websyAvatarSrc} 
                       alt="Websy AI" 
                       className="h-16 w-16 rounded-full object-cover"
                     />

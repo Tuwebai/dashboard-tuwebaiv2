@@ -175,30 +175,45 @@ export const ChatInput: React.FC<ChatInputProps> = ({
   };
 
   return (
-    <div className="space-y-3">
-      {/* Attachments Preview */}
+    <div className="relative">
+      {/* Vista previa de archivos adjuntos - Posicionada absolutamente arriba */}
       {attachments.length > 0 && (
-        <div className="flex flex-wrap gap-2">
-          {attachments.map(attachment => (
-            <Badge key={attachment.id} variant="secondary" className="flex items-center gap-1">
-              {attachment.type === 'image' ? (
-                <Image className="h-3 w-3" />
-              ) : (
-                <FileText className="h-3 w-3" />
+        <div className="absolute -top-20 left-0 right-0 flex flex-wrap gap-2 z-10">
+          {attachments.map((attachment) => (
+            <div key={attachment.id} className="relative group">
+              {attachment.type === 'image' && attachment.file && (
+                <div className="relative">
+                  <img
+                    src={URL.createObjectURL(attachment.file)}
+                    alt={attachment.name}
+                    className="w-16 h-16 object-cover rounded-lg border border-border/50 bg-background shadow-lg"
+                  />
+                  <Button
+                    variant="ghost"
+                    size="sm"
+                    onClick={() => removeAttachment(attachment.id)}
+                    className="absolute -top-2 -right-2 h-6 w-6 p-0 bg-destructive text-destructive-foreground hover:bg-destructive/90 rounded-full opacity-0 group-hover:opacity-100 transition-opacity"
+                  >
+                    <X className="h-3 w-3" />
+                  </Button>
+                </div>
               )}
-              <span className="truncate max-w-32">{attachment.name}</span>
-              <span className="text-xs text-muted-foreground">
-                ({formatFileSize(attachment.size)})
-              </span>
-              <Button
-                variant="ghost"
-                size="sm"
-                onClick={() => removeAttachment(attachment.id)}
-                className="h-4 w-4 p-0 ml-1"
-              >
-                <X className="h-3 w-3" />
-              </Button>
-            </Badge>
+              {attachment.type === 'file' && (
+                <div className="relative">
+                  <div className="w-16 h-16 bg-muted rounded-lg border border-border/50 flex items-center justify-center bg-background shadow-lg">
+                    <FileText className="h-6 w-6 text-muted-foreground" />
+                  </div>
+                  <Button
+                    variant="ghost"
+                    size="sm"
+                    onClick={() => removeAttachment(attachment.id)}
+                    className="absolute -top-2 -right-2 h-6 w-6 p-0 bg-destructive text-destructive-foreground hover:bg-destructive/90 rounded-full opacity-0 group-hover:opacity-100 transition-opacity"
+                  >
+                    <X className="h-3 w-3" />
+                  </Button>
+                </div>
+              )}
+            </div>
           ))}
         </div>
       )}
@@ -241,7 +256,7 @@ export const ChatInput: React.FC<ChatInputProps> = ({
                 e.target.style.height = Math.min(e.target.scrollHeight, 120) + 'px';
               }}
               onKeyDown={handleKeyDown}
-              placeholder={placeholder}
+              placeholder={attachments.length > 0 ? "Escribe un mensaje..." : placeholder}
               disabled={disabled}
               maxLength={maxLength}
               onDrop={handleDrop}

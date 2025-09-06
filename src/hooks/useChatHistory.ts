@@ -150,6 +150,12 @@ export const useChatHistory = () => {
         const title = message.length > 50 ? message.substring(0, 50) + '...' : message;
         currentConvId = await createConversation(title);
         if (!currentConvId) return null;
+        // Actualizar el estado de la conversación actual
+        setCurrentConversationId(currentConvId);
+        // Limpiar mensajes actuales para la nueva conversación
+        setCurrentMessages([]);
+        // Cargar mensajes de la nueva conversación
+        await loadMessages(currentConvId);
       }
 
       const { data, error: insertError } = await supabase
