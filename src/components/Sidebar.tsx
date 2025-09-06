@@ -1,5 +1,6 @@
 import { NavLink, useLocation, useNavigate } from 'react-router-dom';
 import { useApp } from '@/contexts/AppContext';
+import { useTheme } from '@/contexts/ThemeContext';
 import { 
   Home, 
   FolderKanban, 
@@ -40,6 +41,7 @@ import { supabase } from '@/lib/supabase';
 
 export default function Sidebar() {
   const { user, logout } = useApp();
+  const { theme } = useTheme();
   const location = useLocation();
   const navigate = useNavigate();
   const [counts, setCounts] = useState({
@@ -97,8 +99,8 @@ export default function Sidebar() {
     <NavLink
       to={to}
       className={({ isActive }) =>
-        `relative group cursor-pointer transition-all duration-300 ease-out hover:bg-sidebar-accent w-full
-        ${isActive ? 'bg-gradient-to-r from-sidebar-primary/10 to-sidebar-primary/5' : ''}`
+        `relative group cursor-pointer transition-all duration-300 ease-out hover:bg-sidebar-accent dark:hover:bg-slate-700 w-full
+        ${isActive ? 'bg-gradient-to-r from-sidebar-primary/10 to-sidebar-primary/5 dark:from-blue-900/20 dark:to-blue-800/10' : ''}`
       }
       aria-label={`Navegar a ${label}`}
       aria-describedby={count ? `count-${label.toLowerCase()}` : undefined}
@@ -109,7 +111,7 @@ export default function Sidebar() {
             <div className={`relative p-2 rounded-xl transition-all duration-300 ${
               isActive 
                 ? 'bg-sidebar-primary text-sidebar-primary-foreground shadow-lg shadow-sidebar-primary/25' 
-                : 'bg-sidebar-accent text-sidebar-foreground/70 group-hover:bg-sidebar-primary/10 group-hover:text-sidebar-primary'
+                : 'bg-sidebar-accent dark:bg-slate-700 text-sidebar-foreground/70 dark:text-slate-300 group-hover:bg-sidebar-primary/10 dark:group-hover:bg-blue-900/30 group-hover:text-sidebar-primary dark:group-hover:text-blue-400'
             }`}>
               {icon}
               {/* Indicador al lado del icono */}
@@ -118,13 +120,13 @@ export default function Sidebar() {
               )}
             </div>
             <div className="flex-1 min-w-0">
-              <span className="text-sm font-medium text-sidebar-foreground group-hover:text-sidebar-primary transition-colors duration-200">
+              <span className="text-sm font-medium text-sidebar-foreground dark:text-slate-200 group-hover:text-sidebar-primary dark:group-hover:text-blue-400 transition-colors duration-200">
                 {label}
               </span>
               {count !== undefined && (
                 <div 
                   id={`count-${label.toLowerCase()}`}
-                  className="text-xs text-gray-500 mt-1"
+                  className="text-xs text-gray-500 dark:text-slate-400 mt-1"
                   aria-label={`${count} ${label.toLowerCase()}`}
                 >
                   {count}
@@ -179,14 +181,14 @@ export default function Sidebar() {
             }, 100);
           }
         }}
-        className={`relative group cursor-pointer transition-all duration-300 ease-out hover:bg-sidebar-accent w-full
-        ${isActive ? 'bg-gradient-to-r from-sidebar-primary/10 to-sidebar-primary/5' : ''}`}
+        className={`relative group cursor-pointer transition-all duration-300 ease-out hover:bg-sidebar-accent dark:hover:bg-slate-700 w-full
+        ${isActive ? 'bg-gradient-to-r from-sidebar-primary/10 to-sidebar-primary/5 dark:from-blue-900/20 dark:to-blue-800/10' : ''}`}
       >
         <div className="flex items-center px-4 py-3.5 space-x-4">
           <div className={`relative p-2 rounded-xl transition-all duration-300 ${
             isActive 
               ? 'bg-sidebar-primary text-sidebar-primary-foreground shadow-lg shadow-sidebar-primary/25' 
-              : 'bg-sidebar-accent text-sidebar-foreground/70 group-hover:bg-sidebar-primary/10 group-hover:text-sidebar-primary'
+              : 'bg-sidebar-accent dark:bg-slate-700 text-sidebar-foreground/70 dark:text-slate-300 group-hover:bg-sidebar-primary/10 dark:group-hover:bg-blue-900/30 group-hover:text-sidebar-primary dark:group-hover:text-blue-400'
           }`}>
             <div className="transition-transform duration-300 group-hover:scale-110">
               {icon}
@@ -197,7 +199,7 @@ export default function Sidebar() {
             )}
           </div>
           <span className={`font-medium text-sm flex-1 text-center ${
-            isActive ? 'text-sidebar-foreground' : 'text-sidebar-foreground/80 group-hover:text-sidebar-foreground'
+            isActive ? 'text-sidebar-foreground dark:text-slate-100' : 'text-sidebar-foreground/80 dark:text-slate-300 group-hover:text-sidebar-foreground dark:group-hover:text-slate-100'
           }`}>
             {t(label)}
           </span>
@@ -206,7 +208,7 @@ export default function Sidebar() {
               <Badge variant="secondary" className={`px-2.5 py-1 rounded-full text-xs font-semibold ${
                 isActive 
                   ? 'bg-blue-500 text-white' 
-                  : 'bg-red-100 text-red-600 group-hover:bg-red-500 group-hover:text-white'
+                  : 'bg-red-100 dark:bg-red-900/30 text-red-600 dark:text-red-400 group-hover:bg-red-500 dark:group-hover:bg-red-600 group-hover:text-white'
               }`}>
                 {count}
               </Badge>
@@ -215,7 +217,7 @@ export default function Sidebar() {
               <Badge variant="destructive" className={`px-2.5 py-1 rounded-full text-xs font-semibold ${
                 isActive 
                   ? 'bg-blue-500 text-white' 
-                  : 'bg-red-100 text-red-600 group-hover:bg-red-500 group-hover:text-white'
+                  : 'bg-red-100 dark:bg-red-900/30 text-red-600 dark:text-red-400 group-hover:bg-red-500 dark:group-hover:bg-red-600 group-hover:text-white'
               }`}>
                 {badge}
               </Badge>
@@ -233,10 +235,10 @@ export default function Sidebar() {
   };
 
   return (
-    <aside className="w-80 h-screen bg-sidebar-background border-r border-sidebar-border flex flex-col shadow-xl">
+    <aside className="w-80 h-screen bg-sidebar-background dark:bg-slate-900 border-r border-sidebar-border dark:border-slate-700 flex flex-col shadow-xl">
       <div className="flex-1 flex flex-col min-h-0 overflow-hidden">
         {/* Header visual mejorado */}
-        <div className="p-6 border-b border-sidebar-border bg-gradient-to-r from-sidebar-accent to-sidebar-background">
+        <div className="p-6 border-b border-sidebar-border dark:border-slate-700 bg-gradient-to-r from-sidebar-accent to-sidebar-background dark:from-slate-800 dark:to-slate-900">
           {/* Información del usuario */}
           <div className="flex flex-col items-center gap-3">
             {/* Avatar del usuario - usar imagen real si existe */}
@@ -266,10 +268,10 @@ export default function Sidebar() {
             )}
             
             <div className="text-center">
-              <div className="font-bold text-xl text-sidebar-foreground truncate max-w-[200px]">
+              <div className="font-bold text-xl text-sidebar-foreground dark:text-slate-100 truncate max-w-[200px]">
                 {user?.full_name || 'Usuario'}
               </div>
-              <div className="text-sm text-sidebar-foreground/70 truncate max-w-[200px]">
+              <div className="text-sm text-sidebar-foreground/70 dark:text-slate-400 truncate max-w-[200px]">
                 {user?.email}
               </div>
             </div>
@@ -282,8 +284,8 @@ export default function Sidebar() {
           <nav className="flex-1 overflow-y-auto py-2">
             {/* Sección Principal */}
             <div className="mb-8 px-2">
-              <div className="text-xs font-semibold text-sidebar-foreground/60 uppercase tracking-wider px-4 py-2 mb-2">{t('Principal')}</div>
-              <div className="h-px bg-gradient-to-r from-sidebar-border to-transparent mb-2"></div>
+              <div className="text-xs font-semibold text-sidebar-foreground/60 dark:text-slate-400 uppercase tracking-wider px-4 py-2 mb-2">{t('Principal')}</div>
+              <div className="h-px bg-gradient-to-r from-sidebar-border dark:from-slate-700 to-transparent mb-2"></div>
               <div className="space-y-1">
                 {adminNavItem('dashboard', <BarChart3 size={18} />, t('Dashboard'))}
                 {adminNavItem('usuarios', <Users size={18} />, t('Usuarios'), counts.users)}
@@ -291,8 +293,8 @@ export default function Sidebar() {
                 <NavLink
                   to="/admin/fases-tareas"
                   className={({ isActive }) =>
-                    `relative group cursor-pointer transition-all duration-300 ease-out hover:bg-gray-50 w-full
-                    ${isActive ? 'bg-gradient-to-r from-purple-50 to-violet-50 border-r-4 border-purple-500' : ''}`
+                    `relative group cursor-pointer transition-all duration-300 ease-out hover:bg-gray-50 dark:hover:bg-slate-700 w-full
+                    ${isActive ? 'bg-gradient-to-r from-purple-50 to-violet-50 dark:from-purple-900/20 dark:to-violet-900/20 border-r-4 border-purple-500' : ''}`
                   }
                 >
                   {({ isActive }) => (
@@ -301,7 +303,7 @@ export default function Sidebar() {
                         <div className={`relative p-2 rounded-xl transition-all duration-300 ${
                           isActive 
                             ? 'bg-purple-500 text-white shadow-lg shadow-purple-500/25' 
-                            : 'bg-gray-100 text-gray-600 group-hover:bg-purple-100 group-hover:text-purple-600'
+                            : 'bg-gray-100 dark:bg-slate-700 text-gray-600 dark:text-slate-300 group-hover:bg-purple-100 dark:group-hover:bg-purple-900/30 group-hover:text-purple-600 dark:group-hover:text-purple-400'
                         }`}>
                           {isActive && (
                             <div className="absolute inset-0 bg-purple-400 rounded-xl animate-ping opacity-25"></div>
@@ -311,7 +313,7 @@ export default function Sidebar() {
                           </div>
                         </div>
                         <span className={`font-medium text-sm flex-1 text-center ${
-                          isActive ? 'text-gray-900' : 'text-gray-700 group-hover:text-gray-900'
+                          isActive ? 'text-gray-900 dark:text-slate-100' : 'text-gray-700 dark:text-slate-300 group-hover:text-gray-900 dark:group-hover:text-slate-100'
                         }`}>
                           Fases y Tareas
                         </span>
@@ -331,8 +333,8 @@ export default function Sidebar() {
                 <NavLink
                   to="/team"
                   className={({ isActive }) =>
-                    `relative group cursor-pointer transition-all duration-300 ease-out hover:bg-gray-50 w-full
-                    ${isActive ? 'bg-gradient-to-r from-blue-50 to-indigo-50 border-r-4 border-blue-500' : ''}`
+                    `relative group cursor-pointer transition-all duration-300 ease-out hover:bg-gray-50 dark:hover:bg-slate-700 w-full
+                    ${isActive ? 'bg-gradient-to-r from-blue-50 to-indigo-50 dark:from-blue-900/20 dark:to-indigo-900/20 border-r-4 border-blue-500' : ''}`
                   }
                 >
                   {({ isActive }) => (
@@ -341,7 +343,7 @@ export default function Sidebar() {
                         <div className={`relative p-2 rounded-xl transition-all duration-300 ${
                           isActive 
                             ? 'bg-blue-500 text-white shadow-lg shadow-blue-500/25' 
-                            : 'bg-gray-100 text-gray-600 group-hover:bg-blue-100 group-hover:text-blue-600'
+                            : 'bg-gray-100 dark:bg-slate-700 text-gray-600 dark:text-slate-300 group-hover:bg-blue-100 dark:group-hover:bg-blue-900/30 group-hover:text-blue-600 dark:group-hover:text-blue-400'
                         }`}>
                           {isActive && (
                             <div className="absolute inset-0 bg-blue-400 rounded-xl animate-ping opacity-25"></div>
@@ -351,7 +353,7 @@ export default function Sidebar() {
                           </div>
                         </div>
                         <span className={`font-medium text-sm flex-1 text-center ${
-                          isActive ? 'text-gray-900' : 'text-gray-700 group-hover:text-gray-900'
+                          isActive ? 'text-gray-900 dark:text-slate-100' : 'text-gray-700 dark:text-slate-300 group-hover:text-gray-900 dark:group-hover:text-slate-100'
                         }`}>
                           Equipo
                         </span>
@@ -370,10 +372,10 @@ export default function Sidebar() {
 
             {/* ANÁLISIS */}
             <div className="mb-8 px-2">
-              <div className="text-xs font-semibold text-sidebar-foreground/60 uppercase tracking-wider px-4 py-2 mb-2">
+              <div className="text-xs font-semibold text-sidebar-foreground/60 dark:text-slate-400 uppercase tracking-wider px-4 py-2 mb-2">
                 {t('Análisis')}
               </div>
-              <div className="h-px bg-gradient-to-r from-sidebar-border to-transparent mb-2"></div>
+              <div className="h-px bg-gradient-to-r from-sidebar-border dark:from-slate-700 to-transparent mb-2"></div>
               <div className="space-y-1">
                 {adminNavItem('advanced-analytics', <BarChart size={18} />, t('Analytics Avanzado'))}
               </div>
@@ -383,8 +385,8 @@ export default function Sidebar() {
 
             {/* Sección Sistema */}
             <div className="mb-8 px-2">
-              <div className="text-xs font-semibold text-sidebar-foreground/60 uppercase tracking-wider px-4 py-2 mb-2">Sistema</div>
-              <div className="h-px bg-gradient-to-r from-sidebar-border to-transparent mb-2"></div>
+              <div className="text-xs font-semibold text-sidebar-foreground/60 dark:text-slate-400 uppercase tracking-wider px-4 py-2 mb-2">Sistema</div>
+              <div className="h-px bg-gradient-to-r from-sidebar-border dark:from-slate-700 to-transparent mb-2"></div>
               <div className="space-y-1">
                 {adminNavItem('notifications', <Bell size={18} />, 'Notificaciones')}
                 {navItem('/configuracion', <Settings size={18} />, 'Configuración')}
@@ -396,8 +398,8 @@ export default function Sidebar() {
           <nav className="flex-1 overflow-y-auto py-2 px-2">
             {/* Sección Principal */}
             <div className="mb-6 px-2">
-              <div className="text-xs font-semibold text-sidebar-foreground/60 uppercase tracking-wider px-4 py-2 mb-2">Principal</div>
-              <div className="h-px bg-gradient-to-r from-sidebar-border to-transparent mb-2"></div>
+              <div className="text-xs font-semibold text-sidebar-foreground/60 dark:text-slate-400 uppercase tracking-wider px-4 py-2 mb-2">Principal</div>
+              <div className="h-px bg-gradient-to-r from-sidebar-border dark:from-slate-700 to-transparent mb-2"></div>
               <div className="space-y-1">
                 {navItem('/dashboard', <Home size={18} />, t('Dashboard'))}
                 {navItem('/proyectos', <FolderKanban size={18} />, t('Proyectos'))}
@@ -407,8 +409,8 @@ export default function Sidebar() {
 
             {/* Sección Personal */}
             <div className="mb-6 px-2">
-              <div className="text-xs font-semibold text-sidebar-foreground/60 uppercase tracking-wider px-4 py-2 mb-2">Personal</div>
-              <div className="h-px bg-gradient-to-r from-sidebar-border to-transparent mb-2"></div>
+              <div className="text-xs font-semibold text-sidebar-foreground/60 dark:text-slate-400 uppercase tracking-wider px-4 py-2 mb-2">Personal</div>
+              <div className="h-px bg-gradient-to-r from-sidebar-border dark:from-slate-700 to-transparent mb-2"></div>
               <div className="space-y-1">
                 {navItem('/perfil', <User size={18} />, t('Mi Perfil'))}
                 {navItem('/facturacion', <CreditCard size={18} />, t('Facturación'))}
@@ -417,8 +419,8 @@ export default function Sidebar() {
 
             {/* Sección Soporte */}
             <div className="mb-6 px-2">
-              <div className="text-xs font-semibold text-sidebar-foreground/60 uppercase tracking-wider px-4 py-2 mb-2">Soporte</div>
-              <div className="h-px bg-gradient-to-r from-sidebar-border to-transparent mb-2"></div>
+              <div className="text-xs font-semibold text-sidebar-foreground/60 dark:text-slate-400 uppercase tracking-wider px-4 py-2 mb-2">Soporte</div>
+              <div className="h-px bg-gradient-to-r from-sidebar-border dark:from-slate-700 to-transparent mb-2"></div>
               <div className="space-y-1">
                 {navItem('/soporte', <HelpCircle size={18} />, t('Soporte'))}
                 {navItem('/configuracion', <Settings size={18} />, t('Configuración'))}
@@ -429,11 +431,11 @@ export default function Sidebar() {
       </div>
 
       {/* Footer mejorado */}
-      <div className="p-4 border-t border-sidebar-border bg-gradient-to-r from-sidebar-accent to-sidebar-background">
+      <div className="p-4 border-t border-sidebar-border dark:border-slate-700 bg-gradient-to-r from-sidebar-accent to-sidebar-background dark:from-slate-800 dark:to-slate-900">
         <Button
           onClick={logout}
           variant="ghost"
-          className="w-full flex items-center space-x-3 px-3 py-3 text-sidebar-foreground hover:bg-destructive/10 hover:text-destructive rounded-xl transition-all duration-300 group"
+          className="w-full flex items-center space-x-3 px-3 py-3 text-sidebar-foreground dark:text-slate-200 hover:bg-destructive/10 dark:hover:bg-destructive/20 hover:text-destructive dark:hover:text-red-400 rounded-xl transition-all duration-300 group"
         >
           <TooltipProvider>
             <Tooltip>
