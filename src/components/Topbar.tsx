@@ -1,4 +1,4 @@
-import { Bell, Search, Menu, Clock, RefreshCw } from 'lucide-react';
+import { Bell, Search, Menu, Clock, RefreshCw, Lightbulb, TrendingUp, Activity, Zap } from 'lucide-react';
 import { useApp } from '@/contexts/AppContext';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
@@ -60,8 +60,8 @@ export default function Topbar({
   const isClientDashboardPage = location.pathname === '/dashboard';
 
   return (
-    <header className={`${isAdminPage || isClientDashboardPage ? 'h-auto' : 'h-16 sm:h-18'} bg-background border-b border-border shadow-sm`}>
-      <div className={`flex items-center justify-between px-6 sm:px-8 ${isAdminPage || isClientDashboardPage ? 'py-6' : 'h-full'}`}>
+    <header className={`${isAdminPage || isClientDashboardPage ? 'h-auto' : 'h-16'} bg-background border-b border-border shadow-sm`}>
+      <div className={`flex items-center justify-between px-6 ${isAdminPage || isClientDashboardPage ? 'py-6' : 'h-full'}`}>
         <div className="flex items-center gap-6">
           {/* Mobile menu button */}
           {showMobileMenu && (
@@ -134,111 +134,158 @@ export default function Topbar({
         </div>
 
         <div className="flex items-center gap-6">
-          {/* Admin Panel Actions */}
+          {/* Admin Panel Actions - Diseño Profesional */}
           {isAdminPage ? (
-            <div className="flex items-center space-x-4">
+            <div className="flex items-center space-x-3">
               <ThemeToggle variant="outline" size="sm" />
-              <TooltipProvider>
-                <Tooltip>
-                  <TooltipTrigger asChild>
-                    <Button
-                      variant="outline"
-                      size="sm"
-                      onClick={onRefreshData}
-                      className="bg-background border-border text-foreground hover:bg-muted hover:border-border transition-all duration-300"
-                    >
-                      <RefreshCw className="h-4 w-4 mr-2" />
-                      Actualizar
-                    </Button>
-                  </TooltipTrigger>
-                  <TooltipContent>
-                    <p>Recargar datos desde la base de datos</p>
-                  </TooltipContent>
-                </Tooltip>
-              </TooltipProvider>
-              <NotificationBell />
-              <HelpButton variant="minimal" />
+              
+              {/* Botones de acción agrupados */}
+              <div className="flex items-center space-x-2">
+                <TooltipProvider>
+                  <Tooltip>
+                    <TooltipTrigger asChild>
+                      <Button
+                        variant="outline"
+                        size="sm"
+                        onClick={onRefreshData}
+                        className="h-9 px-4 border-border hover:bg-muted hover:border-primary/50 transition-all duration-200"
+                      >
+                        <RefreshCw className="h-4 w-4 mr-2" />
+                        Actualizar
+                      </Button>
+                    </TooltipTrigger>
+                    <TooltipContent>
+                      <p>Recargar datos desde la base de datos</p>
+                    </TooltipContent>
+                  </Tooltip>
+                </TooltipProvider>
+                
+                <NotificationBell />
+                <HelpButton variant="minimal" />
+              </div>
             </div>
           ) : isClientDashboardPage ? (
-            /* Client Dashboard Actions */
-            <div className="flex items-center space-x-4">
+            /* Client Dashboard Actions - Diseño Profesional */
+            <div className="flex items-center space-x-3">
               <ThemeToggle variant="outline" size="sm" />
-              {/* Barra de búsqueda */}
+              
+              {/* Barra de búsqueda mejorada */}
               <div className="relative">
                 <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-muted-foreground h-4 w-4" />
                 <Input
                   placeholder="Buscar proyectos..."
                   value={clientSearchTerm}
                   onChange={(e) => onClientSearch?.(e.target.value)}
-                  className="pl-10 w-64 bg-muted border-border text-foreground placeholder-muted-foreground"
+                  className="pl-10 w-64 h-9 bg-background border-border focus:ring-2 focus:ring-primary/20 focus:border-primary transition-all duration-200"
                 />
               </div>
               
-              {/* Notificación */}
-              <NotificationBell />
-              
-              {/* Ayuda */}
-              <HelpButton variant="minimal" />
-              
-              {/* Botón actualizar */}
-              {onClientRefresh && (
-                <Button
-                  onClick={onClientRefresh}
-                  className="px-6 py-3 bg-primary hover:bg-primary/90 text-primary-foreground rounded-lg font-semibold transition-all duration-300 shadow-sm hover:shadow-md transform hover:-translate-y-0.5"
-                >
-                  <RefreshCw className="h-4 w-4 mr-2" />
-                  Actualizar
-                </Button>
-              )}
+              {/* Botones de acción */}
+              <div className="flex items-center space-x-2">
+                <NotificationBell />
+                <HelpButton variant="minimal" />
+                
+                {/* Botón actualizar mejorado */}
+                {onClientRefresh && (
+                  <Button
+                    onClick={onClientRefresh}
+                    variant="outline"
+                    size="sm"
+                    className="h-9 px-4 border-border hover:bg-muted hover:border-primary/50 transition-all duration-200"
+                  >
+                    <RefreshCw className="h-4 w-4 mr-2" />
+                    Actualizar
+                  </Button>
+                )}
+              </div>
             </div>
           ) : (
-            /* Regular Stats */
+            /* Regular Stats - Diseño Limpio y Profesional */
             <div className="hidden sm:flex items-center gap-4">
               <ThemeToggle variant="outline" size="sm" />
-              <div className="text-sm">
-                <span className="text-muted-foreground font-medium">{t('Proyectos')}: </span>
-                <Badge variant="secondary" className="bg-primary/10 text-primary border-0 px-3 py-1.5 rounded-lg font-semibold">
-                  {getUserProjects().length}
-                </Badge>
+              
+              {/* Contador de Proyectos Simplificado */}
+              <div className="flex items-center gap-3 bg-white dark:bg-slate-800 px-4 py-2 rounded-lg border border-slate-200 dark:border-slate-700 shadow-sm hover:shadow-md transition-all duration-200">
+                <div className="flex items-center justify-center w-8 h-8 bg-blue-500 rounded-lg">
+                  <Lightbulb className="h-4 w-4 text-white" />
+                </div>
+                <div className="flex items-center gap-2">
+                  <span className="text-sm font-medium text-slate-600 dark:text-slate-400">
+                    {t('Proyectos')}:
+                  </span>
+                  <span className="text-lg font-bold text-slate-900 dark:text-slate-100">
+                    {getUserProjects().length}
+                  </span>
+                </div>
               </div>
             </div>
           )}
 
-          {/* User info */}
-          <div className="flex items-center gap-3 sm:gap-4">
-            {/* Avatar */}
+          {/* User info - Diseño Limpio */}
+          <div className="flex items-center gap-3">
+            {/* Avatar Simplificado */}
             <DropdownMenu>
               <DropdownMenuTrigger asChild>
-                <Avatar className="h-10 w-10 sm:h-12 sm:w-12 cursor-pointer border-2 border-slate-200 hover:border-blue-300 transition-all duration-300 transform hover:scale-110 shadow-sm">
-                  {user?.avatar ? (
-                    <AvatarImage 
-                      src={user.avatar} 
-                      alt={`Avatar de ${user.full_name || user.email}`}
-                      className="object-cover"
-                    />
-                  ) : null}
-                  <AvatarFallback className="bg-gradient-to-br from-blue-500 to-purple-600 text-white font-bold text-lg">
-                    {(user?.full_name || user?.email || '').charAt(0).toUpperCase()}
-                  </AvatarFallback>
-                </Avatar>
+                <Button variant="ghost" className="relative h-10 w-10 rounded-full p-0 hover:bg-slate-100 dark:hover:bg-slate-800 transition-colors">
+                  <Avatar className="h-10 w-10">
+                    {user?.avatar ? (
+                      <AvatarImage 
+                        src={user.avatar} 
+                        alt={`Avatar de ${user.full_name || user.email}`}
+                        className="object-cover"
+                      />
+                    ) : null}
+                    <AvatarFallback className="bg-blue-500 text-white font-semibold">
+                      {(user?.full_name || user?.email || '').charAt(0).toUpperCase()}
+                    </AvatarFallback>
+                  </Avatar>
+                </Button>
               </DropdownMenuTrigger>
-              <DropdownMenuContent align="end" className="w-48 bg-popover border-border shadow-lg rounded-lg">
-                <DropdownMenuItem 
-                  onClick={() => navigate('/perfil')}
-                  className="text-popover-foreground hover:text-popover-foreground hover:bg-muted rounded-lg transition-all duration-200"
-                >
-                  <UserIcon className="h-4 w-4 mr-3 text-primary" /> {t('Mi perfil')}
-                </DropdownMenuItem>
-                <DropdownMenuSeparator className="bg-border" />
-                <DropdownMenuItem
-                  onClick={async () => {
-                    await logout();
-                    navigate('/login');
-                  }}
-                  className="text-destructive hover:text-destructive hover:bg-destructive/10 rounded-lg transition-all duration-200"
-                >
-                  <LogOut className="h-4 w-4 mr-3" /> {t('Cerrar sesión')}
-                </DropdownMenuItem>
+              <DropdownMenuContent align="end" className="w-56">
+                <div className="px-4 py-3 border-b">
+                  <div className="flex items-center gap-3">
+                    <Avatar className="h-10 w-10">
+                      {user?.avatar ? (
+                        <AvatarImage 
+                          src={user.avatar} 
+                          alt={`Avatar de ${user.full_name || user.email}`}
+                          className="object-cover"
+                        />
+                      ) : null}
+                      <AvatarFallback className="bg-blue-500 text-white font-semibold">
+                        {(user?.full_name || user?.email || '').charAt(0).toUpperCase()}
+                      </AvatarFallback>
+                    </Avatar>
+                    <div className="flex flex-col">
+                      <span className="font-semibold">
+                        {user?.full_name || 'Usuario'}
+                      </span>
+                      <span className="text-sm text-muted-foreground">
+                        {user?.email}
+                      </span>
+                    </div>
+                  </div>
+                </div>
+                <div className="py-2">
+                  <DropdownMenuItem 
+                    onClick={() => navigate('/perfil')}
+                    className="cursor-pointer"
+                  >
+                    <UserIcon className="h-4 w-4 mr-3" /> 
+                    {t('Mi perfil')}
+                  </DropdownMenuItem>
+                  <DropdownMenuSeparator />
+                  <DropdownMenuItem
+                    onClick={async () => {
+                      await logout();
+                      navigate('/login');
+                    }}
+                    className="cursor-pointer text-red-600 focus:text-red-600"
+                  >
+                    <LogOut className="h-4 w-4 mr-3" /> 
+                    {t('Cerrar sesión')}
+                  </DropdownMenuItem>
+                </div>
               </DropdownMenuContent>
             </DropdownMenu>
           </div>

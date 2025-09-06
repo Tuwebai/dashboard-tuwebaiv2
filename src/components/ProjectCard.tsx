@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { memo, useCallback, useMemo, useState } from 'react';
 import { motion } from '@/components/OptimizedMotion';
 import { Draggable } from '@hello-pangea/dnd';
 import { Button } from '@/components/ui/button';
@@ -70,6 +70,7 @@ interface Project {
   approval_status?: 'pending' | 'approved' | 'rejected';
   approval_notes?: string;
   approved_at?: string;
+  isFavorite?: boolean;
 }
 
 interface ProjectCardProps {
@@ -278,7 +279,7 @@ const isProjectUrgent = (project: Project) => {
   return urgentPhases.length > 0;
 };
 
-export default function ProjectCard({
+const ProjectCard = memo(({
   project,
   user,
   projectCreators,
@@ -293,7 +294,7 @@ export default function ProjectCard({
   index = 0,
   isDragDisabled = false,
   dragMode = false
-}: ProjectCardProps) {
+}: ProjectCardProps) => {
   const [showDeleteDialog, setShowDeleteDialog] = React.useState(false);
   const progress = calculateProjectProgress(project);
   const status = getProjectStatus(project);
@@ -831,4 +832,8 @@ export default function ProjectCard({
       </Dialog>
     </>
   );
-}
+});
+
+ProjectCard.displayName = 'ProjectCard';
+
+export default ProjectCard;

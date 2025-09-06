@@ -1,5 +1,4 @@
-import React from 'react';
-import { useState, useEffect, useMemo } from 'react';
+import React, { memo, useCallback, useMemo, useState, useEffect } from 'react';
 import { Input } from '@/components/ui/input';
 import { Button } from '@/components/ui/button';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
@@ -33,12 +32,12 @@ interface SearchAndFiltersProps {
   onRefresh?: () => void;
 }
 
-export default function SearchAndFilters({ 
+const SearchAndFilters = memo(({ 
   projects, 
   onFilteredProjects, 
   onExport,
   onRefresh 
-}: SearchAndFiltersProps) {
+}: SearchAndFiltersProps) => {
   const [searchTerm, setSearchTerm] = useState('');
   const [selectedType, setSelectedType] = useState<string>('all');
   const [selectedStatus, setSelectedStatus] = useState<string>('all');
@@ -494,4 +493,8 @@ export default function SearchAndFilters({
       </div>
     </div>
   );
-} 
+});
+
+SearchAndFilters.displayName = 'SearchAndFilters';
+
+export default SearchAndFilters; 

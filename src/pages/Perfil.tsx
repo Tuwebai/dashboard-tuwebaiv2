@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useCallback, useMemo } from 'react';
+import React, { useState, useEffect, useCallback, useMemo, useRef } from 'react';
 import { useApp } from '@/contexts/AppContext';
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
@@ -320,7 +320,6 @@ const Perfil = React.memo(() => {
 
       // Actualizar el usuario en el contexto global para sincronización en tiempo real
       await updateUserSettings({
-        avatar_url: publicUrl,
         avatar: publicUrl // Para compatibilidad con el campo avatar
       });
 
@@ -382,7 +381,6 @@ const Perfil = React.memo(() => {
 
       // Actualizar el usuario en el contexto global
       await updateUserSettings({
-        avatar_url: defaultAvatarUrl,
         avatar: defaultAvatarUrl
       });
 
