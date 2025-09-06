@@ -4,7 +4,13 @@ import { toast } from '@/hooks/use-toast';
 
 interface GeminiMessage {
   role: 'user' | 'model';
-  parts: { text: string }[];
+  parts: { 
+    text?: string;
+    inline_data?: {
+      mime_type: string;
+      data: string;
+    };
+  }[];
 }
 
 interface ChatMessage {
@@ -31,7 +37,6 @@ export const useGeminiAI = ({ apiKey, temperature = 0.7, maxTokens = 2048 }: Use
   // Obtener contexto de la base de datos
   const getDatabaseContext = useCallback(async () => {
     try {
-      console.log('📊 Obteniendo contexto de base de datos...');
       
       // Intentar obtener datos de manera individual para manejar errores específicos
       let projects = [];
@@ -46,7 +51,6 @@ export const useGeminiAI = ({ apiKey, temperature = 0.7, maxTokens = 2048 }: Use
           .limit(10);
         
         if (projectsResult.error) {
-          console.warn('⚠️ Error obteniendo proyectos:', projectsResult.error);
           // Fallback a consulta simple
           const simpleResult = await supabase
             .from('projects')
@@ -54,18 +58,14 @@ export const useGeminiAI = ({ apiKey, temperature = 0.7, maxTokens = 2048 }: Use
             .limit(5);
           
           if (simpleResult.error) {
-            console.warn('⚠️ Error en consulta simple de proyectos:', simpleResult.error);
             projects = [];
           } else {
             projects = simpleResult.data || [];
-            console.log('✅ Proyectos obtenidos (consulta simple):', projects.length);
           }
         } else {
           projects = projectsResult.data || [];
-          console.log('✅ Proyectos obtenidos:', projects.length);
         }
       } catch (error) {
-        console.warn('⚠️ Error en consulta de proyectos:', error);
         projects = [];
       }
 
@@ -76,13 +76,10 @@ export const useGeminiAI = ({ apiKey, temperature = 0.7, maxTokens = 2048 }: Use
           .limit(10);
         
         if (usersResult.error) {
-          console.warn('⚠️ Error obteniendo usuarios:', usersResult.error);
         } else {
           users = usersResult.data || [];
-          console.log('✅ Usuarios obtenidos:', users.length);
         }
       } catch (error) {
-        console.warn('⚠️ Error en consulta de usuarios:', error);
       }
 
       try {
@@ -93,7 +90,6 @@ export const useGeminiAI = ({ apiKey, temperature = 0.7, maxTokens = 2048 }: Use
           .limit(10);
         
         if (ticketsResult.error) {
-          console.warn('⚠️ Error obteniendo tickets:', ticketsResult.error);
           // Fallback a consulta simple
           const simpleResult = await supabase
             .from('tickets')
@@ -101,18 +97,14 @@ export const useGeminiAI = ({ apiKey, temperature = 0.7, maxTokens = 2048 }: Use
             .limit(5);
           
           if (simpleResult.error) {
-            console.warn('⚠️ Error en consulta simple de tickets:', simpleResult.error);
             tickets = [];
           } else {
             tickets = simpleResult.data || [];
-            console.log('✅ Tickets obtenidos (consulta simple):', tickets.length);
           }
         } else {
           tickets = ticketsResult.data || [];
-          console.log('✅ Tickets obtenidos:', tickets.length);
         }
       } catch (error) {
-        console.warn('⚠️ Error en consulta de tickets:', error);
         tickets = [];
       }
 
@@ -123,10 +115,8 @@ export const useGeminiAI = ({ apiKey, temperature = 0.7, maxTokens = 2048 }: Use
         timestamp: new Date().toISOString()
       };
 
-      console.log('📊 Contexto de BD preparado:', context);
       return context;
     } catch (error) {
-      console.error('❌ Error general obteniendo contexto de BD:', error);
       return {
         projects: [],
         users: [],
@@ -141,7 +131,8 @@ export const useGeminiAI = ({ apiKey, temperature = 0.7, maxTokens = 2048 }: Use
     message: string,
     conversationHistory: ChatMessage[] = [],
     contextType: 'general' | 'project' | 'user' | 'analytics' = 'general',
-    contextId?: string
+    contextId?: string,
+    attachments?: any[]
   ): Promise<string> => {
     setIsLoading(true);
     setError(null);
@@ -157,20 +148,12 @@ export const useGeminiAI = ({ apiKey, temperature = 0.7, maxTokens = 2048 }: Use
         throw new Error('El mensaje no puede estar vacío');
       }
 
-      console.log('🚀 Enviando mensaje a Gemini AI...', {
-        messageLength: message.length,
-        conversationHistoryLength: conversationHistory.length,
-        contextType,
-        contextId
-      });
 
       // Obtener contexto de la base de datos
       let dbContext = null;
       try {
         dbContext = await getDatabaseContext();
-        console.log('📊 Contexto de base de datos obtenido:', dbContext ? 'OK' : 'ERROR');
       } catch (dbError) {
-        console.warn('⚠️ Error obteniendo contexto de BD, continuando sin contexto:', dbError);
         // Continuar sin contexto si hay error en la BD
       }
       
@@ -187,6 +170,9 @@ INSTRUCCIONES:
 4. Si no tienes información suficiente, pide aclaraciones específicas
 5. Mantén un tono profesional pero amigable
 6. Siempre incluye datos específicos cuando sea relevante
+7. PUEDES ANALIZAR IMÁGENES Y ARCHIVOS: Eres capaz de procesar y analizar imágenes, gráficos, diagramas, capturas de pantalla, documentos PDF, y otros archivos adjuntos
+8. Para imágenes: Describe lo que ves, analiza gráficos y datos, identifica problemas o mejoras, proporciona insights basados en el contenido visual
+9. Para archivos: Extrae información relevante, analiza el contenido, identifica patrones o problemas, sugiere mejoras
 
 TIPOS DE ANÁLISIS QUE PUEDES REALIZAR:
 - Análisis predictivo de proyectos
@@ -195,6 +181,9 @@ TIPOS DE ANÁLISIS QUE PUEDES REALIZAR:
 - Generación de reportes automáticos
 - Optimización de carga de trabajo
 - Análisis de tendencias y patrones
+- Análisis visual de gráficos, diagramas y capturas de pantalla
+- Procesamiento de documentos y archivos adjuntos
+- Análisis de diseños web y mockups
 
 Responde en español y sé específico con los datos cuando sea posible.`;
 
@@ -215,22 +204,38 @@ Responde en español y sé específico con los datos cuando sea posible.`;
         });
       }
 
-      // Agregar el mensaje actual
+      // Agregar el mensaje actual con archivos adjuntos si los hay
+      const userMessageParts = [{ text: message }];
+      
+      // Procesar archivos adjuntos
+      if (attachments && attachments.length > 0) {
+        for (const attachment of attachments) {
+          if (attachment.type === 'image' && attachment.data) {
+            // Para imágenes, agregar como parte de imagen
+            userMessageParts.push({
+              inline_data: {
+                mime_type: attachment.mimeType || 'image/jpeg',
+                data: attachment.data
+              }
+            });
+          } else if (attachment.type === 'file' && attachment.content) {
+            // Para archivos de texto, agregar como texto
+            userMessageParts.push({
+              text: `\n\n[Archivo adjunto: ${attachment.name}]\n${attachment.content}`
+            });
+          }
+        }
+      }
+      
       geminiHistory.push({
         role: 'user',
-        parts: [{ text: message }]
+        parts: userMessageParts
       });
 
-      console.log('📝 Historial preparado:', {
-        totalMessages: geminiHistory.length,
-        systemPromptLength: systemPrompt.length,
-        userMessageLength: message.length
-      });
 
       // Llamar a la API de Gemini
       const apiUrl = `https://generativelanguage.googleapis.com/v1beta/models/gemini-1.5-flash:generateContent?key=${geminiApiKey}`;
       
-      console.log('🌐 Llamando a Gemini API...', { apiUrl: apiUrl.replace(geminiApiKey, '***') });
 
       const response = await fetch(apiUrl, {
         method: 'POST',
@@ -248,19 +253,9 @@ Responde en español y sé específico con los datos cuando sea posible.`;
         })
       });
 
-      console.log('📡 Respuesta de API recibida:', {
-        status: response.status,
-        statusText: response.statusText,
-        ok: response.ok
-      });
 
       if (!response.ok) {
         const errorText = await response.text();
-        console.error('❌ Error de API:', {
-          status: response.status,
-          statusText: response.statusText,
-          errorText
-        });
 
         let errorMessage = `Error de API: ${response.status} ${response.statusText}`;
         
@@ -281,10 +276,8 @@ Responde en español y sé específico con los datos cuando sea posible.`;
       }
 
       const data = await response.json();
-      console.log('📄 Datos de respuesta:', data);
       
       if (!data.candidates || !data.candidates[0] || !data.candidates[0].content) {
-        console.error('❌ Respuesta inválida de la API:', data);
         throw new Error('Respuesta inválida de la API de Gemini');
       }
 
@@ -294,14 +287,9 @@ Responde en español y sé específico con los datos cuando sea posible.`;
         throw new Error('La respuesta de la IA está vacía');
       }
 
-      console.log('✅ Respuesta de IA obtenida:', {
-        length: aiResponse.length,
-        preview: aiResponse.substring(0, 100) + '...'
-      });
       
       return aiResponse;
     } catch (error) {
-      console.error('❌ Error en sendMessage:', error);
       const errorMessage = error instanceof Error ? error.message : 'Error desconocido';
       setError(errorMessage);
       

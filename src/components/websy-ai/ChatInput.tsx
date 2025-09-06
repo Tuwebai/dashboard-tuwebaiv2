@@ -19,6 +19,9 @@ interface Attachment {
   type: string;
   size: number;
   file: File;
+  data?: string; // Base64 para imágenes
+  content?: string; // Contenido de texto para archivos
+  mimeType?: string; // Tipo MIME del archivo
 }
 
 interface ChatInputProps {
@@ -61,12 +64,12 @@ export const ChatInput: React.FC<ChatInputProps> = ({
     }
   }, [handleSend]);
 
-  const handleFileSelect = useCallback((files: FileList | null) => {
+  const handleFileSelect = useCallback(async (files: FileList | null) => {
     if (!files) return;
 
     const newAttachments: Attachment[] = [];
     
-    Array.from(files).forEach(file => {
+    for (const file of Array.from(files)) {
       // Validar tamaño (max 10MB)
       if (file.size > 10 * 1024 * 1024) {
         toast({
@@ -74,7 +77,7 @@ export const ChatInput: React.FC<ChatInputProps> = ({
           description: `${file.name} es demasiado grande. Máximo 10MB.`,
           variant: "destructive"
         });
-        return;
+        continue;
       }
 
       // Validar tipo de archivo
@@ -91,17 +94,54 @@ export const ChatInput: React.FC<ChatInputProps> = ({
           description: `${file.name} no es un tipo de archivo soportado.`,
           variant: "destructive"
         });
-        return;
+        continue;
       }
 
-      newAttachments.push({
-        id: Math.random().toString(36).substr(2, 9),
-        name: file.name,
-        type: file.type.startsWith('image/') ? 'image' : 'document',
-        size: file.size,
-        file
-      });
-    });
+      try {
+        let data = null;
+        let content = null;
+
+        if (file.type.startsWith('image/')) {
+          // Convertir imagen a base64
+          data = await new Promise<string>((resolve, reject) => {
+            const reader = new FileReader();
+            reader.onload = () => {
+              const result = reader.result as string;
+              // Remover el prefijo data:image/...;base64,
+              const base64 = result.split(',')[1];
+              resolve(base64);
+            };
+            reader.onerror = reject;
+            reader.readAsDataURL(file);
+          });
+        } else {
+          // Leer archivo de texto
+          content = await new Promise<string>((resolve, reject) => {
+            const reader = new FileReader();
+            reader.onload = () => resolve(reader.result as string);
+            reader.onerror = reject;
+            reader.readAsText(file);
+          });
+        }
+
+        newAttachments.push({
+          id: Math.random().toString(36).substr(2, 9),
+          name: file.name,
+          type: file.type.startsWith('image/') ? 'image' : 'file',
+          size: file.size,
+          file,
+          data,
+          content,
+          mimeType: file.type
+        });
+      } catch (error) {
+        toast({
+          title: "Error procesando archivo",
+          description: `No se pudo procesar ${file.name}.`,
+          variant: "destructive"
+        });
+      }
+    }
 
     setAttachments(prev => [...prev, ...newAttachments]);
   }, []);
@@ -163,71 +203,78 @@ export const ChatInput: React.FC<ChatInputProps> = ({
         </div>
       )}
 
-      {/* Input Area */}
-      <Card className={`transition-colors ${
-        isDragging ? 'border-primary bg-primary/5' : ''
+      {/* Input Area - Estilo ChatGPT */}
+      <div className={`relative transition-all duration-200 ${
+        isDragging ? 'scale-[1.02]' : ''
       }`}>
-        <CardContent className="p-3">
-          <div className="flex gap-2">
-            <div className="flex-1 relative">
-              <Textarea
-                ref={textareaRef}
-                value={message}
-                onChange={(e) => {
-                  setMessage(e.target.value);
-                  // Auto-resize
-                  e.target.style.height = 'auto';
-                  e.target.style.height = Math.min(e.target.scrollHeight, 120) + 'px';
-                }}
-                onKeyDown={handleKeyDown}
-                placeholder={placeholder}
-                disabled={disabled}
-                maxLength={maxLength}
-                onDrop={handleDrop}
-                onDragOver={handleDragOver}
-                onDragLeave={handleDragLeave}
-                className="min-h-[40px] max-h-[120px] resize-none pr-10"
-              />
-              <div className="absolute bottom-2 right-2 text-xs text-muted-foreground">
-                {message.length}/{maxLength}
-              </div>
-            </div>
+        <div className="relative flex items-end gap-2 p-3 bg-muted/30 rounded-2xl border border-border/50 hover:border-border focus-within:border-primary/50 focus-within:bg-muted/50 transition-all duration-200">
+          {/* Botón de adjuntar archivos */}
+          <input
+            ref={fileInputRef}
+            type="file"
+            multiple
+            accept="image/*,.pdf,.doc,.docx,.txt"
+            onChange={(e) => handleFileSelect(e.target.files)}
+            className="hidden"
+          />
+          
+          <Button
+            variant="ghost"
+            size="sm"
+            onClick={() => fileInputRef.current?.click()}
+            disabled={disabled}
+            className="h-8 w-8 p-0 text-muted-foreground hover:text-foreground hover:bg-transparent"
+            title="Adjuntar archivo"
+          >
+            <Paperclip className="h-4 w-4" />
+          </Button>
+
+          {/* Textarea principal */}
+          <div className="flex-1 relative">
+            <Textarea
+              ref={textareaRef}
+              value={message}
+              onChange={(e) => {
+                setMessage(e.target.value);
+                // Auto-resize
+                e.target.style.height = 'auto';
+                e.target.style.height = Math.min(e.target.scrollHeight, 120) + 'px';
+              }}
+              onKeyDown={handleKeyDown}
+              placeholder={placeholder}
+              disabled={disabled}
+              maxLength={maxLength}
+              onDrop={handleDrop}
+              onDragOver={handleDragOver}
+              onDragLeave={handleDragLeave}
+              className="min-h-[40px] max-h-[120px] resize-none border-0 bg-transparent shadow-none focus-visible:ring-0 focus-visible:ring-offset-0 p-0 text-base placeholder:text-muted-foreground"
+            />
             
-            <div className="flex flex-col gap-1">
-              <input
-                ref={fileInputRef}
-                type="file"
-                multiple
-                accept="image/*,.pdf,.doc,.docx,.txt"
-                onChange={(e) => handleFileSelect(e.target.files)}
-                className="hidden"
-              />
-              
-              <Button
-                variant="ghost"
-                size="sm"
-                onClick={() => fileInputRef.current?.click()}
-                disabled={disabled}
-                className="h-8 w-8 p-0"
-              >
-                <Paperclip className="h-4 w-4" />
-              </Button>
-              
-              <Button
-                onClick={handleSend}
-                disabled={disabled || (!message.trim() && attachments.length === 0)}
-                className="h-8 w-8 p-0"
-              >
-                {disabled ? (
-                  <Loader2 className="h-4 w-4 animate-spin" />
-                ) : (
-                  <Send className="h-4 w-4" />
-                )}
-              </Button>
+            {/* Contador de caracteres */}
+            <div className="absolute bottom-1 right-1 text-xs text-muted-foreground/70">
+              {message.length}/{maxLength}
             </div>
           </div>
-        </CardContent>
-      </Card>
+          
+          {/* Botón de enviar */}
+          <Button
+            onClick={handleSend}
+            disabled={disabled || (!message.trim() && attachments.length === 0)}
+            className={`h-8 w-8 p-0 rounded-full transition-all duration-200 ${
+              (!message.trim() && attachments.length === 0) || disabled
+                ? 'bg-muted text-muted-foreground cursor-not-allowed'
+                : 'bg-primary text-primary-foreground hover:bg-primary/90 shadow-sm'
+            }`}
+            title="Enviar mensaje"
+          >
+            {disabled ? (
+              <Loader2 className="h-4 w-4 animate-spin" />
+            ) : (
+              <Send className="h-4 w-4" />
+            )}
+          </Button>
+        </div>
+      </div>
     </div>
   );
 };

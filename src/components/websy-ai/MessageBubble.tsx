@@ -8,18 +8,23 @@ import { formatDistanceToNow } from 'date-fns';
 import { es } from 'date-fns/locale';
 import { ChatMessage } from '@/hooks/useChatHistory';
 import { TypewriterText } from './TypewriterText';
+import { useApp } from '@/contexts/AppContext';
+import websyAvatar from '@/assets/websyavatar.png';
 
 interface MessageBubbleProps {
   message: ChatMessage;
   onCopy?: (text: string) => void;
   onDownload?: (attachment: any) => void;
+  isNewMessage?: boolean;
 }
 
 export const MessageBubble: React.FC<MessageBubbleProps> = ({
   message,
   onCopy,
-  onDownload
+  onDownload,
+  isNewMessage = false
 }) => {
+  const { user } = useApp();
   const isAI = message.isAI;
   const [showTypewriter, setShowTypewriter] = useState(false);
   const timestamp = formatDistanceToNow(message.timestamp, { 
@@ -29,10 +34,10 @@ export const MessageBubble: React.FC<MessageBubbleProps> = ({
 
   // Mostrar efecto de escritura solo para mensajes de IA nuevos
   useEffect(() => {
-    if (isAI) {
+    if (isAI && isNewMessage) {
       setShowTypewriter(true);
     }
-  }, [isAI]);
+  }, [isAI, isNewMessage]);
 
   const handleCopy = () => {
     if (onCopy) {
@@ -77,7 +82,7 @@ export const MessageBubble: React.FC<MessageBubbleProps> = ({
     <div className={`flex gap-3 ${isAI ? 'justify-start' : 'justify-end'}`}>
       {isAI && (
         <Avatar className="h-8 w-8 flex-shrink-0">
-          <AvatarImage src="/websy-ai-avatar.png" alt="Websy AI" />
+          <AvatarImage src={websyAvatar} alt="Websy AI" />
           <AvatarFallback className="bg-gradient-to-br from-blue-500 to-purple-600 text-white text-xs">
             WA
           </AvatarFallback>
@@ -128,9 +133,12 @@ export const MessageBubble: React.FC<MessageBubbleProps> = ({
       
       {!isAI && (
         <Avatar className="h-8 w-8 flex-shrink-0">
-          <AvatarImage src="/user-avatar.png" alt="Usuario" />
+          <AvatarImage 
+            src={user?.avatar_url || user?.avatar} 
+            alt={user?.name || 'Usuario'} 
+          />
           <AvatarFallback className="bg-gradient-to-br from-green-500 to-blue-600 text-white text-xs">
-            U
+            {user?.name ? user.name.charAt(0).toUpperCase() : 'U'}
           </AvatarFallback>
         </Avatar>
       )}

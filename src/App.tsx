@@ -178,9 +178,7 @@ function AppRoutes() {
       
       <Route path="/admin/websy-ai" element={
         <ProtectedRoute>
-          <DashboardLayout>
-            <WebsyAI />
-          </DashboardLayout>
+          <WebsyAI />
         </ProtectedRoute>
       } />
       
