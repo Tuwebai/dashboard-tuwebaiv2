@@ -54,6 +54,7 @@ import { formatDateSafe } from '@/utils/formatDateSafe';
 import VerDetallesProyecto from '@/components/VerDetallesProyecto';
 import ProjectCard from '@/components/ProjectCard';
 import LazyProjectCard from '@/components/LazyProjectCard';
+import ProjectCollaborationModal from '@/components/ProjectCollaborationModal';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { userService } from '@/lib/supabaseService';
@@ -131,7 +132,7 @@ const customStyles = `
 
 interface ProjectPhase {
   key: string;
-  estado: 'Pendiente' | 'En Progreso' | 'Terminado';
+  estado: 'Pendiente' | 'En Progreso' | 'En Revisión' | 'Aprobada' | 'Terminado' | 'Bloqueada';
   descripcion?: string;
   fechaEntrega?: string;
   archivos?: Array<{ url: string; name: string }>;
@@ -152,6 +153,7 @@ interface Project {
   status: string;
   created_at: string;
   updated_at: string;
+  progress: number;
   // Campos extendidos para compatibilidad
   type?: string;
   ownerEmail?: string;
@@ -172,10 +174,20 @@ const Dashboard = React.memo(() => {
   const { user, projects, updateProject, addCommentToPhase, deleteProject, loading } = useApp();
   const navigate = useNavigate();
   
+  // Función para navegar a proyectos con filtros específicos
+  const navigateToProjects = (filter: string, value?: string) => {
+    const params = new URLSearchParams();
+    if (filter && value) {
+      params.set(filter, value);
+    }
+    navigate(`/proyectos?${params.toString()}`);
+  };
+  
   // Configurar actualizaciones en tiempo real
   const { refreshProjects } = useRealtimeProjects();
   const [comentarioInput, setComentarioInput] = useState<Record<string, string>>({});
   const [selectedProject, setSelectedProject] = useState<Project | null>(null);
+  const [showCollaborationModal, setShowCollaborationModal] = useState(false);
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [modalInitialized, setModalInitialized] = useState(false);
   const [realTimeProjects, setRealTimeProjects] = useState<Project[]>([]);
@@ -738,7 +750,7 @@ const Dashboard = React.memo(() => {
               {/* Columna Izquierda - Acciones Rápidas (30%) */}
               <div className="lg:col-span-3 space-y-6">
                 {/* Acciones Rápidas */}
-                <motion.div
+            <motion.div 
                   initial={{ opacity: 0, x: -20 }}
                   animate={{ opacity: 1, x: 0 }}
                   transition={{ duration: 0.5, delay: 0.1 }}
@@ -759,12 +771,12 @@ const Dashboard = React.memo(() => {
                         <div className="flex items-center gap-3">
                           <div className="w-10 h-10 bg-blue-100 dark:bg-blue-500/20 rounded-lg flex items-center justify-center">
                             <Plus className="h-5 w-5 text-blue-600 dark:text-blue-400" />
-                          </div>
+                </div>
                           <div>
                             <p className="font-medium text-slate-800 dark:text-white">Nuevo Proyecto</p>
                             <p className="text-sm text-slate-500 dark:text-slate-400">Crear un proyecto web</p>
-                          </div>
-                        </div>
+                </div>
+                </div>
                       </Button>
                       <Button
                         variant="ghost"
@@ -774,12 +786,12 @@ const Dashboard = React.memo(() => {
                         <div className="flex items-center gap-3">
                           <div className="w-10 h-10 bg-green-100 dark:bg-green-500/20 rounded-lg flex items-center justify-center">
                             <FileText className="h-5 w-5 text-green-600 dark:text-green-400" />
-                          </div>
+                </div>
                           <div>
                             <p className="font-medium text-slate-800 dark:text-white">Ver Proyectos</p>
                             <p className="text-sm text-slate-500 dark:text-slate-400">Gestionar existentes</p>
-                          </div>
-                        </div>
+                </div>
+              </div>
                       </Button>
                       <Button
                         variant="ghost"
@@ -798,10 +810,10 @@ const Dashboard = React.memo(() => {
                       </Button>
                     </CardContent>
                   </Card>
-                </motion.div>
+            </motion.div>
 
                 {/* Estado del Equipo */}
-                <motion.div
+            <motion.div 
                   initial={{ opacity: 0, x: -20 }}
                   animate={{ opacity: 1, x: 0 }}
                   transition={{ duration: 0.5, delay: 0.2 }}
@@ -817,46 +829,49 @@ const Dashboard = React.memo(() => {
                       <div className="flex items-center gap-3">
                         <div className="w-8 h-8 bg-green-100 dark:bg-green-500/20 rounded-full flex items-center justify-center">
                           <div className="w-3 h-3 bg-green-500 rounded-full"></div>
-                        </div>
+                </div>
                         <div>
                           <p className="font-medium text-slate-800 dark:text-white">Equipo Activo</p>
                           <p className="text-sm text-slate-500 dark:text-slate-400">Trabajando en tus proyectos</p>
-                        </div>
-                      </div>
+                </div>
+                </div>
                       <div className="flex items-center gap-3">
                         <div className="w-8 h-8 bg-blue-100 dark:bg-blue-500/20 rounded-full flex items-center justify-center">
                           <MessageSquare className="h-4 w-4 text-blue-600 dark:text-blue-400" />
-                        </div>
+                </div>
                         <div>
                           <p className="font-medium text-slate-800 dark:text-white">Comunicación</p>
                           <p className="text-sm text-slate-500 dark:text-slate-400">Respuesta en 2-4 horas</p>
-                        </div>
-                      </div>
+                  </div>
+                </div>
                     </CardContent>
                   </Card>
-                </motion.div>
+            </motion.div>
               </div>
 
               {/* Columna Central - Contenido Principal (50%) */}
               <div className="lg:col-span-6 space-y-6">
                 {/* Métricas Mejoradas para el Cliente */}
-                <motion.div
+            <motion.div 
                   initial={{ opacity: 0, y: 20 }}
                   animate={{ opacity: 1, y: 0 }}
                   transition={{ duration: 0.6, delay: 0.1 }}
                   className="grid grid-cols-1 sm:grid-cols-2 gap-4"
                 >
                   {/* Progreso de Mis Proyectos */}
-                  <Card className="bg-gradient-to-br from-blue-500/10 via-blue-600/15 to-indigo-500/20 dark:from-blue-500/20 dark:via-blue-600/25 dark:to-indigo-500/30 border border-blue-200/50 dark:border-blue-500/30 shadow-lg hover:shadow-xl transition-all duration-300 cursor-pointer group">
+                  <Card 
+                    className="bg-gradient-to-br from-blue-500/10 via-blue-600/15 to-indigo-500/20 dark:from-blue-500/20 dark:via-blue-600/25 dark:to-indigo-500/30 border border-blue-200/50 dark:border-blue-500/30 shadow-lg hover:shadow-xl transition-all duration-300 cursor-pointer group"
+                    onClick={() => navigateToProjects('view', 'progress')}
+                  >
                     <CardContent className="p-6">
                       <div className="flex items-center justify-between mb-4">
                         <div className="w-12 h-12 bg-blue-500 rounded-xl flex items-center justify-center shadow-lg group-hover:scale-110 transition-transform duration-300">
                           <BarChart3 className="h-6 w-6 text-white" />
-                        </div>
+                </div>
                         <Badge className="bg-blue-100 text-blue-700 dark:bg-blue-500/20 dark:text-blue-300">
                           {dashboardStats.averageProgress}% Promedio
                         </Badge>
-                      </div>
+                </div>
                       <h3 className="text-lg font-semibold text-slate-800 dark:text-white mb-2">
                         Progreso de Mis Proyectos
                       </h3>
@@ -864,23 +879,26 @@ const Dashboard = React.memo(() => {
                         <div className="flex justify-between text-sm text-slate-600 dark:text-slate-300">
                           <span>Progreso General</span>
                           <span>{dashboardStats.averageProgress}%</span>
-                        </div>
+                </div>
                         <Progress value={dashboardStats.averageProgress} className="h-2" />
-                      </div>
+                </div>
                     </CardContent>
                   </Card>
 
                   {/* Próximas Entregas */}
-                  <Card className="bg-gradient-to-br from-orange-500/10 via-orange-600/15 to-red-500/20 dark:from-orange-500/20 dark:via-orange-600/25 dark:to-red-500/30 border border-orange-200/50 dark:border-orange-500/30 shadow-lg hover:shadow-xl transition-all duration-300 cursor-pointer group">
+                  <Card 
+                    className="bg-gradient-to-br from-orange-500/10 via-orange-600/15 to-red-500/20 dark:from-orange-500/20 dark:via-orange-600/25 dark:to-red-500/30 border border-orange-200/50 dark:border-orange-500/30 shadow-lg hover:shadow-xl transition-all duration-300 cursor-pointer group"
+                    onClick={() => navigateToProjects('status', 'in_progress')}
+                  >
                     <CardContent className="p-6">
                       <div className="flex items-center justify-between mb-4">
                         <div className="w-12 h-12 bg-orange-500 rounded-xl flex items-center justify-center shadow-lg group-hover:scale-110 transition-transform duration-300">
                           <Calendar className="h-6 w-6 text-white" />
-                        </div>
+                </div>
                         <Badge className="bg-orange-100 text-orange-700 dark:bg-orange-500/20 dark:text-orange-300">
                           Próximas
                         </Badge>
-                      </div>
+              </div>
                       <h3 className="text-lg font-semibold text-slate-800 dark:text-white mb-2">
                         Próximas Entregas
                       </h3>
@@ -897,16 +915,19 @@ const Dashboard = React.memo(() => {
                   </Card>
 
                   {/* Comunicación Activa */}
-                  <Card className="bg-gradient-to-br from-green-500/10 via-green-600/15 to-emerald-500/20 dark:from-green-500/20 dark:via-green-600/25 dark:to-emerald-500/30 border border-green-200/50 dark:border-green-500/30 shadow-lg hover:shadow-xl transition-all duration-300 cursor-pointer group">
+                  <Card 
+                    className="bg-gradient-to-br from-green-500/10 via-green-600/15 to-emerald-500/20 dark:from-green-500/20 dark:via-green-600/25 dark:to-emerald-500/30 border border-green-200/50 dark:border-green-500/30 shadow-lg hover:shadow-xl transition-all duration-300 cursor-pointer group"
+                    onClick={() => setShowCollaborationModal(true)}
+                  >
                     <CardContent className="p-6">
                       <div className="flex items-center justify-between mb-4">
                         <div className="w-12 h-12 bg-green-500 rounded-xl flex items-center justify-center shadow-lg group-hover:scale-110 transition-transform duration-300">
                           <MessageSquare className="h-6 w-6 text-white" />
-                        </div>
+                  </div>
                         <Badge className="bg-green-100 text-green-700 dark:bg-green-500/20 dark:text-green-300">
                           {dashboardStats.totalComments} Mensajes
                         </Badge>
-                      </div>
+                </div>
                       <h3 className="text-lg font-semibold text-slate-800 dark:text-white mb-2">
                         Comunicación Activa
                       </h3>
@@ -914,25 +935,28 @@ const Dashboard = React.memo(() => {
                         <div className="flex justify-between text-sm text-slate-600 dark:text-slate-300">
                           <span>Comentarios Totales</span>
                           <span>{dashboardStats.totalComments}</span>
-                        </div>
+                </div>
                         <div className="text-xs text-slate-500 dark:text-slate-400">
                           Mantente al día con el equipo
-                        </div>
-                      </div>
+                </div>
+                </div>
                     </CardContent>
                   </Card>
 
                   {/* Estado de Colaboración */}
-                  <Card className="bg-gradient-to-br from-purple-500/10 via-purple-600/15 to-violet-500/20 dark:from-purple-500/20 dark:via-purple-600/25 dark:to-violet-500/30 border border-purple-200/50 dark:border-purple-500/30 shadow-lg hover:shadow-xl transition-all duration-300 cursor-pointer group">
+                  <Card 
+                    className="bg-gradient-to-br from-purple-500/10 via-purple-600/15 to-violet-500/20 dark:from-purple-500/20 dark:via-purple-600/25 dark:to-violet-500/30 border border-purple-200/50 dark:border-purple-500/30 shadow-lg hover:shadow-xl transition-all duration-300 cursor-pointer group"
+                    onClick={() => navigateToProjects('type', 'collaborative')}
+                  >
                     <CardContent className="p-6">
                       <div className="flex items-center justify-between mb-4">
                         <div className="w-12 h-12 bg-purple-500 rounded-xl flex items-center justify-center shadow-lg group-hover:scale-110 transition-transform duration-300">
                           <Users className="h-6 w-6 text-white" />
-                        </div>
+                  </div>
                         <Badge className="bg-purple-100 text-purple-700 dark:bg-purple-500/20 dark:text-purple-300">
                           Activo
                         </Badge>
-                      </div>
+                </div>
                       <h3 className="text-lg font-semibold text-slate-800 dark:text-white mb-2">
                         Estado de Colaboración
                       </h3>
@@ -940,22 +964,25 @@ const Dashboard = React.memo(() => {
                         <div className="flex justify-between text-sm text-slate-600 dark:text-slate-300">
                           <span>Proyectos Colaborativos</span>
                           <span>{dashboardStats.totalProjects}</span>
-                        </div>
+              </div>
                         <div className="text-xs text-slate-500 dark:text-slate-400">
                           Trabajo en equipo activo
-                        </div>
+          </div>
                       </div>
                     </CardContent>
                   </Card>
                 </motion.div>
 
                 {/* Timeline de Actividad Reciente */}
-                <motion.div
-                  initial={{ opacity: 0, y: 20 }}
-                  animate={{ opacity: 1, y: 0 }}
+            <motion.div 
+              initial={{ opacity: 0, y: 20 }}
+              animate={{ opacity: 1, y: 0 }}
                   transition={{ duration: 0.6, delay: 0.3 }}
                 >
-                  <Card className="bg-white/80 dark:bg-slate-800/50 backdrop-blur-sm border border-slate-200/50 dark:border-slate-700/50 shadow-lg">
+                  <Card 
+                    className="bg-white/80 dark:bg-slate-800/50 backdrop-blur-sm border border-slate-200/50 dark:border-slate-700/50 shadow-lg cursor-pointer hover:shadow-xl transition-all duration-300"
+                    onClick={() => navigateToProjects('filter', 'recent_activity')}
+                  >
                     <CardHeader>
                       <CardTitle className="text-lg font-semibold text-slate-800 dark:text-white flex items-center gap-2">
                         <Activity className="h-5 w-5 text-blue-500" />
@@ -970,7 +997,7 @@ const Dashboard = React.memo(() => {
                               <span className="text-white font-bold text-sm">
                                 {project.name?.charAt(0) || 'P'}
                               </span>
-                            </div>
+                    </div>
                             <div className="flex-1">
                               <p className="font-medium text-slate-800 dark:text-white">
                                 {project.name}
@@ -978,18 +1005,18 @@ const Dashboard = React.memo(() => {
                               <p className="text-sm text-slate-500 dark:text-slate-400">
                                 Última actualización: {formatDate(project.updated_at)}
                               </p>
-                            </div>
+                  </div>
                             <Badge variant="outline" className="text-xs">
                               {getProjectStatus(project)}
                             </Badge>
-                          </div>
+                </div>
                         ))}
-                      </div>
+                  </div>
                     </CardContent>
                   </Card>
                 </motion.div>
-              </div>
-
+                </div>
+                
               {/* Columna Derecha - Tareas y Notificaciones (20%) */}
               <div className="lg:col-span-3 space-y-6">
                 {/* Tareas Personales */}
@@ -998,7 +1025,10 @@ const Dashboard = React.memo(() => {
                   animate={{ opacity: 1, x: 0 }}
                   transition={{ duration: 0.5, delay: 0.2 }}
                 >
-                  <Card className="bg-white/80 dark:bg-slate-800/50 backdrop-blur-sm border border-slate-200/50 dark:border-slate-700/50 shadow-lg">
+                  <Card 
+                    className="bg-white/80 dark:bg-slate-800/50 backdrop-blur-sm border border-slate-200/50 dark:border-slate-700/50 shadow-lg cursor-pointer hover:shadow-xl transition-all duration-300"
+                    onClick={() => navigate('/fases-tareas')}
+                  >
                     <CardHeader className="pb-3">
                       <CardTitle className="text-lg font-semibold text-slate-800 dark:text-white flex items-center gap-2">
                         <CheckCircle className="h-5 w-5 text-green-500" />
@@ -1010,7 +1040,7 @@ const Dashboard = React.memo(() => {
                         <div className="flex items-center gap-3 p-2 rounded-lg hover:bg-slate-50 dark:hover:bg-slate-700/50 transition-colors duration-200">
                           <CheckCircle className="h-4 w-4 text-green-500" />
                           <span className="text-sm text-slate-700 dark:text-slate-300">Revisar propuesta de diseño</span>
-                        </div>
+                  </div>
                         <div className="flex items-center gap-3 p-2 rounded-lg hover:bg-slate-50 dark:hover:bg-slate-700/50 transition-colors duration-200">
                           <Clock className="h-4 w-4 text-orange-500" />
                           <span className="text-sm text-slate-700 dark:text-slate-300">Aprobar contenido final</span>
@@ -1030,7 +1060,10 @@ const Dashboard = React.memo(() => {
                   animate={{ opacity: 1, x: 0 }}
                   transition={{ duration: 0.5, delay: 0.3 }}
                 >
-                  <Card className="bg-white/80 dark:bg-slate-800/50 backdrop-blur-sm border border-slate-200/50 dark:border-slate-700/50 shadow-lg">
+                  <Card 
+                    className="bg-white/80 dark:bg-slate-800/50 backdrop-blur-sm border border-slate-200/50 dark:border-slate-700/50 shadow-lg cursor-pointer hover:shadow-xl transition-all duration-300"
+                    onClick={() => navigateToProjects('filter', 'notifications')}
+                  >
                     <CardHeader className="pb-3">
                       <CardTitle className="text-lg font-semibold text-slate-800 dark:text-white flex items-center gap-2">
                         <Bell className="h-5 w-5 text-blue-500" />
@@ -1046,7 +1079,7 @@ const Dashboard = React.memo(() => {
                           <p className="text-xs text-blue-600 dark:text-blue-400 mt-1">
                             Hace 2 horas
                           </p>
-                        </div>
+                    </div>
                         <div className="p-3 bg-green-50 dark:bg-green-500/10 rounded-lg border border-green-200 dark:border-green-500/20">
                           <p className="text-sm font-medium text-green-800 dark:text-green-300">
                             Proyecto actualizado
@@ -1054,7 +1087,7 @@ const Dashboard = React.memo(() => {
                           <p className="text-xs text-green-600 dark:text-green-400 mt-1">
                             Hace 4 horas
                           </p>
-                        </div>
+                  </div>
                       </div>
                     </CardContent>
                   </Card>
@@ -1066,7 +1099,10 @@ const Dashboard = React.memo(() => {
                   animate={{ opacity: 1, x: 0 }}
                   transition={{ duration: 0.5, delay: 0.4 }}
                 >
-                  <Card className="bg-gradient-to-br from-indigo-500/10 via-purple-500/15 to-pink-500/20 dark:from-indigo-500/20 dark:via-purple-500/25 dark:to-pink-500/30 border border-indigo-200/50 dark:border-indigo-500/30 shadow-lg">
+                  <Card 
+                    className="bg-gradient-to-br from-indigo-500/10 via-purple-500/15 to-pink-500/20 dark:from-indigo-500/20 dark:via-purple-500/25 dark:to-pink-500/30 border border-indigo-200/50 dark:border-indigo-500/30 shadow-lg cursor-pointer hover:shadow-xl transition-all duration-300"
+                    onClick={() => navigateToProjects('view', 'summary')}
+                  >
                     <CardHeader className="pb-3">
                       <CardTitle className="text-lg font-semibold text-slate-800 dark:text-white flex items-center gap-2">
                         <TrendingUp className="h-5 w-5 text-indigo-500" />
@@ -1077,28 +1113,28 @@ const Dashboard = React.memo(() => {
                       <div className="text-center">
                         <div className="text-3xl font-bold text-indigo-600 dark:text-indigo-400 mb-2">
                           {dashboardStats.averageProgress}%
-                        </div>
+                </div>
                         <p className="text-sm text-slate-600 dark:text-slate-300">
                           Progreso General
                         </p>
-                      </div>
+              </div>
                       <div className="space-y-2">
                         <div className="flex justify-between text-sm">
                           <span className="text-slate-600 dark:text-slate-300">Proyectos Activos</span>
                           <span className="font-medium text-slate-800 dark:text-white">{dashboardStats.totalProjects}</span>
-                        </div>
+                </div>
                         <div className="flex justify-between text-sm">
                           <span className="text-slate-600 dark:text-slate-300">Comentarios</span>
                           <span className="font-medium text-slate-800 dark:text-white">{dashboardStats.totalComments}</span>
-                        </div>
+                </div>
                         <div className="flex justify-between text-sm">
                           <span className="text-slate-600 dark:text-slate-300">Completados</span>
                           <span className="font-medium text-slate-800 dark:text-white">{dashboardStats.completedProjects}</span>
-                        </div>
+              </div>
                       </div>
                     </CardContent>
                   </Card>
-                </motion.div>
+            </motion.div>
               </div>
             </div>
           </div>
@@ -1537,6 +1573,17 @@ const Dashboard = React.memo(() => {
           </div>
         </div>
       </div>
+
+      {/* Modal de Colaboración */}
+      <ProjectCollaborationModal
+        isOpen={showCollaborationModal}
+        onClose={() => setShowCollaborationModal(false)}
+        projects={userProjects.map(project => ({
+          ...project,
+          progress: calculateProjectProgress(project)
+        }))}
+      />
+
     </>
   );
 });

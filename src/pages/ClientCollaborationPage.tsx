@@ -671,28 +671,28 @@ export default function ClientCollaborationPage() {
   }
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-slate-50 via-blue-50/30 to-indigo-50/30">
+    <div className="min-h-screen bg-gradient-to-br from-slate-50 via-blue-50/30 to-indigo-50/30 dark:from-slate-900 dark:via-slate-800 dark:to-slate-900">
       <div className="p-6 max-w-7xl mx-auto space-y-6">
         {/* Header con diseño claro */}
-        <div className="bg-white rounded-2xl p-6 shadow-lg border border-slate-200/50">
+        <div className="bg-white dark:bg-slate-800 rounded-2xl p-6 shadow-lg border border-slate-200/50 dark:border-slate-700/50">
           <div className="flex flex-col lg:flex-row lg:items-center justify-between gap-4">
             <div className="flex items-center gap-4">
               <Button 
                 variant="outline" 
                 onClick={() => navigate('/dashboard')}
-                className="border-slate-300 text-slate-700 hover:bg-slate-50"
+                className="border-slate-300 dark:border-slate-600 text-slate-700 dark:text-slate-300 hover:bg-slate-50 dark:hover:bg-slate-700"
               >
                 <ArrowLeft className="h-4 w-4 mr-2" />
                 Volver al Dashboard
               </Button>
               <div>
-                <h1 className="text-3xl font-bold text-slate-800">Colaboración - {project.name}</h1>
-                <p className="text-slate-600 mt-2">Espacio de trabajo colaborativo para tu proyecto</p>
+                <h1 className="text-3xl font-bold text-slate-800 dark:text-white">Colaboración - {project.name}</h1>
+                <p className="text-slate-600 dark:text-slate-300 mt-2">Espacio de trabajo colaborativo para tu proyecto</p>
               </div>
             </div>
             
             <div className="flex items-center gap-4">
-              <Badge variant="outline" className="flex items-center gap-1 bg-slate-100 text-slate-700 border-slate-200">
+              <Badge variant="outline" className="flex items-center gap-1 bg-slate-100 dark:bg-slate-700 text-slate-700 dark:text-slate-300 border-slate-200 dark:border-slate-600">
                 <Users className="h-3 w-3" />
                 {participants.length} participantes
               </Badge>
@@ -702,61 +702,61 @@ export default function ClientCollaborationPage() {
 
         {/* Stats Cards con diseño claro */}
         <div className="grid grid-cols-2 md:grid-cols-4 lg:grid-cols-6 gap-4">
-          <div className="bg-white rounded-2xl p-4 shadow-lg border border-slate-200/50">
+          <div className="bg-white dark:bg-slate-800 rounded-2xl p-4 shadow-lg border border-slate-200/50 dark:border-slate-700/50">
             <div className="flex items-center justify-between">
               <div>
-                <p className="text-sm font-medium text-slate-600">Mensajes</p>
-                <p className="text-2xl font-bold text-slate-800">{collaborationStats.totalMessages}</p>
+                <p className="text-sm font-medium text-slate-600 dark:text-slate-300">Mensajes</p>
+                <p className="text-2xl font-bold text-slate-800 dark:text-white">{collaborationStats.totalMessages}</p>
               </div>
               <MessageSquare className="h-8 w-8 text-blue-500" />
             </div>
           </div>
           
-          <div className="bg-white rounded-2xl p-4 shadow-lg border border-slate-200/50">
+          <div className="bg-white dark:bg-slate-800 rounded-2xl p-4 shadow-lg border border-slate-200/50 dark:border-slate-700/50">
             <div className="flex items-center justify-between">
               <div>
-                <p className="text-sm font-medium text-slate-600">Tareas</p>
-                <p className="text-2xl font-bold text-slate-800">{collaborationStats.totalTasks}</p>
+                <p className="text-sm font-medium text-slate-600 dark:text-slate-300">Tareas</p>
+                <p className="text-2xl font-bold text-slate-800 dark:text-white">{collaborationStats.totalTasks}</p>
               </div>
               <CheckSquare className="h-8 w-8 text-green-500" />
             </div>
           </div>
           
-          <div className="bg-white rounded-2xl p-4 shadow-lg border border-slate-200/50">
+          <div className="bg-white dark:bg-slate-800 rounded-2xl p-4 shadow-lg border border-slate-200/50 dark:border-slate-700/50">
             <div className="flex items-center justify-between">
               <div>
-                <p className="text-sm font-medium text-slate-600">Completadas</p>
-                <p className="text-2xl font-bold text-slate-800">{collaborationStats.completedTasks}</p>
+                <p className="text-sm font-medium text-slate-600 dark:text-slate-300">Completadas</p>
+                <p className="text-2xl font-bold text-slate-800 dark:text-white">{collaborationStats.completedTasks}</p>
               </div>
               <CheckCircle className="h-8 w-8 text-green-500" />
             </div>
           </div>
           
-          <div className="bg-white rounded-2xl p-4 shadow-lg border border-slate-200/50">
+          <div className="bg-white dark:bg-slate-800 rounded-2xl p-4 shadow-lg border border-slate-200/50 dark:border-slate-700/50">
             <div className="flex items-center justify-between">
               <div>
-                <p className="text-sm font-medium text-slate-600">Archivos</p>
-                <p className="text-2xl font-bold text-slate-800">{collaborationStats.filesUploaded}</p>
+                <p className="text-sm font-medium text-slate-600 dark:text-slate-300">Archivos</p>
+                <p className="text-2xl font-bold text-slate-800 dark:text-white">{collaborationStats.filesUploaded}</p>
               </div>
               <FileText className="h-8 w-8 text-purple-500" />
             </div>
           </div>
           
-          <div className="bg-white rounded-2xl p-4 shadow-lg border border-slate-200/50">
+          <div className="bg-white dark:bg-slate-800 rounded-2xl p-4 shadow-lg border border-slate-200/50 dark:border-slate-700/50">
             <div className="flex items-center justify-between">
               <div>
-                <p className="text-sm font-medium text-slate-600">Comentarios</p>
-                <p className="text-2xl font-bold text-slate-800">{collaborationStats.totalComments}</p>
+                <p className="text-sm font-medium text-slate-600 dark:text-slate-300">Comentarios</p>
+                <p className="text-2xl font-bold text-slate-800 dark:text-white">{collaborationStats.totalComments}</p>
               </div>
               <MessageSquare className="h-8 w-8 text-orange-500" />
             </div>
           </div>
           
-          <div className="bg-white rounded-2xl p-4 shadow-lg border border-slate-200/50">
+          <div className="bg-white dark:bg-slate-800 rounded-2xl p-4 shadow-lg border border-slate-200/50 dark:border-slate-700/50">
             <div className="flex items-center justify-between">
               <div>
-                <p className="text-sm font-medium text-slate-600">Progreso</p>
-                <p className="text-2xl font-bold text-slate-800">{collaborationStats.totalTasks > 0 ? Math.round((collaborationStats.completedTasks / collaborationStats.totalTasks) * 100) : 0}%</p>
+                <p className="text-sm font-medium text-slate-600 dark:text-slate-300">Progreso</p>
+                <p className="text-2xl font-bold text-slate-800 dark:text-white">{collaborationStats.totalTasks > 0 ? Math.round((collaborationStats.completedTasks / collaborationStats.totalTasks) * 100) : 0}%</p>
               </div>
               <CheckSquare className="h-8 w-8 text-indigo-500" />
             </div>
@@ -764,33 +764,33 @@ export default function ClientCollaborationPage() {
         </div>
 
         {/* Main Content con diseño claro */}
-        <div className="bg-white rounded-2xl shadow-lg border border-slate-200/50 p-6">
+        <div className="bg-white dark:bg-slate-800 rounded-2xl shadow-lg border border-slate-200/50 dark:border-slate-700/50 p-6">
           <Tabs value={activeTab} onValueChange={setActiveTab} className="space-y-6">
-                         <TabsList className="grid w-full grid-cols-4 bg-slate-100 border border-slate-200">
+                         <TabsList className="grid w-full grid-cols-4 bg-slate-100 dark:bg-slate-700 border border-slate-200 dark:border-slate-600">
                <TabsTrigger 
                  value="chat" 
-                 className="flex items-center gap-2 text-slate-600 hover:text-slate-800 hover:bg-slate-200 data-[state=active]:bg-white data-[state=active]:text-slate-800 data-[state=active]:shadow-sm font-medium"
+                 className="flex items-center gap-2 text-slate-600 dark:text-slate-300 hover:text-slate-800 dark:hover:text-white hover:bg-slate-200 dark:hover:bg-slate-600 data-[state=active]:bg-white dark:data-[state=active]:bg-slate-800 data-[state=active]:text-slate-800 dark:data-[state=active]:text-white data-[state=active]:shadow-sm font-medium"
                >
                  <MessageSquare className="h-4 w-4" />
                  Chat
                </TabsTrigger>
                <TabsTrigger 
                  value="tasks" 
-                 className="flex items-center gap-2 text-slate-600 hover:text-slate-800 hover:bg-slate-200 data-[state=active]:bg-white data-[state=active]:text-slate-800 data-[state=active]:shadow-sm font-medium"
+                 className="flex items-center gap-2 text-slate-600 dark:text-slate-300 hover:text-slate-800 dark:hover:text-white hover:bg-slate-200 dark:hover:bg-slate-600 data-[state=active]:bg-white dark:data-[state=active]:bg-slate-800 data-[state=active]:text-slate-800 dark:data-[state=active]:text-white data-[state=active]:shadow-sm font-medium"
                >
                  <CheckSquare className="h-4 w-4" />
                  Tareas
                </TabsTrigger>
                <TabsTrigger 
                  value="files" 
-                 className="flex items-center gap-2 text-slate-600 hover:text-slate-800 hover:bg-slate-200 data-[state=active]:bg-white data-[state=active]:text-slate-800 data-[state=active]:shadow-sm font-medium"
+                 className="flex items-center gap-2 text-slate-600 dark:text-slate-300 hover:text-slate-800 dark:hover:text-white hover:bg-slate-200 dark:hover:bg-slate-600 data-[state=active]:bg-white dark:data-[state=active]:bg-slate-800 data-[state=active]:text-slate-800 dark:data-[state=active]:text-white data-[state=active]:shadow-sm font-medium"
                >
                  <FileText className="h-4 w-4" />
                  Archivos
                </TabsTrigger>
                <TabsTrigger 
                  value="comments" 
-                 className="flex items-center gap-2 text-slate-600 hover:text-slate-800 hover:bg-slate-200 data-[state=active]:bg-white data-[state=active]:text-slate-800 data-[state=active]:shadow-sm font-medium"
+                 className="flex items-center gap-2 text-slate-600 dark:text-slate-300 hover:text-slate-800 dark:hover:text-white hover:bg-slate-200 dark:hover:bg-slate-600 data-[state=active]:bg-white dark:data-[state=active]:bg-slate-800 data-[state=active]:text-slate-800 dark:data-[state=active]:text-white data-[state=active]:shadow-sm font-medium"
                >
                  <MessageSquare className="h-4 w-4" />
                  Comentarios
@@ -799,13 +799,13 @@ export default function ClientCollaborationPage() {
 
             {/* Chat Tab */}
             <TabsContent value="chat" className="space-y-4">
-              <div className="bg-slate-50 rounded-xl p-4 border border-slate-200">
-                <h3 className="text-lg font-semibold text-slate-800 mb-4 flex items-center gap-2">
+              <div className="bg-slate-50 dark:bg-slate-700/50 rounded-xl p-4 border border-slate-200 dark:border-slate-600">
+                <h3 className="text-lg font-semibold text-slate-800 dark:text-white mb-4 flex items-center gap-2">
                   <MessageSquare className="h-5 w-5" />
                   Chat del Proyecto
                 </h3>
                 
-                                 <div className="h-96 overflow-y-auto space-y-4 border border-slate-200 rounded-lg p-4 bg-white">
+                                 <div className="h-96 overflow-y-auto space-y-4 border border-slate-200 dark:border-slate-600 rounded-lg p-4 bg-white dark:bg-slate-800">
                    {messages.length > 0 ? (
                                                              messages.map((message) => {
                     const isOwnMessage = message.sender === user.id;

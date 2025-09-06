@@ -56,6 +56,7 @@ const ProjectsPage = React.memo(() => {
   const [sortBy, setSortBy] = useState<string>('updatedAt');
   const [sortOrder, setSortOrder] = useState<'asc' | 'desc'>('desc');
   const [showNuevoModal, setShowNuevoModal] = useState(false);
+  const [urlFilters, setUrlFilters] = useState<Record<string, string>>({});
   const [selectedProject, setSelectedProject] = useState<any>(null);
   const [showProjectModal, setShowProjectModal] = useState(false);
   const [projectCreators, setProjectCreators] = useState<Record<string, { full_name: string; email: string }>>({});
@@ -74,6 +75,84 @@ const ProjectsPage = React.memo(() => {
         ? projects
         : projects.filter(p => p.created_by === user.id);
   }, [projects, userId, user.role, user.id]);
+
+  // Leer parámetros de URL y aplicar filtros automáticamente
+  useEffect(() => {
+    const searchParams = new URLSearchParams(location.search);
+    const filters: Record<string, string> = {};
+    
+    // Leer todos los parámetros de la URL
+    for (const [key, value] of searchParams.entries()) {
+      filters[key] = value;
+    }
+    
+    setUrlFilters(filters);
+    
+    // Aplicar filtros automáticamente
+    let filtered = [...visibleProjects];
+    
+    if (filters.view) {
+      switch (filters.view) {
+        case 'progress':
+          // Filtrar por proyectos con progreso
+          filtered = filtered.filter(p => p.progress && p.progress > 0);
+          break;
+        case 'tasks':
+          // Filtrar por proyectos con tareas
+          filtered = filtered.filter(p => p.phases && p.phases.some(phase => phase.tasks && phase.tasks.length > 0));
+          break;
+        case 'summary':
+          // Mostrar todos los proyectos para resumen
+          break;
+      }
+    }
+    
+    if (filters.status) {
+      switch (filters.status) {
+        case 'in_progress':
+          filtered = filtered.filter(p => p.status === 'in_progress');
+          break;
+        case 'completed':
+          filtered = filtered.filter(p => p.status === 'completed');
+          break;
+        case 'pending':
+          filtered = filtered.filter(p => p.status === 'pending');
+          break;
+      }
+    }
+    
+    if (filters.type) {
+      switch (filters.type) {
+        case 'collaborative':
+          filtered = filtered.filter(p => p.collaborators && p.collaborators.length > 0);
+          break;
+        case 'personal':
+          filtered = filtered.filter(p => !p.collaborators || p.collaborators.length === 0);
+          break;
+      }
+    }
+    
+    if (filters.filter) {
+      switch (filters.filter) {
+        case 'comments':
+          // Filtrar por proyectos con comentarios recientes
+          filtered = filtered.filter(p => p.phases && p.phases.some(phase => phase.comments && phase.comments.length > 0));
+          break;
+        case 'recent_activity':
+          // Filtrar por actividad reciente (últimos 7 días)
+          const weekAgo = new Date();
+          weekAgo.setDate(weekAgo.getDate() - 7);
+          filtered = filtered.filter(p => new Date(p.updated_at) > weekAgo);
+          break;
+        case 'notifications':
+          // Filtrar por proyectos con notificaciones
+          filtered = filtered.filter(p => p.notifications && p.notifications.length > 0);
+          break;
+      }
+    }
+    
+    setFilteredProjects(filtered);
+  }, [location.search, visibleProjects]);
 
   // Actualizar proyectos filtrados cuando cambien los proyectos o el usuario
   useEffect(() => {
@@ -399,6 +478,15 @@ const ProjectsPage = React.memo(() => {
             </div>
             <div className="text-sm text-slate-600 dark:text-slate-300">
               Mostrando {filteredProjects.length} de {projects.length} proyectos
+              {Object.keys(urlFilters).length > 0 && (
+                <div className="mt-2 flex flex-wrap gap-2">
+                  {Object.entries(urlFilters).map(([key, value]) => (
+                    <Badge key={key} variant="secondary" className="text-xs">
+                      {key}: {value}
+                    </Badge>
+                  ))}
+                </div>
+              )}
             </div>
           </div>
         </div>

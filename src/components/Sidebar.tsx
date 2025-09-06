@@ -25,7 +25,9 @@ import {
   Key,
   ChevronRight,
   Search,
-  GitBranch
+  GitBranch,
+  Target,
+  Calendar
 } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
@@ -286,6 +288,43 @@ export default function Sidebar() {
                 {adminNavItem('dashboard', <BarChart3 size={18} />, t('Dashboard'))}
                 {adminNavItem('usuarios', <Users size={18} />, t('Usuarios'), counts.users)}
                 {adminNavItem('proyectos', <FolderKanban size={18} />, t('Proyectos'), counts.projects)}
+                <NavLink
+                  to="/admin/fases-tareas"
+                  className={({ isActive }) =>
+                    `relative group cursor-pointer transition-all duration-300 ease-out hover:bg-gray-50 w-full
+                    ${isActive ? 'bg-gradient-to-r from-purple-50 to-violet-50 border-r-4 border-purple-500' : ''}`
+                  }
+                >
+                  {({ isActive }) => (
+                    <>
+                      <div className="flex items-center px-4 py-3.5 space-x-4">
+                        <div className={`relative p-2 rounded-xl transition-all duration-300 ${
+                          isActive 
+                            ? 'bg-purple-500 text-white shadow-lg shadow-purple-500/25' 
+                            : 'bg-gray-100 text-gray-600 group-hover:bg-purple-100 group-hover:text-purple-600'
+                        }`}>
+                          {isActive && (
+                            <div className="absolute inset-0 bg-purple-400 rounded-xl animate-ping opacity-25"></div>
+                          )}
+                          <div className="transition-transform duration-300 group-hover:scale-110">
+                            <Target size={18} />
+                          </div>
+                        </div>
+                        <span className={`font-medium text-sm flex-1 text-center ${
+                          isActive ? 'text-gray-900' : 'text-gray-700 group-hover:text-gray-900'
+                        }`}>
+                          Fases y Tareas
+                        </span>
+                        {isActive && (
+                          <ChevronRight size={16} className="text-purple-500 animate-pulse" />
+                        )}
+                      </div>
+                      {isActive && (
+                        <div className="absolute left-0 top-0 w-1 h-full bg-gradient-to-b from-purple-400 to-purple-600 rounded-r-full"></div>
+                      )}
+                    </>
+                  )}
+                </NavLink>
                 {adminNavItem('aprobar-proyectos', <CheckCircle size={18} />, 'Aprobar Proyectos', counts.pendingApprovals)}
                 {adminNavItem('tickets', <Ticket size={18} />, t('Tickets'), counts.tickets)}
                 {adminNavItem('pagos', <CreditCard size={18} />, t('Pagos'), counts.payments)}
@@ -362,6 +401,7 @@ export default function Sidebar() {
               <div className="space-y-1">
                 {navItem('/dashboard', <Home size={18} />, t('Dashboard'))}
                 {navItem('/proyectos', <FolderKanban size={18} />, t('Proyectos'))}
+                {navItem('/fases-tareas', <Target size={18} />, 'Fases y Tareas')}
               </div>
             </div>
 

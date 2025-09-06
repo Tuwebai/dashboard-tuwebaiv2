@@ -36,6 +36,7 @@ const LandingPage = React.memo(() => {
   const [activeDemo, setActiveDemo] = useState<string | null>(null);
   const [isPlaying, setIsPlaying] = useState(false);
   const [previewImage, setPreviewImage] = useState<string | null>(null);
+  const [demoTheme, setDemoTheme] = useState<'light' | 'dark'>('dark'); // Tema independiente para el dashboard demo
   const { login, loginWithGoogle, loginWithGithub } = useApp();
   const { theme, toggleTheme } = useTheme();
   const navigate = useNavigate();
@@ -121,6 +122,19 @@ const LandingPage = React.memo(() => {
     return () => clearInterval(interval);
   }, [isPlaying, demos]);
 
+
+  const handleDemoAction = useCallback((action: string) => {
+    setActiveDemo(action);
+  }, []);
+
+  const handleImagePreview = useCallback((imageSrc: string) => {
+    setPreviewImage(imageSrc);
+  }, []);
+
+  const toggleDemoTheme = useCallback(() => {
+    setDemoTheme(prev => prev === 'light' ? 'dark' : 'light');
+  }, []);
+
   const handleSubmit = useCallback(async (e: React.FormEvent) => {
     e.preventDefault();
     setIsLoading(true);
@@ -138,7 +152,7 @@ const LandingPage = React.memo(() => {
     } catch (error) {
       toast({
         title: "Error",
-        description: "Ocurrió un error inesperado.",
+        description: "Ocurrió un error inesperado. Intenta de nuevo.",
         variant: "destructive",
       });
     } finally {
@@ -150,35 +164,33 @@ const LandingPage = React.memo(() => {
     setIsLoading(true);
     try {
       await loginWithGoogle();
+      navigate('/dashboard');
     } catch (error) {
-      toast({ title: 'Error', description: 'No se pudo iniciar sesión con Google.', variant: 'destructive' });
+      toast({
+        title: "Error",
+        description: "No se pudo iniciar sesión con Google.",
+        variant: "destructive",
+      });
     } finally {
       setIsLoading(false);
     }
-  }, [loginWithGoogle]);
+  }, [loginWithGoogle, navigate]);
 
   const handleGithubLogin = useCallback(async () => {
     setIsLoading(true);
     try {
       await loginWithGithub();
+      navigate('/dashboard');
     } catch (error) {
-      toast({ title: 'Error', description: 'No se pudo iniciar sesión con GitHub.', variant: 'destructive' });
+      toast({
+        title: "Error",
+        description: "No se pudo iniciar sesión con GitHub.",
+        variant: "destructive",
+      });
     } finally {
       setIsLoading(false);
     }
-  }, [loginWithGithub]);
-
-  const handleRegister = useCallback(() => {
-    navigate('/register');
-  }, [navigate]);
-
-  const handleDemoAction = useCallback((action: string) => {
-    setActiveDemo(action);
-  }, []);
-
-  const handleImagePreview = useCallback((imageSrc: string) => {
-    setPreviewImage(imageSrc);
-  }, []);
+  }, [loginWithGithub, navigate]);
 
   const demoCards = useMemo(() => [
     {
@@ -234,17 +246,17 @@ const LandingPage = React.memo(() => {
               </span>
             </div>
             <div className="flex items-center space-x-4">
-              <ThemeToggle variant="ghost" />
+              <ThemeToggle variant="outline" size="sm" />
               <Button 
                 variant="ghost" 
                 className="text-muted-foreground hover:text-foreground"
-                onClick={() => handleDemoAction('login')}
+                onClick={() => navigate('/login')}
               >
                 Login
               </Button>
               <Button 
                 className="bg-gradient-to-r from-cyan-500 to-emerald-600 hover:from-cyan-600 hover:to-emerald-700"
-                onClick={handleRegister}
+                onClick={() => navigate('/register')}
               >
                 Registro
               </Button>
@@ -756,83 +768,95 @@ const LandingPage = React.memo(() => {
       </section>
 
       {/* Dashboard Interactivo Real */}
-      <section className={`py-24 transition-colors duration-300 ${theme === 'dark' ? 'bg-gradient-to-br from-slate-900 to-slate-800' : 'bg-gradient-to-br from-gray-50 to-white'}`}>
+      <section className="py-24 bg-background">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="text-center mb-16">
-            <h2 className={`text-5xl font-bold mb-4 transition-colors duration-300 ${theme === 'dark' ? 'text-white' : 'text-gray-900'}`}>
+            <h2 className="text-5xl font-bold mb-4 text-foreground">
               Prueba el dashboard 
               <span className="bg-gradient-to-r from-cyan-600 to-blue-600 bg-clip-text text-transparent"> en vivo</span>
             </h2>
-            <p className={`text-xl max-w-3xl mx-auto transition-colors duration-300 ${theme === 'dark' ? 'text-slate-300' : 'text-gray-600'}`}>
+            <p className="text-xl max-w-3xl mx-auto text-muted-foreground">
               Explora nuestro dashboard con datos simulados y descubre todas las funcionalidades disponibles.
             </p>
           </div>
 
           {/* Dashboard Interactivo */}
-          <div className={`rounded-2xl overflow-hidden transition-all duration-300 ${theme === 'dark' ? 'bg-slate-900 border-2 border-slate-700 shadow-2xl shadow-slate-900/50' : 'bg-white border border-gray-200 shadow-2xl'}`}>
+          <div className={`rounded-2xl overflow-hidden transition-all duration-300 ${demoTheme === 'dark' ? 'bg-slate-900 border-2 border-slate-700 shadow-2xl shadow-slate-900/50' : 'bg-white border border-gray-200 shadow-2xl'}`}>
             {/* Header del Dashboard */}
-            <div className={`px-6 py-4 transition-colors duration-300 ${theme === 'dark' ? 'bg-gradient-to-r from-slate-800 to-slate-700 border-b border-slate-600' : 'bg-gradient-to-r from-gray-900 to-gray-800'}`}>
+            <div className={`px-6 py-4 transition-colors duration-300 ${demoTheme === 'dark' ? 'bg-gradient-to-r from-slate-800 to-slate-700 border-b border-slate-600' : 'bg-gradient-to-r from-gray-900 to-gray-800'}`}>
               <div className="flex items-center justify-between">
                 <div className="flex items-center space-x-3">
                   <div className="w-8 h-8 bg-gradient-to-r from-cyan-500 to-emerald-600 rounded-lg flex items-center justify-center shadow-lg">
                     <span className="text-white font-bold text-sm">T</span>
                   </div>
                   <div>
-                    <h3 className={`font-semibold transition-colors duration-300 ${theme === 'dark' ? 'text-white' : 'text-white'}`}>TuWebAI Dashboard</h3>
-                    <p className={`text-sm transition-colors duration-300 ${theme === 'dark' ? 'text-slate-300' : 'text-gray-300'}`}>Demo Interactivo</p>
+                    <h3 className={`font-semibold transition-colors duration-300 ${demoTheme === 'dark' ? 'text-white' : 'text-white'}`}>TuWebAI Dashboard</h3>
+                    <p className={`text-sm transition-colors duration-300 ${demoTheme === 'dark' ? 'text-slate-300' : 'text-gray-300'}`}>Demo Interactivo</p>
                   </div>
                 </div>
-                <div className="flex items-center space-x-2">
-                  <div className="w-3 h-3 bg-red-500 rounded-full shadow-sm"></div>
-                  <div className="w-3 h-3 bg-yellow-500 rounded-full shadow-sm"></div>
-                  <div className="w-3 h-3 bg-green-500 rounded-full shadow-sm"></div>
+                <div className="flex items-center space-x-3">
+                  <button
+                    onClick={toggleDemoTheme}
+                    className={`px-3 py-1 rounded-full text-xs font-medium transition-all duration-200 ${
+                      demoTheme === 'dark' 
+                        ? 'bg-slate-700 text-slate-300 hover:bg-slate-600' 
+                        : 'bg-gray-200 text-gray-700 hover:bg-gray-300'
+                    }`}
+                  >
+                    {demoTheme === 'dark' ? '🌙 Oscuro' : '☀️ Claro'}
+                  </button>
+                  <div className="flex space-x-2">
+                    <div className="w-3 h-3 bg-red-500 rounded-full shadow-sm"></div>
+                    <div className="w-3 h-3 bg-yellow-500 rounded-full shadow-sm"></div>
+                    <div className="w-3 h-3 bg-green-500 rounded-full shadow-sm"></div>
+                  </div>
                 </div>
               </div>
             </div>
 
             {/* Contenido del Dashboard */}
-            <div className={`p-6 transition-colors duration-300 ${theme === 'dark' ? 'bg-slate-900' : 'bg-white'}`}>
+            <div className={`p-6 transition-colors duration-300 ${demoTheme === 'dark' ? 'bg-slate-900' : 'bg-white'}`}>
               {/* Sidebar y Main Content */}
               <div className="grid lg:grid-cols-4 gap-6">
                 {/* Sidebar */}
                 <div className="lg:col-span-1">
                   <div className="space-y-4">
-                    <div className={`rounded-lg p-4 transition-colors duration-300 ${theme === 'dark' ? 'bg-slate-800 border border-slate-700 shadow-lg' : 'bg-gray-50'}`}>
+                    <div className={`rounded-lg p-4 transition-colors duration-300 ${demoTheme === 'dark' ? 'bg-slate-800 border border-slate-700 shadow-lg' : 'bg-gray-50'}`}>
                       <div className="flex items-center space-x-3 mb-3">
                         <div className="w-8 h-8 bg-green-500 rounded-full flex items-center justify-center shadow-md">
                           <span className="text-white font-bold text-sm">E</span>
                         </div>
                         <div>
-                          <p className={`font-medium transition-colors duration-300 ${theme === 'dark' ? 'text-white' : 'text-gray-900'}`}>Usuario Demo</p>
-                          <p className={`text-sm transition-colors duration-300 ${theme === 'dark' ? 'text-slate-400' : 'text-gray-500'}`}>demo@tuwebai.com</p>
+                          <p className={`font-medium transition-colors duration-300 ${demoTheme === 'dark' ? 'text-white' : 'text-gray-900'}`}>Usuario Demo</p>
+                          <p className={`text-sm transition-colors duration-300 ${demoTheme === 'dark' ? 'text-slate-400' : 'text-gray-500'}`}>demo@tuwebai.com</p>
                         </div>
                       </div>
                     </div>
                     
                     <nav className="space-y-2">
                       <button 
-                        className={`w-full flex items-center space-x-3 px-3 py-2 text-left rounded-lg transition-all duration-200 ${activeDemo === 'dashboard' ? (theme === 'dark' ? 'bg-blue-900/50 text-blue-300 border border-blue-700 shadow-md' : 'bg-blue-50 text-blue-700') : (theme === 'dark' ? 'text-slate-400 hover:bg-slate-800 hover:text-slate-200 border border-transparent hover:border-slate-600' : 'text-gray-600 hover:bg-gray-50')}`}
+                        className={`w-full flex items-center space-x-3 px-3 py-2 text-left rounded-lg transition-all duration-200 ${activeDemo === 'dashboard' ? (demoTheme === 'dark' ? 'bg-blue-900/50 text-blue-300 border border-blue-700 shadow-md' : 'bg-blue-50 text-blue-700') : (demoTheme === 'dark' ? 'text-slate-400 hover:bg-slate-800 hover:text-slate-200 border border-transparent hover:border-slate-600' : 'text-gray-600 hover:bg-gray-50')}`}
                         onClick={() => handleDemoAction('dashboard')}
                       >
                         <Target className="h-4 w-4" />
                         <span className="text-sm font-medium">Dashboard</span>
                       </button>
                       <button 
-                        className={`w-full flex items-center space-x-3 px-3 py-2 text-left rounded-lg transition-all duration-200 ${activeDemo === 'projects' ? (theme === 'dark' ? 'bg-blue-900/50 text-blue-300 border border-blue-700 shadow-md' : 'bg-blue-50 text-blue-700') : (theme === 'dark' ? 'text-slate-400 hover:bg-slate-800 hover:text-slate-200 border border-transparent hover:border-slate-600' : 'text-gray-600 hover:bg-gray-50')}`}
+                        className={`w-full flex items-center space-x-3 px-3 py-2 text-left rounded-lg transition-all duration-200 ${activeDemo === 'projects' ? (demoTheme === 'dark' ? 'bg-blue-900/50 text-blue-300 border border-blue-700 shadow-md' : 'bg-blue-50 text-blue-700') : (demoTheme === 'dark' ? 'text-slate-400 hover:bg-slate-800 hover:text-slate-200 border border-transparent hover:border-slate-600' : 'text-gray-600 hover:bg-gray-50')}`}
                         onClick={() => handleDemoAction('projects')}
                       >
                         <BarChart3 className="h-4 w-4" />
                         <span className="text-sm">Proyectos</span>
                       </button>
                       <button 
-                        className={`w-full flex items-center space-x-3 px-3 py-2 text-left rounded-lg transition-all duration-200 ${activeDemo === 'team' ? (theme === 'dark' ? 'bg-blue-900/50 text-blue-300 border border-blue-700 shadow-md' : 'bg-blue-50 text-blue-700') : (theme === 'dark' ? 'text-slate-400 hover:bg-slate-800 hover:text-slate-200 border border-transparent hover:border-slate-600' : 'text-gray-600 hover:bg-gray-50')}`}
+                        className={`w-full flex items-center space-x-3 px-3 py-2 text-left rounded-lg transition-all duration-200 ${activeDemo === 'team' ? (demoTheme === 'dark' ? 'bg-blue-900/50 text-blue-300 border border-blue-700 shadow-md' : 'bg-blue-50 text-blue-700') : (demoTheme === 'dark' ? 'text-slate-400 hover:bg-slate-800 hover:text-slate-200 border border-transparent hover:border-slate-600' : 'text-gray-600 hover:bg-gray-50')}`}
                         onClick={() => handleDemoAction('team')}
                       >
                         <Users className="h-4 w-4" />
                         <span className="text-sm">Equipo</span>
                       </button>
                       <button 
-                        className={`w-full flex items-center space-x-3 px-3 py-2 text-left rounded-lg transition-all duration-200 ${activeDemo === 'settings' ? (theme === 'dark' ? 'bg-blue-900/50 text-blue-300 border border-blue-700 shadow-md' : 'bg-blue-50 text-blue-700') : (theme === 'dark' ? 'text-slate-400 hover:bg-slate-800 hover:text-slate-200 border border-transparent hover:border-slate-600' : 'text-gray-600 hover:bg-gray-50')}`}
+                        className={`w-full flex items-center space-x-3 px-3 py-2 text-left rounded-lg transition-all duration-200 ${activeDemo === 'settings' ? (demoTheme === 'dark' ? 'bg-blue-900/50 text-blue-300 border border-blue-700 shadow-md' : 'bg-blue-50 text-blue-700') : (demoTheme === 'dark' ? 'text-slate-400 hover:bg-slate-800 hover:text-slate-200 border border-transparent hover:border-slate-600' : 'text-gray-600 hover:bg-gray-50')}`}
                         onClick={() => handleDemoAction('settings')}
                       >
                         <Settings className="h-4 w-4" />
@@ -847,63 +871,63 @@ const LandingPage = React.memo(() => {
                   <div className="space-y-6">
                     {/* Header */}
                     <div>
-                      <h1 className={`text-2xl font-bold transition-colors duration-300 ${theme === 'dark' ? 'text-white' : 'text-gray-900'}`}>Mi Dashboard</h1>
-                      <p className={`transition-colors duration-300 ${theme === 'dark' ? 'text-gray-300' : 'text-gray-600'}`}>Gestiona y revisa el progreso de tus proyectos web</p>
+                      <h1 className={`text-2xl font-bold transition-colors duration-300 ${demoTheme === 'dark' ? 'text-white' : 'text-gray-900'}`}>Mi Dashboard</h1>
+                      <p className={`transition-colors duration-300 ${demoTheme === 'dark' ? 'text-gray-300' : 'text-gray-600'}`}>Gestiona y revisa el progreso de tus proyectos web</p>
                     </div>
 
                     {/* Stats Cards */}
                     <div className="grid grid-cols-2 lg:grid-cols-4 gap-4">
-                      <div className={`rounded-lg p-4 hover:shadow-lg transition-all duration-300 ${theme === 'dark' ? 'bg-gradient-to-br from-blue-900/30 to-blue-800/30 border border-blue-700/50 shadow-lg shadow-blue-900/20' : 'bg-gradient-to-br from-blue-50 to-blue-100'}`}>
+                      <div className={`rounded-lg p-4 hover:shadow-lg transition-all duration-300 ${demoTheme === 'dark' ? 'bg-gradient-to-br from-blue-900/30 to-blue-800/30 border border-blue-700/50 shadow-lg shadow-blue-900/20' : 'bg-gradient-to-br from-blue-50 to-blue-100'}`}>
                         <div className="flex items-center justify-between mb-2">
-                          <Target className={`h-6 w-6 transition-colors duration-300 ${theme === 'dark' ? 'text-blue-400' : 'text-blue-600'}`} />
+                          <Target className={`h-6 w-6 transition-colors duration-300 ${demoTheme === 'dark' ? 'text-blue-400' : 'text-blue-600'}`} />
                           <div className="w-3 h-3 bg-green-500 rounded-full animate-pulse shadow-sm"></div>
                         </div>
-                        <div className={`text-2xl font-bold transition-colors duration-300 ${theme === 'dark' ? 'text-white' : 'text-blue-900'}`}>12</div>
-                        <div className={`text-sm transition-colors duration-300 ${theme === 'dark' ? 'text-blue-300' : 'text-blue-700'}`}>Proyectos Activos</div>
-                        <div className={`text-xs mt-1 transition-colors duration-300 ${theme === 'dark' ? 'text-blue-400' : 'text-blue-600'}`}>+3 este mes</div>
+                        <div className={`text-2xl font-bold transition-colors duration-300 ${demoTheme === 'dark' ? 'text-white' : 'text-blue-900'}`}>12</div>
+                        <div className={`text-sm transition-colors duration-300 ${demoTheme === 'dark' ? 'text-blue-300' : 'text-blue-700'}`}>Proyectos Activos</div>
+                        <div className={`text-xs mt-1 transition-colors duration-300 ${demoTheme === 'dark' ? 'text-blue-400' : 'text-blue-600'}`}>+3 este mes</div>
                       </div>
 
-                      <div className={`rounded-lg p-4 hover:shadow-lg transition-all duration-300 ${theme === 'dark' ? 'bg-gradient-to-br from-green-900/30 to-green-800/30 border border-green-700/50 shadow-lg shadow-green-900/20' : 'bg-gradient-to-br from-green-50 to-green-100'}`}>
+                      <div className={`rounded-lg p-4 hover:shadow-lg transition-all duration-300 ${demoTheme === 'dark' ? 'bg-gradient-to-br from-green-900/30 to-green-800/30 border border-green-700/50 shadow-lg shadow-green-900/20' : 'bg-gradient-to-br from-green-50 to-green-100'}`}>
                         <div className="flex items-center justify-between mb-2">
-                          <TrendingUp className={`h-6 w-6 transition-colors duration-300 ${theme === 'dark' ? 'text-green-400' : 'text-green-600'}`} />
+                          <TrendingUp className={`h-6 w-6 transition-colors duration-300 ${demoTheme === 'dark' ? 'text-green-400' : 'text-green-600'}`} />
                           <div className="w-3 h-3 bg-green-500 rounded-full animate-pulse"></div>
                         </div>
-                        <div className={`text-2xl font-bold transition-colors duration-300 ${theme === 'dark' ? 'text-white' : 'text-green-900'}`}>8</div>
-                        <div className={`text-sm transition-colors duration-300 ${theme === 'dark' ? 'text-green-300' : 'text-green-700'}`}>En Progreso</div>
-                        <div className={`text-xs mt-1 transition-colors duration-300 ${theme === 'dark' ? 'text-green-400' : 'text-green-600'}`}>+2 esta semana</div>
+                        <div className={`text-2xl font-bold transition-colors duration-300 ${demoTheme === 'dark' ? 'text-white' : 'text-green-900'}`}>8</div>
+                        <div className={`text-sm transition-colors duration-300 ${demoTheme === 'dark' ? 'text-green-300' : 'text-green-700'}`}>En Progreso</div>
+                        <div className={`text-xs mt-1 transition-colors duration-300 ${demoTheme === 'dark' ? 'text-green-400' : 'text-green-600'}`}>+2 esta semana</div>
                       </div>
 
-                      <div className={`rounded-lg p-4 hover:shadow-lg transition-all duration-300 ${theme === 'dark' ? 'bg-gradient-to-br from-orange-900/30 to-orange-800/30 border border-orange-700/50 shadow-lg shadow-orange-900/20' : 'bg-gradient-to-br from-orange-50 to-orange-100'}`}>
+                      <div className={`rounded-lg p-4 hover:shadow-lg transition-all duration-300 ${demoTheme === 'dark' ? 'bg-gradient-to-br from-orange-900/30 to-orange-800/30 border border-orange-700/50 shadow-lg shadow-orange-900/20' : 'bg-gradient-to-br from-orange-50 to-orange-100'}`}>
                         <div className="flex items-center justify-between mb-2">
-                          <Users className={`h-6 w-6 transition-colors duration-300 ${theme === 'dark' ? 'text-orange-400' : 'text-orange-600'}`} />
+                          <Users className={`h-6 w-6 transition-colors duration-300 ${demoTheme === 'dark' ? 'text-orange-400' : 'text-orange-600'}`} />
                           <div className="w-3 h-3 bg-green-500 rounded-full animate-pulse"></div>
                         </div>
-                        <div className={`text-2xl font-bold transition-colors duration-300 ${theme === 'dark' ? 'text-white' : 'text-orange-900'}`}>24</div>
-                        <div className={`text-sm transition-colors duration-300 ${theme === 'dark' ? 'text-orange-300' : 'text-orange-700'}`}>Comentarios</div>
-                        <div className={`text-xs mt-1 transition-colors duration-300 ${theme === 'dark' ? 'text-orange-400' : 'text-orange-600'}`}>+5 hoy</div>
+                        <div className={`text-2xl font-bold transition-colors duration-300 ${demoTheme === 'dark' ? 'text-white' : 'text-orange-900'}`}>24</div>
+                        <div className={`text-sm transition-colors duration-300 ${demoTheme === 'dark' ? 'text-orange-300' : 'text-orange-700'}`}>Comentarios</div>
+                        <div className={`text-xs mt-1 transition-colors duration-300 ${demoTheme === 'dark' ? 'text-orange-400' : 'text-orange-600'}`}>+5 hoy</div>
                       </div>
 
-                      <div className={`rounded-lg p-4 hover:shadow-lg transition-all duration-300 ${theme === 'dark' ? 'bg-gradient-to-br from-purple-900/30 to-purple-800/30 border border-purple-700/50 shadow-lg shadow-purple-900/20' : 'bg-gradient-to-br from-purple-50 to-purple-100'}`}>
+                      <div className={`rounded-lg p-4 hover:shadow-lg transition-all duration-300 ${demoTheme === 'dark' ? 'bg-gradient-to-br from-purple-900/30 to-purple-800/30 border border-purple-700/50 shadow-lg shadow-purple-900/20' : 'bg-gradient-to-br from-purple-50 to-purple-100'}`}>
                         <div className="flex items-center justify-between mb-2">
-                          <Activity className={`h-6 w-6 transition-colors duration-300 ${theme === 'dark' ? 'text-purple-400' : 'text-purple-600'}`} />
+                          <Activity className={`h-6 w-6 transition-colors duration-300 ${demoTheme === 'dark' ? 'text-purple-400' : 'text-purple-600'}`} />
                           <div className="w-3 h-3 bg-green-500 rounded-full animate-pulse"></div>
                         </div>
-                        <div className={`text-2xl font-bold transition-colors duration-300 ${theme === 'dark' ? 'text-white' : 'text-purple-900'}`}>85%</div>
-                        <div className={`text-sm transition-colors duration-300 ${theme === 'dark' ? 'text-purple-300' : 'text-purple-700'}`}>Progreso General</div>
-                        <div className={`text-xs mt-1 transition-colors duration-300 ${theme === 'dark' ? 'text-purple-400' : 'text-purple-600'}`}>+12% este mes</div>
+                        <div className={`text-2xl font-bold transition-colors duration-300 ${demoTheme === 'dark' ? 'text-white' : 'text-purple-900'}`}>85%</div>
+                        <div className={`text-sm transition-colors duration-300 ${demoTheme === 'dark' ? 'text-purple-300' : 'text-purple-700'}`}>Progreso General</div>
+                        <div className={`text-xs mt-1 transition-colors duration-300 ${demoTheme === 'dark' ? 'text-purple-400' : 'text-purple-600'}`}>+12% este mes</div>
                       </div>
                     </div>
 
                     {/* Interactive Demo Panel */}
                     {activeDemo && (
-                      <div className={`rounded-lg p-6 border transition-colors duration-300 ${theme === 'dark' ? 'bg-slate-800 border-slate-600 shadow-lg shadow-slate-900/50' : 'bg-gray-50 border-gray-200'}`}>
+                      <div className={`rounded-lg p-6 border transition-colors duration-300 ${demoTheme === 'dark' ? 'bg-slate-800 border-slate-600 shadow-lg shadow-slate-900/50' : 'bg-gray-50 border-gray-200'}`}>
                         <div className="flex items-center justify-between mb-4">
-                          <h3 className={`text-lg font-semibold transition-colors duration-300 ${theme === 'dark' ? 'text-white' : 'text-gray-900'}`}>
+                          <h3 className={`text-lg font-semibold transition-colors duration-300 ${demoTheme === 'dark' ? 'text-white' : 'text-gray-900'}`}>
                             {demoCards.find(card => card.id === activeDemo)?.title} - Demo Interactivo
                           </h3>
                           <button 
                             onClick={() => setActiveDemo(null)}
-                            className={`transition-colors duration-300 ${theme === 'dark' ? 'text-gray-400 hover:text-gray-200' : 'text-gray-400 hover:text-gray-600'}`}
+                            className={`transition-colors duration-300 ${demoTheme === 'dark' ? 'text-gray-400 hover:text-gray-200' : 'text-gray-400 hover:text-gray-600'}`}
                           >
                             ✕
                           </button>
@@ -914,38 +938,38 @@ const LandingPage = React.memo(() => {
                             {/* Widgets del Dashboard */}
                             <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
                               {/* Widget de Actividad Reciente */}
-                              <div className={`rounded-lg p-4 shadow-sm transition-colors duration-300 ${theme === 'dark' ? 'bg-slate-700 border border-slate-600' : 'bg-white'}`}>
+                              <div className={`rounded-lg p-4 shadow-sm transition-colors duration-300 ${demoTheme === 'dark' ? 'bg-slate-700 border border-slate-600' : 'bg-white'}`}>
                                 <div className="flex items-center justify-between mb-3">
-                                  <h4 className={`font-semibold transition-colors duration-300 ${theme === 'dark' ? 'text-white' : 'text-gray-900'}`}>Actividad Reciente</h4>
+                                  <h4 className={`font-semibold transition-colors duration-300 ${demoTheme === 'dark' ? 'text-white' : 'text-gray-900'}`}>Actividad Reciente</h4>
                                   <div className="w-2 h-2 bg-green-500 rounded-full animate-pulse"></div>
                                 </div>
                                 <div className="space-y-2">
                                   <div className="flex items-center space-x-2 text-sm">
                                     <div className="w-2 h-2 bg-blue-500 rounded-full"></div>
-                                    <span className={`transition-colors duration-300 ${theme === 'dark' ? 'text-gray-300' : 'text-gray-600'}`}>Nuevo proyecto "E-commerce" creado</span>
+                                    <span className={`transition-colors duration-300 ${demoTheme === 'dark' ? 'text-gray-300' : 'text-gray-600'}`}>Nuevo proyecto "E-commerce" creado</span>
                                   </div>
                                   <div className="flex items-center space-x-2 text-sm">
                                     <div className="w-2 h-2 bg-green-500 rounded-full"></div>
-                                    <span className={`transition-colors duration-300 ${theme === 'dark' ? 'text-gray-300' : 'text-gray-600'}`}>Tarea completada por Ana García</span>
+                                    <span className={`transition-colors duration-300 ${demoTheme === 'dark' ? 'text-gray-300' : 'text-gray-600'}`}>Tarea completada por Ana García</span>
                                   </div>
                                   <div className="flex items-center space-x-2 text-sm">
                                     <div className="w-2 h-2 bg-orange-500 rounded-full"></div>
-                                    <span className={`transition-colors duration-300 ${theme === 'dark' ? 'text-gray-300' : 'text-gray-600'}`}>Comentario en "Landing Page"</span>
+                                    <span className={`transition-colors duration-300 ${demoTheme === 'dark' ? 'text-gray-300' : 'text-gray-600'}`}>Comentario en "Landing Page"</span>
                                   </div>
                                 </div>
                               </div>
 
                               {/* Widget de Progreso de Proyectos */}
-                              <div className={`rounded-lg p-4 shadow-sm transition-colors duration-300 ${theme === 'dark' ? 'bg-slate-700 border border-slate-600' : 'bg-white'}`}>
+                              <div className={`rounded-lg p-4 shadow-sm transition-colors duration-300 ${demoTheme === 'dark' ? 'bg-slate-700 border border-slate-600' : 'bg-white'}`}>
                                 <div className="flex items-center justify-between mb-3">
-                                  <h4 className={`font-semibold transition-colors duration-300 ${theme === 'dark' ? 'text-white' : 'text-gray-900'}`}>Progreso de Proyectos</h4>
+                                  <h4 className={`font-semibold transition-colors duration-300 ${demoTheme === 'dark' ? 'text-white' : 'text-gray-900'}`}>Progreso de Proyectos</h4>
                                   <span className="text-xs text-green-600 font-medium">+15%</span>
                                 </div>
                                 <div className="space-y-3">
                                   <div>
                                     <div className="flex justify-between text-sm mb-1">
-                                      <span className={`transition-colors duration-300 ${theme === 'dark' ? 'text-gray-300' : 'text-gray-600'}`}>E-commerce App</span>
-                                      <span className={`transition-colors duration-300 ${theme === 'dark' ? 'text-white' : 'text-gray-900'}`}>75%</span>
+                                      <span className={`transition-colors duration-300 ${demoTheme === 'dark' ? 'text-gray-300' : 'text-gray-600'}`}>E-commerce App</span>
+                                      <span className={`transition-colors duration-300 ${demoTheme === 'dark' ? 'text-white' : 'text-gray-900'}`}>75%</span>
                                     </div>
                                     <div className="w-full bg-gray-200 rounded-full h-2">
                                       <div className="bg-blue-500 h-2 rounded-full" style={{width: '75%'}}></div>
@@ -953,8 +977,8 @@ const LandingPage = React.memo(() => {
                                   </div>
                                   <div>
                                     <div className="flex justify-between text-sm mb-1">
-                                      <span className={`transition-colors duration-300 ${theme === 'dark' ? 'text-gray-300' : 'text-gray-600'}`}>Landing Page</span>
-                                      <span className={`transition-colors duration-300 ${theme === 'dark' ? 'text-white' : 'text-gray-900'}`}>90%</span>
+                                      <span className={`transition-colors duration-300 ${demoTheme === 'dark' ? 'text-gray-300' : 'text-gray-600'}`}>Landing Page</span>
+                                      <span className={`transition-colors duration-300 ${demoTheme === 'dark' ? 'text-white' : 'text-gray-900'}`}>90%</span>
                                     </div>
                                     <div className="w-full bg-gray-200 rounded-full h-2">
                                       <div className="bg-green-500 h-2 rounded-full" style={{width: '90%'}}></div>
@@ -962,8 +986,8 @@ const LandingPage = React.memo(() => {
                                   </div>
                                   <div>
                                     <div className="flex justify-between text-sm mb-1">
-                                      <span className={`transition-colors duration-300 ${theme === 'dark' ? 'text-gray-300' : 'text-gray-600'}`}>Dashboard Admin</span>
-                                      <span className={`transition-colors duration-300 ${theme === 'dark' ? 'text-white' : 'text-gray-900'}`}>45%</span>
+                                      <span className={`transition-colors duration-300 ${demoTheme === 'dark' ? 'text-gray-300' : 'text-gray-600'}`}>Dashboard Admin</span>
+                                      <span className={`transition-colors duration-300 ${demoTheme === 'dark' ? 'text-white' : 'text-gray-900'}`}>45%</span>
                                     </div>
                                     <div className="w-full bg-gray-200 rounded-full h-2">
                                       <div className="bg-orange-500 h-2 rounded-full" style={{width: '45%'}}></div>
@@ -973,9 +997,9 @@ const LandingPage = React.memo(() => {
                               </div>
 
                               {/* Widget de Equipo */}
-                              <div className={`rounded-lg p-4 shadow-sm transition-colors duration-300 ${theme === 'dark' ? 'bg-slate-700 border border-slate-600' : 'bg-white'}`}>
+                              <div className={`rounded-lg p-4 shadow-sm transition-colors duration-300 ${demoTheme === 'dark' ? 'bg-slate-700 border border-slate-600' : 'bg-white'}`}>
                                 <div className="flex items-center justify-between mb-3">
-                                  <h4 className={`font-semibold transition-colors duration-300 ${theme === 'dark' ? 'text-white' : 'text-gray-900'}`}>Equipo Activo</h4>
+                                  <h4 className={`font-semibold transition-colors duration-300 ${demoTheme === 'dark' ? 'text-white' : 'text-gray-900'}`}>Equipo Activo</h4>
                                   <span className="text-xs text-green-600 font-medium">3 en línea</span>
                                 </div>
                                 <div className="space-y-2">
@@ -984,7 +1008,7 @@ const LandingPage = React.memo(() => {
                                       <span className="text-white text-xs font-bold">A</span>
                                     </div>
                                     <div className="flex-1">
-                                      <div className={`text-sm font-medium transition-colors duration-300 ${theme === 'dark' ? 'text-white' : 'text-gray-900'}`}>Ana García</div>
+                                      <div className={`text-sm font-medium transition-colors duration-300 ${demoTheme === 'dark' ? 'text-white' : 'text-gray-900'}`}>Ana García</div>
                                       <div className="text-xs text-green-600">En línea</div>
                                     </div>
                                   </div>
@@ -993,7 +1017,7 @@ const LandingPage = React.memo(() => {
                                       <span className="text-white text-xs font-bold">C</span>
                                     </div>
                                     <div className="flex-1">
-                                      <div className={`text-sm font-medium transition-colors duration-300 ${theme === 'dark' ? 'text-white' : 'text-gray-900'}`}>Carlos López</div>
+                                      <div className={`text-sm font-medium transition-colors duration-300 ${demoTheme === 'dark' ? 'text-white' : 'text-gray-900'}`}>Carlos López</div>
                                       <div className="text-xs text-green-600">En línea</div>
                                     </div>
                                   </div>
@@ -1002,7 +1026,7 @@ const LandingPage = React.memo(() => {
                                       <span className="text-white text-xs font-bold">M</span>
                                     </div>
                                     <div className="flex-1">
-                                      <div className={`text-sm font-medium transition-colors duration-300 ${theme === 'dark' ? 'text-white' : 'text-gray-900'}`}>María Rodríguez</div>
+                                      <div className={`text-sm font-medium transition-colors duration-300 ${demoTheme === 'dark' ? 'text-white' : 'text-gray-900'}`}>María Rodríguez</div>
                                       <div className="text-xs text-gray-500">Ausente</div>
                                     </div>
                                   </div>
@@ -1011,101 +1035,101 @@ const LandingPage = React.memo(() => {
                             </div>
 
                             {/* Gráfico de Rendimiento */}
-                            <div className={`rounded-lg p-4 shadow-sm transition-colors duration-300 ${theme === 'dark' ? 'bg-gray-700' : 'bg-white'}`}>
-                              <h4 className={`font-semibold mb-4 transition-colors duration-300 ${theme === 'dark' ? 'text-white' : 'text-gray-900'}`}>Rendimiento del Mes</h4>
+                            <div className={`rounded-lg p-4 shadow-sm transition-colors duration-300 ${demoTheme === 'dark' ? 'bg-gray-700' : 'bg-white'}`}>
+                              <h4 className={`font-semibold mb-4 transition-colors duration-300 ${demoTheme === 'dark' ? 'text-white' : 'text-gray-900'}`}>Rendimiento del Mes</h4>
                               <div className="h-48 relative">
                                 {/* Gráfico de barras interactivo */}
                                 <div className="flex items-end justify-between h-full px-4 space-x-2">
                                   {/* Barra 1 - Enero */}
                                   <div className="flex flex-col items-center group cursor-pointer">
                                     <div 
-                                      className={`w-10 bg-gradient-to-t from-blue-500 to-blue-400 rounded-t-lg transition-all duration-500 group-hover:from-blue-600 group-hover:to-blue-500 group-hover:scale-110 group-hover:shadow-lg animate-pulse ${theme === 'dark' ? 'shadow-blue-500/30' : 'shadow-blue-200'}`}
+                                      className={`w-10 bg-gradient-to-t from-blue-500 to-blue-400 rounded-t-lg transition-all duration-500 group-hover:from-blue-600 group-hover:to-blue-500 group-hover:scale-110 group-hover:shadow-lg animate-pulse ${demoTheme === 'dark' ? 'shadow-blue-500/30' : 'shadow-blue-200'}`}
                                       style={{ 
                                         height: '60%',
                                         animation: 'slideUp 0.8s ease-out 0.1s both'
                                       }}
                                       title="Enero: 60% - 1,200 proyectos"
                                     ></div>
-                                    <span className={`text-xs mt-2 transition-colors duration-300 ${theme === 'dark' ? 'text-gray-300' : 'text-gray-600'}`}>Ene</span>
-                                    <span className={`text-xs font-medium transition-colors duration-300 ${theme === 'dark' ? 'text-blue-400' : 'text-blue-600'}`}>1.2K</span>
+                                    <span className={`text-xs mt-2 transition-colors duration-300 ${demoTheme === 'dark' ? 'text-gray-300' : 'text-gray-600'}`}>Ene</span>
+                                    <span className={`text-xs font-medium transition-colors duration-300 ${demoTheme === 'dark' ? 'text-blue-400' : 'text-blue-600'}`}>1.2K</span>
                                   </div>
                                   
                                   {/* Barra 2 - Febrero */}
                                   <div className="flex flex-col items-center group cursor-pointer">
                                     <div 
-                                      className={`w-10 bg-gradient-to-t from-green-500 to-green-400 rounded-t-lg transition-all duration-500 group-hover:from-green-600 group-hover:to-green-500 group-hover:scale-110 group-hover:shadow-lg animate-pulse ${theme === 'dark' ? 'shadow-green-500/30' : 'shadow-green-200'}`}
+                                      className={`w-10 bg-gradient-to-t from-green-500 to-green-400 rounded-t-lg transition-all duration-500 group-hover:from-green-600 group-hover:to-green-500 group-hover:scale-110 group-hover:shadow-lg animate-pulse ${demoTheme === 'dark' ? 'shadow-green-500/30' : 'shadow-green-200'}`}
                                       style={{ 
                                         height: '80%',
                                         animation: 'slideUp 0.8s ease-out 0.2s both'
                                       }}
                                       title="Febrero: 80% - 1,600 proyectos"
                                     ></div>
-                                    <span className={`text-xs mt-2 transition-colors duration-300 ${theme === 'dark' ? 'text-gray-300' : 'text-gray-600'}`}>Feb</span>
-                                    <span className={`text-xs font-medium transition-colors duration-300 ${theme === 'dark' ? 'text-green-400' : 'text-green-600'}`}>1.6K</span>
+                                    <span className={`text-xs mt-2 transition-colors duration-300 ${demoTheme === 'dark' ? 'text-gray-300' : 'text-gray-600'}`}>Feb</span>
+                                    <span className={`text-xs font-medium transition-colors duration-300 ${demoTheme === 'dark' ? 'text-green-400' : 'text-green-600'}`}>1.6K</span>
                                   </div>
                                   
                                   {/* Barra 3 - Marzo */}
                                   <div className="flex flex-col items-center group cursor-pointer">
                                     <div 
-                                      className={`w-10 bg-gradient-to-t from-orange-500 to-orange-400 rounded-t-lg transition-all duration-500 group-hover:from-orange-600 group-hover:to-orange-500 group-hover:scale-110 group-hover:shadow-lg animate-pulse ${theme === 'dark' ? 'shadow-orange-500/30' : 'shadow-orange-200'}`}
+                                      className={`w-10 bg-gradient-to-t from-orange-500 to-orange-400 rounded-t-lg transition-all duration-500 group-hover:from-orange-600 group-hover:to-orange-500 group-hover:scale-110 group-hover:shadow-lg animate-pulse ${demoTheme === 'dark' ? 'shadow-orange-500/30' : 'shadow-orange-200'}`}
                                       style={{ 
                                         height: '45%',
                                         animation: 'slideUp 0.8s ease-out 0.3s both'
                                       }}
                                       title="Marzo: 45% - 900 proyectos"
                                     ></div>
-                                    <span className={`text-xs mt-2 transition-colors duration-300 ${theme === 'dark' ? 'text-gray-300' : 'text-gray-600'}`}>Mar</span>
-                                    <span className={`text-xs font-medium transition-colors duration-300 ${theme === 'dark' ? 'text-orange-400' : 'text-orange-600'}`}>900</span>
+                                    <span className={`text-xs mt-2 transition-colors duration-300 ${demoTheme === 'dark' ? 'text-gray-300' : 'text-gray-600'}`}>Mar</span>
+                                    <span className={`text-xs font-medium transition-colors duration-300 ${demoTheme === 'dark' ? 'text-orange-400' : 'text-orange-600'}`}>900</span>
                                   </div>
                                   
                                   {/* Barra 4 - Abril */}
                                   <div className="flex flex-col items-center group cursor-pointer">
                                     <div 
-                                      className={`w-10 bg-gradient-to-t from-purple-500 to-purple-400 rounded-t-lg transition-all duration-500 group-hover:from-purple-600 group-hover:to-purple-500 group-hover:scale-110 group-hover:shadow-lg animate-pulse ${theme === 'dark' ? 'shadow-purple-500/30' : 'shadow-purple-200'}`}
+                                      className={`w-10 bg-gradient-to-t from-purple-500 to-purple-400 rounded-t-lg transition-all duration-500 group-hover:from-purple-600 group-hover:to-purple-500 group-hover:scale-110 group-hover:shadow-lg animate-pulse ${demoTheme === 'dark' ? 'shadow-purple-500/30' : 'shadow-purple-200'}`}
                                       style={{ 
                                         height: '90%',
                                         animation: 'slideUp 0.8s ease-out 0.4s both'
                                       }}
                                       title="Abril: 90% - 1,800 proyectos"
                                     ></div>
-                                    <span className={`text-xs mt-2 transition-colors duration-300 ${theme === 'dark' ? 'text-gray-300' : 'text-gray-600'}`}>Abr</span>
-                                    <span className={`text-xs font-medium transition-colors duration-300 ${theme === 'dark' ? 'text-purple-400' : 'text-purple-600'}`}>1.8K</span>
+                                    <span className={`text-xs mt-2 transition-colors duration-300 ${demoTheme === 'dark' ? 'text-gray-300' : 'text-gray-600'}`}>Abr</span>
+                                    <span className={`text-xs font-medium transition-colors duration-300 ${demoTheme === 'dark' ? 'text-purple-400' : 'text-purple-600'}`}>1.8K</span>
                                   </div>
                                   
                                   {/* Barra 5 - Mayo */}
                                   <div className="flex flex-col items-center group cursor-pointer">
                                     <div 
-                                      className={`w-10 bg-gradient-to-t from-cyan-500 to-cyan-400 rounded-t-lg transition-all duration-500 group-hover:from-cyan-600 group-hover:to-cyan-500 group-hover:scale-110 group-hover:shadow-lg animate-pulse ${theme === 'dark' ? 'shadow-cyan-500/30' : 'shadow-cyan-200'}`}
+                                      className={`w-10 bg-gradient-to-t from-cyan-500 to-cyan-400 rounded-t-lg transition-all duration-500 group-hover:from-cyan-600 group-hover:to-cyan-500 group-hover:scale-110 group-hover:shadow-lg animate-pulse ${demoTheme === 'dark' ? 'shadow-cyan-500/30' : 'shadow-cyan-200'}`}
                                       style={{ 
                                         height: '75%',
                                         animation: 'slideUp 0.8s ease-out 0.5s both'
                                       }}
                                       title="Mayo: 75% - 1,500 proyectos"
                                     ></div>
-                                    <span className={`text-xs mt-2 transition-colors duration-300 ${theme === 'dark' ? 'text-gray-300' : 'text-gray-600'}`}>May</span>
-                                    <span className={`text-xs font-medium transition-colors duration-300 ${theme === 'dark' ? 'text-cyan-400' : 'text-cyan-600'}`}>1.5K</span>
+                                    <span className={`text-xs mt-2 transition-colors duration-300 ${demoTheme === 'dark' ? 'text-gray-300' : 'text-gray-600'}`}>May</span>
+                                    <span className={`text-xs font-medium transition-colors duration-300 ${demoTheme === 'dark' ? 'text-cyan-400' : 'text-cyan-600'}`}>1.5K</span>
                                   </div>
                                   
                                   {/* Barra 6 - Junio */}
                                   <div className="flex flex-col items-center group cursor-pointer">
                                     <div 
-                                      className={`w-10 bg-gradient-to-t from-pink-500 to-pink-400 rounded-t-lg transition-all duration-500 group-hover:from-pink-600 group-hover:to-pink-500 group-hover:scale-110 group-hover:shadow-lg animate-pulse ${theme === 'dark' ? 'shadow-pink-500/30' : 'shadow-pink-200'}`}
+                                      className={`w-10 bg-gradient-to-t from-pink-500 to-pink-400 rounded-t-lg transition-all duration-500 group-hover:from-pink-600 group-hover:to-pink-500 group-hover:scale-110 group-hover:shadow-lg animate-pulse ${demoTheme === 'dark' ? 'shadow-pink-500/30' : 'shadow-pink-200'}`}
                                       style={{ 
                                         height: '95%',
                                         animation: 'slideUp 0.8s ease-out 0.6s both'
                                       }}
                                       title="Junio: 95% - 1,900 proyectos"
                                     ></div>
-                                    <span className={`text-xs mt-2 transition-colors duration-300 ${theme === 'dark' ? 'text-gray-300' : 'text-gray-600'}`}>Jun</span>
-                                    <span className={`text-xs font-medium transition-colors duration-300 ${theme === 'dark' ? 'text-pink-400' : 'text-pink-600'}`}>1.9K</span>
+                                    <span className={`text-xs mt-2 transition-colors duration-300 ${demoTheme === 'dark' ? 'text-gray-300' : 'text-gray-600'}`}>Jun</span>
+                                    <span className={`text-xs font-medium transition-colors duration-300 ${demoTheme === 'dark' ? 'text-pink-400' : 'text-pink-600'}`}>1.9K</span>
                                   </div>
                                 </div>
                                 
                                 {/* Línea de referencia */}
-                                <div className={`absolute top-0 left-0 right-0 h-px ${theme === 'dark' ? 'bg-gray-600' : 'bg-gray-200'}`}></div>
+                                <div className={`absolute top-0 left-0 right-0 h-px ${demoTheme === 'dark' ? 'bg-gray-600' : 'bg-gray-200'}`}></div>
                                 
                                 {/* Tooltip de información */}
-                                <div className={`absolute top-2 right-2 text-xs transition-colors duration-300 ${theme === 'dark' ? 'text-gray-400' : 'text-gray-500'}`}>
+                                <div className={`absolute top-2 right-2 text-xs transition-colors duration-300 ${demoTheme === 'dark' ? 'text-gray-400' : 'text-gray-500'}`}>
                                   <div className="flex items-center space-x-1">
                                     <div className="w-2 h-2 bg-green-500 rounded-full animate-pulse"></div>
                                     <span>Datos en tiempo real</span>
@@ -1117,44 +1141,44 @@ const LandingPage = React.memo(() => {
                               <div className="mt-4 flex flex-wrap gap-4 text-xs">
                                 <div className="flex items-center space-x-2">
                                   <div className="w-3 h-3 bg-blue-500 rounded animate-pulse"></div>
-                                  <span className={`transition-colors duration-300 ${theme === 'dark' ? 'text-gray-300' : 'text-gray-600'}`}>Proyectos Completados</span>
+                                  <span className={`transition-colors duration-300 ${demoTheme === 'dark' ? 'text-gray-300' : 'text-gray-600'}`}>Proyectos Completados</span>
                                 </div>
                                 <div className="flex items-center space-x-2">
                                   <div className="w-3 h-3 bg-green-500 rounded animate-pulse"></div>
-                                  <span className={`transition-colors duration-300 ${theme === 'dark' ? 'text-gray-300' : 'text-gray-600'}`}>Proyectos Activos</span>
+                                  <span className={`transition-colors duration-300 ${demoTheme === 'dark' ? 'text-gray-300' : 'text-gray-600'}`}>Proyectos Activos</span>
                                 </div>
                                 <div className="flex items-center space-x-2">
                                   <div className="w-3 h-3 bg-orange-500 rounded animate-pulse"></div>
-                                  <span className={`transition-colors duration-300 ${theme === 'dark' ? 'text-gray-300' : 'text-gray-600'}`}>En Revisión</span>
+                                  <span className={`transition-colors duration-300 ${demoTheme === 'dark' ? 'text-gray-300' : 'text-gray-600'}`}>En Revisión</span>
                                 </div>
                               </div>
                             </div>
 
                             {/* Tareas Pendientes */}
-                            <div className={`rounded-lg p-4 shadow-sm transition-colors duration-300 ${theme === 'dark' ? 'bg-gray-700' : 'bg-white'}`}>
-                              <h4 className={`font-semibold mb-4 transition-colors duration-300 ${theme === 'dark' ? 'text-white' : 'text-gray-900'}`}>Tareas Pendientes</h4>
+                            <div className={`rounded-lg p-4 shadow-sm transition-colors duration-300 ${demoTheme === 'dark' ? 'bg-gray-700' : 'bg-white'}`}>
+                              <h4 className={`font-semibold mb-4 transition-colors duration-300 ${demoTheme === 'dark' ? 'text-white' : 'text-gray-900'}`}>Tareas Pendientes</h4>
                               <div className="space-y-3">
                                 <div className="flex items-center space-x-3">
                                   <input type="checkbox" className="w-4 h-4 text-blue-600 rounded focus:ring-blue-500" />
                                   <div className="flex-1">
-                                    <div className={`text-sm font-medium transition-colors duration-300 ${theme === 'dark' ? 'text-white' : 'text-gray-900'}`}>Revisar diseño de la landing page</div>
-                                    <div className={`text-xs transition-colors duration-300 ${theme === 'dark' ? 'text-gray-400' : 'text-gray-500'}`}>Vence en 2 días</div>
+                                    <div className={`text-sm font-medium transition-colors duration-300 ${demoTheme === 'dark' ? 'text-white' : 'text-gray-900'}`}>Revisar diseño de la landing page</div>
+                                    <div className={`text-xs transition-colors duration-300 ${demoTheme === 'dark' ? 'text-gray-400' : 'text-gray-500'}`}>Vence en 2 días</div>
                                   </div>
                                   <span className="text-xs bg-red-100 text-red-800 px-2 py-1 rounded">Urgente</span>
                                 </div>
                                 <div className="flex items-center space-x-3">
                                   <input type="checkbox" className="w-4 h-4 text-blue-600 rounded focus:ring-blue-500" />
                                   <div className="flex-1">
-                                    <div className={`text-sm font-medium transition-colors duration-300 ${theme === 'dark' ? 'text-white' : 'text-gray-900'}`}>Implementar autenticación</div>
-                                    <div className={`text-xs transition-colors duration-300 ${theme === 'dark' ? 'text-gray-400' : 'text-gray-500'}`}>Vence en 5 días</div>
+                                    <div className={`text-sm font-medium transition-colors duration-300 ${demoTheme === 'dark' ? 'text-white' : 'text-gray-900'}`}>Implementar autenticación</div>
+                                    <div className={`text-xs transition-colors duration-300 ${demoTheme === 'dark' ? 'text-gray-400' : 'text-gray-500'}`}>Vence en 5 días</div>
                                   </div>
                                   <span className="text-xs bg-yellow-100 text-yellow-800 px-2 py-1 rounded">Media</span>
                                 </div>
                                 <div className="flex items-center space-x-3">
                                   <input type="checkbox" className="w-4 h-4 text-blue-600 rounded focus:ring-blue-500" />
                                   <div className="flex-1">
-                                    <div className={`text-sm font-medium transition-colors duration-300 ${theme === 'dark' ? 'text-white' : 'text-gray-900'}`}>Optimizar rendimiento</div>
-                                    <div className={`text-xs transition-colors duration-300 ${theme === 'dark' ? 'text-gray-400' : 'text-gray-500'}`}>Vence en 1 semana</div>
+                                    <div className={`text-sm font-medium transition-colors duration-300 ${demoTheme === 'dark' ? 'text-white' : 'text-gray-900'}`}>Optimizar rendimiento</div>
+                                    <div className={`text-xs transition-colors duration-300 ${demoTheme === 'dark' ? 'text-gray-400' : 'text-gray-500'}`}>Vence en 1 semana</div>
                                   </div>
                                   <span className="text-xs bg-green-100 text-green-800 px-2 py-1 rounded">Baja</span>
                                 </div>
@@ -1166,40 +1190,40 @@ const LandingPage = React.memo(() => {
                         {activeDemo === 'projects' && (
                           <div className="space-y-4">
                             <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                              <div className={`rounded-lg p-4 shadow-sm transition-colors duration-300 ${theme === 'dark' ? 'bg-slate-700 border border-slate-600' : 'bg-white'}`}>
-                                <h4 className={`font-medium mb-2 transition-colors duration-300 ${theme === 'dark' ? 'text-white' : 'text-gray-900'}`}>Proyectos Recientes</h4>
+                              <div className={`rounded-lg p-4 shadow-sm transition-colors duration-300 ${demoTheme === 'dark' ? 'bg-slate-700 border border-slate-600' : 'bg-white'}`}>
+                                <h4 className={`font-medium mb-2 transition-colors duration-300 ${demoTheme === 'dark' ? 'text-white' : 'text-gray-900'}`}>Proyectos Recientes</h4>
                                 <div className="space-y-2">
                                   <div className="flex items-center justify-between">
-                                    <span className={`text-sm transition-colors duration-300 ${theme === 'dark' ? 'text-gray-300' : 'text-gray-600'}`}>E-commerce App</span>
+                                    <span className={`text-sm transition-colors duration-300 ${demoTheme === 'dark' ? 'text-gray-300' : 'text-gray-600'}`}>E-commerce App</span>
                                     <span className="text-xs bg-green-100 text-green-800 px-2 py-1 rounded">En Progreso</span>
                                   </div>
                                   <div className="flex items-center justify-between">
-                                    <span className={`text-sm transition-colors duration-300 ${theme === 'dark' ? 'text-gray-300' : 'text-gray-600'}`}>Landing Page</span>
+                                    <span className={`text-sm transition-colors duration-300 ${demoTheme === 'dark' ? 'text-gray-300' : 'text-gray-600'}`}>Landing Page</span>
                                     <span className="text-xs bg-blue-100 text-blue-800 px-2 py-1 rounded">Completado</span>
                                   </div>
                                   <div className="flex items-center justify-between">
-                                    <span className={`text-sm transition-colors duration-300 ${theme === 'dark' ? 'text-gray-300' : 'text-gray-600'}`}>Dashboard Admin</span>
+                                    <span className={`text-sm transition-colors duration-300 ${demoTheme === 'dark' ? 'text-gray-300' : 'text-gray-600'}`}>Dashboard Admin</span>
                                     <span className="text-xs bg-yellow-100 text-yellow-800 px-2 py-1 rounded">Pendiente</span>
                                   </div>
                                 </div>
                               </div>
-                              <div className={`rounded-lg p-4 shadow-sm transition-colors duration-300 ${theme === 'dark' ? 'bg-slate-700 border border-slate-600' : 'bg-white'}`}>
-                                <h4 className={`font-medium mb-2 transition-colors duration-300 ${theme === 'dark' ? 'text-white' : 'text-gray-900'}`}>Estadísticas</h4>
+                              <div className={`rounded-lg p-4 shadow-sm transition-colors duration-300 ${demoTheme === 'dark' ? 'bg-slate-700 border border-slate-600' : 'bg-white'}`}>
+                                <h4 className={`font-medium mb-2 transition-colors duration-300 ${demoTheme === 'dark' ? 'text-white' : 'text-gray-900'}`}>Estadísticas</h4>
                                 <div className="space-y-2">
                                   <div className="flex justify-between">
-                                    <span className={`text-sm transition-colors duration-300 ${theme === 'dark' ? 'text-gray-300' : 'text-gray-600'}`}>Total Proyectos:</span>
-                                    <span className={`font-medium transition-colors duration-300 ${theme === 'dark' ? 'text-white' : 'text-gray-900'}`}>12</span>
+                                    <span className={`text-sm transition-colors duration-300 ${demoTheme === 'dark' ? 'text-gray-300' : 'text-gray-600'}`}>Total Proyectos:</span>
+                                    <span className={`font-medium transition-colors duration-300 ${demoTheme === 'dark' ? 'text-white' : 'text-gray-900'}`}>12</span>
                                   </div>
                                   <div className="flex justify-between">
-                                    <span className={`text-sm transition-colors duration-300 ${theme === 'dark' ? 'text-gray-300' : 'text-gray-600'}`}>Completados:</span>
+                                    <span className={`text-sm transition-colors duration-300 ${demoTheme === 'dark' ? 'text-gray-300' : 'text-gray-600'}`}>Completados:</span>
                                     <span className="font-medium text-green-600">8</span>
                                   </div>
                                   <div className="flex justify-between">
-                                    <span className={`text-sm transition-colors duration-300 ${theme === 'dark' ? 'text-gray-300' : 'text-gray-600'}`}>En Progreso:</span>
+                                    <span className={`text-sm transition-colors duration-300 ${demoTheme === 'dark' ? 'text-gray-300' : 'text-gray-600'}`}>En Progreso:</span>
                                     <span className="font-medium text-blue-600">3</span>
                                   </div>
                                   <div className="flex justify-between">
-                                    <span className={`text-sm transition-colors duration-300 ${theme === 'dark' ? 'text-gray-300' : 'text-gray-600'}`}>Pendientes:</span>
+                                    <span className={`text-sm transition-colors duration-300 ${demoTheme === 'dark' ? 'text-gray-300' : 'text-gray-600'}`}>Pendientes:</span>
                                     <span className="font-medium text-yellow-600">1</span>
                                   </div>
                                 </div>
@@ -1211,23 +1235,23 @@ const LandingPage = React.memo(() => {
                         {activeDemo === 'analytics' && (
                           <div className="space-y-4">
                             <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
-                              <div className={`rounded-lg p-4 shadow-sm text-center transition-colors duration-300 ${theme === 'dark' ? 'bg-gray-700' : 'bg-white'}`}>
+                              <div className={`rounded-lg p-4 shadow-sm text-center transition-colors duration-300 ${demoTheme === 'dark' ? 'bg-gray-700' : 'bg-white'}`}>
                                 <div className="text-3xl font-bold text-green-600 mb-1">+24%</div>
-                                <div className={`text-sm transition-colors duration-300 ${theme === 'dark' ? 'text-gray-300' : 'text-gray-600'}`}>Crecimiento</div>
+                                <div className={`text-sm transition-colors duration-300 ${demoTheme === 'dark' ? 'text-gray-300' : 'text-gray-600'}`}>Crecimiento</div>
                               </div>
-                              <div className={`rounded-lg p-4 shadow-sm text-center transition-colors duration-300 ${theme === 'dark' ? 'bg-gray-700' : 'bg-white'}`}>
+                              <div className={`rounded-lg p-4 shadow-sm text-center transition-colors duration-300 ${demoTheme === 'dark' ? 'bg-gray-700' : 'bg-white'}`}>
                                 <div className="text-3xl font-bold text-blue-600 mb-1">2.4K</div>
-                                <div className={`text-sm transition-colors duration-300 ${theme === 'dark' ? 'text-gray-300' : 'text-gray-600'}`}>Vistas</div>
+                                <div className={`text-sm transition-colors duration-300 ${demoTheme === 'dark' ? 'text-gray-300' : 'text-gray-600'}`}>Vistas</div>
                               </div>
-                              <div className={`rounded-lg p-4 shadow-sm text-center transition-colors duration-300 ${theme === 'dark' ? 'bg-gray-700' : 'bg-white'}`}>
+                              <div className={`rounded-lg p-4 shadow-sm text-center transition-colors duration-300 ${demoTheme === 'dark' ? 'bg-gray-700' : 'bg-white'}`}>
                                 <div className="text-3xl font-bold text-purple-600 mb-1">8.2%</div>
-                                <div className={`text-sm transition-colors duration-300 ${theme === 'dark' ? 'text-gray-300' : 'text-gray-600'}`}>Conversión</div>
+                                <div className={`text-sm transition-colors duration-300 ${demoTheme === 'dark' ? 'text-gray-300' : 'text-gray-600'}`}>Conversión</div>
                               </div>
                             </div>
-                            <div className={`rounded-lg p-4 shadow-sm transition-colors duration-300 ${theme === 'dark' ? 'bg-gray-700' : 'bg-white'}`}>
-                              <h4 className={`font-medium mb-3 transition-colors duration-300 ${theme === 'dark' ? 'text-white' : 'text-gray-900'}`}>Gráfico de Rendimiento</h4>
-                              <div className={`h-32 rounded-lg flex items-end justify-center transition-colors duration-300 ${theme === 'dark' ? 'bg-gradient-to-r from-gray-800 to-gray-700' : 'bg-gradient-to-r from-blue-50 to-green-50'}`}>
-                                <div className={`text-sm transition-colors duration-300 ${theme === 'dark' ? 'text-gray-400' : 'text-gray-500'}`}>📊 Gráfico interactivo aquí</div>
+                            <div className={`rounded-lg p-4 shadow-sm transition-colors duration-300 ${demoTheme === 'dark' ? 'bg-gray-700' : 'bg-white'}`}>
+                              <h4 className={`font-medium mb-3 transition-colors duration-300 ${demoTheme === 'dark' ? 'text-white' : 'text-gray-900'}`}>Gráfico de Rendimiento</h4>
+                              <div className={`h-32 rounded-lg flex items-end justify-center transition-colors duration-300 ${demoTheme === 'dark' ? 'bg-gradient-to-r from-gray-800 to-gray-700' : 'bg-gradient-to-r from-blue-50 to-green-50'}`}>
+                                <div className={`text-sm transition-colors duration-300 ${demoTheme === 'dark' ? 'text-gray-400' : 'text-gray-500'}`}>📊 Gráfico interactivo aquí</div>
                               </div>
                             </div>
                           </div>
@@ -1236,16 +1260,16 @@ const LandingPage = React.memo(() => {
                         {activeDemo === 'team' && (
                           <div className="space-y-4">
                             <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                              <div className={`rounded-lg p-4 shadow-sm transition-colors duration-300 ${theme === 'dark' ? 'bg-slate-700 border border-slate-600' : 'bg-white'}`}>
-                                <h4 className={`font-medium mb-3 transition-colors duration-300 ${theme === 'dark' ? 'text-white' : 'text-gray-900'}`}>Miembros del Equipo</h4>
+                              <div className={`rounded-lg p-4 shadow-sm transition-colors duration-300 ${demoTheme === 'dark' ? 'bg-slate-700 border border-slate-600' : 'bg-white'}`}>
+                                <h4 className={`font-medium mb-3 transition-colors duration-300 ${demoTheme === 'dark' ? 'text-white' : 'text-gray-900'}`}>Miembros del Equipo</h4>
                                 <div className="space-y-2">
                                   <div className="flex items-center space-x-3">
                                     <div className="w-8 h-8 bg-blue-500 rounded-full flex items-center justify-center">
                                       <span className="text-white text-sm font-bold">A</span>
                                     </div>
                                     <div>
-                                      <div className={`text-sm font-medium transition-colors duration-300 ${theme === 'dark' ? 'text-white' : 'text-gray-900'}`}>Ana García</div>
-                                      <div className={`text-xs transition-colors duration-300 ${theme === 'dark' ? 'text-gray-400' : 'text-gray-500'}`}>Desarrolladora</div>
+                                      <div className={`text-sm font-medium transition-colors duration-300 ${demoTheme === 'dark' ? 'text-white' : 'text-gray-900'}`}>Ana García</div>
+                                      <div className={`text-xs transition-colors duration-300 ${demoTheme === 'dark' ? 'text-gray-400' : 'text-gray-500'}`}>Desarrolladora</div>
                                     </div>
                                   </div>
                                   <div className="flex items-center space-x-3">
@@ -1253,8 +1277,8 @@ const LandingPage = React.memo(() => {
                                       <span className="text-white text-sm font-bold">C</span>
                                     </div>
                                     <div>
-                                      <div className={`text-sm font-medium transition-colors duration-300 ${theme === 'dark' ? 'text-white' : 'text-gray-900'}`}>Carlos López</div>
-                                      <div className={`text-xs transition-colors duration-300 ${theme === 'dark' ? 'text-gray-400' : 'text-gray-500'}`}>Diseñador</div>
+                                      <div className={`text-sm font-medium transition-colors duration-300 ${demoTheme === 'dark' ? 'text-white' : 'text-gray-900'}`}>Carlos López</div>
+                                      <div className={`text-xs transition-colors duration-300 ${demoTheme === 'dark' ? 'text-gray-400' : 'text-gray-500'}`}>Diseñador</div>
                                     </div>
                                   </div>
                                   <div className="flex items-center space-x-3">
@@ -1262,19 +1286,19 @@ const LandingPage = React.memo(() => {
                                       <span className="text-white text-sm font-bold">M</span>
                                     </div>
                                     <div>
-                                      <div className={`text-sm font-medium transition-colors duration-300 ${theme === 'dark' ? 'text-white' : 'text-gray-900'}`}>María Rodríguez</div>
-                                      <div className={`text-xs transition-colors duration-300 ${theme === 'dark' ? 'text-gray-400' : 'text-gray-500'}`}>Project Manager</div>
+                                      <div className={`text-sm font-medium transition-colors duration-300 ${demoTheme === 'dark' ? 'text-white' : 'text-gray-900'}`}>María Rodríguez</div>
+                                      <div className={`text-xs transition-colors duration-300 ${demoTheme === 'dark' ? 'text-gray-400' : 'text-gray-500'}`}>Project Manager</div>
                                     </div>
                                   </div>
                                 </div>
                               </div>
-                              <div className={`rounded-lg p-4 shadow-sm transition-colors duration-300 ${theme === 'dark' ? 'bg-slate-700 border border-slate-600' : 'bg-white'}`}>
-                                <h4 className={`font-medium mb-3 transition-colors duration-300 ${theme === 'dark' ? 'text-white' : 'text-gray-900'}`}>Actividad Reciente</h4>
+                              <div className={`rounded-lg p-4 shadow-sm transition-colors duration-300 ${demoTheme === 'dark' ? 'bg-slate-700 border border-slate-600' : 'bg-white'}`}>
+                                <h4 className={`font-medium mb-3 transition-colors duration-300 ${demoTheme === 'dark' ? 'text-white' : 'text-gray-900'}`}>Actividad Reciente</h4>
                                 <div className="space-y-2">
-                                  <div className={`text-sm transition-colors duration-300 ${theme === 'dark' ? 'text-gray-300' : 'text-gray-600'}`}>✅ Ana completó el diseño</div>
-                                  <div className={`text-sm transition-colors duration-300 ${theme === 'dark' ? 'text-gray-300' : 'text-gray-600'}`}>💬 Carlos comentó en el proyecto</div>
-                                  <div className={`text-sm transition-colors duration-300 ${theme === 'dark' ? 'text-gray-300' : 'text-gray-600'}`}>🔄 María actualizó el estado</div>
-                                  <div className={`text-sm transition-colors duration-300 ${theme === 'dark' ? 'text-gray-300' : 'text-gray-600'}`}>📝 Nueva tarea asignada</div>
+                                  <div className={`text-sm transition-colors duration-300 ${demoTheme === 'dark' ? 'text-gray-300' : 'text-gray-600'}`}>✅ Ana completó el diseño</div>
+                                  <div className={`text-sm transition-colors duration-300 ${demoTheme === 'dark' ? 'text-gray-300' : 'text-gray-600'}`}>💬 Carlos comentó en el proyecto</div>
+                                  <div className={`text-sm transition-colors duration-300 ${demoTheme === 'dark' ? 'text-gray-300' : 'text-gray-600'}`}>🔄 María actualizó el estado</div>
+                                  <div className={`text-sm transition-colors duration-300 ${demoTheme === 'dark' ? 'text-gray-300' : 'text-gray-600'}`}>📝 Nueva tarea asignada</div>
                                 </div>
                               </div>
                             </div>
@@ -1284,45 +1308,45 @@ const LandingPage = React.memo(() => {
                         {activeDemo === 'settings' && (
                           <div className="space-y-4">
                             <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                              <div className={`rounded-lg p-4 shadow-sm transition-colors duration-300 ${theme === 'dark' ? 'bg-slate-700 border border-slate-600' : 'bg-white'}`}>
-                                <h4 className={`font-medium mb-3 transition-colors duration-300 ${theme === 'dark' ? 'text-white' : 'text-gray-900'}`}>Configuración General</h4>
+                              <div className={`rounded-lg p-4 shadow-sm transition-colors duration-300 ${demoTheme === 'dark' ? 'bg-slate-700 border border-slate-600' : 'bg-white'}`}>
+                                <h4 className={`font-medium mb-3 transition-colors duration-300 ${demoTheme === 'dark' ? 'text-white' : 'text-gray-900'}`}>Configuración General</h4>
                                 <div className="space-y-3">
                                   <div className="flex items-center justify-between">
-                                    <span className={`text-sm transition-colors duration-300 ${theme === 'dark' ? 'text-gray-300' : 'text-gray-600'}`}>Notificaciones</span>
+                                    <span className={`text-sm transition-colors duration-300 ${demoTheme === 'dark' ? 'text-gray-300' : 'text-gray-600'}`}>Notificaciones</span>
                                     <div className="w-12 h-6 bg-green-500 rounded-full relative">
                                       <div className="w-5 h-5 bg-white rounded-full absolute right-0.5 top-0.5"></div>
                                     </div>
                                   </div>
                                   <div className="flex items-center justify-between">
-                                    <span className={`text-sm transition-colors duration-300 ${theme === 'dark' ? 'text-gray-300' : 'text-gray-600'}`}>Tema Oscuro</span>
+                                    <span className={`text-sm transition-colors duration-300 ${demoTheme === 'dark' ? 'text-gray-300' : 'text-gray-600'}`}>Tema Oscuro</span>
                                     <button 
-                                      className={`w-12 h-6 rounded-full relative transition-colors ${theme === 'dark' ? 'bg-cyan-500' : 'bg-gray-300'}`}
-                                      onClick={() => toggleTheme()}
+                                      className={`w-12 h-6 rounded-full relative transition-colors ${demoTheme === 'dark' ? 'bg-cyan-500' : 'bg-gray-300'}`}
+                                      onClick={() => toggleDemoTheme()}
                                     >
-                                      <div className={`w-5 h-5 bg-white rounded-full absolute top-0.5 transition-transform ${theme === 'dark' ? 'right-0.5' : 'left-0.5'}`}></div>
+                                      <div className={`w-5 h-5 bg-white rounded-full absolute top-0.5 transition-transform ${demoTheme === 'dark' ? 'right-0.5' : 'left-0.5'}`}></div>
                                     </button>
                                   </div>
                                   <div className="flex items-center justify-between">
-                                    <span className={`text-sm transition-colors duration-300 ${theme === 'dark' ? 'text-gray-300' : 'text-gray-600'}`}>Auto-guardado</span>
+                                    <span className={`text-sm transition-colors duration-300 ${demoTheme === 'dark' ? 'text-gray-300' : 'text-gray-600'}`}>Auto-guardado</span>
                                     <div className="w-12 h-6 bg-green-500 rounded-full relative">
                                       <div className="w-5 h-5 bg-white rounded-full absolute right-0.5 top-0.5"></div>
                                     </div>
                                   </div>
                                 </div>
                               </div>
-                              <div className={`rounded-lg p-4 shadow-sm transition-colors duration-300 ${theme === 'dark' ? 'bg-slate-700 border border-slate-600' : 'bg-white'}`}>
-                                <h4 className={`font-medium mb-3 transition-colors duration-300 ${theme === 'dark' ? 'text-white' : 'text-gray-900'}`}>Integraciones</h4>
+                              <div className={`rounded-lg p-4 shadow-sm transition-colors duration-300 ${demoTheme === 'dark' ? 'bg-slate-700 border border-slate-600' : 'bg-white'}`}>
+                                <h4 className={`font-medium mb-3 transition-colors duration-300 ${demoTheme === 'dark' ? 'text-white' : 'text-gray-900'}`}>Integraciones</h4>
                                 <div className="space-y-2">
                                   <div className="flex items-center justify-between">
-                                    <span className={`text-sm transition-colors duration-300 ${theme === 'dark' ? 'text-gray-300' : 'text-gray-600'}`}>Google Drive</span>
+                                    <span className={`text-sm transition-colors duration-300 ${demoTheme === 'dark' ? 'text-gray-300' : 'text-gray-600'}`}>Google Drive</span>
                                     <span className="text-xs bg-green-100 text-green-800 px-2 py-1 rounded">Conectado</span>
                                   </div>
                                   <div className="flex items-center justify-between">
-                                    <span className={`text-sm transition-colors duration-300 ${theme === 'dark' ? 'text-gray-300' : 'text-gray-600'}`}>Slack</span>
+                                    <span className={`text-sm transition-colors duration-300 ${demoTheme === 'dark' ? 'text-gray-300' : 'text-gray-600'}`}>Slack</span>
                                     <span className="text-xs bg-green-100 text-green-800 px-2 py-1 rounded">Conectado</span>
                                   </div>
                                   <div className="flex items-center justify-between">
-                                    <span className={`text-sm transition-colors duration-300 ${theme === 'dark' ? 'text-gray-300' : 'text-gray-600'}`}>GitHub</span>
+                                    <span className={`text-sm transition-colors duration-300 ${demoTheme === 'dark' ? 'text-gray-300' : 'text-gray-600'}`}>GitHub</span>
                                     <span className="text-xs bg-yellow-100 text-yellow-800 px-2 py-1 rounded">Pendiente</span>
                                   </div>
                                 </div>
@@ -1334,11 +1358,11 @@ const LandingPage = React.memo(() => {
                     )}
 
                     {/* Call to Action */}
-                    <div className={`text-center rounded-lg p-8 transition-colors duration-300 ${theme === 'dark' ? 'bg-gradient-to-r from-slate-800 to-slate-700 border border-slate-600 shadow-lg shadow-slate-900/50' : 'bg-gradient-to-r from-cyan-50 to-blue-50'}`}>
-                      <h3 className={`text-2xl font-bold mb-2 transition-colors duration-300 ${theme === 'dark' ? 'text-white' : 'text-gray-900'}`}>
+                    <div className="text-center rounded-lg p-8 bg-gradient-to-r from-cyan-50 to-blue-50 dark:from-slate-800 dark:to-slate-700 dark:border dark:border-slate-600 dark:shadow-lg dark:shadow-slate-900/50">
+                      <h3 className="text-2xl font-bold mb-2 text-foreground">
                         ¿Listo para comenzar?
                       </h3>
-                      <p className={`mb-6 transition-colors duration-300 ${theme === 'dark' ? 'text-gray-300' : 'text-gray-600'}`}>
+                      <p className="mb-6 text-muted-foreground">
                         Crea tu cuenta gratuita y accede a todas estas funcionalidades y más.
                       </p>
                       <div className="flex flex-col sm:flex-row gap-4 justify-center">

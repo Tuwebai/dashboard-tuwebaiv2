@@ -1,0 +1,938 @@
+import React, { useState, useEffect, useCallback } from 'react';
+import { useApp } from '@/contexts/AppContext';
+import { useNavigate } from 'react-router-dom';
+import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
+import { Button } from '@/components/ui/button';
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
+import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
+import { Badge } from '@/components/ui/badge';
+import { Progress } from '@/components/ui/progress';
+import { Input } from '@/components/ui/input';
+import { Textarea } from '@/components/ui/textarea';
+import { 
+  Target, 
+  Plus, 
+  ArrowLeft, 
+  RefreshCw, 
+  FolderKanban, 
+  Calendar, 
+  CheckCircle, 
+  Clock, 
+  AlertCircle, 
+  Search, 
+  Filter, 
+  Bell, 
+  CalendarDays, 
+  ChevronLeft, 
+  ChevronRight, 
+  Users,
+  BarChart3,
+  Settings,
+  MessageSquare,
+  FileText,
+  Zap,
+  Shield,
+  Eye,
+  Edit,
+  Trash2,
+  MoreHorizontal
+} from 'lucide-react';
+import PhasesAndTasks from '@/components/PhasesAndTasks';
+import { motion, AnimatePresence } from '@/components/OptimizedMotion';
+import { formatDateSafe } from '@/utils/formatDateSafe';
+import { supabase } from '@/lib/supabase';
+import { toast } from '@/hooks/use-toast';
+
+const AdminPhasesAndTasksPage: React.FC = () => {
+  const { user, projects } = useApp();
+  const navigate = useNavigate();
+  const [selectedProjectId, setSelectedProjectId] = useState<string>('');
+  const [selectedClientId, setSelectedClientId] = useState<string>('');
+  const [activeTab, setActiveTab] = useState<string>('overview');
+  const [loading, setLoading] = useState(false);
+  const [searchTerm, setSearchTerm] = useState('');
+  const [statusFilter, setStatusFilter] = useState<string>('all');
+  const [clientFilter, setClientFilter] = useState<string>('all');
+  const [lastUpdate, setLastUpdate] = useState<Date>(new Date());
+  const [currentDate, setCurrentDate] = useState(new Date());
+  const [calendarView, setCalendarView] = useState<'month' | 'week' | 'day'>('month');
+  const [clients, setClients] = useState<any[]>([]);
+  const [allProjects, setAllProjects] = useState<any[]>([]);
+
+  // =====================================================
+  // REAL-TIME UPDATES PARA ADMIN
+  // =====================================================
+
+  useEffect(() => {
+    if (!user?.id || user?.role !== 'admin') return;
+
+    const channel = supabase
+      .channel('admin-projects-changes')
+      .on(
+        'postgres_changes',
+        {
+          event: '*',
+          schema: 'public',
+          table: 'projects'
+        },
+        (payload) => {
+          console.log('Cambio detectado en proyectos (Admin):', payload);
+          setLastUpdate(new Date());
+          
+          toast({
+            title: "Proyecto actualizado",
+            description: `Se detectó un cambio en un proyecto`,
+          });
+        }
+      )
+      .on(
+        'postgres_changes',
+        {
+          event: '*',
+          schema: 'public',
+          table: 'tasks'
+        },
+        (payload) => {
+          console.log('Cambio detectado en tareas (Admin):', payload);
+          setLastUpdate(new Date());
+          
+          toast({
+            title: "Tarea actualizada",
+            description: `Se detectó un cambio en las tareas`,
+          });
+        }
+      )
+      .subscribe();
+
+    return () => {
+      supabase.removeChannel(channel);
+    };
+  }, [user?.id, user?.role]);
+
+  // Auto-refresh cada 30 segundos
+  useEffect(() => {
+    const interval = setInterval(() => {
+      setLastUpdate(new Date());
+    }, 30000);
+
+    return () => clearInterval(interval);
+  }, []);
+
+  // Cargar todos los proyectos y clientes
+  useEffect(() => {
+    loadAllData();
+  }, []);
+
+  const loadAllData = async () => {
+    try {
+      setLoading(true);
+      
+      // Cargar todos los proyectos
+      const { data: projectsData, error: projectsError } = await supabase
+        .from('projects')
+        .select(`
+          *,
+          users!projects_created_by_fkey (
+            id,
+            full_name,
+            email
+          )
+        `)
+        .order('created_at', { ascending: false });
+
+      if (projectsError) throw projectsError;
+
+      setAllProjects(projectsData || []);
+
+      // Cargar clientes únicos
+      const uniqueClients = projectsData?.reduce((acc: any[], project: any) => {
+        const client = project.users;
+        if (client && !acc.find(c => c.id === client.id)) {
+          acc.push(client);
+        }
+        return acc;
+      }, []) || [];
+
+      setClients(uniqueClients);
+
+      if (projectsData && projectsData.length > 0) {
+        setSelectedProjectId(projectsData[0].id);
+        setSelectedClientId(projectsData[0].created_by);
+      }
+
+    } catch (error) {
+      console.error('Error cargando datos:', error);
+      toast({
+        title: "Error",
+        description: "No se pudieron cargar los datos",
+        variant: "destructive",
+      });
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  // =====================================================
+  // FUNCIONES DE CÁLCULO
+  // =====================================================
+
+  const calculateProjectProgress = (project: any) => {
+    if (!project.fases || project.fases.length === 0) return 0;
+    const completedPhases = project.fases.filter((f: any) => f.estado === 'Terminado').length;
+    return Math.round((completedPhases / project.fases.length) * 100);
+  };
+
+  const getProjectStatus = (project: any) => {
+    if (!project.fases || project.fases.length === 0) return 'Sin iniciar';
+    
+    const completedPhases = project.fases.filter((f: any) => f.estado === 'Terminado').length;
+    const inProgressPhases = project.fases.filter((f: any) => f.estado === 'En Progreso').length;
+    
+    if (completedPhases === project.fases.length) return 'Completado';
+    if (inProgressPhases > 0) return 'En Progreso';
+    return 'Pendiente';
+  };
+
+  const getStatusColor = (status: string) => {
+    switch (status) {
+      case 'Completado': return 'bg-green-100 text-green-800 border-green-200 dark:bg-green-500/20 dark:text-green-300';
+      case 'En Progreso': return 'bg-blue-100 text-blue-800 border-blue-200 dark:bg-blue-500/20 dark:text-blue-300';
+      case 'Pendiente': return 'bg-gray-100 text-gray-800 border-gray-200 dark:bg-gray-500/20 dark:text-gray-300';
+      default: return 'bg-gray-100 text-gray-800 border-gray-200 dark:bg-gray-500/20 dark:text-gray-300';
+    }
+  };
+
+  // =====================================================
+  // FILTROS Y BÚSQUEDA
+  // =====================================================
+
+  const filteredProjects = useCallback(() => {
+    let filtered = allProjects;
+
+    // Filtro por cliente
+    if (clientFilter !== 'all') {
+      filtered = filtered.filter(project => project.created_by === clientFilter);
+    }
+
+    // Filtro por búsqueda
+    if (searchTerm) {
+      filtered = filtered.filter(project =>
+        project.name.toLowerCase().includes(searchTerm.toLowerCase()) ||
+        (project.description && project.description.toLowerCase().includes(searchTerm.toLowerCase())) ||
+        (project.users?.full_name && project.users.full_name.toLowerCase().includes(searchTerm.toLowerCase()))
+      );
+    }
+
+    // Filtro por estado
+    if (statusFilter !== 'all') {
+      filtered = filtered.filter(project => getProjectStatus(project) === statusFilter);
+    }
+
+    return filtered;
+  }, [allProjects, searchTerm, statusFilter, clientFilter]);
+
+  // =====================================================
+  // FUNCIONES DEL CALENDARIO
+  // =====================================================
+
+  const getCalendarDays = () => {
+    const year = currentDate.getFullYear();
+    const month = currentDate.getMonth();
+    const firstDay = new Date(year, month, 1);
+    const lastDay = new Date(year, month + 1, 0);
+    const startDate = new Date(firstDay);
+    startDate.setDate(startDate.getDate() - firstDay.getDay());
+    
+    const days = [];
+    const endDate = new Date(lastDay);
+    endDate.setDate(endDate.getDate() + (6 - lastDay.getDay()));
+    
+    for (let d = new Date(startDate); d <= endDate; d.setDate(d.getDate() + 1)) {
+      days.push(new Date(d));
+    }
+    
+    return days;
+  };
+
+  const getProjectEvents = () => {
+    const events: any[] = [];
+    
+    allProjects.forEach(project => {
+      if (project.fases) {
+        project.fases.forEach((phase: any) => {
+          if (phase.fechaEntrega) {
+            events.push({
+              id: `${project.id}-${phase.key}`,
+              title: `${project.name} - ${phase.descripcion || phase.key}`,
+              date: new Date(phase.fechaEntrega),
+              projectId: project.id,
+              phaseKey: phase.key,
+              status: phase.estado,
+              type: 'phase',
+              clientName: project.users?.full_name || 'Cliente desconocido'
+            });
+          }
+        });
+      }
+    });
+    
+    return events;
+  };
+
+  const getEventsForDate = (date: Date) => {
+    const events = getProjectEvents();
+    return events.filter(event => 
+      event.date.toDateString() === date.toDateString()
+    );
+  };
+
+  const navigateCalendar = (direction: 'prev' | 'next') => {
+    const newDate = new Date(currentDate);
+    if (direction === 'prev') {
+      newDate.setMonth(newDate.getMonth() - 1);
+    } else {
+      newDate.setMonth(newDate.getMonth() + 1);
+    }
+    setCurrentDate(newDate);
+  };
+
+  const goToToday = () => {
+    setCurrentDate(new Date());
+  };
+
+  const handleRefresh = async () => {
+    setLoading(true);
+    await loadAllData();
+  };
+
+  // Verificar permisos de admin
+  if (!user || user.role !== 'admin') {
+    return (
+      <div className="flex items-center justify-center min-h-screen">
+        <div className="text-center">
+          <Shield className="h-16 w-16 text-red-500 mx-auto mb-4" />
+          <h2 className="text-2xl font-bold text-gray-900 dark:text-white mb-4">
+            Acceso Denegado
+          </h2>
+          <p className="text-gray-600 dark:text-gray-400 mb-6">
+            Solo los administradores pueden acceder a esta página
+          </p>
+          <Button onClick={() => navigate('/dashboard')}>
+            Volver al Dashboard
+          </Button>
+        </div>
+      </div>
+    );
+  }
+
+  const selectedProject = allProjects.find(p => p.id === selectedProjectId);
+
+  return (
+    <div className="min-h-screen bg-gray-50 dark:bg-gray-900">
+      {/* Header */}
+      <div className="bg-white dark:bg-gray-800 border-b border-gray-200 dark:border-gray-700">
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+          <div className="flex items-center justify-between h-16">
+            <div className="flex items-center gap-4">
+              <Button
+                variant="ghost"
+                size="sm"
+                onClick={() => navigate('/admin')}
+                className="flex items-center gap-2"
+              >
+                <ArrowLeft className="h-4 w-4" />
+                Volver al Admin
+              </Button>
+              
+              <div className="h-6 w-px bg-gray-300 dark:bg-gray-600" />
+              
+              <div className="flex items-center gap-3">
+                <div className="p-2 bg-purple-100 dark:bg-purple-500/20 rounded-lg">
+                  <Shield className="h-6 w-6 text-purple-600 dark:text-purple-400" />
+                </div>
+                <div>
+                  <h1 className="text-xl font-bold text-gray-900 dark:text-white">
+                    Gestión de Fases y Tareas
+                  </h1>
+                  <p className="text-sm text-gray-600 dark:text-gray-400">
+                    Administración completa de proyectos de todos los clientes
+                  </p>
+                </div>
+              </div>
+            </div>
+
+            <div className="flex items-center gap-3">
+              {/* Indicador de última actualización */}
+              <div className="flex items-center gap-2 text-sm text-gray-500 dark:text-gray-400">
+                <div className={`w-2 h-2 rounded-full ${lastUpdate > new Date(Date.now() - 60000) ? 'bg-green-500' : 'bg-gray-400'}`} />
+                <span>Última actualización: {lastUpdate.toLocaleTimeString()}</span>
+              </div>
+              
+              <Button
+                variant="outline"
+                size="sm"
+                onClick={handleRefresh}
+                disabled={loading}
+                className="flex items-center gap-2"
+              >
+                <RefreshCw className={`h-4 w-4 ${loading ? 'animate-spin' : ''}`} />
+                Actualizar
+              </Button>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      {/* Contenido Principal */}
+      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
+        {loading ? (
+          <div className="text-center py-16">
+            <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-purple-600 mx-auto"></div>
+            <p className="mt-4 text-gray-600 dark:text-gray-400">Cargando datos...</p>
+          </div>
+        ) : allProjects.length === 0 ? (
+          <motion.div
+            initial={{ opacity: 0, y: 20 }}
+            animate={{ opacity: 1, y: 0 }}
+            className="text-center py-16"
+          >
+            <div className="max-w-md mx-auto">
+              <div className="p-4 bg-purple-100 dark:bg-purple-500/20 rounded-full w-20 h-20 mx-auto mb-6 flex items-center justify-center">
+                <Shield className="h-10 w-10 text-purple-600 dark:text-purple-400" />
+              </div>
+              
+              <h2 className="text-2xl font-bold text-gray-900 dark:text-white mb-4">
+                No hay proyectos disponibles
+              </h2>
+              
+              <p className="text-gray-600 dark:text-gray-400 mb-8">
+                Los proyectos aparecerán aquí cuando los clientes los creen.
+              </p>
+            </div>
+          </motion.div>
+        ) : (
+          <div className="space-y-6">
+            {/* Tabs de Navegación */}
+            <Tabs value={activeTab} onValueChange={setActiveTab} className="w-full">
+              <TabsList className="grid w-full grid-cols-4">
+                <TabsTrigger value="overview" className="flex items-center gap-2">
+                  <BarChart3 className="h-4 w-4" />
+                  Vista General
+                </TabsTrigger>
+                <TabsTrigger value="calendar" className="flex items-center gap-2">
+                  <CalendarDays className="h-4 w-4" />
+                  Calendario
+                </TabsTrigger>
+                <TabsTrigger value="clients" className="flex items-center gap-2">
+                  <Users className="h-4 w-4" />
+                  Por Cliente
+                </TabsTrigger>
+                <TabsTrigger value="detailed" className="flex items-center gap-2">
+                  <Target className="h-4 w-4" />
+                  Detalle
+                </TabsTrigger>
+              </TabsList>
+
+              {/* Vista General Admin */}
+              <TabsContent value="overview" className="space-y-6">
+                {/* Filtros Avanzados */}
+                <div className="grid grid-cols-1 md:grid-cols-4 gap-4">
+                  <div className="relative">
+                    <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 h-4 w-4 text-gray-400" />
+                    <Input
+                      placeholder="Buscar proyectos..."
+                      value={searchTerm}
+                      onChange={(e) => setSearchTerm(e.target.value)}
+                      className="pl-10"
+                    />
+                  </div>
+                  
+                  <Select value={clientFilter} onValueChange={setClientFilter}>
+                    <SelectTrigger>
+                      <Users className="h-4 w-4 mr-2" />
+                      <SelectValue placeholder="Filtrar por cliente" />
+                    </SelectTrigger>
+                    <SelectContent>
+                      <SelectItem value="all">Todos los clientes</SelectItem>
+                      {clients.map((client) => (
+                        <SelectItem key={client.id} value={client.id}>
+                          {client.full_name || client.email}
+                        </SelectItem>
+                      ))}
+                    </SelectContent>
+                  </Select>
+
+                  <Select value={statusFilter} onValueChange={setStatusFilter}>
+                    <SelectTrigger>
+                      <Filter className="h-4 w-4 mr-2" />
+                      <SelectValue placeholder="Filtrar por estado" />
+                    </SelectTrigger>
+                    <SelectContent>
+                      <SelectItem value="all">Todos los estados</SelectItem>
+                      <SelectItem value="Pendiente">Pendiente</SelectItem>
+                      <SelectItem value="En Progreso">En Progreso</SelectItem>
+                      <SelectItem value="Completado">Completado</SelectItem>
+                    </SelectContent>
+                  </Select>
+
+                  <Button
+                    variant="outline"
+                    onClick={() => {
+                      setSearchTerm('');
+                      setClientFilter('all');
+                      setStatusFilter('all');
+                    }}
+                    className="flex items-center gap-2"
+                  >
+                    <RefreshCw className="h-4 w-4" />
+                    Limpiar Filtros
+                  </Button>
+                </div>
+
+                {/* Estadísticas Generales Admin */}
+                <div className="grid grid-cols-1 md:grid-cols-4 gap-6">
+                  <Card className="bg-gradient-to-r from-blue-50 to-indigo-50 dark:from-blue-900/20 dark:to-indigo-900/20 border-blue-200 dark:border-blue-800">
+                    <CardContent className="p-6">
+                      <div className="flex items-center justify-between">
+                        <div>
+                          <p className="text-blue-600 dark:text-blue-400 text-sm font-medium">Total Proyectos</p>
+                          <p className="text-2xl font-bold text-blue-900 dark:text-blue-100">{allProjects.length}</p>
+                        </div>
+                        <FolderKanban className="h-8 w-8 text-blue-500" />
+                      </div>
+                    </CardContent>
+                  </Card>
+
+                  <Card className="bg-gradient-to-r from-green-50 to-emerald-50 dark:from-green-900/20 dark:to-emerald-900/20 border-green-200 dark:border-green-800">
+                    <CardContent className="p-6">
+                      <div className="flex items-center justify-between">
+                        <div>
+                          <p className="text-green-600 dark:text-green-400 text-sm font-medium">Completados</p>
+                          <p className="text-2xl font-bold text-green-900 dark:text-green-100">
+                            {allProjects.filter(p => getProjectStatus(p) === 'Completado').length}
+                          </p>
+                        </div>
+                        <CheckCircle className="h-8 w-8 text-green-500" />
+                      </div>
+                    </CardContent>
+                  </Card>
+
+                  <Card className="bg-gradient-to-r from-orange-50 to-amber-50 dark:from-orange-900/20 dark:to-amber-900/20 border-orange-200 dark:border-orange-800">
+                    <CardContent className="p-6">
+                      <div className="flex items-center justify-between">
+                        <div>
+                          <p className="text-orange-600 dark:text-orange-400 text-sm font-medium">En Progreso</p>
+                          <p className="text-2xl font-bold text-orange-900 dark:text-orange-100">
+                            {allProjects.filter(p => getProjectStatus(p) === 'En Progreso').length}
+                          </p>
+                        </div>
+                        <Clock className="h-8 w-8 text-orange-500" />
+                      </div>
+                    </CardContent>
+                  </Card>
+
+                  <Card className="bg-gradient-to-r from-purple-50 to-violet-50 dark:from-purple-900/20 dark:to-violet-900/20 border-purple-200 dark:border-purple-800">
+                    <CardContent className="p-6">
+                      <div className="flex items-center justify-between">
+                        <div>
+                          <p className="text-purple-600 dark:text-purple-400 text-sm font-medium">Clientes Activos</p>
+                          <p className="text-2xl font-bold text-purple-900 dark:text-purple-100">{clients.length}</p>
+                        </div>
+                        <Users className="h-8 w-8 text-purple-500" />
+                      </div>
+                    </CardContent>
+                  </Card>
+                </div>
+
+                {/* Lista de Proyectos Admin */}
+                <div className="space-y-4">
+                  <div className="flex items-center justify-between">
+                    <h2 className="text-xl font-bold text-gray-900 dark:text-white">
+                      Proyectos ({filteredProjects().length})
+                    </h2>
+                    {searchTerm && (
+                      <Button
+                        variant="ghost"
+                        size="sm"
+                        onClick={() => setSearchTerm('')}
+                        className="text-gray-500 hover:text-gray-700"
+                      >
+                        Limpiar búsqueda
+                      </Button>
+                    )}
+                  </div>
+                  
+                  {filteredProjects().map((project, index) => {
+                    const progress = calculateProjectProgress(project);
+                    const status = getProjectStatus(project);
+                    
+                    return (
+                      <motion.div
+                        key={project.id}
+                        initial={{ opacity: 0, y: 20 }}
+                        animate={{ opacity: 1, y: 0 }}
+                        transition={{ delay: index * 0.1 }}
+                      >
+                        <Card className="hover:shadow-lg transition-all duration-300 cursor-pointer"
+                              onClick={() => {
+                                setSelectedProjectId(project.id);
+                                setActiveTab('detailed');
+                              }}>
+                          <CardContent className="p-6">
+                            <div className="flex items-center justify-between">
+                              <div className="flex-1">
+                                <div className="flex items-center gap-3 mb-2">
+                                  <h3 className="text-lg font-semibold text-gray-900 dark:text-white">
+                                    {project.name}
+                                  </h3>
+                                  <Badge className={getStatusColor(status)}>
+                                    {status}
+                                  </Badge>
+                                  <Badge variant="outline" className="text-xs">
+                                    {project.users?.full_name || 'Cliente desconocido'}
+                                  </Badge>
+                                </div>
+                                
+                                {project.description && (
+                                  <p className="text-gray-600 dark:text-gray-400 mb-3">
+                                    {project.description}
+                                  </p>
+                                )}
+
+                                <div className="flex items-center gap-6 text-sm text-gray-500 dark:text-gray-400">
+                                  <div className="flex items-center gap-1">
+                                    <Calendar className="h-4 w-4" />
+                                    <span>Creado: {formatDateSafe(project.created_at)}</span>
+                                  </div>
+                                  <div className="flex items-center gap-1">
+                                    <Target className="h-4 w-4" />
+                                    <span>{project.fases?.length || 0} fases</span>
+                                  </div>
+                                  <div className="flex items-center gap-1">
+                                    <Users className="h-4 w-4" />
+                                    <span>{project.users?.email}</span>
+                                  </div>
+                                </div>
+
+                                <div className="mt-4">
+                                  <div className="flex justify-between text-sm mb-2">
+                                    <span>Progreso General</span>
+                                    <span>{progress}%</span>
+                                  </div>
+                                  <Progress value={progress} className="h-2" />
+                                </div>
+                              </div>
+
+                              <div className="ml-4 flex gap-2">
+                                <Button variant="outline" size="sm">
+                                  <Eye className="h-4 w-4 mr-1" />
+                                  Ver
+                                </Button>
+                                <Button variant="outline" size="sm">
+                                  <Edit className="h-4 w-4 mr-1" />
+                                  Editar
+                                </Button>
+                              </div>
+                            </div>
+                          </CardContent>
+                        </Card>
+                      </motion.div>
+                    );
+                  })}
+                </div>
+              </TabsContent>
+
+              {/* Vista de Calendario Admin */}
+              <TabsContent value="calendar" className="space-y-6">
+                {/* Header del Calendario */}
+                <div className="flex items-center justify-between">
+                  <div className="flex items-center gap-4">
+                    <h2 className="text-xl font-bold text-gray-900 dark:text-white">
+                      Calendario de Proyectos - Admin
+                    </h2>
+                    <div className="flex items-center gap-2">
+                      <Button
+                        variant="outline"
+                        size="sm"
+                        onClick={() => navigateCalendar('prev')}
+                      >
+                        <ChevronLeft className="h-4 w-4" />
+                      </Button>
+                      <Button
+                        variant="outline"
+                        size="sm"
+                        onClick={goToToday}
+                      >
+                        Hoy
+                      </Button>
+                      <Button
+                        variant="outline"
+                        size="sm"
+                        onClick={() => navigateCalendar('next')}
+                      >
+                        <ChevronRight className="h-4 w-4" />
+                      </Button>
+                    </div>
+                  </div>
+                  
+                  <div className="flex items-center gap-2">
+                    <Select value={calendarView} onValueChange={(value: any) => setCalendarView(value)}>
+                      <SelectTrigger className="w-32">
+                        <SelectValue />
+                      </SelectTrigger>
+                      <SelectContent>
+                        <SelectItem value="month">Mes</SelectItem>
+                        <SelectItem value="week">Semana</SelectItem>
+                        <SelectItem value="day">Día</SelectItem>
+                      </SelectContent>
+                    </Select>
+                  </div>
+                </div>
+
+                {/* Calendario Admin */}
+                <Card className="overflow-hidden">
+                  <CardContent className="p-0">
+                    {/* Header de días de la semana */}
+                    <div className="grid grid-cols-7 border-b border-gray-200 dark:border-gray-700">
+                      {['Dom', 'Lun', 'Mar', 'Mié', 'Jue', 'Vie', 'Sáb'].map(day => (
+                        <div key={day} className="p-4 text-center font-medium text-gray-500 dark:text-gray-400 bg-gray-50 dark:bg-gray-800">
+                          {day}
+                        </div>
+                      ))}
+                    </div>
+
+                    {/* Días del calendario */}
+                    <div className="grid grid-cols-7">
+                      {getCalendarDays().map((day, index) => {
+                        const isCurrentMonth = day.getMonth() === currentDate.getMonth();
+                        const isToday = day.toDateString() === new Date().toDateString();
+                        const events = getEventsForDate(day);
+                        
+                        return (
+                          <motion.div
+                            key={index}
+                            className={`min-h-[120px] border-r border-b border-gray-200 dark:border-gray-700 p-2 ${
+                              isCurrentMonth ? 'bg-white dark:bg-gray-900' : 'bg-gray-50 dark:bg-gray-800'
+                            } ${isToday ? 'bg-blue-50 dark:bg-blue-900/20' : ''}`}
+                            initial={{ opacity: 0 }}
+                            animate={{ opacity: 1 }}
+                            transition={{ delay: index * 0.01 }}
+                          >
+                            <div className={`text-sm font-medium mb-2 ${
+                              isCurrentMonth ? 'text-gray-900 dark:text-white' : 'text-gray-400'
+                            } ${isToday ? 'text-blue-600 dark:text-blue-400' : ''}`}>
+                              {day.getDate()}
+                            </div>
+                            
+                            {/* Eventos del día */}
+                            <div className="space-y-1">
+                              {events.slice(0, 3).map((event, eventIndex) => (
+                                <div
+                                  key={event.id}
+                                  className={`text-xs p-1 rounded cursor-pointer truncate ${
+                                    event.status === 'Terminado' 
+                                      ? 'bg-green-100 text-green-800 dark:bg-green-500/20 dark:text-green-300'
+                                      : event.status === 'En Progreso'
+                                      ? 'bg-blue-100 text-blue-800 dark:bg-blue-500/20 dark:text-blue-300'
+                                      : 'bg-gray-100 text-gray-800 dark:bg-gray-500/20 dark:text-gray-300'
+                                  }`}
+                                  onClick={() => {
+                                    setSelectedProjectId(event.projectId);
+                                    setActiveTab('detailed');
+                                  }}
+                                >
+                                  <div className="font-medium">{event.title}</div>
+                                  <div className="text-xs opacity-75">{event.clientName}</div>
+                                </div>
+                              ))}
+                              {events.length > 3 && (
+                                <div className="text-xs text-gray-500 dark:text-gray-400">
+                                  +{events.length - 3} más
+                                </div>
+                              )}
+                            </div>
+                          </motion.div>
+                        );
+                      })}
+                    </div>
+                  </CardContent>
+                </Card>
+
+                {/* Lista de eventos próximos Admin */}
+                <Card>
+                  <CardHeader>
+                    <CardTitle className="flex items-center gap-2">
+                      <Calendar className="h-5 w-5" />
+                      Próximos Eventos - Todos los Clientes
+                    </CardTitle>
+                  </CardHeader>
+                  <CardContent>
+                    <div className="space-y-3">
+                      {getProjectEvents()
+                        .filter(event => event.date >= new Date())
+                        .sort((a, b) => a.date.getTime() - b.date.getTime())
+                        .slice(0, 10)
+                        .map((event, index) => (
+                          <motion.div
+                            key={event.id}
+                            className="flex items-center gap-3 p-3 rounded-lg hover:bg-gray-50 dark:hover:bg-gray-800 cursor-pointer"
+                            initial={{ opacity: 0, x: -20 }}
+                            animate={{ opacity: 1, x: 0 }}
+                            transition={{ delay: index * 0.1 }}
+                          >
+                            <div 
+                              className="flex items-center gap-3 w-full"
+                              onClick={() => {
+                                setSelectedProjectId(event.projectId);
+                                setActiveTab('detailed');
+                              }}
+                            >
+                              <div className={`w-3 h-3 rounded-full ${
+                                event.status === 'Terminado' 
+                                  ? 'bg-green-500'
+                                  : event.status === 'En Progreso'
+                                  ? 'bg-blue-500'
+                                  : 'bg-gray-400'
+                              }`} />
+                              <div className="flex-1">
+                                <p className="font-medium text-gray-900 dark:text-white">{event.title}</p>
+                                <p className="text-sm text-gray-500 dark:text-gray-400">
+                                  {event.clientName} • {formatDateSafe(event.date.toISOString())}
+                                </p>
+                              </div>
+                              <Badge className={getStatusColor(event.status)}>
+                                {event.status}
+                              </Badge>
+                            </div>
+                          </motion.div>
+                        ))}
+                    </div>
+                  </CardContent>
+                </Card>
+              </TabsContent>
+
+              {/* Vista por Cliente */}
+              <TabsContent value="clients" className="space-y-6">
+                <h2 className="text-xl font-bold text-gray-900 dark:text-white">Proyectos por Cliente</h2>
+                
+                <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+                  {clients.map((client, index) => {
+                    const clientProjects = allProjects.filter(p => p.created_by === client.id);
+                    const completedProjects = clientProjects.filter(p => getProjectStatus(p) === 'Completado').length;
+                    const inProgressProjects = clientProjects.filter(p => getProjectStatus(p) === 'En Progreso').length;
+                    
+                    return (
+                      <motion.div
+                        key={client.id}
+                        initial={{ opacity: 0, y: 20 }}
+                        animate={{ opacity: 1, y: 0 }}
+                        transition={{ delay: index * 0.1 }}
+                      >
+                        <Card className="hover:shadow-lg transition-all duration-300">
+                          <CardHeader>
+                            <CardTitle className="flex items-center gap-2">
+                              <Users className="h-5 w-5 text-purple-500" />
+                              {client.full_name || client.email}
+                            </CardTitle>
+                          </CardHeader>
+                          <CardContent>
+                            <div className="space-y-4">
+                              <div className="grid grid-cols-2 gap-4 text-center">
+                                <div>
+                                  <p className="text-2xl font-bold text-green-600">{completedProjects}</p>
+                                  <p className="text-sm text-gray-500">Completados</p>
+                                </div>
+                                <div>
+                                  <p className="text-2xl font-bold text-blue-600">{inProgressProjects}</p>
+                                  <p className="text-sm text-gray-500">En Progreso</p>
+                                </div>
+                              </div>
+                              
+                              <div>
+                                <p className="text-sm text-gray-500 mb-2">Total: {clientProjects.length} proyectos</p>
+                                <Progress 
+                                  value={clientProjects.length > 0 ? (completedProjects / clientProjects.length) * 100 : 0} 
+                                  className="h-2" 
+                                />
+                              </div>
+                              
+                              <Button 
+                                variant="outline" 
+                                size="sm" 
+                                className="w-full"
+                                onClick={() => {
+                                  setClientFilter(client.id);
+                                  setActiveTab('overview');
+                                }}
+                              >
+                                Ver Proyectos
+                              </Button>
+                            </div>
+                          </CardContent>
+                        </Card>
+                      </motion.div>
+                    );
+                  })}
+                </div>
+              </TabsContent>
+
+              {/* Vista Detallada Admin */}
+              <TabsContent value="detailed" className="space-y-6">
+                {selectedProject ? (
+                  <div className="space-y-4">
+                    <div className="flex items-center justify-between">
+                      <div>
+                        <h2 className="text-xl font-bold text-gray-900 dark:text-white">
+                          {selectedProject.name}
+                        </h2>
+                        <p className="text-gray-600 dark:text-gray-400">
+                          Cliente: {selectedProject.users?.full_name || selectedProject.users?.email}
+                        </p>
+                      </div>
+                      
+                      <div className="flex items-center gap-2">
+                        <Select value={selectedProjectId} onValueChange={setSelectedProjectId}>
+                          <SelectTrigger className="w-64">
+                            <SelectValue placeholder="Seleccionar proyecto" />
+                          </SelectTrigger>
+                          <SelectContent>
+                            {allProjects.map((project) => (
+                              <SelectItem key={project.id} value={project.id}>
+                                {project.name} - {project.users?.full_name || 'Cliente desconocido'}
+                              </SelectItem>
+                            ))}
+                          </SelectContent>
+                        </Select>
+                      </div>
+                    </div>
+
+                    <PhasesAndTasks 
+                      project={selectedProject} 
+                      user={user}
+                      onUpdate={(updatedProject) => {
+                        console.log('Proyecto actualizado:', updatedProject);
+                        // Aquí podrías actualizar el proyecto en el estado local
+                      }}
+                    />
+                  </div>
+                ) : (
+                  <div className="text-center py-12">
+                    <AlertCircle className="h-12 w-12 text-gray-400 mx-auto mb-4" />
+                    <h3 className="text-lg font-medium text-gray-900 dark:text-white mb-2">
+                      Selecciona un proyecto
+                    </h3>
+                    <p className="text-gray-500 dark:text-gray-400">
+                      Elige un proyecto de la vista general para ver sus detalles
+                    </p>
+                  </div>
+                )}
+              </TabsContent>
+            </Tabs>
+          </div>
+        )}
+      </div>
+    </div>
+  );
+};
+
+export default AdminPhasesAndTasksPage;

@@ -59,6 +59,8 @@ const ProyectosNuevo = createLazyComponent(() => import('./pages/ProyectosNuevo'
 const CollaborationPage = createLazyComponent(() => import('./pages/CollaborationPage'));
 const ClientCollaborationPage = createLazyComponent(() => import('./pages/ClientCollaborationPage'));
 const AdminCollaborationPage = createLazyComponent(() => import('./pages/AdminCollaborationPage'));
+const PhasesAndTasksPage = createLazyComponent(() => import('./pages/PhasesAndTasksPage'));
+const AdminPhasesAndTasksPage = createLazyComponent(() => import('./pages/AdminPhasesAndTasksPage'));
 
 const WorkspacePage = createLazyComponent(() => import('./pages/WorkspacePage'));
 const Perfil = createLazyComponent(() => import('./pages/Perfil'));
@@ -173,11 +175,27 @@ function AppRoutes() {
         </ProtectedRoute>
       } />
       
+      <Route path="/admin/fases-tareas" element={
+        <ProtectedRoute>
+          <DashboardLayout>
+            <AdminPhasesAndTasksPage />
+          </DashboardLayout>
+        </ProtectedRoute>
+      } />
+      
       {/* Rutas del dashboard del cliente */}
       <Route path="/proyectos" element={
         <ProtectedRoute>
           <DashboardLayout key="proyectos">
             <ProjectsPage key="proyectos-content" />
+          </DashboardLayout>
+        </ProtectedRoute>
+      } />
+      
+      <Route path="/fases-tareas" element={
+        <ProtectedRoute>
+          <DashboardLayout key="fases-tareas">
+            <PhasesAndTasksPage key="fases-tareas-content" />
           </DashboardLayout>
         </ProtectedRoute>
       } />
