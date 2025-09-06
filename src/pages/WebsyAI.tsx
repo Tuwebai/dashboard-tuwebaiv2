@@ -27,6 +27,7 @@ import { ContextPanel } from '@/components/websy-ai/ContextPanel';
 import { AISettingsModal } from '@/components/websy-ai/AISettingsModal';
 import { DiagnosticPanel } from '@/components/websy-ai/DiagnosticPanel';
 import { EnvDebug } from '@/components/websy-ai/EnvDebug';
+import { ConnectionTest } from '@/components/websy-ai/ConnectionTest';
 import { supabase } from '@/lib/supabase';
 import { logConfigStatus } from '@/utils/checkConfig';
 
@@ -417,6 +418,7 @@ const WebsyAI: React.FC = () => {
               loading={loadingContext}
             />
             <EnvDebug />
+            <ConnectionTest />
             <DiagnosticPanel />
           </div>
         </div>

@@ -39,13 +39,26 @@ export const useGeminiAI = ({ apiKey, temperature = 0.7, maxTokens = 2048 }: Use
       let tickets = [];
 
       try {
+        // Consulta simple de proyectos - solo columnas básicas
         const projectsResult = await supabase
           .from('projects')
-          .select('id, name, status, progress, created_at, updated_at, created_by')
+          .select('id, name, created_at')
           .limit(10);
         
         if (projectsResult.error) {
           console.warn('⚠️ Error obteniendo proyectos:', projectsResult.error);
+          // Intentar consulta aún más simple
+          const simpleProjectsResult = await supabase
+            .from('projects')
+            .select('id, name')
+            .limit(5);
+          
+          if (simpleProjectsResult.error) {
+            console.warn('⚠️ Error en consulta simple de proyectos:', simpleProjectsResult.error);
+          } else {
+            projects = simpleProjectsResult.data || [];
+            console.log('✅ Proyectos obtenidos (consulta simple):', projects.length);
+          }
         } else {
           projects = projectsResult.data || [];
           console.log('✅ Proyectos obtenidos:', projects.length);
@@ -71,13 +84,26 @@ export const useGeminiAI = ({ apiKey, temperature = 0.7, maxTokens = 2048 }: Use
       }
 
       try {
+        // Consulta simple de tickets - solo columnas básicas
         const ticketsResult = await supabase
           .from('tickets')
-          .select('id, title, status, priority, created_at, user_id')
+          .select('id, title, created_at')
           .limit(10);
         
         if (ticketsResult.error) {
           console.warn('⚠️ Error obteniendo tickets:', ticketsResult.error);
+          // Intentar consulta aún más simple
+          const simpleTicketsResult = await supabase
+            .from('tickets')
+            .select('id, title')
+            .limit(5);
+          
+          if (simpleTicketsResult.error) {
+            console.warn('⚠️ Error en consulta simple de tickets:', simpleTicketsResult.error);
+          } else {
+            tickets = simpleTicketsResult.data || [];
+            console.log('✅ Tickets obtenidos (consulta simple):', tickets.length);
+          }
         } else {
           tickets = ticketsResult.data || [];
           console.log('✅ Tickets obtenidos:', tickets.length);
