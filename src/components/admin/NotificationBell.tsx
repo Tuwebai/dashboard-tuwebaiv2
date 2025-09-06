@@ -7,6 +7,7 @@ import { ScrollArea } from '@/components/ui/scroll-area';
 import { toast } from '@/hooks/use-toast';
 import { useApp } from '@/contexts/AppContext';
 import { notificationService, Notification } from '@/lib/notificationService';
+import { useTheme } from '@/contexts/ThemeContext';
 import './NotificationBell.css';
 
 interface NotificationBellProps {
@@ -14,6 +15,7 @@ interface NotificationBellProps {
 }
 
 export default function NotificationBell({ className = '' }: NotificationBellProps) {
+  const { theme } = useTheme();
   const { user } = useApp();
   const [notifications, setNotifications] = useState<Notification[]>([]);
   const [unreadCount, setUnreadCount] = useState(0);
@@ -262,17 +264,17 @@ export default function NotificationBell({ className = '' }: NotificationBellPro
       {/* Dropdown de notificaciones */}
       {showDropdown && (
         <div className="absolute right-0 top-12 w-96 z-50">
-          <Card className="bg-white border-slate-200 shadow-xl">
+          <Card className="bg-white dark:bg-slate-800 border-slate-200 dark:border-slate-700 shadow-xl">
             <CardHeader className="pb-3">
               <div className="flex items-center justify-between">
-                <CardTitle className="text-slate-800 text-lg">Notificaciones</CardTitle>
+                <CardTitle className="text-slate-800 dark:text-slate-100 text-lg">Notificaciones</CardTitle>
                 <div className="flex items-center space-x-2">
                   {unreadCount > 0 && (
                     <Button
                       onClick={markAllAsRead}
                       variant="ghost"
                       size="sm"
-                      className="h-7 px-2 text-xs text-blue-600 hover:text-blue-700 hover:bg-blue-50"
+                      className="h-7 px-2 text-xs text-blue-600 dark:text-blue-400 hover:text-blue-700 dark:hover:text-blue-300 hover:bg-blue-50 dark:hover:bg-blue-900/30"
                     >
                       Marcar todas
                     </Button>
@@ -280,12 +282,12 @@ export default function NotificationBell({ className = '' }: NotificationBellPro
                 </div>
               </div>
               {unreadCount > 0 && (
-                <div className="flex items-center space-x-2 text-sm text-slate-500">
+                <div className="flex items-center space-x-2 text-sm text-slate-500 dark:text-slate-400">
                   <span>{unreadCount} no leídas</span>
                   {urgentCount > 0 && (
                     <>
                       <span>•</span>
-                      <span className="text-red-600">{urgentCount} urgentes</span>
+                      <span className="text-red-600 dark:text-red-400">{urgentCount} urgentes</span>
                     </>
                   )}
                 </div>
@@ -299,12 +301,12 @@ export default function NotificationBell({ className = '' }: NotificationBellPro
               >
                 {loading ? (
                   <div className="flex items-center justify-center p-8">
-                    <div className="animate-spin rounded-full h-6 w-6 border-b-2 border-slate-600"></div>
+                    <div className="animate-spin rounded-full h-6 w-6 border-b-2 border-slate-600 dark:border-slate-400"></div>
                   </div>
                 ) : notifications.length === 0 ? (
                   <div className="text-center py-8">
-                    <Bell className="h-8 w-8 text-slate-400 mx-auto mb-2" />
-                    <p className="text-slate-500 text-sm">No hay notificaciones nuevas</p>
+                    <Bell className="h-8 w-8 text-slate-400 dark:text-slate-500 mx-auto mb-2" />
+                    <p className="text-slate-500 dark:text-slate-400 text-sm">No hay notificaciones nuevas</p>
                   </div>
                 ) : (
                   <div className="space-y-1 p-2">
@@ -313,9 +315,9 @@ export default function NotificationBell({ className = '' }: NotificationBellPro
                         key={notification.id}
                         className={`p-3 rounded-lg border transition-colors cursor-pointer ${
                           notification.is_urgent 
-                            ? 'border-red-200 bg-red-50' 
-                            : 'border-slate-200 bg-slate-50'
-                        } hover:bg-slate-100`}
+                            ? 'border-red-200 dark:border-red-800 bg-red-50 dark:bg-red-900/20' 
+                            : 'border-slate-200 dark:border-slate-700 bg-slate-50 dark:bg-slate-700/50'
+                        } hover:bg-slate-100 dark:hover:bg-slate-600/50`}
                         onClick={() => handleNotificationClick(notification)}
                       >
                         <div className="flex items-start space-x-3">
@@ -323,7 +325,7 @@ export default function NotificationBell({ className = '' }: NotificationBellPro
                           <div className="flex-1 min-w-0">
                             <div className="flex items-center space-x-2 mb-1">
                               <h4 className={`font-medium text-sm ${
-                                notification.is_urgent ? 'text-red-700' : 'text-slate-800'
+                                notification.is_urgent ? 'text-red-700 dark:text-red-400' : 'text-slate-800 dark:text-slate-200'
                               }`}>
                                 {notification.title}
                               </h4>
@@ -339,15 +341,15 @@ export default function NotificationBell({ className = '' }: NotificationBellPro
                                 </Badge>
                               )}
                             </div>
-                            <p className="text-xs text-slate-600 line-clamp-2">
+                            <p className="text-xs text-slate-600 dark:text-slate-300 line-clamp-2">
                               {notification.message}
                             </p>
                             <div className="flex items-center justify-between mt-2">
-                              <span className="text-xs text-slate-500">
+                              <span className="text-xs text-slate-500 dark:text-slate-400">
                                 {formatDate(notification.created_at)}
                               </span>
                               {notification.category !== 'system' && (
-                                <Badge variant="outline" className="text-xs text-slate-500 border-slate-300">
+                                <Badge variant="outline" className="text-xs text-slate-500 dark:text-slate-400 border-slate-300 dark:border-slate-600">
                                   {notification.category}
                                 </Badge>
                               )}
