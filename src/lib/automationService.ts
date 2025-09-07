@@ -26,7 +26,7 @@ export interface Task {
   phase_key?: string;
   created_at: string;
   updated_at?: string;
-  table_name?: 'tasks' | 'project_tasks';
+  table_name?: 'tasks';
 }
 
 export interface Report {
@@ -160,7 +160,7 @@ class AutomationService {
           .gte('created_at', weekStart.toISOString())
           .lte('created_at', weekEnd.toISOString()),
         supabase
-          .from('project_tasks')
+          .from('tasks')
           .select('*')
           .gte('created_at', weekStart.toISOString())
           .lte('created_at', weekEnd.toISOString())
@@ -172,7 +172,7 @@ class AutomationService {
       // Combinar tareas de ambas tablas
       const tasks = [
         ...(tasksResult.data || []).map(t => ({ ...t, table_name: 'tasks' as const })),
-        ...(projectTasksResult.data || []).map(t => ({ ...t, table_name: 'project_tasks' as const }))
+        ...(projectTasksResult.data || []).map(t => ({ ...t, table_name: 'tasks' as const }))
       ];
 
       // Calcular métricas
@@ -298,7 +298,7 @@ class AutomationService {
   /**
    * Asignación inteligente de tareas según habilidades
    */
-  public async assignTaskIntelligently(taskId: string, tableName: 'tasks' | 'project_tasks' = 'tasks'): Promise<boolean> {
+  public async assignTaskIntelligently(taskId: string, tableName: 'tasks' = 'tasks'): Promise<boolean> {
     try {
       // Obtener la tarea de la tabla correspondiente
       const { data: task, error: taskError } = await supabase
@@ -404,7 +404,7 @@ class AutomationService {
           .gte('due_date', now.toISOString())
           .lte('due_date', tomorrow.toISOString()),
         supabase
-          .from('project_tasks')
+          .from('tasks')
           .select(`
             id,
             title,
@@ -448,7 +448,7 @@ class AutomationService {
           .in('status', ['pending', 'in-progress'])
           .lt('due_date', now.toISOString()),
         supabase
-          .from('project_tasks')
+          .from('tasks')
           .select(`
             id,
             title,

@@ -1,5 +1,5 @@
 import { useState, useCallback, useEffect } from 'react';
-import { googleCalendarService, CalendarEvent } from '@/lib/googleCalendarService';
+import { googleCalendarService, CalendarEvent } from '../lib/googleCalendarService';
 import { toast } from '@/hooks/use-toast';
 
 interface User {
@@ -288,100 +288,92 @@ export const useGoogleCalendar = (currentUser?: User | null) => {
     endTime: string;
     attendees?: string[];
     location?: string;
+    userMessage?: string; // Agregar mensaje del usuario para personalización
   }): Promise<CalendarEvent | null> => {
-    // Generar descripción profesional basada en el título
-    const generateProfessionalDescription = (title: string): string => {
-      const meetingTypes = {
-        'reunión': 'Reunión de trabajo',
-        'meeting': 'Meeting de trabajo',
-        'presentación': 'Presentación de proyecto',
-        'presentation': 'Project presentation',
-        'revisión': 'Revisión de proyecto',
-        'review': 'Project review',
-        'planificación': 'Sesión de planificación',
-        'planning': 'Planning session',
-        'análisis': 'Sesión de análisis',
-        'analysis': 'Analysis session',
-        'coordinación': 'Reunión de coordinación',
-        'coordination': 'Coordination meeting'
-      };
+    // Generar descripción personalizada basada en el mensaje del usuario
+    const generatePersonalizedDescription = (title: string, userMessage?: string): string => {
+      // Si hay descripción personalizada, usarla
+      if (meetingData.description) {
+        return meetingData.description;
+      }
 
-      const meetingType = Object.keys(meetingTypes).find(key => 
-        title.toLowerCase().includes(key)
-      ) || 'reunión';
+      // Si hay mensaje del usuario, crear descripción basada en él
+      if (userMessage) {
+        const cleanMessage = userMessage.replace(/programar|reunir|reunión|meeting|calendario|calendar/gi, '').trim();
+        
+        return `📅 **${title}**
 
-      const professionalType = meetingTypes[meetingType as keyof typeof meetingTypes] || 'Reunión de trabajo';
+**Contexto:**
+${cleanMessage}
 
-      return `📅 **${professionalType}**
+**Agenda sugerida:**
+• Revisión del tema principal
+• Discusión de puntos clave
+• Definición de próximos pasos
+• Asignación de responsabilidades
 
-**Agenda:**
-• Revisión de objetivos y metas
-• Análisis de progreso actual
-• Planificación de próximos pasos
-• Definición de responsabilidades
-• Establecimiento de deadlines
-
-**Preparación requerida:**
-• Revisar documentación previa
-• Preparar puntos de discusión
-• Confirmar disponibilidad de recursos
+**Preparación:**
+• Revisar información relevante
+• Preparar preguntas específicas
+• Confirmar disponibilidad
 
 **Objetivos:**
-• Alinear expectativas del equipo
-• Resolver bloqueos identificados
-• Optimizar procesos de trabajo
-• Mejorar comunicación interna
-
-**Seguimiento:**
-• Actas de reunión serán enviadas post-reunión
-• Próximos pasos definidos en el chat del equipo
-• Revisión de progreso en la siguiente sesión
+• Resolver dudas planteadas
+• Establecer acuerdos claros
+• Planificar acciones concretas
 
 ---
-*Reunión programada automáticamente por Websy AI - TuWebAI Dashboard*
-*Para más información: https://tuwebai.com*`;
+*Evento programado por Websy AI - TuWebAI Dashboard*
+*Para más información: https://dashboard.tuweb-ai.com*`;
+      }
+
+      // Descripción genérica profesional
+      return `📅 **${title}**
+
+**Agenda:**
+• Revisión de objetivos
+• Análisis de situación actual
+• Planificación de acciones
+• Definición de responsabilidades
+
+**Preparación requerida:**
+• Revisar documentación relevante
+• Preparar puntos de discusión
+• Confirmar disponibilidad
+
+**Objetivos:**
+• Alinear expectativas
+• Resolver dudas
+• Establecer próximos pasos
+
+---
+*Evento programado por Websy AI - TuWebAI Dashboard*
+*Para más información: https://dashboard.tuweb-ai.com*`;
     };
 
     // Generar ubicación profesional si no se proporciona
     const generateProfessionalLocation = (): string => {
       const locations = [
-        'Sala de conferencias principal - Oficina TuWebAI',
         'Google Meet - Enlace enviado por email',
         'Microsoft Teams - Sala virtual',
-        'Zoom - Link compartido en el chat',
-        'Oficina principal - Piso 2, Sala A'
+        'Zoom - Link compartido',
+        'Sala de conferencias virtual'
       ];
       return locations[Math.floor(Math.random() * locations.length)];
     };
 
-    // Generar asistentes sugeridos basados en el tipo de reunión
-    const generateSuggestedAttendees = (title: string): string[] => {
-      const attendees = [
-        'equipo@tuwebai.com',
-        'proyectos@tuwebai.com',
-        'admin@tuwebai.com'
-      ];
-      
-      if (title.toLowerCase().includes('técnico') || title.toLowerCase().includes('technical')) {
-        attendees.push('desarrollo@tuwebai.com');
-      }
-      if (title.toLowerCase().includes('diseño') || title.toLowerCase().includes('design')) {
-        attendees.push('diseño@tuwebai.com');
-      }
-      if (title.toLowerCase().includes('marketing') || title.toLowerCase().includes('ventas')) {
-        attendees.push('marketing@tuwebai.com');
-      }
-      
-      return attendees;
+    // Solo usar asistentes reales si se proporcionan
+    const getAttendees = (): string[] => {
+      return meetingData.attendees || []; // No generar correos falsos
     };
 
-    const professionalDescription = generateProfessionalDescription(meetingData.title);
+    const personalizedDescription = generatePersonalizedDescription(meetingData.title, meetingData.userMessage);
     const professionalLocation = meetingData.location || generateProfessionalLocation();
-    const suggestedAttendees = meetingData.attendees || generateSuggestedAttendees(meetingData.title);
+    const attendees = getAttendees();
 
     const event: Omit<CalendarEvent, 'id'> = {
-      summary: `🤖 ${meetingData.title}`,
-      description: professionalDescription,
+      summary: meetingData.title, // Quitar emoji para que se vea más profesional
+      description: personalizedDescription,
       start: {
         dateTime: meetingData.startTime,
         timeZone: Intl.DateTimeFormat().resolvedOptions().timeZone
@@ -390,11 +382,11 @@ export const useGoogleCalendar = (currentUser?: User | null) => {
         dateTime: meetingData.endTime,
         timeZone: Intl.DateTimeFormat().resolvedOptions().timeZone
       },
-      attendees: suggestedAttendees.map(email => ({ 
+      attendees: attendees.length > 0 ? attendees.map(email => ({ 
         email,
         responseStatus: 'needsAction',
         optional: false
-      })),
+      })) : [], // Solo incluir asistentes si existen
       location: professionalLocation,
       reminders: {
         useDefault: false,

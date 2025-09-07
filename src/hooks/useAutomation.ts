@@ -181,7 +181,7 @@ export const useAutomation = () => {
           .lt('due_date', new Date().toISOString())
           .order('due_date', { ascending: true }),
         supabase
-          .from('project_tasks')
+          .from('tasks')
           .select('*')
           .eq('status', 'pending')
           .lt('due_date', new Date().toISOString())
@@ -193,7 +193,7 @@ export const useAutomation = () => {
 
       const tasks = [
         ...(tasksResult.data || []).map(t => ({ ...t, table_name: 'tasks' as const })),
-        ...(projectTasksResult.data || []).map(t => ({ ...t, table_name: 'project_tasks' as const }))
+        ...(projectTasksResult.data || []).map(t => ({ ...t, table_name: 'tasks' as const }))
       ];
 
       return tasks;

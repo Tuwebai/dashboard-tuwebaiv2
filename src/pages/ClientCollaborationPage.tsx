@@ -231,7 +231,7 @@ export default function ClientCollaborationPage() {
 
         // Cargar tareas del proyecto
         const { data: tasksData } = await supabase
-          .from('project_tasks')
+          .from('tasks')
           .select('*')
           .eq('project_id', project.id);
 

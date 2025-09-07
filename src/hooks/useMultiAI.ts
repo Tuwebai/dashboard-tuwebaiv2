@@ -389,7 +389,8 @@ Para programar reuniones, primero necesitas conectar tu Google Calendar.
           const meetingData = {
             title: title,
             startTime: startTime.toISOString(),
-            endTime: endTime.toISOString()
+            endTime: endTime.toISOString(),
+            userMessage: userMessage // Pasar el mensaje del usuario para personalización
           };
 
           const createdEvent = await createMeeting(meetingData);

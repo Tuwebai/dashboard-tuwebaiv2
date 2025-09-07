@@ -50,14 +50,14 @@ export const useWebsyMemory = () => {
     try {
       setIsLoading(true);
       const { data, error } = await supabase
-        .from('websy_conversation_memories')
+        .from('websy_memory')
         .select('*')
         .eq('user_id', user.id)
         .order('updated_at', { ascending: false })
         .limit(50);
 
       if (error) {
-        console.warn('Error consultando websy_conversation_memories:', error.message);
+        console.warn('Error consultando websy_memory:', error.message);
         setConversationMemories([]);
         return;
       }
@@ -129,7 +129,7 @@ export const useWebsyMemory = () => {
     try {
       // Verificar si ya existe una memoria para esta conversación
       const { data: existingMemory } = await supabase
-        .from('websy_conversation_memories')
+        .from('websy_memory')
         .select('*')
         .eq('user_id', user.id)
         .eq('conversation_id', conversationId)
@@ -139,7 +139,7 @@ export const useWebsyMemory = () => {
       if (existingMemory) {
         // Actualizar memoria existente
         const { data: updatedData, error } = await supabase
-          .from('websy_conversation_memories')
+          .from('websy_memory')
           .update({
             context_summary: contextSummary,
             key_topics: keyTopics,
@@ -158,7 +158,7 @@ export const useWebsyMemory = () => {
       } else {
         // Crear nueva memoria
         const { data: newData, error } = await supabase
-          .from('websy_conversation_memories')
+          .from('websy_memory')
           .insert({
             user_id: user.id,
             conversation_id: conversationId,

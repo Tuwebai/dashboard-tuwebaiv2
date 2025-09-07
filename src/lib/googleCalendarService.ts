@@ -230,7 +230,6 @@ class GoogleCalendarService {
       }
 
       const createdEvent = await response.json();
-      console.log('Event created successfully in Google Calendar:', createdEvent);
       
       return {
         id: createdEvent.id,
@@ -283,7 +282,6 @@ class GoogleCalendarService {
       }
 
       const updatedEvent = await response.json();
-      console.log('Event updated successfully in Google Calendar:', updatedEvent);
       
       return {
         id: updatedEvent.id,
@@ -325,7 +323,6 @@ class GoogleCalendarService {
         throw new Error(`Failed to delete event: ${errorData.error?.message || response.statusText}`);
       }
 
-      console.log('Event deleted successfully from Google Calendar:', eventId);
       return true;
     } catch (error) {
       console.error('Error deleting calendar event:', error);
@@ -376,7 +373,6 @@ class GoogleCalendarService {
         reminders: event.reminders,
       }));
 
-      console.log('Events retrieved successfully from Google Calendar:', events.length);
       return events;
     } catch (error) {
       console.error('Error listing calendar events:', error);

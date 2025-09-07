@@ -249,7 +249,7 @@ export default function AdminCollaborationPage() {
 
       // Cargar tareas
       const { data: tasksData, error: tasksError } = await supabase
-        .from('project_tasks')
+        .from('tasks')
         .select('*')
         .eq('project_id', projectId)
         .order('created_at', { ascending: false });
@@ -428,7 +428,7 @@ export default function AdminCollaborationPage() {
       };
 
       const { data, error } = await supabase
-        .from('project_tasks')
+        .from('tasks')
         .insert([taskData])
         .select()
         .single();
@@ -490,7 +490,7 @@ export default function AdminCollaborationPage() {
   const updateTaskStatus = async (taskId: string, newStatus: Task['status']) => {
     try {
       const { error } = await supabase
-        .from('project_tasks')
+        .from('tasks')
         .update({ status: newStatus })
         .eq('id', taskId);
 

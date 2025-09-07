@@ -133,7 +133,7 @@ export const AutomationDashboard: React.FC = () => {
           .order('due_date', { ascending: true })
           .limit(5),
         supabase
-          .from('project_tasks')
+          .from('tasks')
           .select('*')
           .eq('status', 'pending')
           .lt('due_date', new Date().toISOString())
@@ -144,7 +144,7 @@ export const AutomationDashboard: React.FC = () => {
       if (!overdueTasksResult.error && !overdueProjectTasksResult.error) {
         const overdueTasks = [
           ...(overdueTasksResult.data || []).map(t => ({ ...t, table_name: 'tasks' as const })),
-          ...(overdueProjectTasksResult.data || []).map(t => ({ ...t, table_name: 'project_tasks' as const }))
+          ...(overdueProjectTasksResult.data || []).map(t => ({ ...t, table_name: 'tasks' as const }))
         ];
         setOverdueTasks(overdueTasks);
       }
@@ -184,7 +184,7 @@ export const AutomationDashboard: React.FC = () => {
     }
   };
 
-  const assignTaskIntelligently = async (taskId: string, tableName: 'tasks' | 'project_tasks' = 'tasks') => {
+  const assignTaskIntelligently = async (taskId: string, tableName: 'tasks' = 'tasks') => {
     try {
       const success = await automationService.assignTaskIntelligently(taskId, tableName);
       if (success) {

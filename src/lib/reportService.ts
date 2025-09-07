@@ -46,14 +46,14 @@ export class ReportService {
           .select('*')
           .gte('created_at', startDate.toISOString()),
         supabase
-          .from('project_tasks')
+          .from('tasks')
           .select('*')
           .gte('created_at', startDate.toISOString())
       ]);
 
       const allTasks = [
         ...(tasksResult.data || []).map(t => ({ ...t, table_name: 'tasks' as const })),
-        ...(projectTasksResult.data || []).map(t => ({ ...t, table_name: 'project_tasks' as const }))
+        ...(projectTasksResult.data || []).map(t => ({ ...t, table_name: 'tasks' as const }))
       ];
 
       // Calcular estadísticas
