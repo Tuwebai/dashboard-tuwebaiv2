@@ -1021,3 +1021,15 @@ h1, h2, h3, h4, h5, h6 {
     scroll-behavior: auto !important;
   }
 }
+
+/* Estilos para burbujas de chat estilo ChatGPT */
+[data-multiline="true"] {
+  padding-top: 0.75rem;
+  padding-bottom: 0.75rem;
+}
+
+/* Ajuste para mensajes cortos - evitar break innecesario */
+.user-message-bubble {
+  max-width: min(70%, fit-content) !important;
+  width: fit-content !important;
+}

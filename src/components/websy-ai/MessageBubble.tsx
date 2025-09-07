@@ -156,54 +156,53 @@ export const MessageBubble: React.FC<MessageBubbleProps> = ({
         </Avatar>
       )}
       
-      <div className={`flex flex-col max-w-[80%] ${isAI ? 'items-start' : 'items-end'} group/turn-messages`}>
+      <div className={`flex flex-col ${isAI ? 'items-start' : 'items-end'} group/turn-messages`}>
         {/* Vista previa de archivos adjuntos - Arriba del mensaje */}
         {renderAttachments()}
         
-        <Card className={`${
+        {/* Burbuja de mensaje estilo ChatGPT */}
+        <div className={`relative rounded-[18px] px-4 py-1.5 data-[multiline]:py-3 ${
           isAI 
-            ? 'bg-muted/50 border-muted-foreground/20' 
-            : 'bg-primary text-primary-foreground border-primary/20'
-        }`}>
-          <CardContent className="p-3">
-            <div className="prose prose-sm max-w-none dark:prose-invert">
-              {!isAI && isAdmin && isEditing ? (
-                <div className="relative">
-                  <textarea
-                    value={localEditText}
-                    onChange={(e) => setLocalEditText(e.target.value)}
-                    className="w-full min-h-[60px] p-0 border-none resize-none focus:outline-none bg-transparent text-primary-foreground placeholder:text-primary-foreground/70 pr-32"
-                    placeholder="Edita tu mensaje..."
-                    autoFocus
-                  />
-                  <div className="absolute bottom-2 right-2 flex gap-1">
-                    <button
-                      onClick={handleCancelEdit}
-                      className="bg-white/90 hover:bg-white text-gray-800 h-6 px-2 text-xs rounded border border-gray-300 shadow-sm"
-                    >
-                      Cancelar
-                    </button>
-                    <button
-                      onClick={() => handleEditMessage(message.id, localEditText)}
-                      className="bg-white/90 hover:bg-white text-gray-800 h-6 px-2 text-xs rounded border border-gray-300 shadow-sm"
-                    >
-                      Enviar
-                    </button>
-                  </div>
-                </div>
-              ) : isAI && showTypewriter ? (
-                <TypewriterText 
-                  text={message.message} 
-                  speed={1}
-                  onComplete={() => setShowTypewriter(false)}
-                  onProgress={onTypewriterProgress}
+            ? 'bg-muted/50' 
+            : 'bg-primary text-primary-foreground dark:bg-[#323232D9] dark:text-white user-message-bubble'
+        }`} data-multiline={message.message.includes('\n')}>
+          <div className="whitespace-pre-wrap">
+            {!isAI && isAdmin && isEditing ? (
+              <div className="relative">
+                <textarea
+                  value={localEditText}
+                  onChange={(e) => setLocalEditText(e.target.value)}
+                  className="w-full min-h-[60px] p-0 border-none resize-none focus:outline-none bg-transparent text-primary-foreground placeholder:text-primary-foreground/70 pr-32"
+                  placeholder="Edita tu mensaje..."
+                  autoFocus
                 />
-              ) : (
-                <FormattedMessage content={message.message} />
-              )}
-            </div>
-          </CardContent>
-        </Card>
+                <div className="absolute bottom-2 right-2 flex gap-1">
+                  <button
+                    onClick={handleCancelEdit}
+                    className="bg-white/90 hover:bg-white text-gray-800 h-6 px-2 text-xs rounded border border-gray-300 shadow-sm"
+                  >
+                    Cancelar
+                  </button>
+                  <button
+                    onClick={() => handleEditMessage(message.id, localEditText)}
+                    className="bg-white/90 hover:bg-white text-gray-800 h-6 px-2 text-xs rounded border border-gray-300 shadow-sm"
+                  >
+                    Enviar
+                  </button>
+                </div>
+              </div>
+            ) : isAI && showTypewriter ? (
+              <TypewriterText 
+                text={message.message} 
+                speed={1}
+                onComplete={() => setShowTypewriter(false)}
+                onProgress={onTypewriterProgress}
+              />
+            ) : (
+              <FormattedMessage content={message.message} />
+            )}
+          </div>
+        </div>
         
         
         <div className="flex items-center justify-between mt-1">

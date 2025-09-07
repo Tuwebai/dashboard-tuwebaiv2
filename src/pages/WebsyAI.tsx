@@ -1,7 +1,6 @@
 import React, { useState, useEffect, useRef, useCallback } from 'react';
 import { useApp } from '@/contexts/AppContext';
 import { useTheme } from '@/contexts/ThemeContext';
-import { ThemeToggle } from '@/components/ThemeToggle';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
@@ -51,6 +50,8 @@ import { useNavigate } from 'react-router-dom';
 import websyAvatar from '@/assets/websyavatar.png';
 import websyAvatarDark from '@/assets/websyparamodooscuro.png';
 import { TypingIndicator } from '@/components/websy-ai/TypingIndicator';
+import { ThinkingIndicator } from '@/components/websy-ai/ThinkingIndicator';
+import { CleanResponse } from '@/components/websy-ai/CleanResponse';
 import { ChatInput } from '@/components/websy-ai/ChatInput';
 import { AISettingsModal } from '@/components/websy-ai/AISettingsModal';
 // Removidos - ahora están en configuración
@@ -61,9 +62,28 @@ const WebsyAI: React.FC = () => {
   const { theme, toggleTheme } = useTheme();
   const navigate = useNavigate();
   
+  // Forzar modo oscuro en WebsyAI - persistente
+  useEffect(() => {
+    // Forzar tema oscuro en localStorage
+    localStorage.setItem('theme', 'dark');
+    
+    // Aplicar tema oscuro al documento
+    document.documentElement.classList.add('dark');
+    document.documentElement.classList.remove('light');
+    
+    // Si el tema no es oscuro, cambiarlo
+    if (theme !== 'dark') {
+      toggleTheme();
+    }
+  }, []);
+  
   // Seleccionar avatar según el tema
   const websyAvatarSrc = theme === 'dark' ? websyAvatarDark : websyAvatar;
   const [isTyping, setIsTyping] = useState(false);
+  const [isThinking, setIsThinking] = useState(false);
+  const [aiResponse, setAiResponse] = useState<string>('');
+  const [isStreaming, setIsStreaming] = useState(false);
+  const [streamingText, setStreamingText] = useState('');
   const [searchQuery, setSearchQuery] = useState('');
   const [showSettings, setShowSettings] = useState(false);
   const [editingMessageId, setEditingMessageId] = useState<string | null>(null);
@@ -157,11 +177,12 @@ const WebsyAI: React.FC = () => {
         setNewMessageIds(prev => new Set(prev).add(userMessageId));
       }
 
-      // Mostrar indicador de escritura
-      setIsTyping(true);
+      // Mostrar indicador de pensamiento inmediatamente
+      setIsThinking(true);
+      setAiResponse('');
 
       // Enviar a Gemini AI
-      const aiResponse = await sendMessage(
+      const response = await sendMessage(
         message,
         currentMessages,
         'general',
@@ -169,18 +190,42 @@ const WebsyAI: React.FC = () => {
         attachments
       );
 
+      // Cambiar a modo streaming
+      setIsThinking(false);
+      setIsStreaming(true);
+      setStreamingText('');
+      setAiResponse(response);
+
+      // Simular streaming progresivo
+      const words = response.split(' ');
+      const delay = 1000 / 15; // 15 palabras por segundo
+      
+      for (let i = 0; i <= words.length; i++) {
+        const partialText = words.slice(0, i).join(' ');
+        setStreamingText(partialText);
+        
+        if (i < words.length) {
+          await new Promise(resolve => setTimeout(resolve, delay));
+        }
+      }
+
+      // Finalizar streaming
+      setIsStreaming(false);
+      setStreamingText('');
+
       // Guardar respuesta de la IA
-      const aiMessageId = await saveMessage(aiResponse, true, currentConversationId);
+      const aiMessageId = await saveMessage(response, true, currentConversationId);
       
       // Marcar mensaje de IA como nuevo
       if (aiMessageId) {
         setNewMessageIds(prev => new Set(prev).add(aiMessageId));
       }
 
-      setIsTyping(false);
-
     } catch (error) {
-      setIsTyping(false);
+      setIsThinking(false);
+      setIsStreaming(false);
+      setStreamingText('');
+      setAiResponse('');
       
       const errorMessage = error instanceof Error ? error.message : 'Error desconocido';
       
@@ -475,6 +520,20 @@ const WebsyAI: React.FC = () => {
     }
   }, [isTyping, scrollToBottom]);
 
+  // Scroll automático cuando se muestra "pensando"
+  useEffect(() => {
+    if (isThinking) {
+      scrollToBottom();
+    }
+  }, [isThinking, scrollToBottom]);
+
+  // Scroll automático durante streaming
+  useEffect(() => {
+    if (isStreaming) {
+      scrollToBottom();
+    }
+  }, [isStreaming, streamingText, scrollToBottom]);
+
   // Callback para scroll durante typewriter con debounce
   const handleTypewriterProgress = useCallback(() => {
     // Usar scroll instantáneo para typewriter (más fluido)
@@ -489,6 +548,10 @@ const WebsyAI: React.FC = () => {
       loadMessages(currentConversationId);
       // Limpiar mensajes nuevos al cambiar de conversación
       setNewMessageIds(new Set());
+      // Limpiar respuesta de IA
+      setAiResponse('');
+      setIsStreaming(false);
+      setStreamingText('');
     }
   }, [currentConversationId, loadMessages]);
 
@@ -559,7 +622,6 @@ const WebsyAI: React.FC = () => {
             </div>
           </div>
           <div className="flex items-center gap-2">
-            <ThemeToggle variant="outline" size="sm" />
             <Button
               variant="outline"
               size="sm"
@@ -814,27 +876,45 @@ const WebsyAI: React.FC = () => {
               
               <div className="space-y-6">
                 {currentMessages.map((message) => (
-                  <MessageBubble
-                    key={message.id}
-                    message={message}
-                    isNewMessage={newMessageIds.has(message.id)}
-                    onCopy={(text) => {
-                      navigator.clipboard.writeText(text);
-                      toast({
-                        title: "Copiado",
-                        description: "Mensaje copiado al portapapeles"
-                      });
-                    }}
-                    onRetry={message.isAI ? handleRetryMessage : undefined}
-                    onEditMessage={handleEditMessage}
-                    onStartEdit={handleStartEdit}
-                    onCancelEdit={handleCancelEdit}
-                    isEditing={editingMessageId === message.id}
-                    onTypewriterProgress={handleTypewriterProgress}
-                  />
+                  !message.isAI ? (
+                    <MessageBubble
+                      key={message.id}
+                      message={message}
+                      isNewMessage={newMessageIds.has(message.id)}
+                      onCopy={(text) => {
+                        navigator.clipboard.writeText(text);
+                        toast({
+                          title: "Copiado",
+                          description: "Mensaje copiado al portapapeles"
+                        });
+                      }}
+                      onRetry={undefined}
+                      onEditMessage={handleEditMessage}
+                      onStartEdit={handleStartEdit}
+                      onCancelEdit={handleCancelEdit}
+                      isEditing={editingMessageId === message.id}
+                      onTypewriterProgress={handleTypewriterProgress}
+                    />
+                  ) : (
+                    <CleanResponse 
+                      key={message.id}
+                      content={message.message}
+                      onRetry={handleRetryMessage}
+                    />
+                  )
                 ))}
                 
-                {isTyping && <TypingIndicator />}
+                {/* Respuesta de IA limpia */}
+                {aiResponse && (
+                  <CleanResponse 
+                    content={aiResponse}
+                    isStreaming={isStreaming}
+                    streamingText={streamingText}
+                    onRetry={handleRetryMessage}
+                  />
+                )}
+                
+                {isThinking && <ThinkingIndicator />}
                 <div ref={messagesEndRef} />
               </div>
             </div>

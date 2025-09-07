@@ -50,14 +50,14 @@ export const useWebsyMemory = () => {
     try {
       setIsLoading(true);
       const { data, error } = await supabase
-        .from('websy_memory')
+        .from('websy_conversation_memories')
         .select('*')
         .eq('user_id', user.id)
         .order('updated_at', { ascending: false })
         .limit(50);
 
       if (error) {
-        console.warn('Error consultando websy_memory:', error.message);
+        console.warn('Error consultando websy_conversation_memories:', error.message);
         setConversationMemories([]);
         return;
       }
@@ -129,7 +129,7 @@ export const useWebsyMemory = () => {
     try {
       // Verificar si ya existe una memoria para esta conversación
       const { data: existingMemory } = await supabase
-        .from('websy_memory')
+        .from('websy_conversation_memories')
         .select('*')
         .eq('user_id', user.id)
         .eq('conversation_id', conversationId)
@@ -139,7 +139,7 @@ export const useWebsyMemory = () => {
       if (existingMemory) {
         // Actualizar memoria existente
         const { data: updatedData, error } = await supabase
-          .from('websy_memory')
+          .from('websy_conversation_memories')
           .update({
             context_summary: contextSummary,
             key_topics: keyTopics,
@@ -158,7 +158,7 @@ export const useWebsyMemory = () => {
       } else {
         // Crear nueva memoria
         const { data: newData, error } = await supabase
-          .from('websy_memory')
+          .from('websy_conversation_memories')
           .insert({
             user_id: user.id,
             conversation_id: conversationId,
@@ -296,16 +296,38 @@ export const useWebsyMemory = () => {
     if (!user) return [];
 
     try {
+      // Limpiar y validar la consulta
+      const cleanQuery = query.trim();
+      if (!cleanQuery || cleanQuery.length < 2) {
+        return [];
+      }
+
+      // Escapar caracteres especiales para SQL
+      const escapedQuery = cleanQuery
+        .replace(/[%_\\]/g, '\\$&')
+        .replace(/[(){}[\]]/g, '\\$&')
+        .replace(/[?]/g, '\\?');
+
+      // Dividir la consulta en palabras para búsqueda más efectiva
+      const words = cleanQuery.split(/\s+/).filter(word => word.length > 2);
+      if (words.length === 0) {
+        return [];
+      }
+
+      // Usar solo la primera palabra para evitar consultas muy complejas
+      const searchTerm = words[0];
+
       const { data, error } = await supabase
         .from('websy_knowledge_base')
         .select('*')
         .eq('user_id', user.id)
-        .or(`title.ilike.%${query}%,content.ilike.%${query}%,tags.cs.{${query}}`)
-        .order('updated_at', { ascending: false });
+        .or(`title.ilike.%${searchTerm}%,content.ilike.%${searchTerm}%`)
+        .order('updated_at', { ascending: false })
+        .limit(10);
 
       if (error) {
         console.warn('Error consultando websy:', error.message);
-        return;
+        return [];
       }
       return data || [];
     } catch (err) {
@@ -319,15 +341,31 @@ export const useWebsyMemory = () => {
     if (!user) return { memories: [], knowledge: [], profile: null };
 
     try {
-      // Buscar memorias relevantes
+      // Limpiar y procesar el mensaje para búsqueda
+      const cleanMessage = currentMessage.trim();
+      if (!cleanMessage || cleanMessage.length < 3) {
+        return { memories: [], knowledge: [], profile: userProfile };
+      }
+
+      // Extraer palabras clave del mensaje (máximo 5 palabras)
+      const keywords = cleanMessage
+        .toLowerCase()
+        .split(/\s+/)
+        .filter(word => word.length > 2)
+        .slice(0, 5);
+
+      // Buscar memorias relevantes usando palabras clave
       const relevantMemories = conversationMemories.filter(memory => 
         memory.key_topics.some(topic => 
-          currentMessage.toLowerCase().includes(topic.toLowerCase())
+          keywords.some(keyword => 
+            topic.toLowerCase().includes(keyword)
+          )
         )
       );
 
-      // Buscar en base de conocimiento
-      const relevantKnowledge = await searchKnowledgeBase(currentMessage);
+      // Buscar en base de conocimiento usando solo las primeras palabras clave
+      const searchQuery = keywords.slice(0, 2).join(' ');
+      const relevantKnowledge = await searchKnowledgeBase(searchQuery);
 
       return {
         memories: relevantMemories,
