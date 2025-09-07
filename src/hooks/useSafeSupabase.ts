@@ -11,8 +11,7 @@ export const useSafeSupabase = () => {
       const { data, error } = await supabase
         .from(tableName)
         .select(columns.join(', '))
-        .limit(options.limit || 10)
-        .abortSignal(AbortSignal.timeout(10000));
+        .limit(options.limit || 10);
 
       if (error) {
         console.warn(`Error consultando ${tableName}:`, error.message);
@@ -44,11 +43,11 @@ export const useSafeSupabase = () => {
     }
   }, []);
 
-  // Consultas seguras para tablas principales
-  const getUsers = useCallback(() => safeQuery('users', ['id', 'full_name', 'email', 'created_at']), [safeQuery]);
-  const getProjects = useCallback(() => safeQuery('projects', ['id', 'name', 'created_at']), [safeQuery]);
-  const getTickets = useCallback(() => safeQuery('tickets', ['id', 'asunto', 'created_at']), [safeQuery]);
-  const getPayments = useCallback(() => safeQuery('payments', ['id', 'amount', 'created_at']), [safeQuery]);
+  // Consultas seguras para tablas principales - columnas reales según BASEDEDATOSCOMPLETA.sql
+  const getUsers = useCallback(() => safeQuery('users', ['id', 'email', 'full_name', 'role', 'created_at']), [safeQuery]);
+  const getProjects = useCallback(() => safeQuery('projects', ['id', 'name', 'description', 'status', 'created_at']), [safeQuery]);
+  const getTickets = useCallback(() => safeQuery('tickets', ['id', 'asunto', 'mensaje', 'email', 'estado', 'prioridad', 'created_at']), [safeQuery]);
+  const getPayments = useCallback(() => safeQuery('payments', ['id', 'amount', 'currency', 'status', 'created_at']), [safeQuery]);
 
   // Contadores seguros
   const getUsersCount = useCallback(() => safeCount('users'), [safeCount]);

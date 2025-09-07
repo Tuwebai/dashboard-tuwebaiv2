@@ -60,92 +60,7 @@ interface MultiAIState {
 const STORAGE_KEY = 'websy_ai_multi_api_state';
 const RESET_INTERVAL_MS = 24 * 60 * 60 * 1000; // 24 horas
 
-// Función para formatear respuestas de IA
-const formatAIResponse = (response: string): string => {
-  // Si la respuesta ya tiene el formato correcto, devolverla tal como está
-  if (response.includes('### 🎯') && response.includes('### 📋') && response.includes('### ⚡') && response.includes('### 💡')) {
-    return response;
-  }
-
-  // Si no tiene el formato correcto, intentar estructurarlo
-  const lines = response.split('\n');
-  const formattedLines: string[] = [];
-  
-  // Agregar encabezado si no existe
-  if (!response.includes('### 🎯')) {
-    formattedLines.push('### 🎯 Resumen Ejecutivo');
-    formattedLines.push('');
-  }
-  
-  // Procesar cada línea
-  let inCodeBlock = false;
-  let hasMainSections = false;
-  
-  for (let i = 0; i < lines.length; i++) {
-    const line = lines[i];
-    const trimmed = line.trim();
-    
-    // Detectar bloques de código
-    if (trimmed.startsWith('```')) {
-      inCodeBlock = !inCodeBlock;
-      formattedLines.push(line);
-      continue;
-    }
-    
-    if (inCodeBlock) {
-      formattedLines.push(line);
-      continue;
-    }
-    
-    // Detectar títulos existentes y convertirlos al formato correcto
-    if (trimmed.startsWith('### ')) {
-      if (!hasMainSections) {
-        hasMainSections = true;
-        if (!trimmed.includes('🎯')) {
-          formattedLines.push('### 🎯 Resumen Ejecutivo');
-          formattedLines.push('');
-        }
-      }
-      formattedLines.push(line);
-    } else if (trimmed.startsWith('## ')) {
-      formattedLines.push('### 📋 ' + trimmed.slice(3));
-    } else if (trimmed.startsWith('# ')) {
-      formattedLines.push('### 🎯 ' + trimmed.slice(2));
-    } else if (trimmed && !hasMainSections) {
-      // Si no hay secciones principales, agregar la primera sección
-      formattedLines.push('### 🎯 Resumen Ejecutivo');
-      formattedLines.push('');
-      formattedLines.push(line);
-      hasMainSections = true;
-    } else {
-      formattedLines.push(line);
-    }
-  }
-  
-  // Asegurar que tenga las secciones principales
-  const finalResponse = formattedLines.join('\n');
-  
-  if (!finalResponse.includes('### 📋')) {
-    formattedLines.push('');
-    formattedLines.push('### 📋 Análisis Detallado');
-    formattedLines.push('Análisis específico del tema abordado.');
-  }
-  
-  if (!finalResponse.includes('### ⚡')) {
-    formattedLines.push('');
-    formattedLines.push('### ⚡ Acciones Recomendadas');
-    formattedLines.push('- Revisar la información proporcionada');
-    formattedLines.push('- Implementar las sugerencias relevantes');
-  }
-  
-  if (!finalResponse.includes('### 💡')) {
-    formattedLines.push('');
-    formattedLines.push('### 💡 Conclusiones');
-    formattedLines.push('Información procesada y lista para implementación.');
-  }
-  
-  return formattedLines.join('\n');
-};
+// Función eliminada - ya no formateamos respuestas automáticamente
 
 export const useMultiAI = ({ 
   temperature = 0.7, 
@@ -993,92 +908,15 @@ EJEMPLO DE RESPUESTA CORRECTA:
 EJEMPLO DE RESPUESTA INCORRECTA:
 "He programado la reunión" o "Se ha programado la reunión"
 
-INSTRUCCIONES DE FORMATO Y ESTILO OBLIGATORIAS:
-1. **SIEMPRE** usa formato Markdown para estructurar tus respuestas
-2. **SIEMPRE** usa **texto en negrita** para títulos y puntos importantes
-3. **SIEMPRE** usa ### para subtítulos principales
-4. **SIEMPRE** usa #### para subtítulos secundarios
-5. **SIEMPRE** usa listas con - para puntos clave
-6. **SIEMPRE** usa \`código\` entre backticks para IDs, nombres técnicos y comandos
-7. **SIEMPRE** estructura tus respuestas con:
-   - Un resumen ejecutivo al inicio
-   - Secciones claramente definidas con ###
-   - Puntos de acción específicos con listas
-   - Conclusiones y recomendaciones
-
-FORMATO OBLIGATORIO DE RESPUESTA:
-\`\`\`markdown
-### 🎯 Resumen Ejecutivo
-[Breve resumen de la respuesta]
-
-### 📋 Análisis Detallado
-[Análisis específico del tema]
-
-### ⚡ Acciones Recomendadas
-- [Acción 1]
-- [Acción 2]
-- [Acción 3]
-
-### 💡 Conclusiones
-[Conclusiones y próximos pasos]
-\`\`\`
-
-INSTRUCCIONES DE CONTENIDO:
-1. Eres un experto en gestión de proyectos web, análisis de datos y optimización de recursos
-2. Puedes analizar proyectos, usuarios, tickets y métricas en tiempo real
-3. Proporciona respuestas precisas y accionables basadas en los datos reales
-4. Si no tienes información suficiente, pide aclaraciones específicas
-5. Mantén un tono profesional pero amigable
-6. Siempre incluye datos específicos cuando sea relevante
-7. PUEDES ANALIZAR IMÁGENES Y ARCHIVOS: Eres capaz de procesar y analizar imágenes, gráficos, diagramas, capturas de pantalla, documentos PDF, y otros archivos adjuntos
-8. Para imágenes: Describe lo que ves, analiza gráficos y datos, identifica problemas o mejoras, proporciona insights basados en el contenido visual
-9. Para archivos: Extrae información relevante, analiza el contenido, identifica patrones o problemas, sugiere mejoras
-
-ACCIONES REALES QUE PUEDES REALIZAR:
-- **Programar reuniones**: Cuando el usuario pida programar una reunión, usa la función createMeeting() para crear el evento real en Google Calendar
-- **Crear eventos**: Puedo crear cualquier tipo de evento en tu calendario usando createEvent()
-- **Gestionar proyectos**: Analizar, crear y actualizar proyectos
-- **Generar reportes**: Crear reportes automáticos basados en datos reales
-- **Análisis de datos**: Proporcionar insights basados en métricas reales
-
-FORMATO DE RESPUESTA REQUERIDO:
-- **OBLIGATORIO**: Usa el formato Markdown especificado arriba
-- **OBLIGATORIO**: Incluye emojis para secciones (🎯, 📋, ⚡, 💡)
-- **OBLIGATORIO**: Usa ### para títulos principales
-- **OBLIGATORIO**: Usa **negrita** para información importante
-- **OBLIGATORIO**: Usa listas con - para puntos clave
-- **OBLIGATORIO**: Mantén un tono ejecutivo y profesional
-- **OBLIGATORIO**: Siempre incluye datos específicos y accionables
-- **OBLIGATORIO**: Cuando realices una acción real, confirma que se completó exitosamente
-
-EJEMPLO DE RESPUESTA CORRECTA:
-\`\`\`markdown
-### 🎯 Resumen Ejecutivo
-He analizado tu solicitud y encontré 3 puntos clave que requieren atención inmediata.
-
-### 📋 Análisis Detallado
-- **Problema identificado**: [descripción específica]
-- **Impacto**: [consecuencias del problema]
-- **Causa raíz**: [explicación técnica]
-
-### ⚡ Acciones Recomendadas
-- Implementar solución A en las próximas 24 horas
-- Revisar configuración B para evitar futuros problemas
-- Programar reunión de seguimiento para el viernes
-
-### 💡 Conclusiones
-La situación es manejable con las acciones propuestas. Te mantendré informado del progreso.
-\`\`\`
-
-IMPORTANTE: 
-- Responde SIEMPRE en español
-- Usa EXACTAMENTE el formato Markdown especificado arriba
-- Incluye SIEMPRE los emojis en los títulos (🎯, 📋, ⚡, 💡)
-- Estructura SIEMPRE tu respuesta con las 4 secciones obligatorias
-- Sé específico con datos reales cuando sea posible
+INSTRUCCIONES:
+- Responde de manera natural y conversacional
+- Para saludos simples como "Hola", responde brevemente y amigable
+- Para consultas complejas, puedes usar formato Markdown si es necesario
 - Mantén un tono profesional pero amigable
+- Responde en español
+- Sé específico con los datos cuando sea relevante
 
-Responde ahora:`;
+Responde de manera útil y contextualizada.`;
 
       // Construir historial de conversación para Gemini
       const geminiHistory: GeminiMessage[] = [
@@ -1213,8 +1051,7 @@ Responde ahora:`;
       // Procesar comandos de tareas y fases
       aiResponse = await processTaskCommands(aiResponse, message);
 
-      // Formatear respuesta para asegurar estructura correcta
-      aiResponse = formatAIResponse(aiResponse);
+      // No formatear respuesta - mantener respuesta natural de la IA
 
       // Actualizar estadísticas de la API actual
       setState(prev => {

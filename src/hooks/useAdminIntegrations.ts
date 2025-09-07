@@ -12,14 +12,9 @@ export const useAdminIntegrations = () => {
 
   const initializeAdminIntegrations = useCallback(async () => {
     try {
-      // Inicializar Google Calendar para el admin
-      if (calendar.initialize) {
-        await calendar.initialize();
-      }
-      
-      // Intentar autenticación silenciosa
-      if (calendar.authenticateSilently) {
-        await calendar.authenticateSilently();
+      // Verificar si ya está autenticado, si no, intentar autenticar
+      if (!calendar.isAuthenticated) {
+        await calendar.authenticate();
       }
 
       setIsInitialized(true);
@@ -29,17 +24,17 @@ export const useAdminIntegrations = () => {
     }
   }, [calendar, email, user]);
 
-  // Auto-conectar servicios para admin al cargar
-  useEffect(() => {
-    if (user?.role === 'admin' && !isInitialized) {
-      // Esperar un poco para que los hooks se inicialicen
-      const timer = setTimeout(() => {
-        initializeAdminIntegrations();
-      }, 1000);
+  // NO auto-conectar servicios - solo cuando se llame explícitamente
+  // useEffect(() => {
+  //   if (user?.role === 'admin' && !isInitialized) {
+  //     // Esperar un poco para que los hooks se inicialicen
+  //     const timer = setTimeout(() => {
+  //       initializeAdminIntegrations();
+  //     }, 1000);
       
-      return () => clearTimeout(timer);
-    }
-  }, [user, isInitialized, initializeAdminIntegrations]);
+  //     return () => clearTimeout(timer);
+  //   }
+  // }, [user, isInitialized, initializeAdminIntegrations]);
 
   // Función para programar reunión automáticamente
   const scheduleMeeting = useCallback(async (title: string, date: Date, time: string, description?: string) => {

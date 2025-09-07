@@ -19,15 +19,11 @@ export const useSupabaseContext = () => {
       let comments = [];
       let dependencies = [];
 
-      // Consulta de proyectos - datos completos
+      // Consulta de proyectos - columnas reales según BASEDEDATOSCOMPLETA.sql
       try {
         const { data, error } = await supabase
           .from('projects')
-          .select(`
-            id, name, description, status, priority, 
-            start_date, end_date, completion_percentage,
-            created_at, updated_at, created_by
-          `)
+          .select('id, name, description, status, created_at, updated_at')
           .limit(10);
         
         if (error) {
@@ -39,11 +35,11 @@ export const useSupabaseContext = () => {
         console.warn('Error en consulta de proyectos:', error);
       }
 
-      // Consulta de usuarios - datos completos
+      // Consulta de usuarios - columnas reales según BASEDEDATOSCOMPLETA.sql
       try {
         const { data, error } = await supabase
           .from('users')
-          .select('id, full_name, email, avatar_url, created_at, last_login')
+          .select('id, email, full_name, role, created_at, updated_at')
           .limit(10);
         
         if (error) {
@@ -55,11 +51,11 @@ export const useSupabaseContext = () => {
         console.warn('Error en consulta de usuarios:', error);
       }
 
-      // Consulta de tickets - solo columnas que existen
+      // Consulta de tickets - columnas reales según BASEDEDATOSCOMPLETA.sql
       try {
         const { data, error } = await supabase
           .from('tickets')
-          .select('id, asunto, created_at, updated_at')
+          .select('id, asunto, mensaje, email, estado, prioridad, created_at, updated_at')
           .limit(10);
         
         if (error) {
@@ -71,11 +67,11 @@ export const useSupabaseContext = () => {
         console.warn('Error en consulta de tickets:', error);
       }
 
-      // Consulta de tareas - solo columnas que existen
+      // Consulta de tareas - columnas reales según BASEDEDATOSCOMPLETA.sql
       try {
         const { data, error } = await supabase
           .from('tasks')
-          .select('id, title, description, status, priority, assignee_name, due_date, completion_percentage, created_at, updated_at')
+          .select('id, title, description, status, priority, assignee, assignee_name, created_at, updated_at')
           .limit(20);
         
         if (error) {
@@ -87,11 +83,11 @@ export const useSupabaseContext = () => {
         console.warn('Error en consulta de tareas:', error);
       }
 
-      // Consulta de fases - solo columnas que existen
+      // Consulta de fases - tabla real project_phases
       try {
         const { data, error } = await supabase
           .from('project_phases')
-          .select('id, name, description, status, start_date, end_date, phase_order, created_at, updated_at')
+          .select('id, name, description, status, phase_order, created_at, updated_at')
           .limit(10);
         
         if (error) {
@@ -103,11 +99,11 @@ export const useSupabaseContext = () => {
         console.warn('Error en consulta de fases:', error);
       }
 
-      // Consulta de métricas - solo columnas que existen
+      // Consulta de métricas - tabla real project_metrics
       try {
         const { data, error } = await supabase
           .from('project_metrics')
-          .select('id, metric_date, completion_percentage, velocity_points, bug_count, task_count, completed_tasks, overdue_tasks, total_hours_estimated, total_hours_actual, created_at')
+          .select('id, metric_date, completion_percentage, task_count, completed_tasks, created_at')
           .limit(20);
         
         if (error) {
@@ -119,11 +115,11 @@ export const useSupabaseContext = () => {
         console.warn('Error en consulta de métricas:', error);
       }
 
-      // Consulta de actividades - solo columnas que existen
+      // Consulta de actividades - tabla real project_activity_log
       try {
         const { data, error } = await supabase
           .from('project_activity_log')
-          .select('id, action, description, old_values, new_values, created_at')
+          .select('id, action, description, created_at')
           .order('created_at', { ascending: false })
           .limit(15);
         
@@ -136,11 +132,11 @@ export const useSupabaseContext = () => {
         console.warn('Error en consulta de actividades:', error);
       }
 
-      // Consulta de archivos adjuntos - solo columnas que existen
+      // Consulta de archivos - tabla real project_attachments
       try {
         const { data, error } = await supabase
           .from('project_attachments')
-          .select('id, file_name, file_path, mime_type, file_size, uploaded_by, created_at')
+          .select('id, file_name, file_path, mime_type, file_size, created_at')
           .limit(10);
         
         if (error) {
@@ -152,11 +148,11 @@ export const useSupabaseContext = () => {
         console.warn('Error en consulta de archivos:', error);
       }
 
-      // Consulta de comentarios - solo columnas que existen
+      // Consulta de comentarios - tabla real task_comments
       try {
         const { data, error } = await supabase
           .from('task_comments')
-          .select('id, comment, user_id, created_at, updated_at')
+          .select('id, comment, created_at, updated_at')
           .order('created_at', { ascending: false })
           .limit(15);
         
@@ -169,7 +165,7 @@ export const useSupabaseContext = () => {
         console.warn('Error en consulta de comentarios:', error);
       }
 
-      // Consulta de dependencias - solo columnas que existen
+      // Consulta de dependencias - tabla real task_dependencies
       try {
         const { data, error } = await supabase
           .from('task_dependencies')

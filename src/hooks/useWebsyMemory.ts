@@ -54,8 +54,7 @@ export const useWebsyMemory = () => {
         .select('*')
         .eq('user_id', user.id)
         .order('updated_at', { ascending: false })
-        .limit(50)
-        .abortSignal(AbortSignal.timeout(10000));
+        .limit(50);
 
       if (error) {
         console.warn('Error consultando websy_conversation_memories:', error.message);
@@ -81,8 +80,7 @@ export const useWebsyMemory = () => {
         .from('websy_user_profiles')
         .select('*')
         .eq('user_id', user.id)
-        .single()
-        .abortSignal(AbortSignal.timeout(10000));
+        .single();
 
       if (error && error.code !== 'PGRST116') throw error;
       setUserProfile(data);
@@ -104,8 +102,7 @@ export const useWebsyMemory = () => {
         .from('websy_knowledge_base')
         .select('*')
         .eq('user_id', user.id)
-        .order('updated_at', { ascending: false })
-        .abortSignal(AbortSignal.timeout(10000));
+        .order('updated_at', { ascending: false });
 
       if (error) {
         console.warn('Error consultando websy:', error.message);
@@ -136,8 +133,7 @@ export const useWebsyMemory = () => {
         .select('*')
         .eq('user_id', user.id)
         .eq('conversation_id', conversationId)
-        .single()
-        .abortSignal(AbortSignal.timeout(10000));
+        .single();
 
       let data;
       if (existingMemory) {
@@ -152,8 +148,7 @@ export const useWebsyMemory = () => {
           })
           .eq('id', existingMemory.id)
           .select()
-          .single()
-          .abortSignal(AbortSignal.timeout(10000));
+          .single();
 
         if (error) {
         console.warn('Error consultando websy:', error.message);
@@ -174,8 +169,7 @@ export const useWebsyMemory = () => {
             updated_at: new Date().toISOString()
           })
           .select()
-          .single()
-          .abortSignal(AbortSignal.timeout(10000));
+          .single();
 
         if (error) {
         console.warn('Error consultando websy:', error.message);
@@ -211,8 +205,7 @@ export const useWebsyMemory = () => {
         .from('websy_user_profiles')
         .select('*')
         .eq('user_id', user.id)
-        .single()
-        .abortSignal(AbortSignal.timeout(10000));
+        .single();
 
       if (existingProfile) {
         // Actualizar perfil existente
@@ -224,8 +217,7 @@ export const useWebsyMemory = () => {
           })
           .eq('user_id', user.id)
           .select()
-          .single()
-          .abortSignal(AbortSignal.timeout(10000));
+          .single();
 
         if (error) {
         console.warn('Error consultando websy:', error.message);
@@ -244,8 +236,7 @@ export const useWebsyMemory = () => {
             updated_at: new Date().toISOString()
           })
           .select()
-          .single()
-          .abortSignal(AbortSignal.timeout(10000));
+          .single();
 
         if (error) {
         console.warn('Error consultando websy:', error.message);
@@ -284,8 +275,7 @@ export const useWebsyMemory = () => {
           created_at: new Date().toISOString()
         })
         .select()
-        .single()
-        .abortSignal(AbortSignal.timeout(10000));
+        .single();
 
       if (error) {
         console.warn('Error consultando websy:', error.message);
@@ -311,8 +301,7 @@ export const useWebsyMemory = () => {
         .select('*')
         .eq('user_id', user.id)
         .or(`title.ilike.%${query}%,content.ilike.%${query}%,tags.cs.{${query}}`)
-        .order('updated_at', { ascending: false })
-        .abortSignal(AbortSignal.timeout(10000));
+        .order('updated_at', { ascending: false });
 
       if (error) {
         console.warn('Error consultando websy:', error.message);

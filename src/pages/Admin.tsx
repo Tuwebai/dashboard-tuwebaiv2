@@ -92,13 +92,14 @@ const Admin = React.memo(() => {
 
   const [initialDataLoaded, setInitialDataLoaded] = useState(false);
 
-  // Google Calendar - Auto-conectar al cargar el dashboard
+  // Google Calendar - Solo inicializar cuando se necesite
   const {
     isAuthenticated: isCalendarAuthenticated,
     userInfo: calendarUserInfo,
     authenticate: authenticateCalendar,
     signOut: signOutCalendar,
-    isLoading: calendarLoading
+    isLoading: calendarLoading,
+    initializeService
   } = useGoogleCalendar(user);
 
   // Cargar datos desde Supabase

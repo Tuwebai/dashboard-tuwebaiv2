@@ -65,6 +65,25 @@ export const useChatHistory = () => {
     }
   };
 
+  // Función para obtener conteo de mensajes de forma segura
+  const getMessageCount = useCallback(async (conversationId: string) => {
+    try {
+      const { count, error } = await supabase
+        .from('conversation_messages')
+        .select('id', { count: 'exact', head: true })
+        .eq('conversation_id', conversationId);
+
+      if (error) {
+        console.warn('Error contando mensajes:', error.message);
+        return 0;
+      }
+      return count || 0;
+    } catch (error) {
+      console.warn('Error en conteo de mensajes:', error);
+      return 0;
+    }
+  }, []);
+
   // Cargar conversaciones del usuario
   const loadConversations = useCallback(async () => {
     if (!user) return;
@@ -81,21 +100,24 @@ export const useChatHistory = () => {
 
       const { data, error: fetchError } = await supabase
         .from('conversations')
-        .select(`
-          *,
-          conversation_messages(count)
-        `)
+        .select('*')
         .eq('user_id', user.id)
         .order('updated_at', { ascending: false });
 
       if (fetchError) throw fetchError;
 
-      const conversationsWithCount = data?.map(conv => ({
-        ...conv,
-        createdAt: new Date(conv.created_at),
-        updatedAt: new Date(conv.updated_at),
-        messageCount: conv.conversation_messages?.[0]?.count || 0
-      })) || [];
+      // Obtener conteos de mensajes para cada conversación
+      const conversationsWithCount = await Promise.all(
+        (data || []).map(async (conv) => {
+          const messageCount = await getMessageCount(conv.id);
+          return {
+            ...conv,
+            createdAt: new Date(conv.created_at),
+            updatedAt: new Date(conv.updated_at),
+            messageCount
+          };
+        })
+      );
 
       setConversations(conversationsWithCount);
       saveToStorage(STORAGE_KEYS.conversations, conversationsWithCount);
@@ -105,7 +127,7 @@ export const useChatHistory = () => {
     } finally {
       setLoading(false);
     }
-  }, [user]);
+  }, [user, getMessageCount]);
 
   // Cargar mensajes de una conversación
   const loadMessages = useCallback(async (conversationId: string) => {
@@ -208,10 +230,21 @@ export const useChatHistory = () => {
         if (!currentConvId) return null;
         // Actualizar el estado de la conversación actual
         setCurrentConversationId(currentConvId);
-        // NO limpiar mensajes actuales - mantener el mensaje del usuario
-        // setCurrentMessages([]);
-        // Cargar mensajes de la nueva conversación
-        await loadMessages(currentConvId);
+        // NO cargar mensajes de la nueva conversación para evitar sobrescribir el mensaje actual
+        // await loadMessages(currentConvId);
+      }
+
+      // Agregar mensaje del usuario al estado local INMEDIATAMENTE
+      if (!isAI) {
+        const tempUserMessage: ChatMessage = {
+          id: `temp_${Date.now()}`,
+          message,
+          isAI: false,
+          timestamp: new Date(),
+          attachments: attachments || [],
+          contextData: contextData || {}
+        };
+        setCurrentMessages(prev => [...prev, tempUserMessage]);
       }
 
       const { data, error: insertError } = await supabase
@@ -238,12 +271,25 @@ export const useChatHistory = () => {
         contextData: contextData || {}
       };
 
-      const updatedMessages = [...currentMessages, newMessage];
-      setCurrentMessages(updatedMessages);
+      // Si es un mensaje del usuario, reemplazar el mensaje temporal
+      if (!isAI) {
+        setCurrentMessages(prev => {
+          // Remover mensaje temporal y agregar el real
+          const withoutTemp = prev.filter(msg => !msg.id.startsWith('temp_'));
+          return [...withoutTemp, newMessage];
+        });
+      } else {
+        // Si es mensaje de IA, agregar normalmente
+        setCurrentMessages(prev => [...prev, newMessage]);
+      }
       setCurrentConversationId(currentConvId);
 
       // Guardar en localStorage
-      saveToStorage(STORAGE_KEYS.currentMessages, updatedMessages);
+      const finalMessages = !isAI ? 
+        currentMessages.filter(msg => !msg.id.startsWith('temp_')).concat(newMessage) :
+        [...currentMessages, newMessage];
+      
+      saveToStorage(STORAGE_KEYS.currentMessages, finalMessages);
       saveToStorage(STORAGE_KEYS.currentConversationId, currentConvId);
 
       // Actualizar timestamp de la conversación

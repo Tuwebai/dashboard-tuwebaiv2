@@ -304,6 +304,44 @@ h1, h2, h3, h4, h5, h6 {
   z-index: 2;
 }
 
+/* Sobrescribir comportamiento problemático para botones del sidebar */
+.sidebar-button:hover {
+  transform: none !important;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1) !important;
+  z-index: 1 !important;
+  background-color: hsl(var(--background)) !important;
+  border-color: hsl(var(--border)) !important;
+  color: hsl(var(--foreground)) !important;
+}
+
+/* Asegurar que los botones del sidebar mantengan su estilo consistente */
+.sidebar-button {
+  background-color: white !important;
+  border-color: #e2e8f0 !important;
+  color: #1e293b !important;
+}
+
+.sidebar-button:hover {
+  background-color: white !important;
+  border-color: #e2e8f0 !important;
+  color: #1e293b !important;
+  opacity: 0.9 !important;
+}
+
+/* En modo oscuro, mantener el mismo estilo */
+.dark .sidebar-button {
+  background-color: #374151 !important;
+  border-color: #4b5563 !important;
+  color: #f9fafb !important;
+}
+
+.dark .sidebar-button:hover {
+  background-color: #374151 !important;
+  border-color: #4b5563 !important;
+  color: #f9fafb !important;
+  opacity: 0.9 !important;
+}
+
 /* Estados de Focus Mejorados */
 .card:focus, .button:focus, .input:focus, .select:focus {
   outline: none;

@@ -67,23 +67,7 @@ const getSupabaseClient = (): SupabaseClient => {
           autoRefreshToken: true,
           persistSession: true,
           detectSessionInUrl: true,
-          flowType: 'pkce',
           storage: createCustomStorage()
-        },
-        realtime: {
-          params: {
-            eventsPerSecond: 10
-          }
-        },
-        global: {
-          headers: {
-            'Accept': 'application/json',
-            'Content-Type': 'application/json',
-            'apikey': supabaseAnonKey
-          }
-        },
-        db: {
-          schema: 'public'
         }
       });
       

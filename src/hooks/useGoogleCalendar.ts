@@ -24,55 +24,50 @@ export const useGoogleCalendar = (currentUser?: User | null) => {
     console.warn('⚠️ Google Calendar no está configurado. Revisa las variables de entorno.');
   }
 
-  // Inicializar servicio y verificar sesión existente
-  useEffect(() => {
-    const initializeService = async () => {
-      try {
-        const initialized = await service.initialize();
+  // Inicializar servicio SOLO cuando se necesite (no automáticamente)
+  const initializeService = useCallback(async () => {
+    try {
+      const initialized = await service.initialize();
+      
+      if (initialized) {
+        // Verificar si ya hay una sesión activa
+        const authenticated = service.isAuthenticated();
         
-        if (initialized) {
-          // Verificar si ya hay una sesión activa
-          const authenticated = service.isAuthenticated();
-          
-          if (authenticated) {
-            // Verificar que realmente funcione obteniendo info del usuario
-            try {
-              const info = await service.getUserInfo();
-              if (info) {
-                setIsAuthenticated(true);
-                setUserInfo(info);
-              } else {
-                setIsAuthenticated(false);
-                setUserInfo(null);
-              }
-            } catch (error) {
+        if (authenticated) {
+          // Verificar que realmente funcione obteniendo info del usuario
+          try {
+            const info = await service.getUserInfo();
+            if (info) {
+              setIsAuthenticated(true);
+              setUserInfo(info);
+            } else {
               setIsAuthenticated(false);
               setUserInfo(null);
             }
-          } else {
-            // Intentar autenticación silenciosa automáticamente
-            try {
-              const silentAuthSuccess = await service.authenticateSilently();
-              if (silentAuthSuccess) {
-                setIsAuthenticated(true);
-                const info = await service.getUserInfo();
-                setUserInfo(info);
-              }
-            } catch (silentAuthError) {
-              // Silencioso - no mostrar logs innecesarios
+          } catch (error) {
+            setIsAuthenticated(false);
+            setUserInfo(null);
+          }
+        } else {
+          // Intentar autenticación silenciosa automáticamente
+          try {
+            const silentAuthSuccess = await service.authenticateSilently();
+            if (silentAuthSuccess) {
+              setIsAuthenticated(true);
+              const info = await service.getUserInfo();
+              setUserInfo(info);
             }
+          } catch (silentAuthError) {
+            // Silencioso - no mostrar logs innecesarios
           }
         }
-      } catch (error) {
-        console.warn('Error inicializando Google Calendar:', error);
       }
-    };
-
-    // Solo inicializar si hay un usuario autenticado
-    if (currentUser?.email) {
-      initializeService();
+    } catch (error) {
+      console.warn('Error inicializando Google Calendar:', error);
     }
-  }, [service, currentUser?.email]);
+  }, [service]);
+
+  // NO inicializar automáticamente - solo cuando se llame explícitamente
 
   // Función para verificar si hay tokens guardados
   const checkStoredTokens = () => {
@@ -426,6 +421,7 @@ export const useGoogleCalendar = (currentUser?: User | null) => {
     deleteEvent,
     listEvents,
     createMeeting,
-    isConfigured
+    isConfigured,
+    initializeService // Exponer función de inicialización manual
   };
 };
