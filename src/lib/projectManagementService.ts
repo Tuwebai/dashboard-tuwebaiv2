@@ -243,44 +243,36 @@ class ProjectManagementService {
     userId: string
   ): Promise<Task> {
     try {
+      console.log('Creando tarea:', { projectId, taskData, userId });
+      
       const { data, error } = await supabase
-        .rpc('create_task_with_validation', {
-          p_project_id: projectId,
-          p_title: taskData.title,
-          p_description: taskData.description,
-          p_priority: taskData.priority || 'medium',
-          p_assigned_to: taskData.assigned_to,
-          p_due_date: taskData.due_date,
-          p_phase_id: taskData.phase_id,
-          p_created_by: userId
-        })
-        .abortSignal(AbortSignal.timeout(10000));
-
-      if (error) {
-        console.warn('Error consultando project_phases:', error.message);
-        return [];
-      }
-
-      // Obtener la tarea creada
-      const { data: task, error: fetchError } = await supabase
         .from('tasks')
-        .select('*')
-        .eq('id', data)
+        .insert({
+          project_id: projectId,
+          title: taskData.title,
+          description: taskData.description || '',
+          priority: taskData.priority || 'medium',
+          assigned_to: taskData.assigned_to || null,
+          due_date: taskData.due_date || null,
+          phase_id: taskData.phase_id || null,
+          estimated_hours: taskData.estimated_hours || null,
+          tags: taskData.tags || [],
+          status: 'pending',
+          created_by: userId,
+          created_at: new Date().toISOString(),
+          updated_at: new Date().toISOString()
+        })
+        .select()
         .single()
         .abortSignal(AbortSignal.timeout(10000));
 
-      if (fetchError) throw fetchError;
-
-      // Actualizar tags si se proporcionaron
-      if (taskData.tags && taskData.tags.length > 0) {
-        await supabase
-          .from('tasks')
-          .update({ tags: taskData.tags })
-          .eq('id', data)
-          .abortSignal(AbortSignal.timeout(10000));
+      if (error) {
+        console.error('Error creando tarea:', error);
+        throw error;
       }
 
-      return task;
+      console.log('Tarea creada exitosamente:', data);
+      return data;
     } catch (error) {
       console.error('Error creando tarea:', error);
       throw error;

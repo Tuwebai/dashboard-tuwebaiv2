@@ -292,7 +292,9 @@ const WebsyAI: React.FC = () => {
 
     try {
       // Encontrar el índice del último mensaje de IA
-      const lastAIIndex = currentMessages.findLastIndex(msg => msg.isAI);
+      const lastAIIndex = currentMessages.map((msg, index) => ({ msg, index }))
+        .reverse()
+        .find(({ msg }) => msg.isAI)?.index ?? -1;
       
       if (lastAIIndex === -1) return;
 

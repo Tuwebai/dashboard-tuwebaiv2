@@ -65,6 +65,7 @@ const AdminPhasesAndTasksPage: React.FC = () => {
   const [selectedDate, setSelectedDate] = useState<Date | null>(null);
   const [showDateModal, setShowDateModal] = useState(false);
   const [dateTasks, setDateTasks] = useState<any[]>([]);
+  const [allTasks, setAllTasks] = useState<any[]>([]);
   const [newTaskTitle, setNewTaskTitle] = useState('');
   const [newTaskDescription, setNewTaskDescription] = useState('');
   const [newTaskProject, setNewTaskProject] = useState('');
@@ -134,6 +135,7 @@ const AdminPhasesAndTasksPage: React.FC = () => {
   // Cargar todos los proyectos y clientes
   useEffect(() => {
     loadAllData();
+    loadAllTasks();
   }, []);
 
   const loadAllData = async () => {
@@ -182,6 +184,31 @@ const AdminPhasesAndTasksPage: React.FC = () => {
       });
     } finally {
       setLoading(false);
+    }
+  };
+
+  const loadAllTasks = async () => {
+    try {
+      const { data: tasksData, error: tasksError } = await supabase
+        .from('tasks')
+        .select(`
+          *,
+          projects (
+            id,
+            name,
+            users (
+              full_name,
+              email
+            )
+          )
+        `)
+        .order('created_at', { ascending: false });
+
+      if (tasksError) throw tasksError;
+
+      setAllTasks(tasksData || []);
+    } catch (error) {
+      console.error('Error cargando tareas:', error);
     }
   };
 
@@ -334,7 +361,7 @@ const AdminPhasesAndTasksPage: React.FC = () => {
       
       // Cargar tareas específicas del día
       const { data: tasksData, error: tasksError } = await supabase
-        .from('daily_tasks')
+        .from('tasks')
         .select(`
           *,
           projects (
@@ -346,7 +373,7 @@ const AdminPhasesAndTasksPage: React.FC = () => {
             )
           )
         `)
-        .eq('task_date', dateStr)
+        .eq('due_date', dateStr)
         .order('created_at', { ascending: false });
 
       if (tasksError) throw tasksError;
@@ -363,16 +390,17 @@ const AdminPhasesAndTasksPage: React.FC = () => {
 
     try {
       const { data, error } = await supabase
-        .from('daily_tasks')
+        .from('tasks')
         .insert({
           title: newTaskTitle,
           description: newTaskDescription,
-          task_date: selectedDate.toISOString().split('T')[0],
+          due_date: selectedDate.toISOString().split('T')[0],
           project_id: newTaskProject,
           priority: newTaskPriority,
           status: newTaskStatus,
           created_by: user?.id,
-          created_at: new Date().toISOString()
+          created_at: new Date().toISOString(),
+          updated_at: new Date().toISOString()
         })
         .select();
 
@@ -385,8 +413,9 @@ const AdminPhasesAndTasksPage: React.FC = () => {
       setNewTaskPriority('medium');
       setNewTaskStatus('pending');
 
-      // Recargar tareas del día
+      // Recargar tareas del día y todas las tareas
       await loadTasksForDate(selectedDate);
+      await loadAllTasks();
 
       toast({
         title: "Tarea creada",
@@ -405,16 +434,20 @@ const AdminPhasesAndTasksPage: React.FC = () => {
   const updateTaskStatus = async (taskId: string, newStatus: string) => {
     try {
       const { error } = await supabase
-        .from('daily_tasks')
-        .update({ status: newStatus })
+        .from('tasks')
+        .update({ 
+          status: newStatus,
+          updated_at: new Date().toISOString()
+        })
         .eq('id', taskId);
 
       if (error) throw error;
 
-      // Recargar tareas del día
+      // Recargar tareas del día y todas las tareas
       if (selectedDate) {
         await loadTasksForDate(selectedDate);
       }
+      await loadAllTasks();
 
       toast({
         title: "Tarea actualizada",
@@ -433,16 +466,17 @@ const AdminPhasesAndTasksPage: React.FC = () => {
   const deleteTask = async (taskId: string) => {
     try {
       const { error } = await supabase
-        .from('daily_tasks')
+        .from('tasks')
         .delete()
         .eq('id', taskId);
 
       if (error) throw error;
 
-      // Recargar tareas del día
+      // Recargar tareas del día y todas las tareas
       if (selectedDate) {
         await loadTasksForDate(selectedDate);
       }
+      await loadAllTasks();
 
       toast({
         title: "Tarea eliminada",
@@ -567,10 +601,14 @@ const AdminPhasesAndTasksPage: React.FC = () => {
           <div className="space-y-6">
             {/* Tabs de Navegación */}
             <Tabs value={activeTab} onValueChange={setActiveTab} className="w-full">
-              <TabsList className="grid w-full grid-cols-4 bg-white dark:bg-slate-800 border-slate-200 dark:border-slate-700">
+              <TabsList className="grid w-full grid-cols-5 bg-white dark:bg-slate-800 border-slate-200 dark:border-slate-700">
                 <TabsTrigger value="overview" className="flex items-center gap-2 data-[state=active]:bg-blue-50 dark:data-[state=active]:bg-blue-900/30 data-[state=active]:text-blue-700 dark:data-[state=active]:text-blue-400 text-slate-700 dark:text-slate-300 hover:text-slate-900 dark:hover:text-slate-100">
                   <BarChart3 className="h-4 w-4" />
                   Vista General
+                </TabsTrigger>
+                <TabsTrigger value="tasks" className="flex items-center gap-2 data-[state=active]:bg-blue-50 dark:data-[state=active]:bg-blue-900/30 data-[state=active]:text-blue-700 dark:data-[state=active]:text-blue-400 text-slate-700 dark:text-slate-300 hover:text-slate-900 dark:hover:text-slate-100">
+                  <Target className="h-4 w-4" />
+                  Todas las Tareas
                 </TabsTrigger>
                 <TabsTrigger value="calendar" className="flex items-center gap-2 data-[state=active]:bg-blue-50 dark:data-[state=active]:bg-blue-900/30 data-[state=active]:text-blue-700 dark:data-[state=active]:text-blue-400 text-slate-700 dark:text-slate-300 hover:text-slate-900 dark:hover:text-slate-100">
                   <CalendarDays className="h-4 w-4" />
@@ -793,6 +831,191 @@ const AdminPhasesAndTasksPage: React.FC = () => {
                     );
                   })}
                 </div>
+              </TabsContent>
+
+              {/* Vista de Todas las Tareas */}
+              <TabsContent value="tasks" className="space-y-6">
+                <div className="flex items-center justify-between">
+                  <div>
+                    <h2 className="text-xl font-bold text-gray-900 dark:text-white">
+                      Todas las Tareas ({allTasks.length})
+                    </h2>
+                    <p className="text-gray-600 dark:text-gray-400">
+                      Gestión centralizada de todas las tareas de todos los proyectos
+                    </p>
+                  </div>
+                  <Button
+                    variant="outline"
+                    size="sm"
+                    onClick={loadAllTasks}
+                    disabled={loading}
+                    className="flex items-center gap-2 border-slate-200 dark:border-slate-600 text-slate-700 dark:text-slate-200 hover:bg-slate-50 dark:hover:bg-slate-700"
+                  >
+                    <RefreshCw className={`h-4 w-4 ${loading ? 'animate-spin' : ''}`} />
+                    Actualizar
+                  </Button>
+                </div>
+
+                {/* Estadísticas de Tareas */}
+                <div className="grid grid-cols-1 md:grid-cols-4 gap-6">
+                  <Card className="bg-gradient-to-r from-blue-50 to-indigo-50 dark:from-blue-900/20 dark:to-indigo-900/20 border-blue-200 dark:border-blue-800">
+                    <CardContent className="p-6">
+                      <div className="flex items-center justify-between">
+                        <div>
+                          <p className="text-blue-600 dark:text-blue-400 text-sm font-medium">Total Tareas</p>
+                          <p className="text-2xl font-bold text-blue-900 dark:text-blue-100">{allTasks.length}</p>
+                        </div>
+                        <Target className="h-8 w-8 text-blue-500" />
+                      </div>
+                    </CardContent>
+                  </Card>
+
+                  <Card className="bg-gradient-to-r from-green-50 to-emerald-50 dark:from-green-900/20 dark:to-emerald-900/20 border-green-200 dark:border-green-800">
+                    <CardContent className="p-6">
+                      <div className="flex items-center justify-between">
+                        <div>
+                          <p className="text-green-600 dark:text-green-400 text-sm font-medium">Completadas</p>
+                          <p className="text-2xl font-bold text-green-900 dark:text-green-100">
+                            {allTasks.filter(t => t.status === 'completed').length}
+                          </p>
+                        </div>
+                        <CheckCircle className="h-8 w-8 text-green-500" />
+                      </div>
+                    </CardContent>
+                  </Card>
+
+                  <Card className="bg-gradient-to-r from-orange-50 to-amber-50 dark:from-orange-900/20 dark:to-amber-900/20 border-orange-200 dark:border-orange-800">
+                    <CardContent className="p-6">
+                      <div className="flex items-center justify-between">
+                        <div>
+                          <p className="text-orange-600 dark:text-orange-400 text-sm font-medium">En Progreso</p>
+                          <p className="text-2xl font-bold text-orange-900 dark:text-orange-100">
+                            {allTasks.filter(t => t.status === 'in_progress').length}
+                          </p>
+                        </div>
+                        <Clock className="h-8 w-8 text-orange-500" />
+                      </div>
+                    </CardContent>
+                  </Card>
+
+                  <Card className="bg-gradient-to-r from-gray-50 to-slate-50 dark:from-gray-900/20 dark:to-slate-900/20 border-gray-200 dark:border-gray-800">
+                    <CardContent className="p-6">
+                      <div className="flex items-center justify-between">
+                        <div>
+                          <p className="text-gray-600 dark:text-gray-400 text-sm font-medium">Pendientes</p>
+                          <p className="text-2xl font-bold text-gray-900 dark:text-gray-100">
+                            {allTasks.filter(t => t.status === 'pending').length}
+                          </p>
+                        </div>
+                        <AlertCircle className="h-8 w-8 text-gray-500" />
+                      </div>
+                    </CardContent>
+                  </Card>
+                </div>
+
+                {/* Lista de Tareas */}
+                <Card>
+                  <CardContent className="p-6">
+                    {allTasks.length === 0 ? (
+                      <div className="text-center py-12">
+                        <Target className="h-12 w-12 text-gray-400 mx-auto mb-4" />
+                        <h3 className="text-lg font-medium text-gray-900 dark:text-white mb-2">
+                          No hay tareas disponibles
+                        </h3>
+                        <p className="text-gray-500 dark:text-gray-400">
+                          Las tareas aparecerán aquí cuando se creen desde Websy AI o manualmente
+                        </p>
+                      </div>
+                    ) : (
+                      <div className="space-y-4">
+                        {allTasks.map((task, index) => (
+                          <motion.div
+                            key={task.id}
+                            initial={{ opacity: 0, y: 20 }}
+                            animate={{ opacity: 1, y: 0 }}
+                            transition={{ delay: index * 0.05 }}
+                            className="p-4 border border-gray-200 dark:border-slate-600 rounded-lg hover:shadow-md transition-shadow bg-white dark:bg-slate-800"
+                          >
+                            <div className="flex items-start justify-between">
+                              <div className="flex-1">
+                                <div className="flex items-center gap-3 mb-2">
+                                  <h4 className="font-medium text-gray-900 dark:text-slate-100">
+                                    {task.title}
+                                  </h4>
+                                  <Badge 
+                                    className={
+                                      task.status === 'completed' 
+                                        ? 'bg-green-100 text-green-800 dark:bg-green-500/20 dark:text-green-300'
+                                        : task.status === 'in_progress'
+                                        ? 'bg-blue-100 text-blue-800 dark:bg-blue-500/20 dark:text-blue-300'
+                                        : 'bg-gray-100 text-gray-800 dark:bg-gray-500/20 dark:text-gray-300'
+                                    }
+                                  >
+                                    {task.status === 'completed' ? 'Completada' : task.status === 'in_progress' ? 'En Progreso' : 'Pendiente'}
+                                  </Badge>
+                                  <Badge 
+                                    className={
+                                      task.priority === 'urgent' 
+                                        ? 'bg-red-100 text-red-800 dark:bg-red-500/20 dark:text-red-300'
+                                        : task.priority === 'high'
+                                        ? 'bg-orange-100 text-orange-800 dark:bg-orange-500/20 dark:text-orange-300'
+                                        : task.priority === 'medium'
+                                        ? 'bg-yellow-100 text-yellow-800 dark:bg-yellow-500/20 dark:text-yellow-300'
+                                        : 'bg-green-100 text-green-800 dark:bg-green-500/20 dark:text-green-300'
+                                    }
+                                  >
+                                    {task.priority === 'urgent' ? 'Urgente' : task.priority === 'high' ? 'Alta' : task.priority === 'medium' ? 'Media' : 'Baja'}
+                                  </Badge>
+                                </div>
+                                
+                                {task.description && (
+                                  <p className="text-sm text-gray-600 dark:text-slate-400 mb-2">
+                                    {task.description}
+                                  </p>
+                                )}
+                                
+                                <div className="flex items-center gap-4 text-xs text-gray-500 dark:text-slate-400">
+                                  <span>Proyecto: {task.projects?.name || 'Sin proyecto'}</span>
+                                  <span>Cliente: {task.projects?.users?.full_name || task.projects?.users?.email || 'Sin cliente'}</span>
+                                  {task.due_date && (
+                                    <span>Vence: {formatDateSafe(task.due_date)}</span>
+                                  )}
+                                  <span>Creada: {formatDateSafe(task.created_at)}</span>
+                                </div>
+                              </div>
+                              
+                              <div className="flex items-center gap-2 ml-4">
+                                <Select
+                                  value={task.status}
+                                  onValueChange={(value) => updateTaskStatus(task.id, value)}
+                                >
+                                  <SelectTrigger className="w-32 bg-white dark:bg-slate-700 border-slate-200 dark:border-slate-600 text-slate-800 dark:text-slate-200">
+                                    <SelectValue />
+                                  </SelectTrigger>
+                                  <SelectContent>
+                                    <SelectItem value="pending">Pendiente</SelectItem>
+                                    <SelectItem value="in_progress">En Progreso</SelectItem>
+                                    <SelectItem value="completed">Completada</SelectItem>
+                                    <SelectItem value="cancelled">Cancelada</SelectItem>
+                                  </SelectContent>
+                                </Select>
+                                
+                                <Button
+                                  variant="ghost"
+                                  size="sm"
+                                  onClick={() => deleteTask(task.id)}
+                                  className="text-red-500 dark:text-red-400 hover:text-red-700 dark:hover:text-red-300 hover:bg-red-50 dark:hover:bg-red-900/20"
+                                >
+                                  <Trash2 className="h-4 w-4" />
+                                </Button>
+                              </div>
+                            </div>
+                          </motion.div>
+                        ))}
+                      </div>
+                    )}
+                  </CardContent>
+                </Card>
               </TabsContent>
 
               {/* Vista de Calendario Admin */}

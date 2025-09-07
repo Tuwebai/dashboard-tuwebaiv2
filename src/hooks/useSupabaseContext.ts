@@ -75,7 +75,7 @@ export const useSupabaseContext = () => {
       try {
         const { data, error } = await supabase
           .from('tasks')
-          .select('id, created_at, updated_at')
+          .select('id, title, description, status, priority, assignee_name, due_date, completion_percentage, created_at, updated_at')
           .limit(20);
         
         if (error) {
@@ -91,7 +91,7 @@ export const useSupabaseContext = () => {
       try {
         const { data, error } = await supabase
           .from('project_phases')
-          .select('id, created_at, updated_at')
+          .select('id, name, description, status, start_date, end_date, phase_order, created_at, updated_at')
           .limit(10);
         
         if (error) {
@@ -107,7 +107,7 @@ export const useSupabaseContext = () => {
       try {
         const { data, error } = await supabase
           .from('project_metrics')
-          .select('id, created_at')
+          .select('id, metric_date, completion_percentage, velocity_points, bug_count, task_count, completed_tasks, overdue_tasks, total_hours_estimated, total_hours_actual, created_at')
           .limit(20);
         
         if (error) {
@@ -123,7 +123,7 @@ export const useSupabaseContext = () => {
       try {
         const { data, error } = await supabase
           .from('project_activity_log')
-          .select('id, created_at')
+          .select('id, action, description, old_values, new_values, created_at')
           .order('created_at', { ascending: false })
           .limit(15);
         
@@ -140,7 +140,7 @@ export const useSupabaseContext = () => {
       try {
         const { data, error } = await supabase
           .from('project_attachments')
-          .select('id, created_at')
+          .select('id, file_name, file_path, mime_type, file_size, uploaded_by, created_at')
           .limit(10);
         
         if (error) {
@@ -156,7 +156,7 @@ export const useSupabaseContext = () => {
       try {
         const { data, error } = await supabase
           .from('task_comments')
-          .select('id, created_at')
+          .select('id, comment, user_id, created_at, updated_at')
           .order('created_at', { ascending: false })
           .limit(15);
         
@@ -173,7 +173,7 @@ export const useSupabaseContext = () => {
       try {
         const { data, error } = await supabase
           .from('task_dependencies')
-          .select('id, created_at')
+          .select('id, task_id, depends_on_task_id, dependency_type, created_at')
           .limit(10);
         
         if (error) {
