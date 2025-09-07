@@ -247,46 +247,70 @@ END;
 $$ language 'plpgsql';
 
 -- Triggers para websy_user_profiles
-DROP TRIGGER IF EXISTS update_websy_user_profiles_updated_at ON websy_user_profiles;
-CREATE TRIGGER update_websy_user_profiles_updated_at
-    BEFORE UPDATE ON websy_user_profiles
-    FOR EACH ROW
-    EXECUTE FUNCTION update_updated_at_column();
+DO $$ 
+BEGIN
+    IF NOT EXISTS (SELECT 1 FROM pg_trigger WHERE tgname = 'update_websy_user_profiles_updated_at') THEN
+        CREATE TRIGGER update_websy_user_profiles_updated_at
+            BEFORE UPDATE ON websy_user_profiles
+            FOR EACH ROW
+            EXECUTE FUNCTION update_updated_at_column();
+    END IF;
+END $$;
 
 -- Triggers para websy_conversation_memories
-DROP TRIGGER IF EXISTS update_websy_conversation_memories_updated_at ON websy_conversation_memories;
-CREATE TRIGGER update_websy_conversation_memories_updated_at
-    BEFORE UPDATE ON websy_conversation_memories
-    FOR EACH ROW
-    EXECUTE FUNCTION update_updated_at_column();
+DO $$ 
+BEGIN
+    IF NOT EXISTS (SELECT 1 FROM pg_trigger WHERE tgname = 'update_websy_conversation_memories_updated_at') THEN
+        CREATE TRIGGER update_websy_conversation_memories_updated_at
+            BEFORE UPDATE ON websy_conversation_memories
+            FOR EACH ROW
+            EXECUTE FUNCTION update_updated_at_column();
+    END IF;
+END $$;
 
 -- Triggers para websy_knowledge_base
-DROP TRIGGER IF EXISTS update_websy_knowledge_base_updated_at ON websy_knowledge_base;
-CREATE TRIGGER update_websy_knowledge_base_updated_at
-    BEFORE UPDATE ON websy_knowledge_base
-    FOR EACH ROW
-    EXECUTE FUNCTION update_updated_at_column();
+DO $$ 
+BEGIN
+    IF NOT EXISTS (SELECT 1 FROM pg_trigger WHERE tgname = 'update_websy_knowledge_base_updated_at') THEN
+        CREATE TRIGGER update_websy_knowledge_base_updated_at
+            BEFORE UPDATE ON websy_knowledge_base
+            FOR EACH ROW
+            EXECUTE FUNCTION update_updated_at_column();
+    END IF;
+END $$;
 
 -- Triggers para project_phases
-DROP TRIGGER IF EXISTS update_project_phases_updated_at ON project_phases;
-CREATE TRIGGER update_project_phases_updated_at
-    BEFORE UPDATE ON project_phases
-    FOR EACH ROW
-    EXECUTE FUNCTION update_updated_at_column();
+DO $$ 
+BEGIN
+    IF NOT EXISTS (SELECT 1 FROM pg_trigger WHERE tgname = 'update_project_phases_updated_at') THEN
+        CREATE TRIGGER update_project_phases_updated_at
+            BEFORE UPDATE ON project_phases
+            FOR EACH ROW
+            EXECUTE FUNCTION update_updated_at_column();
+    END IF;
+END $$;
 
 -- Triggers para tasks
-DROP TRIGGER IF EXISTS update_tasks_updated_at ON tasks;
-CREATE TRIGGER update_tasks_updated_at
-    BEFORE UPDATE ON tasks
-    FOR EACH ROW
-    EXECUTE FUNCTION update_updated_at_column();
+DO $$ 
+BEGIN
+    IF NOT EXISTS (SELECT 1 FROM pg_trigger WHERE tgname = 'update_tasks_updated_at') THEN
+        CREATE TRIGGER update_tasks_updated_at
+            BEFORE UPDATE ON tasks
+            FOR EACH ROW
+            EXECUTE FUNCTION update_updated_at_column();
+    END IF;
+END $$;
 
 -- Triggers para task_comments
-DROP TRIGGER IF EXISTS update_task_comments_updated_at ON task_comments;
-CREATE TRIGGER update_task_comments_updated_at
-    BEFORE UPDATE ON task_comments
-    FOR EACH ROW
-    EXECUTE FUNCTION update_updated_at_column();
+DO $$ 
+BEGIN
+    IF NOT EXISTS (SELECT 1 FROM pg_trigger WHERE tgname = 'update_task_comments_updated_at') THEN
+        CREATE TRIGGER update_task_comments_updated_at
+            BEFORE UPDATE ON task_comments
+            FOR EACH ROW
+            EXECUTE FUNCTION update_updated_at_column();
+    END IF;
+END $$;
 
 -- 5. CREAR POLÍTICAS RLS (ROW LEVEL SECURITY)
 -- =====================================================
@@ -304,112 +328,174 @@ ALTER TABLE task_comments ENABLE ROW LEVEL SECURITY;
 ALTER TABLE task_dependencies ENABLE ROW LEVEL SECURITY;
 
 -- Políticas para websy_user_profiles
-CREATE POLICY "Users can view own profile" ON websy_user_profiles
-    FOR SELECT USING (auth.uid() = user_id);
-
-CREATE POLICY "Users can insert own profile" ON websy_user_profiles
-    FOR INSERT WITH CHECK (auth.uid() = user_id);
-
-CREATE POLICY "Users can update own profile" ON websy_user_profiles
-    FOR UPDATE USING (auth.uid() = user_id);
+DO $$ 
+BEGIN
+    IF NOT EXISTS (SELECT 1 FROM pg_policies WHERE policyname = 'Users can view own profile' AND tablename = 'websy_user_profiles') THEN
+        CREATE POLICY "Users can view own profile" ON websy_user_profiles
+            FOR SELECT USING (auth.uid() = user_id);
+    END IF;
+    
+    IF NOT EXISTS (SELECT 1 FROM pg_policies WHERE policyname = 'Users can insert own profile' AND tablename = 'websy_user_profiles') THEN
+        CREATE POLICY "Users can insert own profile" ON websy_user_profiles
+            FOR INSERT WITH CHECK (auth.uid() = user_id);
+    END IF;
+    
+    IF NOT EXISTS (SELECT 1 FROM pg_policies WHERE policyname = 'Users can update own profile' AND tablename = 'websy_user_profiles') THEN
+        CREATE POLICY "Users can update own profile" ON websy_user_profiles
+            FOR UPDATE USING (auth.uid() = user_id);
+    END IF;
+END $$;
 
 -- Políticas para websy_conversation_memories
-CREATE POLICY "Users can view own memories" ON websy_conversation_memories
-    FOR SELECT USING (auth.uid() = user_id);
-
-CREATE POLICY "Users can insert own memories" ON websy_conversation_memories
-    FOR INSERT WITH CHECK (auth.uid() = user_id);
-
-CREATE POLICY "Users can update own memories" ON websy_conversation_memories
-    FOR UPDATE USING (auth.uid() = user_id);
+DO $$ 
+BEGIN
+    IF NOT EXISTS (SELECT 1 FROM pg_policies WHERE policyname = 'Users can view own memories' AND tablename = 'websy_conversation_memories') THEN
+        CREATE POLICY "Users can view own memories" ON websy_conversation_memories
+            FOR SELECT USING (auth.uid() = user_id);
+    END IF;
+    
+    IF NOT EXISTS (SELECT 1 FROM pg_policies WHERE policyname = 'Users can insert own memories' AND tablename = 'websy_conversation_memories') THEN
+        CREATE POLICY "Users can insert own memories" ON websy_conversation_memories
+            FOR INSERT WITH CHECK (auth.uid() = user_id);
+    END IF;
+    
+    IF NOT EXISTS (SELECT 1 FROM pg_policies WHERE policyname = 'Users can update own memories' AND tablename = 'websy_conversation_memories') THEN
+        CREATE POLICY "Users can update own memories" ON websy_conversation_memories
+            FOR UPDATE USING (auth.uid() = user_id);
+    END IF;
+END $$;
 
 -- Políticas para websy_knowledge_base
-DROP POLICY IF EXISTS "Users can view own knowledge" ON websy_knowledge_base;
-CREATE POLICY "Users can view own knowledge" ON websy_knowledge_base
-    FOR SELECT USING (auth.uid() = user_id);
-
-DROP POLICY IF EXISTS "Users can insert own knowledge" ON websy_knowledge_base;
-CREATE POLICY "Users can insert own knowledge" ON websy_knowledge_base
-    FOR INSERT WITH CHECK (auth.uid() = user_id);
-
-DROP POLICY IF EXISTS "Users can update own knowledge" ON websy_knowledge_base;
-CREATE POLICY "Users can update own knowledge" ON websy_knowledge_base
-    FOR UPDATE USING (auth.uid() = user_id);
+DO $$ 
+BEGIN
+    IF NOT EXISTS (SELECT 1 FROM pg_policies WHERE policyname = 'Users can view own knowledge' AND tablename = 'websy_knowledge_base') THEN
+        CREATE POLICY "Users can view own knowledge" ON websy_knowledge_base
+            FOR SELECT USING (auth.uid() = user_id);
+    END IF;
+    
+    IF NOT EXISTS (SELECT 1 FROM pg_policies WHERE policyname = 'Users can insert own knowledge' AND tablename = 'websy_knowledge_base') THEN
+        CREATE POLICY "Users can insert own knowledge" ON websy_knowledge_base
+            FOR INSERT WITH CHECK (auth.uid() = user_id);
+    END IF;
+    
+    IF NOT EXISTS (SELECT 1 FROM pg_policies WHERE policyname = 'Users can update own knowledge' AND tablename = 'websy_knowledge_base') THEN
+        CREATE POLICY "Users can update own knowledge" ON websy_knowledge_base
+            FOR UPDATE USING (auth.uid() = user_id);
+    END IF;
+END $$;
 
 -- Políticas para project_phases
-DROP POLICY IF EXISTS "Users can view project phases" ON project_phases;
-CREATE POLICY "Users can view project phases" ON project_phases
-    FOR SELECT USING (true);
-
-DROP POLICY IF EXISTS "Users can insert project phases" ON project_phases;
-CREATE POLICY "Users can insert project phases" ON project_phases
-    FOR INSERT WITH CHECK (auth.uid() = created_by);
-
-DROP POLICY IF EXISTS "Users can update project phases" ON project_phases;
-CREATE POLICY "Users can update project phases" ON project_phases
-    FOR UPDATE USING (auth.uid() = created_by);
+DO $$ 
+BEGIN
+    IF NOT EXISTS (SELECT 1 FROM pg_policies WHERE policyname = 'Users can view project phases' AND tablename = 'project_phases') THEN
+        CREATE POLICY "Users can view project phases" ON project_phases
+            FOR SELECT USING (true);
+    END IF;
+    
+    IF NOT EXISTS (SELECT 1 FROM pg_policies WHERE policyname = 'Users can insert project phases' AND tablename = 'project_phases') THEN
+        CREATE POLICY "Users can insert project phases" ON project_phases
+            FOR INSERT WITH CHECK (auth.uid() = created_by);
+    END IF;
+    
+    IF NOT EXISTS (SELECT 1 FROM pg_policies WHERE policyname = 'Users can update project phases' AND tablename = 'project_phases') THEN
+        CREATE POLICY "Users can update project phases" ON project_phases
+            FOR UPDATE USING (auth.uid() = created_by);
+    END IF;
+END $$;
 
 -- Políticas para tasks
-DROP POLICY IF EXISTS "Users can view tasks" ON tasks;
-CREATE POLICY "Users can view tasks" ON tasks
-    FOR SELECT USING (true);
-
-DROP POLICY IF EXISTS "Users can insert tasks" ON tasks;
-CREATE POLICY "Users can insert tasks" ON tasks
-    FOR INSERT WITH CHECK (auth.uid() = created_by);
-
-DROP POLICY IF EXISTS "Users can update tasks" ON tasks;
-CREATE POLICY "Users can update tasks" ON tasks
-    FOR UPDATE USING (auth.uid() = created_by OR auth.uid() = assigned_to);
+DO $$ 
+BEGIN
+    IF NOT EXISTS (SELECT 1 FROM pg_policies WHERE policyname = 'Users can view tasks' AND tablename = 'tasks') THEN
+        CREATE POLICY "Users can view tasks" ON tasks
+            FOR SELECT USING (true);
+    END IF;
+    
+    IF NOT EXISTS (SELECT 1 FROM pg_policies WHERE policyname = 'Users can insert tasks' AND tablename = 'tasks') THEN
+        CREATE POLICY "Users can insert tasks" ON tasks
+            FOR INSERT WITH CHECK (auth.uid() = created_by);
+    END IF;
+    
+    IF NOT EXISTS (SELECT 1 FROM pg_policies WHERE policyname = 'Users can update tasks' AND tablename = 'tasks') THEN
+        CREATE POLICY "Users can update tasks" ON tasks
+            FOR UPDATE USING (auth.uid() = created_by OR auth.uid() = assigned_to);
+    END IF;
+END $$;
 
 -- Políticas para project_metrics
-DROP POLICY IF EXISTS "Users can view project metrics" ON project_metrics;
-CREATE POLICY "Users can view project metrics" ON project_metrics
-    FOR SELECT USING (true);
-
-DROP POLICY IF EXISTS "Users can insert project metrics" ON project_metrics;
-CREATE POLICY "Users can insert project metrics" ON project_metrics
-    FOR INSERT WITH CHECK (true);
+DO $$ 
+BEGIN
+    IF NOT EXISTS (SELECT 1 FROM pg_policies WHERE policyname = 'Users can view project metrics' AND tablename = 'project_metrics') THEN
+        CREATE POLICY "Users can view project metrics" ON project_metrics
+            FOR SELECT USING (true);
+    END IF;
+    
+    IF NOT EXISTS (SELECT 1 FROM pg_policies WHERE policyname = 'Users can insert project metrics' AND tablename = 'project_metrics') THEN
+        CREATE POLICY "Users can insert project metrics" ON project_metrics
+            FOR INSERT WITH CHECK (true);
+    END IF;
+END $$;
 
 -- Políticas para project_activity_log
-DROP POLICY IF EXISTS "Users can view activity log" ON project_activity_log;
-CREATE POLICY "Users can view activity log" ON project_activity_log
-    FOR SELECT USING (true);
-
-DROP POLICY IF EXISTS "Users can insert activity log" ON project_activity_log;
-CREATE POLICY "Users can insert activity log" ON project_activity_log
-    FOR INSERT WITH CHECK (auth.uid() = user_id);
+DO $$ 
+BEGIN
+    IF NOT EXISTS (SELECT 1 FROM pg_policies WHERE policyname = 'Users can view activity log' AND tablename = 'project_activity_log') THEN
+        CREATE POLICY "Users can view activity log" ON project_activity_log
+            FOR SELECT USING (true);
+    END IF;
+    
+    IF NOT EXISTS (SELECT 1 FROM pg_policies WHERE policyname = 'Users can insert activity log' AND tablename = 'project_activity_log') THEN
+        CREATE POLICY "Users can insert activity log" ON project_activity_log
+            FOR INSERT WITH CHECK (auth.uid() = user_id);
+    END IF;
+END $$;
 
 -- Políticas para project_attachments
-DROP POLICY IF EXISTS "Users can view attachments" ON project_attachments;
-CREATE POLICY "Users can view attachments" ON project_attachments
-    FOR SELECT USING (true);
-
-DROP POLICY IF EXISTS "Users can insert attachments" ON project_attachments;
-CREATE POLICY "Users can insert attachments" ON project_attachments
-    FOR INSERT WITH CHECK (auth.uid() = uploaded_by);
+DO $$ 
+BEGIN
+    IF NOT EXISTS (SELECT 1 FROM pg_policies WHERE policyname = 'Users can view attachments' AND tablename = 'project_attachments') THEN
+        CREATE POLICY "Users can view attachments" ON project_attachments
+            FOR SELECT USING (true);
+    END IF;
+    
+    IF NOT EXISTS (SELECT 1 FROM pg_policies WHERE policyname = 'Users can insert attachments' AND tablename = 'project_attachments') THEN
+        CREATE POLICY "Users can insert attachments" ON project_attachments
+            FOR INSERT WITH CHECK (auth.uid() = uploaded_by);
+    END IF;
+END $$;
 
 -- Políticas para task_comments
-DROP POLICY IF EXISTS "Users can view task comments" ON task_comments;
-CREATE POLICY "Users can view task comments" ON task_comments
-    FOR SELECT USING (true);
-
-DROP POLICY IF EXISTS "Users can insert task comments" ON task_comments;
-CREATE POLICY "Users can insert task comments" ON task_comments
-    FOR INSERT WITH CHECK (auth.uid() = user_id);
-
-DROP POLICY IF EXISTS "Users can update task comments" ON task_comments;
-CREATE POLICY "Users can update task comments" ON task_comments
-    FOR UPDATE USING (auth.uid() = user_id);
+DO $$ 
+BEGIN
+    IF NOT EXISTS (SELECT 1 FROM pg_policies WHERE policyname = 'Users can view task comments' AND tablename = 'task_comments') THEN
+        CREATE POLICY "Users can view task comments" ON task_comments
+            FOR SELECT USING (true);
+    END IF;
+    
+    IF NOT EXISTS (SELECT 1 FROM pg_policies WHERE policyname = 'Users can insert task comments' AND tablename = 'task_comments') THEN
+        CREATE POLICY "Users can insert task comments" ON task_comments
+            FOR INSERT WITH CHECK (auth.uid() = user_id);
+    END IF;
+    
+    IF NOT EXISTS (SELECT 1 FROM pg_policies WHERE policyname = 'Users can update task comments' AND tablename = 'task_comments') THEN
+        CREATE POLICY "Users can update task comments" ON task_comments
+            FOR UPDATE USING (auth.uid() = user_id);
+    END IF;
+END $$;
 
 -- Políticas para task_dependencies
-DROP POLICY IF EXISTS "Users can view task dependencies" ON task_dependencies;
-CREATE POLICY "Users can view task dependencies" ON task_dependencies
-    FOR SELECT USING (true);
-
-DROP POLICY IF EXISTS "Users can insert task dependencies" ON task_dependencies;
-CREATE POLICY "Users can insert task dependencies" ON task_dependencies
-    FOR INSERT WITH CHECK (true);
+DO $$ 
+BEGIN
+    IF NOT EXISTS (SELECT 1 FROM pg_policies WHERE policyname = 'Users can view task dependencies' AND tablename = 'task_dependencies') THEN
+        CREATE POLICY "Users can view task dependencies" ON task_dependencies
+            FOR SELECT USING (true);
+    END IF;
+    
+    IF NOT EXISTS (SELECT 1 FROM pg_policies WHERE policyname = 'Users can insert task dependencies' AND tablename = 'task_dependencies') THEN
+        CREATE POLICY "Users can insert task dependencies" ON task_dependencies
+            FOR INSERT WITH CHECK (true);
+    END IF;
+END $$;
 
 -- 6. CREAR VISTAS ÚTILES
 -- =====================================================
