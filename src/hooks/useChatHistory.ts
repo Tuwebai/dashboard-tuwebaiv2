@@ -208,8 +208,8 @@ export const useChatHistory = () => {
         if (!currentConvId) return null;
         // Actualizar el estado de la conversación actual
         setCurrentConversationId(currentConvId);
-        // Limpiar mensajes actuales para la nueva conversación
-        setCurrentMessages([]);
+        // NO limpiar mensajes actuales - mantener el mensaje del usuario
+        // setCurrentMessages([]);
         // Cargar mensajes de la nueva conversación
         await loadMessages(currentConvId);
       }

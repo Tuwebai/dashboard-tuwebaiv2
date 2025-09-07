@@ -138,10 +138,10 @@ export default function RealTimeMetrics() {
   const generateInitialMetrics = async (): Promise<RealTimeMetric[]> => {
     // Obtener datos reales de la base de datos
     const [projectsResponse, usersResponse, paymentsResponse, ticketsResponse] = await Promise.all([
-      supabase.from('projects').select('*'),
-      supabase.from('users').select('*'),
-      supabase.from('payments').select('*'),
-      supabase.from('tickets').select('*')
+      supabase.from('projects').select('id, name, created_at'),
+      supabase.from('users').select('id, full_name, email, created_at'),
+      supabase.from('payments').select('id, amount, created_at'),
+      supabase.from('tickets').select('id, asunto, created_at')
     ]);
 
     const projects = projectsResponse.data || [];
@@ -234,9 +234,9 @@ export default function RealTimeMetrics() {
     const endOfMonth = new Date(now.getFullYear(), now.getMonth() + 1, 0);
     
     // Obtener datos reales para KPIs
-    const { data: projects } = await supabase.from('projects').select('*');
-    const { data: payments } = await supabase.from('payments').select('*');
-    const { data: users } = await supabase.from('users').select('*');
+    const { data: projects } = await supabase.from('projects').select('id, name, created_at');
+    const { data: payments } = await supabase.from('payments').select('id, amount, created_at');
+    const { data: users } = await supabase.from('users').select('id, full_name, email, created_at');
 
     const totalProjects = projects?.length || 0;
     const completedProjects = projects?.filter(p => p.status === 'completed').length || 0;

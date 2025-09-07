@@ -245,10 +245,10 @@ export default function AdvancedReportsManager() {
 
   const generateReportData = async (template: ReportTemplate) => {
     // Generar datos del reporte basado en el template
-    const { data: projects } = await supabase.from('projects').select('*');
-    const { data: users } = await supabase.from('users').select('*');
-    const { data: payments } = await supabase.from('payments').select('*');
-    const { data: tickets } = await supabase.from('tickets').select('*');
+    const { data: projects } = await supabase.from('projects').select('id, name, created_at');
+    const { data: users } = await supabase.from('users').select('id, full_name, email, created_at');
+    const { data: payments } = await supabase.from('payments').select('id, amount, created_at');
+    const { data: tickets } = await supabase.from('tickets').select('id, asunto, created_at');
 
     return {
       projects: projects || [],

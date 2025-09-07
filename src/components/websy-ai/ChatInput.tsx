@@ -16,6 +16,8 @@ import {
 import { toast } from '@/hooks/use-toast';
 import { CalendarScheduler } from './CalendarScheduler';
 import { EmailReporter } from './EmailReporter';
+import { useAdminIntegrations } from '@/hooks/useAdminIntegrations';
+import { useApp } from '@/contexts/AppContext';
 
 interface Attachment {
   id: string;
@@ -51,33 +53,30 @@ export const ChatInput: React.FC<ChatInputProps> = ({
   const recognitionRef = useRef<any>(null);
   const [showCalendar, setShowCalendar] = useState(false);
   const [showEmail, setShowEmail] = useState(false);
+  const { user } = useApp();
+  const { scheduleMeeting, sendReport, isReady } = useAdminIntegrations();
+
+  // Manejar comando de calendario automáticamente
+  const handleCalendarCommand = useCallback(async (message: string) => {
+    // NO interceptar - dejar que el AI maneje los comandos de calendario
+    // Solo enviar el mensaje al AI para que lo procese correctamente
+    onSendMessage(message.trim(), []);
+    setMessage('');
+  }, [onSendMessage]);
+
+  // Manejar comando de email automáticamente
+  const handleEmailCommand = useCallback(async (message: string) => {
+    // NO interceptar - dejar que el AI maneje los comandos de email
+    // Solo enviar el mensaje al AI para que lo procese correctamente
+    onSendMessage(message.trim(), []);
+    setMessage('');
+  }, [onSendMessage]);
 
   const handleSend = useCallback(() => {
     if (!message.trim() && attachments.length === 0) return;
     if (disabled) return;
 
-    // Detectar comandos de calendario
-    const calendarCommands = ['programa', 'agenda', 'reunión', 'cita', 'calendario'];
-    const hasCalendarCommand = calendarCommands.some(cmd => 
-      message.toLowerCase().includes(cmd)
-    );
-
-    // Detectar comandos de email
-    const emailCommands = ['envía', 'enviar', 'email', 'correo', 'reporte'];
-    const hasEmailCommand = emailCommands.some(cmd => 
-      message.toLowerCase().includes(cmd)
-    );
-
-    if (hasCalendarCommand) {
-      setShowCalendar(true);
-      return;
-    }
-
-    if (hasEmailCommand) {
-      setShowEmail(true);
-      return;
-    }
-
+    // Enviar mensaje directamente al AI - NO interceptar comandos
     onSendMessage(message.trim(), attachments);
     setMessage('');
     setAttachments([]);
@@ -237,7 +236,6 @@ export const ChatInput: React.FC<ChatInputProps> = ({
       }
     } catch (error) {
       // Si no se puede verificar permisos, continuar
-      console.log('No se pudo verificar permisos de micrófono:', error);
     }
 
     return true;

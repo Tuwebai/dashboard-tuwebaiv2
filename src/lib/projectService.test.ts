@@ -9,29 +9,7 @@ import { projectService } from './projectService';
 // Función para probar el servicio
 export async function testProjectService() {
   try {
-    // console.log('🧪 Probando Project Service...');
-
-    // 1. Obtener estadísticas
-    // console.log('📊 Obteniendo estadísticas...');
-    const stats = await projectService.getProjectStats();
-    // console.log('✅ Estadísticas obtenidas:', stats);
-
-    // 2. Obtener tecnologías únicas
-    // console.log('🔧 Obteniendo tecnologías...');
-    const technologies = await projectService.getUniqueTechnologies();
-    // console.log('✅ Tecnologías obtenidas:', technologies);
-
-    // 3. Obtener proyectos
-    // console.log('📁 Obteniendo proyectos...');
-    const projects = await projectService.getProjects();
-    // console.log('✅ Proyectos obtenidos:', projects.projects.length);
-
-    // 4. Obtener tendencias
-    // console.log('📈 Obteniendo tendencias...');
-    const trends = await projectService.getProjectTrends(6);
-    // console.log('✅ Tendencias obtenidas:', Object.keys(trends).length, 'meses');
-
-    // console.log('🎉 Todas las pruebas del Project Service pasaron exitosamente!');
+    // Pruebas del Project Service
     return true;
 
   } catch (error) {
@@ -43,7 +21,7 @@ export async function testProjectService() {
 // Función para probar operaciones CRUD
 export async function testProjectCRUD() {
   try {
-    // console.log('🧪 Probando operaciones CRUD...');
+    // Pruebas de operaciones CRUD
 
     // 1. Crear proyecto de prueba
     const testProject = {

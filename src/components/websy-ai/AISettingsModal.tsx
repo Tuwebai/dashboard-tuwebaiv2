@@ -7,9 +7,12 @@ import { Switch } from '@/components/ui/switch';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
+import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { useAISettings, AISettings } from '@/hooks/useAISettings';
-import { Loader2, Save, RotateCcw, Info } from 'lucide-react';
+import { Loader2, Save, RotateCcw, Info, User, Brain, Settings } from 'lucide-react';
 import { toast } from '@/hooks/use-toast';
+import { UserProfilePanel } from './UserProfilePanel';
+import { ConversationMemories } from './ConversationMemories';
 
 interface AISettingsModalProps {
   open: boolean;
@@ -95,18 +98,34 @@ export const AISettingsModal: React.FC<AISettingsModalProps> = ({
 
   return (
     <Dialog open={open} onOpenChange={onOpenChange}>
-      <DialogContent className="max-w-2xl max-h-[80vh] overflow-y-auto">
+      <DialogContent className="max-w-4xl max-h-[80vh] overflow-y-auto">
         <DialogHeader>
           <DialogTitle className="flex items-center gap-2">
-            <Info className="h-5 w-5" />
+            <Settings className="h-5 w-5" />
             Configuración de Websy AI
           </DialogTitle>
           <DialogDescription>
-            Personaliza el comportamiento y las respuestas de Websy AI
+            Personaliza el comportamiento, memoria y respuestas de Websy AI
           </DialogDescription>
         </DialogHeader>
 
-        <div className="space-y-6">
+        <Tabs defaultValue="settings" className="w-full">
+          <TabsList className="grid w-full grid-cols-3">
+            <TabsTrigger value="settings" className="flex items-center gap-2">
+              <Settings className="h-4 w-4" />
+              Configuración
+            </TabsTrigger>
+            <TabsTrigger value="profile" className="flex items-center gap-2">
+              <User className="h-4 w-4" />
+              Perfil
+            </TabsTrigger>
+            <TabsTrigger value="memory" className="flex items-center gap-2">
+              <Brain className="h-4 w-4" />
+              Memoria
+            </TabsTrigger>
+          </TabsList>
+
+          <TabsContent value="settings" className="space-y-6">
           {/* Configuración de Respuesta */}
           <Card>
             <CardHeader className="pb-3">
@@ -322,7 +341,16 @@ export const AISettingsModal: React.FC<AISettingsModalProps> = ({
               </Button>
             </div>
           </div>
-        </div>
+          </TabsContent>
+
+          <TabsContent value="profile" className="space-y-6">
+            <UserProfilePanel />
+          </TabsContent>
+
+          <TabsContent value="memory" className="space-y-6">
+            <ConversationMemories />
+          </TabsContent>
+        </Tabs>
       </DialogContent>
     </Dialog>
   );

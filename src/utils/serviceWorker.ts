@@ -20,7 +20,6 @@ class ServiceWorkerManager {
 
     // No registrar Service Worker en modo desarrollo
     if (import.meta.env.DEV) {
-      console.log('🔧 Modo desarrollo: Service Worker deshabilitado');
       return null;
     }
 
@@ -29,7 +28,7 @@ class ServiceWorkerManager {
         scope: '/'
       });
 
-      console.log('✅ Service Worker registrado exitosamente:', this.registration.scope);
+      // Service Worker registrado exitosamente
 
       // Manejar actualizaciones
       this.registration.addEventListener('updatefound', () => {
@@ -74,7 +73,7 @@ class ServiceWorkerManager {
 
     try {
       await this.sendMessage({ type: 'CLEAR_CACHE' });
-      console.log('🗑️ Cache limpiado exitosamente');
+      // Cache limpiado exitosamente
     } catch (error) {
       console.error('❌ Error limpiando cache:', error);
     }

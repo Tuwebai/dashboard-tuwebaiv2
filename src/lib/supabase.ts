@@ -74,6 +74,16 @@ const getSupabaseClient = (): SupabaseClient => {
           params: {
             eventsPerSecond: 10
           }
+        },
+        global: {
+          headers: {
+            'Accept': 'application/json',
+            'Content-Type': 'application/json',
+            'apikey': supabaseAnonKey
+          }
+        },
+        db: {
+          schema: 'public'
         }
       });
       

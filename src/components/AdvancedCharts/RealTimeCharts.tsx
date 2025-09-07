@@ -75,10 +75,10 @@ export default function RealTimeCharts({ className = '' }: RealTimeChartsProps) 
       
       // Obtener datos reales de Supabase
       const [projectsResponse, usersResponse, paymentsResponse, ticketsResponse] = await Promise.all([
-        supabase.from('projects').select('*'),
-        supabase.from('users').select('*'),
-        supabase.from('payments').select('*'),
-        supabase.from('tickets').select('*')
+        supabase.from('projects').select('id, name, created_at'),
+        supabase.from('users').select('id, full_name, email, created_at'),
+        supabase.from('payments').select('id, amount, created_at'),
+        supabase.from('tickets').select('id, asunto, created_at')
       ]);
 
       if (projectsResponse.error) throw projectsResponse.error;

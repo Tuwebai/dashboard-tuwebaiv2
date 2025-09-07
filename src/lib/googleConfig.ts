@@ -12,10 +12,8 @@ export const GOOGLE_CONFIG = {
 // Verificar configuración
 export const validateGoogleConfig = () => {
   if (!GOOGLE_CONFIG.clientId) {
-    console.error('❌ VITE_GOOGLE_CLIENT_ID no está configurado');
     return false;
   }
-  console.log('✅ Google Client ID configurado:', GOOGLE_CONFIG.clientId);
   return true;
 };
 
@@ -26,7 +24,7 @@ export const generateAuthUrl = (scope: string) => {
     redirect_uri: GOOGLE_CONFIG.redirectUri,
     scope: scope,
     response_type: 'token',
-    access_type: 'offline'
+    access_type: 'online'
   });
   
   return `${GOOGLE_CONFIG.authUrl}?${params.toString()}`;

@@ -114,7 +114,10 @@ export class NotificationAnalyticsService {
 
       const { data, error } = await query;
 
-      if (error) throw error;
+      if (error) {
+        console.warn('Error consultando notification_analytics:', error.message);
+        return [];
+      }
 
       return data || [];
     } catch (error) {
@@ -139,6 +142,22 @@ export class NotificationAnalyticsService {
   }
 
   /**
+   * Obtener resumen por defecto cuando hay errores
+   */
+  private getDefaultSummary(): AnalyticsSummary {
+    return {
+      totalSent: 0,
+      totalDelivered: 0,
+      totalOpened: 0,
+      totalClicked: 0,
+      deliveryRate: 0,
+      openRate: 0,
+      clickRate: 0,
+      period: 'N/A'
+    };
+  }
+
+  /**
    * Obtener resumen general de analytics
    */
   async getAnalyticsSummary(
@@ -154,7 +173,10 @@ export class NotificationAnalyticsService {
 
       const { data, error } = await query;
 
-      if (error) throw error;
+      if (error) {
+        console.warn('Error consultando notification_analytics:', error.message);
+        return this.getDefaultSummary();
+      }
 
       const analytics = data || [];
 
@@ -202,7 +224,10 @@ export class NotificationAnalyticsService {
 
       const { data, error } = await query;
 
-      if (error) throw error;
+      if (error) {
+        console.warn('Error consultando notification_analytics:', error.message);
+        return this.getDefaultSummary();
+      }
 
       const analytics = data || [];
       const channelMap = new Map<string, ChannelPerformance>();
@@ -262,7 +287,10 @@ export class NotificationAnalyticsService {
 
       const { data, error } = await query;
 
-      if (error) throw error;
+      if (error) {
+        console.warn('Error consultando notification_analytics:', error.message);
+        return this.getDefaultSummary();
+      }
 
       const analytics = data || [];
       const categoryMap = new Map<string, CategoryPerformance>();
@@ -335,7 +363,10 @@ export class NotificationAnalyticsService {
 
       const { data, error } = await query;
 
-      if (error) throw error;
+      if (error) {
+        console.warn('Error consultando notification_analytics:', error.message);
+        return this.getDefaultSummary();
+      }
 
       const analytics = data || [];
       const dateMap = new Map<string, TimeSeriesData>();
@@ -474,7 +505,10 @@ export class NotificationAnalyticsService {
         .delete()
         .lt('date', cutoffDate);
 
-      if (error) throw error;
+      if (error) {
+        console.warn('Error consultando notification_analytics:', error.message);
+        return this.getDefaultSummary();
+      }
     } catch (error) {
       console.error('Error cleaning up old analytics:', error);
       throw error;

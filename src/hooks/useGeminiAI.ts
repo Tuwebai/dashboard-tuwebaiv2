@@ -1,6 +1,6 @@
 import { useState, useCallback } from 'react';
-import { supabase } from '@/lib/supabase';
 import { toast } from '@/hooks/use-toast';
+import { useSupabaseContext } from '@/hooks/useSupabaseContext';
 
 interface GeminiMessage {
   role: 'user' | 'model';
@@ -33,98 +33,9 @@ export const useGeminiAI = ({ apiKey, temperature = 0.7, maxTokens = 2048 }: Use
   const geminiApiKey = apiKey || import.meta.env.VITE_GEMINI_API_KEY || import.meta.env.REACT_APP_GEMINI_API_KEY;
   const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
+  const { getDatabaseContext } = useSupabaseContext();
 
-  // Obtener contexto de la base de datos
-  const getDatabaseContext = useCallback(async () => {
-    try {
-      
-      // Intentar obtener datos de manera individual para manejar errores específicos
-      let projects = [];
-      let users = [];
-      let tickets = [];
-
-      try {
-        // Consulta de proyectos con columnas correctas
-        const projectsResult = await supabase
-          .from('projects')
-          .select('id, name, status, progress, created_at, created_by')
-          .limit(10);
-        
-        if (projectsResult.error) {
-          // Fallback a consulta simple
-          const simpleResult = await supabase
-            .from('projects')
-            .select('id, name')
-            .limit(5);
-          
-          if (simpleResult.error) {
-            projects = [];
-          } else {
-            projects = simpleResult.data || [];
-          }
-        } else {
-          projects = projectsResult.data || [];
-        }
-      } catch (error) {
-        projects = [];
-      }
-
-      try {
-        const usersResult = await supabase
-          .from('users')
-          .select('id, full_name, email, role, created_at')
-          .limit(10);
-        
-        if (usersResult.error) {
-        } else {
-          users = usersResult.data || [];
-        }
-      } catch (error) {
-      }
-
-      try {
-        // Consulta de tickets con columnas correctas
-        const ticketsResult = await supabase
-          .from('tickets')
-          .select('id, asunto, status, prioridad, created_at, user_id')
-          .limit(10);
-        
-        if (ticketsResult.error) {
-          // Fallback a consulta simple
-          const simpleResult = await supabase
-            .from('tickets')
-            .select('id, asunto')
-            .limit(5);
-          
-          if (simpleResult.error) {
-            tickets = [];
-          } else {
-            tickets = simpleResult.data || [];
-          }
-        } else {
-          tickets = ticketsResult.data || [];
-        }
-      } catch (error) {
-        tickets = [];
-      }
-
-      const context = {
-        projects,
-        users,
-        tickets,
-        timestamp: new Date().toISOString()
-      };
-
-      return context;
-    } catch (error) {
-      return {
-        projects: [],
-        users: [],
-        tickets: [],
-        timestamp: new Date().toISOString()
-      };
-    }
-  }, []);
+  // Usar el hook de contexto seguro
 
   // Enviar mensaje a Gemini AI
   const sendMessage = useCallback(async (

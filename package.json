@@ -11,7 +11,9 @@
     "preview": "vite preview",
     "clean": "node scripts/clean-and-rebuild.js",
     "clean:dev": "rm -rf node_modules/.vite dist && pnpm dev",
-    "install:clean": "rm -rf node_modules pnpm-lock.yaml && pnpm install"
+    "install:clean": "rm -rf node_modules pnpm-lock.yaml && pnpm install",
+    "test:multi-api": "node scripts/test-multi-api.js",
+    "diagnose:supabase": "node scripts/diagnose-supabase.js"
   },
   "dependencies": {
     "@aws-sdk/client-s3": "^3.844.0",

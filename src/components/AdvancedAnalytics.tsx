@@ -128,12 +128,12 @@ export default function AdvancedAnalytics() {
     try {
       // Obtener datos reales de Supabase
       const [projectsResponse, usersResponse, paymentsResponse, ticketsResponse] = await Promise.all([
-        supabase.from('projects').select('*'),
-        supabase.from('users').select('*'),
+        supabase.from('projects').select('id, name, created_at'),
+        supabase.from('users').select('id, full_name, email, created_at'),
         user?.role === 'admin' 
-          ? supabase.from('payments').select('*')
-          : supabase.from('payments').select('*').eq('user_id', user.id),
-        supabase.from('tickets').select('*')
+          ? supabase.from('payments').select('id, amount, created_at')
+          : supabase.from('payments').select('id, amount, created_at').eq('user_id', user.id),
+        supabase.from('tickets').select('id, asunto, created_at')
       ]);
 
       // Verificar errores

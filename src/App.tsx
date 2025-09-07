@@ -138,7 +138,7 @@ const ServiceWorkerInitializer = () => {
     if (process.env.NODE_ENV === 'production') {
       serviceWorkerManager.register().then((registration) => {
         if (registration) {
-          console.log('🚀 Service Worker registrado para cache offline');
+          // Service Worker registrado para cache offline
         }
       });
     }

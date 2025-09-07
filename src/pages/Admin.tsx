@@ -49,11 +49,10 @@ import AutomationSystem from '@/components/admin/AutomationSystem';
 import AdvancedTicketManager from '@/components/AdvancedTicketManager';
 import AutoVersionCreator from '@/components/admin/AutoVersionCreator';
 import AdvancedTools from '@/components/admin/AdvancedTools';
-import { AdvancedAIPanel } from '@/components/admin/AdvancedAIPanel';
-import { TicketAnalysis } from '@/components/admin/TicketAnalysis';
 import { IntegrationsPanel } from '@/components/admin/IntegrationsPanel';
 import { VersionManagement } from '@/components/admin/VersionManagement';
 import ProjectApprovalManager from '@/components/ProjectApprovalManager';
+import { useGoogleCalendar } from '@/hooks/useGoogleCalendar';
 
 
 
@@ -93,6 +92,14 @@ const Admin = React.memo(() => {
 
   const [initialDataLoaded, setInitialDataLoaded] = useState(false);
 
+  // Google Calendar - Auto-conectar al cargar el dashboard
+  const {
+    isAuthenticated: isCalendarAuthenticated,
+    userInfo: calendarUserInfo,
+    authenticate: authenticateCalendar,
+    signOut: signOutCalendar,
+    isLoading: calendarLoading
+  } = useGoogleCalendar(user);
 
   // Cargar datos desde Supabase
   const loadData = async () => {
@@ -740,6 +747,60 @@ const Admin = React.memo(() => {
             </div>
           </div>
 
+                  {/* Card Estado Google Calendar */}
+                  <div className="mb-6">
+                    <div className="bg-card dark:bg-slate-800/50 rounded-xl sm:rounded-2xl p-4 sm:p-6 shadow-lg hover:shadow-xl transition-all duration-300 border border-border/50 dark:border-slate-700/50 backdrop-blur-sm">
+                      <div className="flex items-center justify-between">
+                        <div className="flex items-center space-x-3">
+                          <div className={`flex items-center justify-center w-10 h-10 sm:w-12 sm:h-12 rounded-xl shadow-lg transition-transform duration-300 ${
+                            isCalendarAuthenticated 
+                              ? 'bg-gradient-to-br from-green-500 to-green-600 text-white' 
+                              : calendarLoading
+                              ? 'bg-gradient-to-br from-blue-500 to-blue-600 text-white'
+                              : 'bg-gradient-to-br from-gray-400 to-gray-500 text-white'
+                          }`}>
+                            <Calendar size={20} className="sm:w-6 sm:h-6" />
+                          </div>
+                          <div>
+                            <h3 className="text-lg font-semibold text-card-foreground">
+                              Google Calendar
+                            </h3>
+                            <p className="text-sm text-muted-foreground">
+                              {isCalendarAuthenticated 
+                                ? `Conectado como ${calendarUserInfo?.name || calendarUserInfo?.email || 'Usuario'}`
+                                : calendarLoading
+                                ? 'Conectando...'
+                                : 'No conectado'
+                              }
+                            </p>
+                          </div>
+                        </div>
+                        <div className="flex items-center space-x-2">
+                          {isCalendarAuthenticated ? (
+                            <Badge variant="default" className="bg-green-500 text-white">
+                              ✓ Conectado
+                            </Badge>
+                          ) : calendarLoading ? (
+                            <Badge variant="outline" className="border-blue-500 text-blue-500">
+                              <div className="h-3 w-3 border-2 border-blue-500 border-t-transparent rounded-full animate-spin mr-2" />
+                              Conectando...
+                            </Badge>
+                          ) : (
+                            <Button
+                              variant="outline"
+                              size="sm"
+                              onClick={authenticateCalendar}
+                              className="text-xs"
+                            >
+                              Conectar
+                            </Button>
+                          )}
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+
+
                   {/* Contenido del Dashboard */}
                   <div className="grid grid-cols-1 xl:grid-cols-2 gap-6 lg:gap-8">
                 
@@ -953,6 +1014,7 @@ const Admin = React.memo(() => {
                          <BarChart3 size={16} />
                        </Badge>
                      </Button>
+
 
                   </div>
                 </div>
@@ -1259,6 +1321,7 @@ const Admin = React.memo(() => {
               <AutomationSystem />
             )}
 
+
             {activeSection === 'auto-version' && (
               <AutoVersionCreator />
             )}
@@ -1285,64 +1348,6 @@ const Admin = React.memo(() => {
               <AdminNotifications />
             )}
 
-            {activeSection === 'inteligencia-contextual' && (
-              <div className="space-y-6">
-                <div className="flex items-center gap-3 mb-6">
-                  <div className="flex items-center justify-center w-12 h-12 rounded-xl bg-gradient-to-br from-purple-500 to-indigo-600 text-white shadow-lg">
-                    <Brain className="h-6 w-6" />
-                  </div>
-                  <div>
-                    <h2 className="text-2xl font-bold text-foreground">Inteligencia Contextual Avanzada</h2>
-                    <p className="text-muted-foreground">Análisis de sentimientos, predicción de patrones y sugerencias proactivas</p>
-                  </div>
-                </div>
-                
-                <AdvancedAIPanel 
-                  recentMessages={recentMessages}
-                  systemMetrics={systemMetrics}
-                  userBehavior={userBehavior}
-                />
-                
-                <TicketAnalysis 
-                  tickets={tickets}
-                  onUpdateTicket={async (ticketId, updates) => {
-                    try {
-                      const { error } = await supabase
-                        .from('tickets')
-                        .update(updates)
-                        .eq('id', ticketId);
-                      
-                      if (error) {
-                        console.error('Error actualizando ticket:', error);
-                        toast({
-                          title: "Error",
-                          description: "No se pudo actualizar el ticket.",
-                          variant: "destructive"
-                        });
-                        return;
-                      }
-                      
-                      // Actualizar el estado local
-                      setTickets(prev => prev.map(ticket => 
-                        ticket.id === ticketId ? { ...ticket, ...updates } : ticket
-                      ));
-                      
-                      toast({
-                        title: "Ticket actualizado",
-                        description: "El ticket se ha actualizado correctamente."
-                      });
-                    } catch (error) {
-                      console.error('Error actualizando ticket:', error);
-                      toast({
-                        title: "Error",
-                        description: "No se pudo actualizar el ticket.",
-                        variant: "destructive"
-                      });
-                    }
-                  }}
-                />
-              </div>
-            )}
 
             {activeSection === 'integraciones' && (
               <IntegrationsPanel />

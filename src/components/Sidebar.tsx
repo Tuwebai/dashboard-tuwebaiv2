@@ -39,12 +39,13 @@ import { useEffect, useState, useCallback } from 'react';
 
 import { Tooltip, TooltipProvider, TooltipTrigger, TooltipContent } from '@/components/ui/tooltip';
 import { useTranslation } from 'react-i18next';
-import { supabase } from '@/lib/supabase';
+import { useSafeSupabase } from '@/hooks/useSafeSupabase';
 
 export default function Sidebar() {
   const { user, logout } = useApp();
   const { theme } = useTheme();
   const location = useLocation();
+  const { getUsersCount, getProjectsCount, getTicketsCount, getPaymentsCount } = useSafeSupabase();
   const navigate = useNavigate();
   const [counts, setCounts] = useState({
     users: 0,
@@ -55,28 +56,23 @@ export default function Sidebar() {
   });
   const { t } = useTranslation();
 
-  // Cargar contadores con Supabase
+  // Cargar contadores con Supabase de manera segura
   const loadCounts = useCallback(async () => {
     try {
-      // Cargar contadores desde Supabase
-      const [usersResult, projectsResult, ticketsResult, paymentsResult, approvalsResult] = await Promise.all([
-        supabase.from('users').select('id', { count: 'exact' }),
-        supabase.from('projects').select('id', { count: 'exact' }),
-        supabase.from('tickets').select('id', { count: 'exact' }),
-        user?.role === 'admin' 
-          ? supabase.from('payments').select('id', { count: 'exact' })
-          : supabase.from('payments').select('id', { count: 'exact' }).eq('user_id', user.id),
-        user?.role === 'admin' 
-          ? supabase.from('projects').select('id', { count: 'exact' }).eq('approval_status', 'pending')
-          : Promise.resolve({ count: 0 })
+      // Cargar contadores usando el hook seguro
+      const [usersCount, projectsCount, ticketsCount, paymentsCount] = await Promise.all([
+        getUsersCount(),
+        getProjectsCount(),
+        getTicketsCount(),
+        getPaymentsCount()
       ]);
 
       setCounts({
-        users: usersResult.count || 0,
-        projects: projectsResult.count || 0,
-        tickets: ticketsResult.count || 0,
-        payments: paymentsResult.count || 0,
-        pendingApprovals: approvalsResult.count || 0
+        users: usersCount,
+        projects: projectsCount,
+        tickets: ticketsCount,
+        payments: paymentsCount,
+        pendingApprovals: 0 // Por ahora 0 hasta que se implemente la lógica de aprobaciones
       });
     } catch (error) {
       console.error('Error loading counts:', error);
@@ -89,7 +85,7 @@ export default function Sidebar() {
         pendingApprovals: 0
       });
     }
-  }, []);
+  }, [getUsersCount, getProjectsCount, getTicketsCount, getPaymentsCount]);
 
   useEffect(() => {
     if (user?.role === 'admin') {
@@ -412,7 +408,6 @@ export default function Sidebar() {
               <div className="h-px bg-gradient-to-r from-sidebar-border dark:from-slate-700 to-transparent mb-2"></div>
               <div className="space-y-1">
                 {adminNavItem('advanced-analytics', <BarChart size={18} />, t('Analytics Avanzado'))}
-                {adminNavItem('inteligencia-contextual', <Brain size={18} />, 'Inteligencia Contextual')}
                 {adminNavItem('integraciones', <Calendar size={18} />, 'Integraciones')}
               </div>
             </div>

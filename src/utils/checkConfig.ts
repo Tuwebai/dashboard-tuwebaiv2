@@ -12,14 +12,41 @@ export const checkWebsyAIConfig = (): ConfigCheck => {
   const warnings: string[] = [];
   const recommendations: string[] = [];
 
-  // Verificar API key de Gemini
-  const geminiApiKey = import.meta.env.VITE_GEMINI_API_KEY || import.meta.env.REACT_APP_GEMINI_API_KEY;
-  if (!geminiApiKey) {
-    errors.push('VITE_GEMINI_API_KEY o REACT_APP_GEMINI_API_KEY no está configurada');
-  } else if (geminiApiKey.length < 20) {
-    errors.push('API key de Gemini parece inválida (muy corta)');
-  } else if (!geminiApiKey.startsWith('AIza')) {
-    warnings.push('API key de Gemini no tiene el formato esperado de Google AI');
+  // Verificar API keys de Gemini (Sistema Multi-API)
+  const geminiApiKeys = [];
+  for (let i = 1; i <= 5; i++) {
+    const key = import.meta.env[`VITE_GEMINI_API_KEY_${i}`] || import.meta.env[`REACT_APP_GEMINI_API_KEY_${i}`];
+    if (key && key.trim()) {
+      geminiApiKeys.push(key.trim());
+    }
+  }
+  
+  const legacyKey = import.meta.env.VITE_GEMINI_API_KEY || import.meta.env.REACT_APP_GEMINI_API_KEY;
+  
+  if (geminiApiKeys.length === 0 && !legacyKey) {
+    errors.push('No se encontraron API keys de Gemini configuradas. Configura al menos VITE_GEMINI_API_KEY_1 o REACT_APP_GEMINI_API_KEY');
+  } else if (geminiApiKeys.length === 0 && legacyKey) {
+    warnings.push('Solo se encontró API key legacy. Se recomienda configurar múltiples API keys para el sistema de fallback automático');
+  } else {
+    recommendations.push(`Sistema Multi-API configurado con ${geminiApiKeys.length} API keys`);
+  }
+  
+  // Validar cada API key
+  geminiApiKeys.forEach((key, index) => {
+    if (key.length < 20) {
+      errors.push(`API key ${index + 1} parece inválida (muy corta)`);
+    } else if (!key.startsWith('AIza')) {
+      warnings.push(`API key ${index + 1} no tiene el formato esperado de Google AI`);
+    }
+  });
+  
+  // Validar API key legacy si existe
+  if (legacyKey) {
+    if (legacyKey.length < 20) {
+      errors.push('API key legacy parece inválida (muy corta)');
+    } else if (!legacyKey.startsWith('AIza')) {
+      warnings.push('API key legacy no tiene el formato esperado de Google AI');
+    }
   }
 
   // Verificar variables de Supabase
@@ -60,31 +87,7 @@ export const checkWebsyAIConfig = (): ConfigCheck => {
 export const logConfigStatus = () => {
   const config = checkWebsyAIConfig();
   
-  console.log('🔧 Estado de configuración de Websy AI:');
-  console.log('=====================================');
-  
-  if (config.isValid) {
-    console.log('✅ Configuración válida');
-  } else {
-    console.log('❌ Configuración inválida');
-  }
-  
-  if (config.errors.length > 0) {
-    console.log('\n🚨 Errores:');
-    config.errors.forEach(error => console.log(`  - ${error}`));
-  }
-  
-  if (config.warnings.length > 0) {
-    console.log('\n⚠️ Advertencias:');
-    config.warnings.forEach(warning => console.log(`  - ${warning}`));
-  }
-  
-  if (config.recommendations.length > 0) {
-    console.log('\n💡 Recomendaciones:');
-    config.recommendations.forEach(rec => console.log(`  - ${rec}`));
-  }
-  
-  console.log('=====================================');
+  // Logging deshabilitado para producción
   
   return config;
 };

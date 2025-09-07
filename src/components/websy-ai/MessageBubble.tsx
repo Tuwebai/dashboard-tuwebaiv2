@@ -10,6 +10,8 @@ import { ChatMessage } from '@/hooks/useChatHistory';
 import { TypewriterText } from './TypewriterText';
 import { FormattedMessage } from './FormattedMessage';
 import { MessageActions } from './MessageActions';
+import { AdminMessageActions } from './AdminMessageActions';
+import { EditMessageInput } from './EditMessageInput';
 import { useApp } from '@/contexts/AppContext';
 import { useTheme } from '@/contexts/ThemeContext';
 import websyAvatar from '@/assets/websyavatar.png';
@@ -20,7 +22,12 @@ interface MessageBubbleProps {
   onCopy?: (text: string) => void;
   onDownload?: (attachment: any) => void;
   onRetry?: () => void;
+  onEditMessage?: (messageId: string, newMessage: string) => void;
+  onStartEdit?: (messageId: string) => void;
+  onCancelEdit?: () => void;
+  isEditing?: boolean;
   isNewMessage?: boolean;
+  onTypewriterProgress?: () => void;
 }
 
 export const MessageBubble: React.FC<MessageBubbleProps> = ({
@@ -28,11 +35,23 @@ export const MessageBubble: React.FC<MessageBubbleProps> = ({
   onCopy,
   onDownload,
   onRetry,
-  isNewMessage = false
+  onEditMessage,
+  onStartEdit,
+  onCancelEdit,
+  isEditing = false,
+  isNewMessage = false,
+  onTypewriterProgress
 }) => {
+  const [localEditText, setLocalEditText] = useState(message.message);
   const { user } = useApp();
   const { theme } = useTheme();
+
+  // Actualizar el texto local cuando cambie el mensaje
+  useEffect(() => {
+    setLocalEditText(message.message);
+  }, [message.message]);
   const isAI = message.isAI;
+  const isAdmin = user?.email === 'tuwebai@gmail.com';
   const [showTypewriter, setShowTypewriter] = useState(false);
   
   // Seleccionar avatar según el tema
@@ -54,6 +73,24 @@ export const MessageBubble: React.FC<MessageBubbleProps> = ({
       onCopy(message.message);
     } else {
       navigator.clipboard.writeText(message.message);
+    }
+  };
+
+  const handleEditMessage = (newMessage: string) => {
+    if (onEditMessage) {
+      onEditMessage(message.id, newMessage);
+    }
+  };
+
+  const handleStartEdit = () => {
+    if (onStartEdit) {
+      onStartEdit(message.id);
+    }
+  };
+
+  const handleCancelEdit = () => {
+    if (onCancelEdit) {
+      onCancelEdit();
     }
   };
 
@@ -107,6 +144,7 @@ export const MessageBubble: React.FC<MessageBubbleProps> = ({
     );
   };
 
+
   return (
     <div className={`flex gap-3 group ${isAI ? 'justify-start' : 'justify-end'}`}>
       {isAI && (
@@ -118,7 +156,7 @@ export const MessageBubble: React.FC<MessageBubbleProps> = ({
         </Avatar>
       )}
       
-      <div className={`flex flex-col max-w-[80%] ${isAI ? 'items-start' : 'items-end'}`}>
+      <div className={`flex flex-col max-w-[80%] ${isAI ? 'items-start' : 'items-end'} group/turn-messages`}>
         {/* Vista previa de archivos adjuntos - Arriba del mensaje */}
         {renderAttachments()}
         
@@ -129,11 +167,36 @@ export const MessageBubble: React.FC<MessageBubbleProps> = ({
         }`}>
           <CardContent className="p-3">
             <div className="prose prose-sm max-w-none dark:prose-invert">
-              {isAI && showTypewriter ? (
+              {!isAI && isAdmin && isEditing ? (
+                <div className="relative">
+                  <textarea
+                    value={localEditText}
+                    onChange={(e) => setLocalEditText(e.target.value)}
+                    className="w-full min-h-[60px] p-0 border-none resize-none focus:outline-none bg-transparent text-primary-foreground placeholder:text-primary-foreground/70 pr-32"
+                    placeholder="Edita tu mensaje..."
+                    autoFocus
+                  />
+                  <div className="absolute bottom-2 right-2 flex gap-1">
+                    <button
+                      onClick={handleCancelEdit}
+                      className="bg-white/90 hover:bg-white text-gray-800 h-6 px-2 text-xs rounded border border-gray-300 shadow-sm"
+                    >
+                      Cancelar
+                    </button>
+                    <button
+                      onClick={() => handleEditMessage(message.id, localEditText)}
+                      className="bg-white/90 hover:bg-white text-gray-800 h-6 px-2 text-xs rounded border border-gray-300 shadow-sm"
+                    >
+                      Enviar
+                    </button>
+                  </div>
+                </div>
+              ) : isAI && showTypewriter ? (
                 <TypewriterText 
                   text={message.message} 
                   speed={1}
                   onComplete={() => setShowTypewriter(false)}
+                  onProgress={onTypewriterProgress}
                 />
               ) : (
                 <FormattedMessage content={message.message} />
@@ -142,14 +205,10 @@ export const MessageBubble: React.FC<MessageBubbleProps> = ({
           </CardContent>
         </Card>
         
+        
         <div className="flex items-center justify-between mt-1">
           <div className="flex items-center gap-2 text-xs text-muted-foreground">
             <span>{timestamp}</span>
-            {isAI && (
-              <Badge variant="secondary" className="text-xs">
-                Websy AI
-              </Badge>
-            )}
           </div>
           
           {isAI && (
@@ -161,6 +220,15 @@ export const MessageBubble: React.FC<MessageBubbleProps> = ({
             />
           )}
         </div>
+        
+         {/* Botones de acción para el admin - Abajo del mensaje - Solo cuando NO está editando */}
+         {!isAI && isAdmin && !isEditing && (
+           <AdminMessageActions
+             message={message.message}
+             onStartEdit={handleStartEdit}
+             className="mt-2"
+           />
+         )}
       </div>
       
       {!isAI && (

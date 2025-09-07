@@ -33,13 +33,40 @@ Websy AI es un asistente de inteligencia artificial especializado en administrac
 ### Variables de Entorno Requeridas
 
 ```env
-# Gemini AI (Google AI Studio)
-REACT_APP_GEMINI_API_KEY=your_gemini_api_key_here
-
 # Supabase (ya configurado)
 VITE_SUPABASE_URL=your_supabase_url_here
 VITE_SUPABASE_ANON_KEY=your_supabase_anon_key_here
+
+# Gemini AI - Sistema Multi-API (Recomendado)
+# Configura hasta 5 API keys para fallback automático
+VITE_GEMINI_API_KEY_1=your_primary_gemini_api_key_here
+VITE_GEMINI_API_KEY_2=your_secondary_gemini_api_key_here
+VITE_GEMINI_API_KEY_3=your_tertiary_gemini_api_key_here
+VITE_GEMINI_API_KEY_4=your_fourth_gemini_api_key_here
+VITE_GEMINI_API_KEY_5=your_fifth_gemini_api_key_here
+
+# Configuración alternativa (compatibilidad con versión anterior)
+REACT_APP_GEMINI_API_KEY=your_legacy_gemini_api_key_here
 ```
+
+### 🚀 Sistema Multi-API con Fallback Automático
+
+Websy AI ahora incluye un sistema inteligente de múltiples API keys que resuelve automáticamente el problema de "Límite de solicitudes excedido":
+
+#### **Características del Sistema Multi-API:**
+- **Fallback Automático**: Cuando una API key alcanza su límite, cambia automáticamente a la siguiente
+- **5 API Keys Soportadas**: Configura hasta 5 API keys diferentes de Gemini
+- **Reset Automático**: Se resetea a la primera API key cada 24 horas
+- **Monitoreo en Tiempo Real**: Panel de estado que muestra el uso de cada API
+- **Logging Detallado**: Sistema de logs para debugging y monitoreo
+- **Persistencia**: Guarda el estado en localStorage para continuidad entre sesiones
+
+#### **Ventajas:**
+- ✅ **Sin interrupciones**: El chat nunca se detiene por límites de API
+- ✅ **Mayor disponibilidad**: Hasta 5x más requests disponibles
+- ✅ **Transparente**: El usuario no nota los cambios de API
+- ✅ **Inteligente**: Solo cambia en errores de rate limit, no en otros errores
+- ✅ **Monitoreo**: Panel visual del estado de todas las APIs
 
 ### Base de Datos
 

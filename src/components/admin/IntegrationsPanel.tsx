@@ -3,39 +3,40 @@ import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
 import { Calendar, Mail, CheckCircle, AlertCircle, Clock, Users } from 'lucide-react';
-import { useCalendarIntegration } from '@/hooks/useCalendarIntegration';
-import { useEmailIntegration } from '@/hooks/useEmailIntegration';
-import { GoogleConfigDebug } from '@/components/debug/GoogleConfigDebug';
+import { useAdminIntegrations } from '@/hooks/useAdminIntegrations';
 import { format } from 'date-fns';
 import { es } from 'date-fns/locale';
 
 export const IntegrationsPanel: React.FC = () => {
   const { 
-    isAuthenticated: isCalendarAuth, 
-    isLoading: isCalendarLoading, 
-    events, 
-    authenticate: authCalendar,
-    listEvents 
-  } = useCalendarIntegration();
-  
-  const { 
-    isAuthenticated: isEmailAuth, 
-    isLoading: isEmailLoading, 
-    authenticate: authEmail 
-  } = useEmailIntegration();
+    calendar,
+    email,
+    isReady,
+    isInitialized
+  } = useAdminIntegrations();
+
+  // Estado local para mostrar el estado de conexión
+  const [calendarConnected, setCalendarConnected] = useState(false);
+  const [emailConnected, setEmailConnected] = useState(false);
+
+  // Actualizar estado cuando cambien las integraciones
+  useEffect(() => {
+    setCalendarConnected(calendar.isAuthenticated);
+    setEmailConnected(email.isAuthenticated);
+  }, [calendar.isAuthenticated, email.isAuthenticated]);
 
   const [recentEvents, setRecentEvents] = useState<any[]>([]);
 
   useEffect(() => {
-    if (isCalendarAuth) {
+    if (calendar.isAuthenticated) {
       loadRecentEvents();
     }
-  }, [isCalendarAuth]);
+  }, [calendar.isAuthenticated]);
 
   const loadRecentEvents = async () => {
     const now = new Date();
     const nextWeek = new Date(now.getTime() + 7 * 24 * 60 * 60 * 1000);
-    const events = await listEvents(now, nextWeek);
+    const events = await calendar.listEvents(now, nextWeek);
     setRecentEvents(events.slice(0, 5));
   };
 
@@ -47,7 +48,12 @@ export const IntegrationsPanel: React.FC = () => {
         </div>
         <div>
           <h2 className="text-2xl font-bold text-foreground">Integraciones Profesionales</h2>
-          <p className="text-muted-foreground">Calendario y Email integrados con Websy AI</p>
+          <p className="text-muted-foreground">
+            Calendario y Email integrados con Websy AI
+            {isInitialized && (
+              <span className="ml-2 text-green-600">✅ Inicializado</span>
+            )}
+          </p>
         </div>
       </div>
 
@@ -58,7 +64,7 @@ export const IntegrationsPanel: React.FC = () => {
             <CardTitle className="flex items-center gap-2">
               <Calendar className="h-5 w-5" />
               Google Calendar
-              {isCalendarAuth ? (
+              {calendarConnected ? (
                 <Badge variant="default" className="bg-green-500">
                   <CheckCircle className="h-3 w-3 mr-1" />
                   Conectado
@@ -72,17 +78,17 @@ export const IntegrationsPanel: React.FC = () => {
             </CardTitle>
           </CardHeader>
           <CardContent className="space-y-4">
-            {!isCalendarAuth ? (
+            {!calendarConnected ? (
               <div className="space-y-3">
                 <p className="text-sm text-muted-foreground">
                   Conecta tu cuenta de Google Calendar para programar reuniones automáticamente.
                 </p>
                 <Button 
-                  onClick={authCalendar} 
-                  disabled={isCalendarLoading}
+                  onClick={calendar.authenticate} 
+                  disabled={calendar.isLoading}
                   className="w-full"
                 >
-                  {isCalendarLoading ? 'Conectando...' : 'Conectar Calendario'}
+                  {calendar.isLoading ? 'Conectando...' : 'Conectar Calendario'}
                 </Button>
               </div>
             ) : (
@@ -130,7 +136,7 @@ export const IntegrationsPanel: React.FC = () => {
             <CardTitle className="flex items-center gap-2">
               <Mail className="h-5 w-5" />
               Gmail
-              {isEmailAuth ? (
+              {emailConnected ? (
                 <Badge variant="default" className="bg-green-500">
                   <CheckCircle className="h-3 w-3 mr-1" />
                   Conectado
@@ -144,17 +150,17 @@ export const IntegrationsPanel: React.FC = () => {
             </CardTitle>
           </CardHeader>
           <CardContent className="space-y-4">
-            {!isEmailAuth ? (
+            {!emailConnected ? (
               <div className="space-y-3">
                 <p className="text-sm text-muted-foreground">
                   Conecta tu cuenta de Gmail para enviar reportes automáticamente.
                 </p>
                 <Button 
-                  onClick={authEmail} 
-                  disabled={isEmailLoading}
+                  onClick={email.authenticate} 
+                  disabled={email.isLoading}
                   className="w-full"
                 >
-                  {isEmailLoading ? 'Conectando...' : 'Conectar Gmail'}
+                  {email.isLoading ? 'Conectando...' : 'Conectar Gmail'}
                 </Button>
               </div>
             ) : (
@@ -181,14 +187,6 @@ export const IntegrationsPanel: React.FC = () => {
       </div>
 
       {/* Debug de configuración */}
-      <Card>
-        <CardHeader>
-          <CardTitle>Debug de Configuración</CardTitle>
-        </CardHeader>
-        <CardContent>
-          <GoogleConfigDebug />
-        </CardContent>
-      </Card>
 
       {/* Comandos disponibles */}
       <Card>

@@ -56,20 +56,53 @@
 - Error después de varios mensajes
 - "Límite de solicitudes excedido"
 
-#### **Solución:**
-1. **Esperar:**
-   - Esperar 1-2 minutos
-   - Los límites se resetean automáticamente
+#### **Solución con Sistema Multi-API:**
+1. **Automático (Recomendado):**
+   - El sistema cambia automáticamente a la siguiente API key
+   - No requiere intervención manual
+   - Verifica el panel de estado de APIs en la barra lateral
 
-2. **Verificar límites:**
+2. **Configuración Manual:**
+   - Configura múltiples API keys en variables de entorno
+   - Usa `VITE_GEMINI_API_KEY_1`, `VITE_GEMINI_API_KEY_2`, etc.
+   - El sistema detectará y usará todas las keys disponibles
+
+3. **Solución Legacy:**
+   - Esperar 1-2 minutos para reset automático
    - Revisar cuota en Google AI Studio
    - Considerar upgrade de plan si es necesario
 
-3. **Optimizar uso:**
-   - Reducir frecuencia de mensajes
-   - Usar mensajes más cortos
+### **4. Problemas con Sistema Multi-API**
 
-### **4. Error: "Tabla chat_history no existe"**
+#### **Síntomas:**
+- Panel de estado de APIs no se muestra
+- Solo se usa una API key a pesar de tener múltiples configuradas
+- Errores de "No hay API keys disponibles"
+
+#### **Solución:**
+1. **Verificar configuración:**
+   ```env
+   VITE_GEMINI_API_KEY_1=tu_primera_api_key
+   VITE_GEMINI_API_KEY_2=tu_segunda_api_key
+   VITE_GEMINI_API_KEY_3=tu_tercera_api_key
+   ```
+
+2. **Reiniciar servidor:**
+   ```bash
+   pnpm dev
+   ```
+
+3. **Verificar panel de estado:**
+   - Abre la barra lateral en Websy AI
+   - Verifica que se muestren todas las API keys configuradas
+   - El panel debe mostrar el estado de cada API
+
+4. **Logs de debugging:**
+   - Abre las herramientas de desarrollador (F12)
+   - Busca mensajes que empiecen con "[WebsyAI Multi-API]"
+   - Verifica que el sistema detecte todas las API keys
+
+### **5. Error: "Tabla chat_history no existe"**
 
 #### **Síntomas:**
 - Error al guardar mensajes

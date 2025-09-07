@@ -37,10 +37,12 @@ import {
   Menu,
   Sun,
   Moon,
-  Edit3
+  Edit3,
+  // Removidos - ahora están en configuración
 } from 'lucide-react';
 import { toast } from '@/hooks/use-toast';
-import { useGeminiAI } from '@/hooks/useGeminiAI';
+import { useMultiAI } from '@/hooks/useMultiAI';
+import { useGoogleCalendar } from '@/hooks/useGoogleCalendar';
 import { useChatHistory, ChatMessage, Conversation } from '@/hooks/useChatHistory';
 import { useAISettings } from '@/hooks/useAISettings';
 import { MessageBubble } from '@/components/websy-ai/MessageBubble';
@@ -50,6 +52,7 @@ import websyAvatarDark from '@/assets/websyparamodooscuro.png';
 import { TypingIndicator } from '@/components/websy-ai/TypingIndicator';
 import { ChatInput } from '@/components/websy-ai/ChatInput';
 import { AISettingsModal } from '@/components/websy-ai/AISettingsModal';
+// Removidos - ahora están en configuración
 import { supabase } from '@/lib/supabase';
 
 const WebsyAI: React.FC = () => {
@@ -62,19 +65,42 @@ const WebsyAI: React.FC = () => {
   const [isTyping, setIsTyping] = useState(false);
   const [searchQuery, setSearchQuery] = useState('');
   const [showSettings, setShowSettings] = useState(false);
+  const [editingMessageId, setEditingMessageId] = useState<string | null>(null);
   const [sidebarCollapsed, setSidebarCollapsed] = useState(false);
   const [newMessageIds, setNewMessageIds] = useState<Set<string>>(new Set());
   const [renameDialogOpen, setRenameDialogOpen] = useState(false);
   const [conversationToRename, setConversationToRename] = useState<Conversation | null>(null);
   const [newConversationTitle, setNewConversationTitle] = useState('');
+  // Removido sidebarView - ahora solo conversaciones
   
   const messagesEndRef = useRef<HTMLDivElement>(null);
 
-  // Hooks
-  const { sendMessage, isLoading, error } = useGeminiAI({
-    apiKey: import.meta.env.VITE_GEMINI_API_KEY || import.meta.env.REACT_APP_GEMINI_API_KEY || '',
+  // Google Calendar - Declarar primero para usar en useMultiAI
+  const {
+    isAuthenticated: isCalendarAuthenticated,
+    userInfo: calendarUserInfo,
+    authenticate: authenticateCalendar,
+    signOut: signOutCalendar,
+    isLoading: calendarLoading
+  } = useGoogleCalendar(user);
+
+  // Hooks - Sistema Multi-API
+  const { 
+    sendMessage, 
+    isLoading, 
+    error,
+    currentApiIndex,
+    apiStatuses,
+    totalRequests,
+    lastReset,
+    resetToFirstApi
+  } = useMultiAI({
     temperature: 0.7,
-    maxTokens: 2048
+    maxTokens: 2048,
+    enableLogging: true,
+    resetIntervalHours: 24,
+    isCalendarAuthenticated,
+    calendarUserInfo
   });
 
   const {
@@ -265,15 +291,15 @@ const WebsyAI: React.FC = () => {
     if (!lastUserMessage) return;
 
     try {
-      // Eliminar la última respuesta de IA
-      const messagesWithoutLastAI = currentMessages.filter((msg, index) => {
-        if (msg.isAI && index === currentMessages.length - 1) {
-          return false; // Eliminar el último mensaje de IA
-        }
-        return true;
-      });
+      // Encontrar el índice del último mensaje de IA
+      const lastAIIndex = currentMessages.findLastIndex(msg => msg.isAI);
+      
+      if (lastAIIndex === -1) return;
 
-      // Actualizar mensajes locales
+      // Eliminar solo el último mensaje de IA
+      const messagesWithoutLastAI = currentMessages.slice(0, lastAIIndex);
+
+      // Actualizar mensajes locales inmediatamente
       setCurrentMessages(messagesWithoutLastAI);
 
       // Mostrar indicador de escritura
@@ -312,10 +338,83 @@ const WebsyAI: React.FC = () => {
     }
   }, [user, currentMessages, sendMessage, saveMessage, currentConversationId, setNewMessageIds]);
 
+  // Iniciar edición de mensaje
+  const handleStartEdit = useCallback((messageId: string) => {
+    setEditingMessageId(messageId);
+  }, []);
+
+  // Cancelar edición
+  const handleCancelEdit = useCallback(() => {
+    setEditingMessageId(null);
+  }, []);
+
+  // Editar mensaje del admin
+  const handleEditMessage = useCallback(async (messageId: string, newMessage: string) => {
+    if (!user || user.email !== 'tuwebai@gmail.com') return;
+
+    try {
+      // Actualizar el mensaje en el estado local
+      setCurrentMessages(prevMessages => 
+        prevMessages.map(msg => 
+          msg.id === messageId 
+            ? { ...msg, message: newMessage, timestamp: new Date() }
+            : msg
+        )
+      );
+
+      // Si hay una respuesta de IA después de este mensaje, eliminarla
+      const messageIndex = currentMessages.findIndex(msg => msg.id === messageId);
+      if (messageIndex !== -1) {
+        const messagesAfter = currentMessages.slice(messageIndex + 1);
+        const aiResponseIndex = messagesAfter.findIndex(msg => msg.isAI);
+        
+        if (aiResponseIndex !== -1) {
+          const actualAIIndex = messageIndex + 1 + aiResponseIndex;
+          setCurrentMessages(prevMessages => 
+            prevMessages.filter((_, index) => index !== actualAIIndex)
+          );
+        }
+      }
+
+      // Cerrar modo edición
+      setEditingMessageId(null);
+
+      // Enviar el mensaje editado
+      await sendMessage(newMessage, []);
+
+      toast({
+        title: "Mensaje editado",
+        description: "El mensaje ha sido actualizado y enviado"
+      });
+    } catch (error) {
+      console.error('Error al editar mensaje:', error);
+      toast({
+        title: "Error",
+        description: "No se pudo editar el mensaje",
+        variant: "destructive"
+      });
+    }
+  }, [currentMessages, sendMessage, user]);
+
   // Scroll automático al final
   const scrollToBottom = useCallback(() => {
     if (messagesEndRef.current) {
-      messagesEndRef.current.scrollIntoView({ behavior: 'smooth' });
+      messagesEndRef.current.scrollIntoView({ 
+        behavior: 'smooth',
+        block: 'end',
+        inline: 'nearest'
+      });
+    }
+  }, []);
+
+  // Scroll instantáneo para typewriter (más fluido)
+  const scrollToBottomInstant = useCallback(() => {
+    if (messagesEndRef.current) {
+      messagesEndRef.current.scrollIntoView({ 
+        behavior: 'auto',
+        block: 'end',
+        inline: 'nearest'
+      });
     }
   }, []);
 
@@ -335,11 +434,19 @@ const WebsyAI: React.FC = () => {
     if (isTyping) {
       const interval = setInterval(() => {
         scrollToBottom();
-      }, 100); // Scroll cada 100ms durante la escritura
+      }, 50); // Scroll cada 50ms durante la escritura para mayor fluidez
       
       return () => clearInterval(interval);
     }
   }, [isTyping, scrollToBottom]);
+
+  // Callback para scroll durante typewriter con debounce
+  const handleTypewriterProgress = useCallback(() => {
+    // Usar scroll instantáneo para typewriter (más fluido)
+    requestAnimationFrame(() => {
+      scrollToBottomInstant();
+    });
+  }, [scrollToBottomInstant]);
 
   // Cargar mensajes cuando cambie la conversación
   useEffect(() => {
@@ -459,7 +566,7 @@ const WebsyAI: React.FC = () => {
 
         <div className={`${sidebarCollapsed ? 'w-0 overflow-hidden' : 'w-80'} transition-all duration-300 border-r bg-background dark:bg-slate-900 flex-shrink-0 flex flex-col`}>
           <div className="flex-shrink-0 px-4 py-3 border-b">
-            <div className="flex items-center justify-between">
+            <div className="flex items-center justify-between mb-3">
               <h3 className="text-sm font-medium">Conversaciones</h3>
               <div className="flex items-center gap-2">
                 <Badge variant="secondary" className="text-xs">
@@ -478,65 +585,65 @@ const WebsyAI: React.FC = () => {
             </div>
           </div>
           
-          <div className="flex-1 overflow-y-auto">
-            <div className="p-3 space-y-2">
-              {conversations.map((conversation) => (
-                <div
-                  key={conversation.id}
-                  className={`group p-3 rounded-lg cursor-pointer transition-colors ${
-                    currentConversationId === conversation.id
-                      ? 'bg-primary text-primary-foreground'
-                      : 'hover:bg-muted'
-                  }`}
-                  onClick={() => handleLoadConversation(conversation.id)}
-                >
-                  <div className="flex items-center justify-between">
-                    <div className="flex-1 min-w-0">
-                      <p className="text-sm font-medium truncate">
-                        {conversation.title}
-                      </p>
-                      <p className="text-xs text-muted-foreground">
-                        {conversation.messageCount} mensajes
-                      </p>
-                    </div>
-                    <DropdownMenu>
-                      <DropdownMenuTrigger asChild>
-                        <Button
-                          variant="ghost"
-                          size="sm"
-                          onClick={(e) => e.stopPropagation()}
-                          className="h-6 w-6 p-0 opacity-60 group-hover:opacity-100 hover:opacity-100 transition-opacity"
-                        >
-                          <MoreHorizontal className="h-4 w-4" />
-                        </Button>
-                      </DropdownMenuTrigger>
-                      <DropdownMenuContent align="end" className="w-48">
-                        <DropdownMenuItem
-                          onClick={(e) => {
-                            e.stopPropagation();
-                            handleRenameConversation(conversation);
-                          }}
-                          className="cursor-pointer"
-                        >
-                          <Edit3 className="h-4 w-4 mr-2" />
-                          Renombrar
-                        </DropdownMenuItem>
-                        <DropdownMenuItem
-                          onClick={(e) => {
-                            e.stopPropagation();
-                            handleDeleteConversation(conversation.id);
-                          }}
-                          className="cursor-pointer text-destructive focus:text-destructive"
-                        >
-                          <Trash2 className="h-4 w-4 mr-2" />
-                          Eliminar
-                        </DropdownMenuItem>
-                      </DropdownMenuContent>
-                    </DropdownMenu>
-                  </div>
-                </div>
-              ))}
-            </div>
+           <div className="flex-1 overflow-y-auto">
+             <div className="p-3 space-y-2">
+               {conversations.map((conversation) => (
+                 <div
+                   key={conversation.id}
+                   className={`group p-3 rounded-lg cursor-pointer transition-colors ${
+                     currentConversationId === conversation.id
+                       ? 'bg-primary text-primary-foreground'
+                       : 'hover:bg-muted'
+                   }`}
+                   onClick={() => handleLoadConversation(conversation.id)}
+                 >
+                   <div className="flex items-center justify-between">
+                     <div className="flex-1 min-w-0">
+                       <p className="text-sm font-medium truncate">
+                         {conversation.title}
+                       </p>
+                       <p className="text-xs text-muted-foreground">
+                         {conversation.messageCount} mensajes
+                       </p>
+                     </div>
+                     <DropdownMenu>
+                       <DropdownMenuTrigger asChild>
+                         <Button
+                           variant="ghost"
+                           size="sm"
+                           onClick={(e) => e.stopPropagation()}
+                           className="h-6 w-6 p-0 opacity-60 group-hover:opacity-100 hover:opacity-100 transition-opacity"
+                         >
+                           <MoreHorizontal className="h-4 w-4" />
+                         </Button>
+                       </DropdownMenuTrigger>
+                       <DropdownMenuContent align="end" className="w-48">
+                         <DropdownMenuItem
+                           onClick={(e) => {
+                             e.stopPropagation();
+                             handleRenameConversation(conversation);
+                           }}
+                           className="cursor-pointer"
+                         >
+                           <Edit3 className="h-4 w-4 mr-2" />
+                           Renombrar
+                         </DropdownMenuItem>
+                         <DropdownMenuItem
+                           onClick={(e) => {
+                             e.stopPropagation();
+                             handleDeleteConversation(conversation.id);
+                           }}
+                           className="cursor-pointer text-destructive focus:text-destructive"
+                         >
+                           <Trash2 className="h-4 w-4 mr-2" />
+                           Eliminar
+                         </DropdownMenuItem>
+                       </DropdownMenuContent>
+                     </DropdownMenu>
+                   </div>
+                 </div>
+               ))}
+             </div>
           </div>
         </div>
 
@@ -584,6 +691,11 @@ const WebsyAI: React.FC = () => {
                       });
                     }}
                     onRetry={message.isAI ? handleRetryMessage : undefined}
+                    onEditMessage={handleEditMessage}
+                    onStartEdit={handleStartEdit}
+                    onCancelEdit={handleCancelEdit}
+                    isEditing={editingMessageId === message.id}
+                    onTypewriterProgress={handleTypewriterProgress}
                   />
                 ))}
                 

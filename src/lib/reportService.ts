@@ -1,288 +1,352 @@
-import jsPDF from 'jspdf';
-import html2canvas from 'html2canvas';
-import * as XLSX from 'xlsx';
-import { saveAs } from 'file-saver';
+import { supabase } from './supabase';
 
-interface ReportData {
-  title: string;
-  description: string;
-  data: any[];
-  columns: Array<{
-    key: string;
-    label: string;
-    type: 'text' | 'number' | 'date' | 'currency' | 'percentage';
+export interface ReportData {
+  total_tasks: number;
+  completed_tasks: number;
+  overdue_tasks: number;
+  productivity_score: number;
+  team_efficiency: number;
+  skill_gaps: Array<{
+    skill_name: string;
+    gap_percentage: number;
   }>;
-  summary?: {
-    total?: number;
-    average?: number;
-    count?: number;
-  };
+  top_performers: Array<{
+    user_name: string;
+    completed_tasks: number;
+  }>;
+  project_summary: Array<{
+    project_name: string;
+    status: string;
+    progress: number;
+  }>;
 }
 
-interface ChartData {
-  type: 'line' | 'bar' | 'pie' | 'area';
-  title: string;
-  data: any[];
-  xAxis: string;
-  yAxis: string;
-}
+export class ReportService {
+  private static instance: ReportService;
 
-class ReportService {
-  private formatValue(value: any, type: string): string {
-    switch (type) {
-      case 'currency':
-        return new Intl.NumberFormat('es-ES', {
-          style: 'currency',
-          currency: 'USD'
-        }).format(value);
-      case 'percentage':
-        return `${value}%`;
-      case 'date':
-        return new Date(value).toLocaleDateString('es-ES');
-      case 'number':
-        return new Intl.NumberFormat('es-ES').format(value);
-      default:
-        return String(value);
+  public static getInstance(): ReportService {
+    if (!ReportService.instance) {
+      ReportService.instance = new ReportService();
     }
+    return ReportService.instance;
   }
 
-  public async exportToPDF(element: HTMLElement, filename: string): Promise<void> {
+  async generateReportData(type: 'weekly' | 'monthly'): Promise<ReportData> {
     try {
-      const canvas = await html2canvas(element, {
-        scale: 2,
-        useCORS: true,
-        allowTaint: true,
-        backgroundColor: '#ffffff'
-      });
+      // Calcular fechas según el tipo de reporte
+      const now = new Date();
+      const startDate = type === 'weekly' 
+        ? new Date(now.getTime() - 7 * 24 * 60 * 60 * 1000)
+        : new Date(now.getTime() - 30 * 24 * 60 * 60 * 1000);
 
-      const imgData = canvas.toDataURL('image/png');
-      const pdf = new jsPDF('p', 'mm', 'a4');
-      const imgWidth = 210;
-      const pageHeight = 295;
-      const imgHeight = (canvas.height * imgWidth) / canvas.width;
-      let heightLeft = imgHeight;
+      // Obtener datos de tareas
+      const [tasksResult, projectTasksResult] = await Promise.all([
+        supabase
+          .from('tasks')
+          .select('*')
+          .gte('created_at', startDate.toISOString()),
+        supabase
+          .from('project_tasks')
+          .select('*')
+          .gte('created_at', startDate.toISOString())
+      ]);
 
-      let position = 0;
+      const allTasks = [
+        ...(tasksResult.data || []).map(t => ({ ...t, table_name: 'tasks' as const })),
+        ...(projectTasksResult.data || []).map(t => ({ ...t, table_name: 'project_tasks' as const }))
+      ];
 
-      pdf.addImage(imgData, 'PNG', 0, position, imgWidth, imgHeight);
-      heightLeft -= pageHeight;
-
-      while (heightLeft >= 0) {
-        position = heightLeft - imgHeight;
-        pdf.addPage();
-        pdf.addImage(imgData, 'PNG', 0, position, imgWidth, imgHeight);
-        heightLeft -= pageHeight;
-      }
-
-      pdf.save(`${filename}.pdf`);
-    } catch (error) {
-      console.error('Error exporting to PDF:', error);
-      throw new Error('No se pudo exportar el PDF');
-    }
-  }
-
-  public exportToExcel(data: ReportData, filename: string): void {
-    try {
-      // Crear workbook
-      const workbook = XLSX.utils.book_new();
-
-      // Preparar datos para Excel
-      const excelData = data.data.map(row => {
-        const formattedRow: any = {};
-        data.columns.forEach(column => {
-          formattedRow[column.label] = this.formatValue(row[column.key], column.type);
-        });
-        return formattedRow;
-      });
-
-      // Crear worksheet
-      const worksheet = XLSX.utils.json_to_sheet(excelData);
-
-      // Agregar resumen si existe
-      if (data.summary) {
-        const summaryData = [];
-        if (data.summary.total !== undefined) {
-          summaryData.push({ Métrica: 'Total', Valor: this.formatValue(data.summary.total, 'number') });
-        }
-        if (data.summary.average !== undefined) {
-          summaryData.push({ Métrica: 'Promedio', Valor: this.formatValue(data.summary.average, 'number') });
-        }
-        if (data.summary.count !== undefined) {
-          summaryData.push({ Métrica: 'Cantidad', Valor: this.formatValue(data.summary.count, 'number') });
-        }
-
-        if (summaryData.length > 0) {
-          // Agregar fila vacía
-          XLSX.utils.sheet_add_aoa(worksheet, [['']], { origin: -1 });
-          // Agregar resumen
-          XLSX.utils.sheet_add_json(worksheet, summaryData, { origin: -1 });
-        }
-      }
-
-      // Agregar worksheet al workbook
-      XLSX.utils.book_append_sheet(workbook, worksheet, 'Reporte');
-
-      // Generar archivo
-      const excelBuffer = XLSX.write(workbook, { bookType: 'xlsx', type: 'array' });
-      const blob = new Blob([excelBuffer], { type: 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet' });
-      saveAs(blob, `${filename}.xlsx`);
-    } catch (error) {
-      console.error('Error exporting to Excel:', error);
-      throw new Error('No se pudo exportar el Excel');
-    }
-  }
-
-  public exportToCSV(data: ReportData, filename: string): void {
-    try {
-      // Crear headers
-      const headers = data.columns.map(col => col.label).join(',');
+      // Calcular estadísticas
+      const total_tasks = allTasks.length;
+      const completed_tasks = allTasks.filter(t => t.status === 'completed').length;
+      const overdue_tasks = allTasks.filter(t => 
+        t.status !== 'completed' && 
+        t.due_date && 
+        new Date(t.due_date) < now
+      ).length;
       
-      // Crear filas de datos
-      const rows = data.data.map(row => {
-        return data.columns.map(col => {
-          const value = this.formatValue(row[col.key], col.type);
-          // Escapar comillas en CSV
-          return value.includes(',') ? `"${value}"` : value;
-        }).join(',');
-      });
+      const productivity_score = total_tasks > 0 ? Math.round((completed_tasks / total_tasks) * 100) : 0;
+      const team_efficiency = productivity_score; // Por ahora igual a productividad
 
-      // Agregar resumen si existe
-      if (data.summary) {
-        rows.push(''); // Línea vacía
-        if (data.summary.total !== undefined) {
-          rows.push(`Total,${this.formatValue(data.summary.total, 'number')}`);
-        }
-        if (data.summary.average !== undefined) {
-          rows.push(`Promedio,${this.formatValue(data.summary.average, 'number')}`);
-        }
-        if (data.summary.count !== undefined) {
-          rows.push(`Cantidad,${this.formatValue(data.summary.count, 'number')}`);
-        }
-      }
+      // Obtener gaps de skills
+      const skillGaps = await this.getSkillGaps();
 
-      // Crear contenido CSV
-      const csvContent = [headers, ...rows].join('\n');
-      
-      // Crear blob y descargar
-      const blob = new Blob([csvContent], { type: 'text/csv;charset=utf-8;' });
-      saveAs(blob, `${filename}.csv`);
+      // Obtener top performers
+      const topPerformers = await this.getTopPerformers(startDate);
+
+      // Obtener resumen de proyectos
+      const projectSummary = await this.getProjectSummary();
+
+      return {
+        total_tasks,
+        completed_tasks,
+        overdue_tasks,
+        productivity_score,
+        team_efficiency,
+        skill_gaps: skillGaps,
+        top_performers: topPerformers,
+        project_summary: projectSummary
+      };
     } catch (error) {
-      console.error('Error exporting to CSV:', error);
-      throw new Error('No se pudo exportar el CSV');
+      console.error('Error generando datos del reporte:', error);
+      throw error;
     }
   }
 
-  public generateProjectReport(projects: any[]): ReportData {
-    return {
-      title: 'Reporte de Proyectos',
-      description: 'Análisis detallado de todos los proyectos',
-      columns: [
-        { key: 'name', label: 'Nombre del Proyecto', type: 'text' },
-        { key: 'type', label: 'Tipo', type: 'text' },
-        { key: 'status', label: 'Estado', type: 'text' },
-        { key: 'ownerEmail', label: 'Propietario', type: 'text' },
-        { key: 'createdAt', label: 'Fecha de Creación', type: 'date' },
-        { key: 'updatedAt', label: 'Última Actualización', type: 'date' }
-      ],
-      data: projects,
-      summary: {
-        total: projects.length,
-        count: projects.filter(p => p.status === 'active').length
-      }
-    };
-  }
-
-  public generateUserReport(users: any[]): ReportData {
-    return {
-      title: 'Reporte de Usuarios',
-      description: 'Análisis de usuarios registrados',
-      columns: [
-        { key: 'email', label: 'Email', type: 'text' },
-        { key: 'role', label: 'Rol', type: 'text' },
-        { key: 'createdAt', label: 'Fecha de Registro', type: 'date' },
-        { key: 'lastLogin', label: 'Último Acceso', type: 'date' },
-        { key: 'status', label: 'Estado', type: 'text' }
-      ],
-      data: users,
-      summary: {
-        total: users.length,
-        count: users.filter(u => u.status === 'active').length
-      }
-    };
-  }
-
-  public generateRevenueReport(revenueData: any[]): ReportData {
-    return {
-      title: 'Reporte de Ingresos',
-      description: 'Análisis financiero detallado',
-      columns: [
-        { key: 'month', label: 'Mes', type: 'text' },
-        { key: 'revenue', label: 'Ingresos', type: 'currency' },
-        { key: 'projects', label: 'Proyectos', type: 'number' },
-        { key: 'growth', label: 'Crecimiento', type: 'percentage' }
-      ],
-      data: revenueData,
-      summary: {
-        total: revenueData.reduce((sum, item) => sum + item.revenue, 0),
-        average: revenueData.reduce((sum, item) => sum + item.revenue, 0) / revenueData.length
-      }
-    };
-  }
-
-  public generatePerformanceReport(performanceData: any[]): ReportData {
-    return {
-      title: 'Reporte de Rendimiento',
-      description: 'Métricas de rendimiento del equipo',
-      columns: [
-        { key: 'metric', label: 'Métrica', type: 'text' },
-        { key: 'value', label: 'Valor', type: 'number' },
-        { key: 'target', label: 'Objetivo', type: 'number' },
-        { key: 'achievement', label: 'Logro', type: 'percentage' }
-      ],
-      data: performanceData,
-      summary: {
-        average: performanceData.reduce((sum, item) => sum + item.value, 0) / performanceData.length
-      }
-    };
-  }
-
-  public async exportDashboardAsPDF(elementId: string, title: string): Promise<void> {
-    const element = document.getElementById(elementId);
-    if (!element) {
-      throw new Error('Elemento no encontrado');
-    }
-
-    await this.exportToPDF(element, `dashboard-${title.toLowerCase().replace(/\s+/g, '-')}`);
-  }
-
-  public exportMultipleReports(reports: ReportData[], filename: string): void {
+  private async getSkillGaps() {
     try {
-      const workbook = XLSX.utils.book_new();
+      const { data: skillData } = await supabase
+        .from('user_skills')
+        .select('skill_name, user_id')
+        .not('skill_name', 'is', null);
 
-      reports.forEach((report, index) => {
-        const excelData = report.data.map(row => {
-          const formattedRow: any = {};
-          report.columns.forEach(column => {
-            formattedRow[column.label] = this.formatValue(row[column.key], column.type);
-          });
-          return formattedRow;
+      if (!skillData) return [];
+
+      const skillCounts = skillData.reduce((acc: any, skill: any) => {
+        if (!acc[skill.skill_name]) {
+          acc[skill.skill_name] = 0;
+        }
+        acc[skill.skill_name]++;
+        return acc;
+      }, {});
+
+      const { data: taskSkillsData } = await supabase
+        .from('tasks')
+        .select('required_skills')
+        .not('required_skills', 'is', null);
+
+      const requiredSkills: any = {};
+      if (taskSkillsData) {
+        taskSkillsData.forEach((task: any) => {
+          if (task.required_skills && Array.isArray(task.required_skills)) {
+            task.required_skills.forEach((skill: string) => {
+              requiredSkills[skill] = (requiredSkills[skill] || 0) + 1;
+            });
+          }
         });
+      }
 
-        const worksheet = XLSX.utils.json_to_sheet(excelData);
-        XLSX.utils.book_append_sheet(workbook, worksheet, report.title.substring(0, 31));
+      return Object.keys(skillCounts).map(skillName => {
+        const available = skillCounts[skillName];
+        const required = requiredSkills[skillName] || 0;
+        const gapPercentage = required > 0 ? Math.max(0, ((required - available) / required) * 100) : 0;
+        
+        return {
+          skill_name: skillName,
+          gap_percentage: gapPercentage
+        };
       });
-
-      const excelBuffer = XLSX.write(workbook, { bookType: 'xlsx', type: 'array' });
-      const blob = new Blob([excelBuffer], { type: 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet' });
-      saveAs(blob, `${filename}.xlsx`);
     } catch (error) {
-      console.error('Error exporting multiple reports:', error);
-      throw new Error('No se pudieron exportar los reportes');
+      console.error('Error obteniendo gaps de skills:', error);
+      return [];
     }
+  }
+
+  private async getTopPerformers(startDate: Date) {
+    try {
+      const { data: users } = await supabase
+        .from('users')
+        .select('id, name, email');
+
+      if (!users) return [];
+
+      const performers = await Promise.all(
+        users.map(async (user) => {
+          const { count } = await supabase
+            .from('tasks')
+            .select('*', { count: 'exact' })
+            .eq('assignee', user.id)
+            .eq('status', 'completed')
+            .gte('updated_at', startDate.toISOString());
+
+          return {
+            user_name: user.name || user.email,
+            completed_tasks: count || 0
+          };
+        })
+      );
+
+      return performers
+        .filter(p => p.completed_tasks > 0)
+        .sort((a, b) => b.completed_tasks - a.completed_tasks)
+        .slice(0, 5);
+    } catch (error) {
+      console.error('Error obteniendo top performers:', error);
+      return [];
+    }
+  }
+
+  private async getProjectSummary() {
+    try {
+      const { data: projects } = await supabase
+        .from('projects')
+        .select('name, status, progress')
+        .limit(10);
+
+      if (!projects) return [];
+
+      return projects.map(project => ({
+        project_name: project.name || 'Sin nombre',
+        status: project.status || 'unknown',
+        progress: project.progress || 0
+      }));
+    } catch (error) {
+      console.error('Error obteniendo resumen de proyectos:', error);
+      return [];
+    }
+  }
+
+  async generatePDF(data: ReportData, type: 'weekly' | 'monthly'): Promise<Blob> {
+    // Crear contenido HTML para el PDF
+    const htmlContent = this.generateHTMLReport(data, type);
+    
+    // Usar jsPDF para generar el PDF
+    const { jsPDF } = await import('jspdf');
+    const doc = new jsPDF();
+    
+    // Agregar título
+    doc.setFontSize(20);
+    doc.text(`Reporte ${type === 'weekly' ? 'Semanal' : 'Mensual'} - TuWebAI`, 20, 20);
+    
+    // Agregar fecha
+    doc.setFontSize(12);
+    doc.text(`Generado el: ${new Date().toLocaleDateString('es-ES')}`, 20, 30);
+    
+    // Agregar estadísticas principales
+    doc.setFontSize(16);
+    doc.text('Estadísticas Principales', 20, 50);
+    
+    doc.setFontSize(12);
+    doc.text(`Total de Tareas: ${data.total_tasks}`, 20, 65);
+    doc.text(`Tareas Completadas: ${data.completed_tasks}`, 20, 75);
+    doc.text(`Tareas Vencidas: ${data.overdue_tasks}`, 20, 85);
+    doc.text(`Puntuación de Productividad: ${data.productivity_score}%`, 20, 95);
+    doc.text(`Eficiencia del Equipo: ${data.team_efficiency}%`, 20, 105);
+    
+    // Agregar top performers
+    if (data.top_performers.length > 0) {
+      doc.setFontSize(16);
+      doc.text('Top Performers', 20, 125);
+      
+      doc.setFontSize(12);
+      data.top_performers.forEach((performer, index) => {
+        doc.text(`${index + 1}. ${performer.user_name}: ${performer.completed_tasks} tareas`, 20, 135 + (index * 10));
+      });
+    }
+    
+    // Agregar gaps de skills
+    if (data.skill_gaps.length > 0) {
+      doc.setFontSize(16);
+      doc.text('Gaps de Habilidades', 20, 185);
+      
+      doc.setFontSize(12);
+      data.skill_gaps.slice(0, 5).forEach((gap, index) => {
+        doc.text(`${gap.skill_name}: ${gap.gap_percentage.toFixed(1)}% gap`, 20, 195 + (index * 10));
+      });
+    }
+    
+    return doc.output('blob');
+  }
+
+  async generateCSV(data: ReportData, type: 'weekly' | 'monthly'): Promise<Blob> {
+    const csvContent = [
+      ['Métrica', 'Valor'],
+      ['Tipo de Reporte', type === 'weekly' ? 'Semanal' : 'Mensual'],
+      ['Fecha de Generación', new Date().toLocaleDateString('es-ES')],
+      ['Total de Tareas', data.total_tasks.toString()],
+      ['Tareas Completadas', data.completed_tasks.toString()],
+      ['Tareas Vencidas', data.overdue_tasks.toString()],
+      ['Puntuación de Productividad (%)', data.productivity_score.toString()],
+      ['Eficiencia del Equipo (%)', data.team_efficiency.toString()],
+      ['', ''],
+      ['Top Performers', ''],
+      ['Nombre', 'Tareas Completadas']
+    ];
+
+    // Agregar top performers
+    data.top_performers.forEach(performer => {
+      csvContent.push([performer.user_name, performer.completed_tasks.toString()]);
+    });
+
+    csvContent.push(['', '']);
+    csvContent.push(['Gaps de Habilidades', '']);
+    csvContent.push(['Habilidad', 'Gap (%)']);
+
+    // Agregar gaps de skills
+    data.skill_gaps.forEach(gap => {
+      csvContent.push([gap.skill_name, gap.gap_percentage.toFixed(1)]);
+    });
+
+    const csvString = csvContent.map(row => row.join(',')).join('\n');
+    return new Blob([csvString], { type: 'text/csv;charset=utf-8;' });
+  }
+
+  private generateHTMLReport(data: ReportData, type: 'weekly' | 'monthly'): string {
+    return `
+      <!DOCTYPE html>
+      <html>
+      <head>
+        <meta charset="utf-8">
+        <title>Reporte ${type === 'weekly' ? 'Semanal' : 'Mensual'} - TuWebAI</title>
+        <style>
+          body { font-family: Arial, sans-serif; margin: 20px; }
+          .header { text-align: center; margin-bottom: 30px; }
+          .section { margin-bottom: 25px; }
+          .metric { display: flex; justify-content: space-between; margin: 10px 0; }
+          .table { width: 100%; border-collapse: collapse; margin: 10px 0; }
+          .table th, .table td { border: 1px solid #ddd; padding: 8px; text-align: left; }
+          .table th { background-color: #f2f2f2; }
+        </style>
+      </head>
+      <body>
+        <div class="header">
+          <h1>Reporte ${type === 'weekly' ? 'Semanal' : 'Mensual'}</h1>
+          <p>TuWebAI Dashboard - ${new Date().toLocaleDateString('es-ES')}</p>
+        </div>
+        
+        <div class="section">
+          <h2>Estadísticas Principales</h2>
+          <div class="metric"><span>Total de Tareas:</span><span>${data.total_tasks}</span></div>
+          <div class="metric"><span>Tareas Completadas:</span><span>${data.completed_tasks}</span></div>
+          <div class="metric"><span>Tareas Vencidas:</span><span>${data.overdue_tasks}</span></div>
+          <div class="metric"><span>Puntuación de Productividad:</span><span>${data.productivity_score}%</span></div>
+          <div class="metric"><span>Eficiencia del Equipo:</span><span>${data.team_efficiency}%</span></div>
+        </div>
+        
+        ${data.top_performers.length > 0 ? `
+        <div class="section">
+          <h2>Top Performers</h2>
+          <table class="table">
+            <tr><th>Nombre</th><th>Tareas Completadas</th></tr>
+            ${data.top_performers.map(p => `<tr><td>${p.user_name}</td><td>${p.completed_tasks}</td></tr>`).join('')}
+          </table>
+        </div>
+        ` : ''}
+        
+        ${data.skill_gaps.length > 0 ? `
+        <div class="section">
+          <h2>Gaps de Habilidades</h2>
+          <table class="table">
+            <tr><th>Habilidad</th><th>Gap (%)</th></tr>
+            ${data.skill_gaps.map(g => `<tr><td>${g.skill_name}</td><td>${g.gap_percentage.toFixed(1)}</td></tr>`).join('')}
+          </table>
+        </div>
+        ` : ''}
+      </body>
+      </html>
+    `;
+  }
+
+  downloadFile(blob: Blob, filename: string) {
+    const url = URL.createObjectURL(blob);
+    const link = document.createElement('a');
+    link.href = url;
+    link.download = filename;
+    document.body.appendChild(link);
+    link.click();
+    document.body.removeChild(link);
+    URL.revokeObjectURL(url);
   }
 }
 
-// Singleton instance
-export const reportService = new ReportService();
-
-export default reportService; 
+export const reportService = ReportService.getInstance();

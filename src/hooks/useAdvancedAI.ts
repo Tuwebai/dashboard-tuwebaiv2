@@ -45,8 +45,6 @@ export const useAdvancedAI = () => {
       return JSON.parse(cleanResponse);
     } catch (parseError) {
       console.error('Error parsing JSON response:', parseError);
-      console.log('Raw response:', response);
-      console.log('Clean response:', cleanResponse);
       return fallback;
     }
   };
@@ -54,7 +52,6 @@ export const useAdvancedAI = () => {
   // Helper function para manejar límites de API
   const handleAPICall = async (apiCall: () => Promise<any>, fallback: any) => {
     if (isRateLimited) {
-      console.log('API está limitada, usando datos de fallback');
       return fallback;
     }
 
@@ -64,7 +61,6 @@ export const useAdvancedAI = () => {
       return result;
     } catch (error: any) {
       if (error.message?.includes('Límite de solicitudes excedido') || error.message?.includes('429')) {
-        console.log('Límite de API alcanzado, usando datos de fallback');
         setIsRateLimited(true);
         // Resetear el límite después de 5 minutos
         setTimeout(() => setIsRateLimited(false), 5 * 60 * 1000);

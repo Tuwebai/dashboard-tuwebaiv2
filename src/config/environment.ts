@@ -30,6 +30,20 @@ export const config = {
     url: import.meta.env.VITE_SUPABASE_URL,
     anonKey: import.meta.env.VITE_SUPABASE_ANON_KEY,
   },
+
+  // Configuración de Gemini AI Multi-API
+  gemini: {
+    apiKeys: [
+      import.meta.env.VITE_GEMINI_API_KEY_1,
+      import.meta.env.VITE_GEMINI_API_KEY_2,
+      import.meta.env.VITE_GEMINI_API_KEY_3,
+      import.meta.env.VITE_GEMINI_API_KEY_4,
+      import.meta.env.VITE_GEMINI_API_KEY_5,
+    ].filter(Boolean), // Filtrar keys vacías
+    legacyKey: import.meta.env.REACT_APP_GEMINI_API_KEY,
+    resetIntervalHours: 24,
+    enableLogging: import.meta.env.VITE_DEBUG_MODE === 'true' || isDevelopment
+  },
   
   // Configuración de la aplicación
   app: {
