@@ -233,7 +233,7 @@ export default function Sidebar() {
   };
 
   return (
-    <aside className="w-80 h-screen bg-sidebar-background dark:bg-slate-900 border-r border-sidebar-border dark:border-slate-700 flex flex-col shadow-xl">
+    <aside className="w-64 h-screen bg-sidebar-background dark:bg-slate-900 border-r border-sidebar-border dark:border-slate-700 flex flex-col shadow-xl">
       <div className="flex-1 flex flex-col min-h-0 overflow-hidden">
         {/* Header visual mejorado */}
         <div className="p-6 border-b border-sidebar-border dark:border-slate-700 bg-gradient-to-r from-sidebar-accent to-sidebar-background dark:from-slate-800 dark:to-slate-900">
