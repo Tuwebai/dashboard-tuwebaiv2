@@ -1671,7 +1671,7 @@ h1, h2, h3, h4, h5, h6 {
   color: var(--text-primary, #fff) !important;
   font-size: var(--text-base) !important;
   line-height: var(--text-base--line-height) !important;
-  padding: 8px 4px !important;
+  padding: 12px 4px !important;
   width: 100% !important;
   min-height: 32px !important;
   resize: none !important;
@@ -1679,26 +1679,22 @@ h1, h2, h3, h4, h5, h6 {
   transition: all 0.15s ease !important;
   font-family: ui-sans-serif, -apple-system, system-ui, Segoe UI, Helvetica, Apple Color Emoji, Arial, sans-serif !important;
   box-shadow: none !important;
-  vertical-align: top !important;
+  vertical-align: middle !important;
 }
 
 .chatgpt-input-wrapper {
-  display: grid;
+  display: flex;
   position: static;
   width: 100%;
   max-width: 768px;
-  height: 55.9896px;
+  min-height: 55.9896px;
   padding: 10px;
   margin: 0px;
   background-color: rgb(48, 48, 48);
   color: rgb(255, 255, 255);
   border-radius: 28px;
   overflow: clip;
-  grid-template-columns: 35.9896px 1fr 77.9688px;
-  grid-template-areas: 
-    "header header header" 
-    "leading primary trailing" 
-    ". footer .";
+  align-items: center;
   transition: all 0.15s ease;
 }
 
