@@ -1218,6 +1218,16 @@ h1, h2, h3, h4, h5, h6 {
   color: rgb(255, 255, 255) !important;
 }
 
+/* Contenido de las burbujas */
+.chatgpt-message-bubble > div {
+  white-space: pre-wrap !important;
+  word-wrap: break-word !important;
+  overflow-wrap: break-word !important;
+  line-height: 24px !important;
+  font-size: 16px !important;
+  color: rgb(255, 255, 255) !important;
+}
+
 /* Ajuste para mensajes cortos - evitar break innecesario */
 .user-message-bubble {
   max-width: 70% !important;

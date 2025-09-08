@@ -166,7 +166,7 @@ export const MessageBubble: React.FC<MessageBubbleProps> = ({
             ? 'chatgpt-ai-bubble' 
             : 'chatgpt-user-bubble'
         }`} data-multiline={message.message.includes('\n')}>
-          <div className="whitespace-pre-wrap">
+          <div>
             {!isAI && isAdmin && isEditing ? (
               <div className="relative">
                 <textarea
