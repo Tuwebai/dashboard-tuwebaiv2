@@ -725,9 +725,9 @@ const Dashboard = React.memo(() => {
   return (
     <>
       <style>{customStyles}</style>
-      <div className="min-h-screen bg-gradient-to-br from-background via-background/95 to-background/90 dark:from-slate-900 dark:via-slate-800 dark:to-slate-900 transition-all duration-300">
-        <div className="flex-1 overflow-hidden">
-          <div className="h-full overflow-y-auto">
+      <div className="min-h-screen w-full bg-gradient-to-br from-background via-background/95 to-background/90 dark:from-slate-900 dark:via-slate-800 dark:to-slate-900 transition-all duration-300">
+        <div className="flex-1 overflow-hidden w-full">
+          <div className="h-full overflow-y-auto w-full">
           
           {/* Botón Crear Proyecto */}
           <div className="px-3 sm:px-4 lg:px-8 py-3 sm:py-4">

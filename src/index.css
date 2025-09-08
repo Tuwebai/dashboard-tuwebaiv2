@@ -642,8 +642,21 @@ h1, h2, h3, h4, h5, h6 {
 }
 
 @layer base {
+  /* ELIMINAR COMPLETAMENTE LOS BORDES GLOBALES */
   * {
-    @apply border-border;
+    border: none !important;
+  }
+  
+  /* Asegurar que los contenedores principales ocupen todo el ancho */
+  html, body, #root {
+    width: 100% !important;
+    margin: 0 !important;
+    padding: 0 !important;
+  }
+  
+  /* Asegurar que los contenedores de dashboard ocupen todo el ancho */
+  .h-screen:not(aside), .min-h-screen:not(aside) {
+    width: 100% !important;
   }
 
   /* FORZAR SIEMPRE MODO CLARO - SOBRESCRIBIR DETECCIÓN DEL SISTEMA */
@@ -1279,7 +1292,7 @@ h1, h2, h3, h4, h5, h6 {
   --utility-scrollbar: #fff3;
   
   /* Variables específicas para sidebar de ChatGPT */
-  --sidebar-width: 260px;
+  --sidebar-width: 256px;
   --sidebar-section-margin-top: 1.25rem;
   --sidebar-section-first-margin-top: .5rem;
   --sidebar-expanded-section-margin-bottom: 1.25rem;

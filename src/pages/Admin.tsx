@@ -644,9 +644,9 @@ const Admin = React.memo(() => {
 
   return (
     <>
-    <div className="min-h-screen bg-gradient-to-br from-background via-background/95 to-background/90 dark:from-slate-900 dark:via-slate-800 dark:to-slate-900 transition-all duration-300">
-      <div className="flex-1 overflow-hidden">
-           <div className="h-full">
+    <div className="min-h-screen w-full bg-gradient-to-br from-background via-background/95 to-background/90 dark:from-slate-900 dark:via-slate-800 dark:to-slate-900 transition-all duration-300">
+      <div className="flex-1 overflow-hidden w-full">
+           <div className="h-full w-full">
              
  
  

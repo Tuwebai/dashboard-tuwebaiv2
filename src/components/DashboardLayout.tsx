@@ -148,7 +148,7 @@ export default function DashboardLayout({ children, dashboardProps }: DashboardL
         clearDelay={3000}
       />
       
-      <div key={routeKey} className="h-screen bg-background flex">
+      <div key={routeKey} className="h-screen w-full bg-background flex">
         {/* Desktop sidebar */}
         <div className="hidden md:block">
           <Sidebar />
@@ -176,7 +176,7 @@ export default function DashboardLayout({ children, dashboardProps }: DashboardL
         )}
 
         {/* Main content */}
-        <div className="flex-1 flex flex-col overflow-hidden">
+        <div className="flex-1 flex flex-col overflow-hidden w-full">
           <Topbar 
             onMenuClick={() => setIsMobileMenuOpen(true)}
             showMobileMenu={true}
@@ -189,7 +189,7 @@ export default function DashboardLayout({ children, dashboardProps }: DashboardL
             onClientSearch={isClientDashboardPage && dashboardProps?.onSearch ? dashboardProps.onSearch : undefined}
             clientSearchTerm={isClientDashboardPage && dashboardProps?.searchTerm ? dashboardProps.searchTerm : ''}
           />
-          <main id="main-content" className="flex-1 overflow-y-auto">
+          <main id="main-content" className="flex-1 overflow-y-auto w-full">
             {children}
           </main>
         </div>
