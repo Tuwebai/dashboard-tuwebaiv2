@@ -82,11 +82,14 @@ export const FormattedMessage: React.FC<FormattedMessageProps> = ({
     };
 
     const formatInlineText = (text: string) => {
-      // Convertir **texto** a <strong>texto</strong>
+      // Convertir **texto** a <strong>texto</strong> primero
       text = text.replace(/\*\*(.*?)\*\*/g, '<strong class="font-semibold text-foreground dark:text-slate-100">$1</strong>');
       
-      // Convertir *texto* a <em>texto</em>
-      text = text.replace(/\*(.*?)\*/g, '<em class="italic text-foreground dark:text-slate-200">$1</em>');
+      // Convertir *texto* a <em>texto</em> (solo si hay texto entre asteriscos)
+      text = text.replace(/\*([^*\n]+?)\*/g, '<em class="italic text-foreground dark:text-slate-200">$1</em>');
+      
+      // Escapar asteriscos sueltos que quedaron sin procesar
+      text = text.replace(/\*/g, '&#42;');
       
       // Convertir `código` a <code>código</code>
       text = text.replace(/`(.*?)`/g, '<code class="bg-muted dark:bg-slate-700 px-2 py-1 rounded text-sm font-mono text-foreground dark:text-slate-200 border border-border/50">$1</code>');
