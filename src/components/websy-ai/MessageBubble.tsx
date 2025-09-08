@@ -230,17 +230,6 @@ export const MessageBubble: React.FC<MessageBubbleProps> = ({
          )}
       </div>
       
-      {!isAI && (
-        <Avatar className="h-8 w-8 flex-shrink-0">
-          <AvatarImage 
-            src={user?.avatar_url || user?.avatar} 
-            alt={user?.name || 'Usuario'} 
-          />
-          <AvatarFallback className="bg-gradient-to-br from-green-500 to-blue-600 text-white text-xs">
-            {user?.name ? user.name.charAt(0).toUpperCase() : 'U'}
-          </AvatarFallback>
-        </Avatar>
-      )}
     </div>
   );
 };
