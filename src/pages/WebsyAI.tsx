@@ -575,7 +575,7 @@ const WebsyAI: React.FC = () => {
   return (
     <TooltipProvider>
     <div 
-      className="fixed inset-0 bg-background dark:bg-slate-900 flex flex-col"
+      className="fixed inset-0 flex flex-col"
       style={{
         height: '100vh',
         width: '100vw',
@@ -585,15 +585,18 @@ const WebsyAI: React.FC = () => {
         left: 0,
         right: 0,
         bottom: 0,
-        zIndex: 50
+        zIndex: 50,
+        backgroundColor: 'var(--bg-elevated-secondary, #181818)'
       }}
     >
       <div 
-        className="flex-shrink-0 px-4 py-3 border-b bg-background dark:bg-slate-900/95 dark:border-slate-700"
+        className="flex-shrink-0 px-4 py-3 border-b"
         style={{
           position: 'relative',
           zIndex: 60,
-          minHeight: '70px'
+          minHeight: '70px',
+          backgroundColor: 'var(--bg-elevated-secondary, #181818)',
+          borderColor: 'var(--border-default, #ffffff26)'
         }}
       >
         <div className="flex items-center justify-between h-full">
@@ -691,10 +694,22 @@ const WebsyAI: React.FC = () => {
           </div>
         )}
 
-        <div className={`${sidebarCollapsed ? 'w-0 overflow-hidden' : 'w-80'} transition-all duration-300 border-r bg-background dark:bg-slate-900 flex-shrink-0 flex flex-col`}>
+        <div 
+          className={`${sidebarCollapsed ? 'w-0 overflow-hidden' : 'w-80'} transition-all duration-300 border-r flex-shrink-0 flex flex-col`}
+          style={{
+            backgroundColor: 'var(--sidebar-surface-primary, #171717)',
+            borderColor: 'var(--border-default, #ffffff26)',
+            width: sidebarCollapsed ? '0' : 'var(--sidebar-width, 260px)'
+          }}
+        >
           <div className="flex-shrink-0 px-4 py-3 border-b">
             <div className="flex items-center justify-between mb-3">
-              <h3 className="text-sm font-medium">Chats</h3>
+              <h3 
+                className="text-sm font-medium"
+                style={{ color: 'var(--sidebar-title-primary, #f0f0f080)' }}
+              >
+                Chats
+              </h3>
               <div className="flex items-center gap-2">
                 <Button
                   variant="outline"
@@ -713,23 +728,25 @@ const WebsyAI: React.FC = () => {
           
            <div className="flex-1 overflow-y-auto">
              <div className="p-3 space-y-2">
-               {conversations.map((conversation) => (
-                 <div
-                   key={conversation.id}
-                   className={`group p-3 rounded-lg cursor-pointer transition-colors ${
-                     currentConversationId === conversation.id
-                       ? 'bg-primary text-primary-foreground'
-                       : 'hover:bg-muted'
-                   }`}
-                   onClick={() => handleLoadConversation(conversation.id)}
-                 >
-                   <div className="flex items-center justify-between">
-                     <div className="flex-1 min-w-0">
-                       <p className="text-sm font-medium truncate">
+                {conversations.map((conversation) => (
+                  <div
+                    key={conversation.id}
+                    className={`sidebar-chat-item group ${
+                      currentConversationId === conversation.id ? 'selected' : ''
+                    }`}
+                    onClick={() => handleLoadConversation(conversation.id)}
+                  >
+                     <div className="chat-title">
+                       <p 
+                         className="font-medium"
+                         style={{ 
+                           color: 'rgb(255, 255, 255)',
+                           fontSize: '14px',
+                           lineHeight: '20px',
+                           fontFamily: 'ui-sans-serif, -apple-system, system-ui, "Segoe UI", Helvetica, "Apple Color Emoji", Arial, sans-serif, "Segoe UI Emoji", "Segoe UI Symbol"'
+                         }}
+                       >
                          {conversation.title}
-                       </p>
-                       <p className="text-xs text-muted-foreground">
-                         {conversation.messageCount} mensajes
                        </p>
                      </div>
                      <DropdownMenu>
@@ -738,7 +755,11 @@ const WebsyAI: React.FC = () => {
                            variant="ghost"
                            size="sm"
                            onClick={(e) => e.stopPropagation()}
-                           className="h-6 w-6 p-0 opacity-60 group-hover:opacity-100 hover:opacity-100 transition-opacity"
+                           className="h-6 w-6 p-0 opacity-0 group-hover:opacity-100 transition-opacity"
+                           style={{ 
+                             color: 'rgba(255, 255, 255, 0.6)',
+                             fontSize: '14px'
+                           }}
                          >
                            <MoreHorizontal className="h-4 w-4" />
                          </Button>
@@ -766,27 +787,38 @@ const WebsyAI: React.FC = () => {
                          </DropdownMenuItem>
                        </DropdownMenuContent>
                      </DropdownMenu>
-                   </div>
-                 </div>
+                  </div>
                ))}
              </div>
           </div>
         </div>
 
         <div 
-          className="flex-1 flex flex-col min-w-0 bg-background dark:bg-slate-900"
-          style={{ height: 'calc(100vh - 70px)' }}
+          className="flex-1 flex flex-col min-w-0"
+          style={{ 
+            height: 'calc(100vh - 70px)',
+            backgroundColor: 'var(--bg-elevated-secondary, #181818)'
+          }}
         >
           <div 
-            className="flex-1 overflow-y-auto bg-background dark:bg-slate-900"
+            className="flex-1 overflow-y-auto"
             style={{ 
               height: 'calc(100vh - 150px)',
-              overflowY: 'auto'
+              overflowY: 'auto',
+              backgroundColor: 'var(--bg-elevated-secondary, #181818)'
             }}
           >
-            <div className="max-w-4xl mx-auto px-4 py-6 bg-background dark:bg-slate-900">
+            <div 
+              className="max-w-4xl mx-auto px-4 py-6"
+              style={{
+                backgroundColor: 'var(--bg-elevated-secondary, #181818)'
+              }}
+            >
               {currentMessages.length === 0 && !isTyping && (
-                <div className="text-center text-muted-foreground dark:text-slate-300 py-12">
+                <div 
+                  className="text-center py-12"
+                  style={{ color: 'var(--text-secondary, #f3f3f3)' }}
+                >
                   <div className="flex justify-center mb-6">
                     <img 
                       src={websyAvatarSrc} 

@@ -11,7 +11,9 @@ import {
   X,
   Loader2,
   PlusCircle,
-  Mic
+  Mic,
+  Plus,
+  Volume2
 } from 'lucide-react';
 import { toast } from '@/hooks/use-toast';
 import { CalendarScheduler } from './CalendarScheduler';
@@ -433,78 +435,89 @@ export const ChatInput: React.FC<ChatInputProps> = ({
         )}
 
         <div className="w-full max-w-3xl">
-          <div className="relative flex items-center gap-2 bg-white dark:bg-slate-800 border border-gray-200 dark:border-slate-600 rounded-3xl px-4 py-2 shadow-lg">
-            <Button
-              type="button"
-              variant="ghost"
-              size="sm"
-              onClick={() => fileInputRef.current?.click()}
-              className="h-8 w-8 p-0 text-gray-500 dark:text-slate-400 hover:text-gray-700 dark:hover:text-slate-200 hover:bg-gray-100 dark:hover:bg-slate-700 rounded-full flex-shrink-0 focus:outline-none focus:ring-0 focus:ring-offset-0"
-              title="Adjuntar archivo"
-              disabled={disabled}
-              onMouseDown={(e) => e.preventDefault()}
-              onBlur={(e) => e.target.blur()}
-            >
-              <svg width="16" height="16" viewBox="0 0 20 20" fill="currentColor" xmlns="http://www.w3.org/2000/svg" className="h-4 w-4">
-                <path d="M9.33496 16.5V10.665H3.5C3.13273 10.665 2.83496 10.3673 2.83496 10C2.83496 9.63273 3.13273 9.33496 3.5 9.33496H9.33496V3.5C9.33496 3.13273 9.63273 2.83496 10 2.83496C10.3673 2.83496 10.665 3.13273 10.665 3.5V9.33496H16.5L16.6338 9.34863C16.9369 9.41057 17.165 9.67857 17.165 10C17.165 10.3214 16.9369 10.5894 16.6338 10.6514L16.5 10.665H10.665V16.5C10.665 16.8673 10.3673 17.165 10 17.165C9.63273 17.165 9.33496 16.8673 9.33496 16.5Z"></path>
-              </svg>
-            </Button>
-            
-            <Textarea
-              ref={textareaRef}
-              value={message}
-              onChange={(e) => {
-                setMessage(e.target.value);
-                // Auto-resize
-                e.target.style.height = 'auto';
-                e.target.style.height = Math.min(e.target.scrollHeight, 120) + 'px';
-              }}
-              onKeyDown={handleKeyDown}
-              onDrop={handleDrop}
-              onDragOver={handleDragOver}
-              onDragLeave={handleDragLeave}
-              placeholder={attachments.length > 0 ? "Escribe un mensaje..." : placeholder}
-              disabled={disabled}
-              maxLength={maxLength}
-              className="flex-1 min-h-[32px] max-h-[120px] resize-none border-0 bg-transparent focus-visible:ring-0 focus-visible:ring-offset-0 text-base placeholder:text-gray-500 dark:placeholder:text-slate-400 text-gray-900 dark:text-slate-100"
-            />
-            
-            <div className="flex items-center gap-1 flex-shrink-0">
-              <Button
-                type="button"
-                variant="ghost"
-                size="sm"
-                onClick={handleVoiceToggle}
-                disabled={!isVoiceSupported || disabled}
-                className={`h-8 w-8 p-0 rounded-full transition-colors focus:outline-none focus:ring-0 focus:ring-offset-0 ${
-                  isListening 
-                    ? 'bg-red-500 text-white hover:bg-red-600' 
-                    : 'text-gray-500 dark:text-slate-400 hover:text-gray-700 dark:hover:text-slate-200 hover:bg-gray-100 dark:hover:bg-slate-700'
-                } ${!isVoiceSupported ? 'opacity-50 cursor-not-allowed' : ''}`}
-                title={isListening ? "Detener grabación" : "Iniciar dictado por voz"}
-                onMouseDown={(e) => e.preventDefault()}
-                onBlur={(e) => e.target.blur()}
-              >
-                <Mic className={`h-4 w-4 ${isListening ? 'animate-pulse' : ''}`} />
-              </Button>
-              
-              <Button
-                type="button"
-                size="sm"
-                onClick={handleSend}
-                disabled={disabled || (!message.trim() && attachments.length === 0)}
-                className="h-8 w-8 p-0 bg-gray-900 dark:bg-slate-100 hover:bg-gray-800 dark:hover:bg-slate-200 text-white dark:text-slate-900 rounded-full disabled:opacity-50 disabled:cursor-not-allowed focus:outline-none focus:ring-0 focus:ring-offset-0"
-                onMouseDown={(e) => e.preventDefault()}
-                onBlur={(e) => e.target.blur()}
-              >
-                {disabled ? (
-                  <Loader2 className="h-4 w-4 animate-spin" />
-                ) : (
-                  <svg width="16" height="16" viewBox="0 0 20 20" fill="currentColor" xmlns="http://www.w3.org/2000/svg" className="h-4 w-4">
-                    <path d="M8.99992 16V6.41407L5.70696 9.70704C5.31643 10.0976 4.68342 10.0976 4.29289 9.70704C3.90237 9.31652 3.90237 8.6835 4.29289 8.29298L9.29289 3.29298L9.36907 3.22462C9.76184 2.90427 10.3408 2.92686 10.707 3.29298L15.707 8.29298L15.7753 8.36915C16.0957 8.76192 16.0731 9.34092 15.707 9.70704C15.3408 10.0732 14.7618 10.0958 14.3691 9.7754L14.2929 9.70704L10.9999 6.41407V16C10.9999 16.5523 10.5522 17 9.99992 17C9.44764 17 8.99992 16.5523 8.99992 16Z"></path>
+          <div 
+            className="bg-token-bg-primary cursor-text overflow-clip bg-clip-padding p-2.5 contain-inline-size dark:bg-[#303030] grid grid-cols-[auto_1fr_auto] [grid-template-areas:'header_header_header'_'leading_primary_trailing'_'._footer_.'] group-data-expanded/composer:[grid-template-areas:'header_header_header'_'primary_primary_primary'_'leading_footer_trailing'] shadow-short"
+            style={{borderRadius: '28px'}}
+          >
+            <div className="[grid-area:leading]">
+              <span className="flex" data-state="closed">
+                <button 
+                  type="button" 
+                  onClick={() => fileInputRef.current?.click()}
+                  className="composer-btn"
+                  data-testid="composer-plus-btn"
+                  disabled={disabled}
+                  onMouseDown={(e) => e.preventDefault()}
+                  onBlur={(e) => e.target.blur()}
+                  style={{ width: '36px', height: '36px' }}
+                >
+                  <svg width="20" height="20" viewBox="0 0 20 20" fill="currentColor" xmlns="http://www.w3.org/2000/svg" className="icon">
+                    <path d="M9.33496 16.5V10.665H3.5C3.13273 10.665 2.83496 10.3673 2.83496 10C2.83496 9.63273 3.13273 9.33496 3.5 9.33496H9.33496V3.5C9.33496 3.13273 9.63273 2.83496 10 2.83496C10.3673 2.83496 10.665 3.13273 10.665 3.5V9.33496H16.5L16.6338 9.34863C16.9369 9.41057 17.165 9.67857 17.165 10C17.165 10.3214 16.9369 10.5894 16.6338 10.6514L16.5 10.665H10.665V16.5C10.665 16.8673 10.3673 17.165 10 17.165C9.63273 17.165 9.33496 16.8673 9.33496 16.5Z"></path>
                   </svg>
-                )}
-              </Button>
+                </button>
+              </span>
+            </div>
+            
+            <div className="-my-2.5 flex min-h-14 items-center overflow-x-hidden px-1.5 [grid-area:primary] group-data-expanded/composer:mb-0 group-data-expanded/composer:px-2.5">
+              <div className="_prosemirror-parent_ebv8s_2 text-token-text-primary max-h-[max(35svh,5rem)] max-h-52 flex-1 overflow-auto [scrollbar-width:thin] default-browser vertical-scroll-fade-mask flex items-center">
+                <Textarea
+                  ref={textareaRef}
+                  value={message}
+                  onChange={(e) => {
+                    setMessage(e.target.value);
+                    // Auto-resize
+                    e.target.style.height = 'auto';
+                    e.target.style.height = Math.min(e.target.scrollHeight, 120) + 'px';
+                  }}
+                  onKeyDown={handleKeyDown}
+                  onDrop={handleDrop}
+                  onDragOver={handleDragOver}
+                  onDragLeave={handleDragLeave}
+                  placeholder={attachments.length > 0 ? "Escribe un mensaje..." : "Pregunta lo que quieras"}
+                  disabled={disabled}
+                  maxLength={maxLength}
+                  className="chatgpt-input w-full min-h-[32px] max-h-[120px] resize-none border-0 bg-transparent focus-visible:ring-0 focus-visible:ring-offset-0 text-base text-white"
+                />
+              </div>
+            </div>
+            
+            <div className="flex items-center gap-2 [grid-area:trailing]">
+              <div className="ms-auto flex items-center gap-1.5">
+                <span className="" data-state="closed">
+                  <button 
+                    aria-label="Botón de dictado" 
+                    type="button" 
+                    className="composer-btn"
+                    onClick={handleVoiceToggle}
+                    disabled={!isVoiceSupported || disabled}
+                    onMouseDown={(e) => e.preventDefault()}
+                    onBlur={(e) => e.target.blur()}
+                    style={{ width: '36px', height: '36px' }}
+                  >
+                    <svg width="20" height="20" viewBox="0 0 20 20" fill="currentColor" xmlns="http://www.w3.org/2000/svg" aria-label="" className="icon" font-size="inherit">
+                      <path d="M15.7806 10.1963C16.1326 10.3011 16.3336 10.6714 16.2288 11.0234L16.1487 11.2725C15.3429 13.6262 13.2236 15.3697 10.6644 15.6299L10.6653 16.835H12.0833L12.2171 16.8486C12.5202 16.9106 12.7484 17.1786 12.7484 17.5C12.7484 17.8214 12.5202 18.0894 12.2171 18.1514L12.0833 18.165H7.91632C7.5492 18.1649 7.25128 17.8672 7.25128 17.5C7.25128 17.1328 7.5492 16.8351 7.91632 16.835H9.33527L9.33429 15.6299C6.775 15.3697 4.6558 13.6262 3.84992 11.2725L3.76984 11.0234L3.74445 10.8906C3.71751 10.5825 3.91011 10.2879 4.21808 10.1963C4.52615 10.1047 4.84769 10.2466 4.99347 10.5195L5.04523 10.6436L5.10871 10.8418C5.8047 12.8745 7.73211 14.335 9.99933 14.335C12.3396 14.3349 14.3179 12.7789 14.9534 10.6436L15.0052 10.5195C15.151 10.2466 15.4725 10.1046 15.7806 10.1963ZM12.2513 5.41699C12.2513 4.17354 11.2437 3.16521 10.0003 3.16504C8.75675 3.16504 7.74835 4.17343 7.74835 5.41699V9.16699C7.74853 10.4104 8.75685 11.418 10.0003 11.418C11.2436 11.4178 12.2511 10.4103 12.2513 9.16699V5.41699ZM13.5814 9.16699C13.5812 11.1448 11.9781 12.7479 10.0003 12.748C8.02232 12.748 6.41845 11.1449 6.41828 9.16699V5.41699C6.41828 3.43889 8.02221 1.83496 10.0003 1.83496C11.9783 1.83514 13.5814 3.439 13.5814 5.41699V9.16699Z"></path>
+                    </svg>
+                  </button>
+                </span>
+                <button 
+                  id="composer-submit-button" 
+                  aria-label="Enviar indicación" 
+                  data-testid="send-button" 
+                  className="composer-submit-btn composer-submit-button-color h-9 w-9"
+                  onClick={handleSend}
+                  disabled={disabled || (!message.trim() && attachments.length === 0)}
+                  onMouseDown={(e) => e.preventDefault()}
+                  onBlur={(e) => e.target.blur()}
+                >
+                  {disabled ? (
+                    <Loader2 className="h-4 w-4 animate-spin" />
+                  ) : (
+                    <svg width="20" height="20" viewBox="0 0 20 20" fill="currentColor" xmlns="http://www.w3.org/2000/svg" className="icon">
+                      <path d="M8.99992 16V6.41407L5.70696 9.70704C5.31643 10.0976 4.68342 10.0976 4.29289 9.70704C3.90237 9.31652 3.90237 8.6835 4.29289 8.29298L9.29289 3.29298L9.36907 3.22462C9.76184 2.90427 10.3408 2.92686 10.707 3.29298L15.707 8.29298L15.7753 8.36915C16.0957 8.76192 16.0731 9.34092 15.707 9.70704C15.3408 10.0732 14.7618 10.0958 14.3691 9.7754L14.2929 9.70704L10.9999 6.41407V16C10.9999 16.5523 10.5522 17 9.99992 17C9.44764 17 8.99992 16.5523 8.99992 16Z"></path>
+                    </svg>
+                  )}
+                </button>
+              </div>
             </div>
           </div>
         </div>
