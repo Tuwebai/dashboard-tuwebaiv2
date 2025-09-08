@@ -459,7 +459,7 @@ export const ChatInput: React.FC<ChatInputProps> = ({
             </div>
             
             <div className="-my-2.5 flex min-h-14 items-center overflow-x-hidden px-1.5 [grid-area:primary] group-data-expanded/composer:mb-0 group-data-expanded/composer:px-2.5">
-              <div className="_prosemirror-parent_ebv8s_2 text-token-text-primary max-h-[max(35svh,5rem)] max-h-52 flex-1 overflow-auto [scrollbar-width:thin] default-browser vertical-scroll-fade-mask flex items-center">
+              <div className="_prosemirror-parent_ebv8s_2 text-token-text-primary max-h-[max(35svh,5rem)] max-h-52 flex-1 overflow-auto [scrollbar-width:thin] default-browser vertical-scroll-fade-mask flex items-start">
                 <Textarea
                   ref={textareaRef}
                   value={message}

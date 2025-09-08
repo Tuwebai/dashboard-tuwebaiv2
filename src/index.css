@@ -1683,18 +1683,22 @@ h1, h2, h3, h4, h5, h6 {
 }
 
 .chatgpt-input-wrapper {
-  display: flex;
+  display: grid;
   position: static;
   width: 100%;
   max-width: 768px;
-  min-height: 55.9896px;
+  height: 55.9896px;
   padding: 10px;
   margin: 0px;
   background-color: rgb(48, 48, 48);
   color: rgb(255, 255, 255);
   border-radius: 28px;
   overflow: clip;
-  align-items: center;
+  grid-template-columns: 35.9896px 1fr 77.9688px;
+  grid-template-areas: 
+    "header header header" 
+    "leading primary trailing" 
+    ". footer .";
   transition: all 0.15s ease;
 }
 
@@ -1727,7 +1731,7 @@ h1, h2, h3, h4, h5, h6 {
 .chatgpt-input-primary {
   grid-area: primary;
   display: flex;
-  align-items: center;
+  align-items: flex-start;
   min-width: 0;
 }
 
