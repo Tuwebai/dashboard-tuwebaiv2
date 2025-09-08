@@ -234,19 +234,6 @@ export const useChatHistory = () => {
         // await loadMessages(currentConvId);
       }
 
-      // Agregar mensaje del usuario al estado local INMEDIATAMENTE
-      if (!isAI) {
-        const tempUserMessage: ChatMessage = {
-          id: `temp_${Date.now()}`,
-          message,
-          isAI: false,
-          timestamp: new Date(),
-          attachments: attachments || [],
-          contextData: contextData || {}
-        };
-        setCurrentMessages(prev => [...prev, tempUserMessage]);
-      }
-
       const { data, error: insertError } = await supabase
         .from('conversation_messages')
         .insert({
@@ -271,32 +258,24 @@ export const useChatHistory = () => {
         contextData: contextData || {}
       };
 
-      // Si es un mensaje del usuario, reemplazar el mensaje temporal
-      if (!isAI) {
-        setCurrentMessages(prev => {
-          // Remover mensaje temporal y agregar el real
-          const withoutTemp = prev.filter(msg => !msg.id.startsWith('temp_'));
-          return [...withoutTemp, newMessage];
-        });
-      } else {
-        // Si es mensaje de IA, agregar normalmente
-        setCurrentMessages(prev => [...prev, newMessage]);
-      }
+      // Agregar mensaje al estado local
+      setCurrentMessages(prev => {
+        const updatedMessages = [...prev, newMessage];
+        // Guardar en localStorage inmediatamente
+        saveToStorage(STORAGE_KEYS.currentMessages, updatedMessages);
+        saveToStorage(STORAGE_KEYS.currentConversationId, currentConvId);
+        return updatedMessages;
+      });
       setCurrentConversationId(currentConvId);
-
-      // Guardar en localStorage
-      const finalMessages = !isAI ? 
-        currentMessages.filter(msg => !msg.id.startsWith('temp_')).concat(newMessage) :
-        [...currentMessages, newMessage];
-      
-      saveToStorage(STORAGE_KEYS.currentMessages, finalMessages);
-      saveToStorage(STORAGE_KEYS.currentConversationId, currentConvId);
 
       // Actualizar timestamp de la conversación
       await supabase
         .from('conversations')
         .update({ updated_at: new Date().toISOString() })
         .eq('id', currentConvId);
+
+      // Recargar conversaciones para actualizar el sidebar
+      loadConversations();
 
       return data.id;
     } catch (error) {
@@ -380,6 +359,8 @@ export const useChatHistory = () => {
           if (conversationId) {
             setCurrentConversationId(conversationId);
             setCurrentMessages([]);
+            // Recargar conversaciones para mostrar la nueva en el sidebar
+            loadConversations();
           }
         });
       }

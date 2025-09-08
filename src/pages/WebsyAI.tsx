@@ -169,6 +169,10 @@ const WebsyAI: React.FC = () => {
     }
 
     try {
+      // Mostrar indicador de pensamiento inmediatamente
+      setIsThinking(true);
+      setAiResponse('');
+
       // Guardar mensaje del usuario
       const userMessageId = await saveMessage(message, false, currentConversationId, attachments);
       
@@ -177,11 +181,7 @@ const WebsyAI: React.FC = () => {
         setNewMessageIds(prev => new Set(prev).add(userMessageId));
       }
 
-      // Mostrar indicador de pensamiento inmediatamente
-      setIsThinking(true);
-      setAiResponse('');
-
-      // Enviar a Gemini AI
+      // Enviar a Gemini AI con los mensajes actuales (que ya incluyen el mensaje del usuario)
       const response = await sendMessage(
         message,
         currentMessages,
@@ -198,7 +198,7 @@ const WebsyAI: React.FC = () => {
 
       // Simular streaming progresivo
       const words = response.split(' ');
-      const delay = 1000 / 15; // 15 palabras por segundo
+      const delay = 1000 / 30; // 30 palabras por segundo (más rápido)
       
       for (let i = 0; i <= words.length; i++) {
         const partialText = words.slice(0, i).join(' ');
@@ -246,6 +246,12 @@ const WebsyAI: React.FC = () => {
       if (conversationId) {
         setCurrentConversationId(conversationId);
         setCurrentMessages([]);
+        // Limpiar estados de IA
+        setAiResponse('');
+        setIsStreaming(false);
+        setStreamingText('');
+        setIsThinking(false);
+        setNewMessageIds(new Set());
         toast({
           title: "Nueva conversación",
           description: "Conversación creada exitosamente"

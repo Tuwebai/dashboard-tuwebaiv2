@@ -20,10 +20,7 @@ export const CleanResponse: React.FC<CleanResponseProps> = ({
       {/* Contenido de la respuesta */}
       <div className="prose prose-sm max-w-none dark:prose-invert">
         {isStreaming && streamingText ? (
-          <div className="relative">
-            <FormattedMessage content={streamingText} />
-            <div className="inline-block w-2 h-4 bg-blue-500 ml-1 animate-pulse" />
-          </div>
+          <FormattedMessage content={streamingText} />
         ) : (
           <FormattedMessage content={content} />
         )}
