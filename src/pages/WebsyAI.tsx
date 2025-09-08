@@ -361,22 +361,41 @@ const WebsyAI: React.FC = () => {
   }, [loadMessages]);
 
   // Reintentar última respuesta de IA
-  const handleRetryMessage = useCallback(async () => {
+  const handleRetryMessage = useCallback(async (messageId?: string) => {
     if (!user || currentMessages.length === 0) return;
 
-    // Encontrar el último mensaje del usuario
-    const lastUserMessage = [...currentMessages].reverse().find(msg => !msg.isAI);
-    if (!lastUserMessage) return;
+    // Si se proporciona un messageId específico, encontrar ese mensaje
+    let lastUserMessage: ChatMessage | undefined;
+    let lastAIIndex = -1;
 
-    try {
+    if (messageId) {
+      // Buscar el mensaje específico por ID
+      const messageIndex = currentMessages.findIndex(msg => msg.id === messageId);
+      if (messageIndex === -1) return;
+      
+      // Buscar el mensaje del usuario anterior a este mensaje de IA
+      for (let i = messageIndex - 1; i >= 0; i--) {
+        if (!currentMessages[i].isAI) {
+          lastUserMessage = currentMessages[i];
+          break;
+        }
+      }
+      lastAIIndex = messageIndex;
+    } else {
+      // Comportamiento original: encontrar el último mensaje del usuario
+      lastUserMessage = [...currentMessages].reverse().find(msg => !msg.isAI);
+      if (!lastUserMessage) return;
+
       // Encontrar el índice del último mensaje de IA
-      const lastAIIndex = currentMessages.map((msg, index) => ({ msg, index }))
+      lastAIIndex = currentMessages.map((msg, index) => ({ msg, index }))
         .reverse()
         .find(({ msg }) => msg.isAI)?.index ?? -1;
-      
-      if (lastAIIndex === -1) return;
+    }
+    
+    if (lastAIIndex === -1 || !lastUserMessage) return;
 
-      // Eliminar solo el último mensaje de IA
+    try {
+      // Eliminar solo el mensaje de IA específico
       const messagesWithoutLastAI = currentMessages.slice(0, lastAIIndex);
 
       // Actualizar mensajes locales inmediatamente
@@ -931,7 +950,7 @@ const WebsyAI: React.FC = () => {
                     <CleanResponse 
                       key={message.id}
                       content={message.message}
-                      onRetry={handleRetryMessage}
+                      onRetry={() => handleRetryMessage(message.id)}
                     />
                   )
                 ))}

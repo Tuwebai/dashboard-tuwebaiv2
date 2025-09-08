@@ -1130,7 +1130,7 @@ h1, h2, h3, h4, h5, h6 {
   text-underline-position: auto !important;
   text-emphasis: none !important;
   text-emphasis-color: rgb(255, 255, 255) !important;
-  text-emphasis-position: over !important;
+  text-emphasis-position: over right !important;
   text-emphasis-style: none !important;
   text-justify: auto !important;
   text-align-last: auto !important;
@@ -1167,7 +1167,7 @@ h1, h2, h3, h4, h5, h6 {
   text-underline-position: auto !important;
   text-emphasis: none !important;
   text-emphasis-color: rgb(255, 255, 255) !important;
-  text-emphasis-position: over !important;
+  text-emphasis-position: over right !important;
   text-emphasis-style: none !important;
   text-shadow: none !important;
   text-stroke: none !important;
@@ -1671,7 +1671,7 @@ h1, h2, h3, h4, h5, h6 {
   color: var(--text-primary, #fff) !important;
   font-size: var(--text-base) !important;
   line-height: var(--text-base--line-height) !important;
-  padding: 12px 4px !important;
+  padding: 8px 4px !important;
   width: 100% !important;
   min-height: 32px !important;
   resize: none !important;
@@ -1679,7 +1679,7 @@ h1, h2, h3, h4, h5, h6 {
   transition: all 0.15s ease !important;
   font-family: ui-sans-serif, -apple-system, system-ui, Segoe UI, Helvetica, Apple Color Emoji, Arial, sans-serif !important;
   box-shadow: none !important;
-  vertical-align: middle !important;
+  vertical-align: top !important;
 }
 
 .chatgpt-input-wrapper {
