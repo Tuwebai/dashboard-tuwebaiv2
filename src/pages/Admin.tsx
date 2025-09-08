@@ -661,7 +661,7 @@ const Admin = React.memo(() => {
             
             {/* Card Usuarios */}
             <div className="relative group cursor-pointer">
-                      <div className="bg-card dark:bg-slate-800/50 rounded-xl sm:rounded-2xl p-3 sm:p-4 lg:p-6 shadow-lg hover:shadow-2xl transition-all duration-500 transform hover:-translate-y-2 border border-border/50 dark:border-slate-700/50 backdrop-blur-sm overflow-hidden bg-gradient-to-br from-primary/5 via-primary/10 to-primary/15 dark:from-blue-500/10 dark:via-blue-500/5 dark:to-indigo-500/10">
+                      <div className="bg-card dark:bg-slate-800/50 rounded-xl sm:rounded-2xl p-3 sm:p-4 lg:p-6 shadow-lg hover:shadow-2xl transition-all duration-500 transform hover:-translate-y-2 border border-border/50 dark:border-slate-700/20 backdrop-blur-sm overflow-hidden bg-gradient-to-br from-primary/5 via-primary/10 to-primary/15 dark:from-blue-500/10 dark:via-blue-500/5 dark:to-indigo-500/10">
                         <div className="flex items-center justify-center w-10 h-10 sm:w-12 sm:h-12 lg:w-14 lg:h-14 rounded-xl sm:rounded-2xl mb-2 sm:mb-3 lg:mb-4 shadow-lg group-hover:scale-110 transition-transform duration-300 bg-gradient-to-br from-blue-500 to-blue-600 text-white">
                           <Users size={20} className="sm:w-6 sm:h-6 lg:w-7 lg:h-7" />
                         </div>
@@ -683,7 +683,7 @@ const Admin = React.memo(() => {
 
             {/* Card Proyectos */}
             <div className="relative group cursor-pointer">
-                      <div className="bg-card dark:bg-slate-800/50 rounded-xl sm:rounded-2xl p-3 sm:p-4 lg:p-6 shadow-lg hover:shadow-2xl transition-all duration-500 transform hover:-translate-y-2 border border-border/50 dark:border-slate-700/50 backdrop-blur-sm overflow-hidden bg-gradient-to-br from-emerald-500/5 via-emerald-500/10 to-teal-500/15 dark:from-emerald-500/10 dark:via-emerald-500/5 dark:to-teal-500/10">
+                      <div className="bg-card dark:bg-slate-800/50 rounded-xl sm:rounded-2xl p-3 sm:p-4 lg:p-6 shadow-lg hover:shadow-2xl transition-all duration-500 transform hover:-translate-y-2 border border-border/50 dark:border-slate-700/20 backdrop-blur-sm overflow-hidden bg-gradient-to-br from-emerald-500/5 via-emerald-500/10 to-teal-500/15 dark:from-emerald-500/10 dark:via-emerald-500/5 dark:to-teal-500/10">
                         <div className="flex items-center justify-center w-10 h-10 sm:w-12 sm:h-12 lg:w-14 lg:h-14 rounded-xl sm:rounded-2xl mb-2 sm:mb-3 lg:mb-4 shadow-lg group-hover:scale-110 transition-transform duration-300 bg-gradient-to-br from-emerald-500 to-emerald-600 text-white">
                           <FolderOpen size={20} className="sm:w-6 sm:h-6 lg:w-7 lg:h-7" />
                         </div>
@@ -704,7 +704,7 @@ const Admin = React.memo(() => {
 
             {/* Card Tickets */}
             <div className="relative group cursor-pointer">
-                      <div className="bg-card dark:bg-slate-800/50 rounded-xl sm:rounded-2xl p-3 sm:p-4 lg:p-6 shadow-lg hover:shadow-2xl transition-all duration-500 transform hover:-translate-y-2 border border-border/50 dark:border-slate-700/50 backdrop-blur-sm overflow-hidden bg-gradient-to-br from-amber-500/5 via-amber-500/10 to-orange-500/15 dark:from-amber-500/10 dark:via-amber-500/5 dark:to-orange-500/10">
+                      <div className="bg-card dark:bg-slate-800/50 rounded-xl sm:rounded-2xl p-3 sm:p-4 lg:p-6 shadow-lg hover:shadow-2xl transition-all duration-500 transform hover:-translate-y-2 border border-border/50 dark:border-slate-700/20 backdrop-blur-sm overflow-hidden bg-gradient-to-br from-amber-500/5 via-amber-500/10 to-orange-500/15 dark:from-amber-500/10 dark:via-amber-500/5 dark:to-orange-500/10">
                         <div className="flex items-center justify-center w-10 h-10 sm:w-12 sm:h-12 lg:w-14 lg:h-14 rounded-xl sm:rounded-2xl mb-2 sm:mb-3 lg:mb-4 shadow-lg group-hover:scale-110 transition-transform duration-300 bg-gradient-to-br from-amber-500 to-amber-600 text-white">
                           <Ticket size={20} className="sm:w-6 sm:h-6 lg:w-7 lg:h-7" />
                         </div>
@@ -727,7 +727,7 @@ const Admin = React.memo(() => {
 
             {/* Card Ingresos */}
             <div className="relative group cursor-pointer">
-                      <div className="bg-card dark:bg-slate-800/50 rounded-xl sm:rounded-2xl p-3 sm:p-4 lg:p-6 shadow-lg hover:shadow-2xl transition-all duration-500 transform hover:-translate-y-2 border border-border/50 dark:border-slate-700/50 backdrop-blur-sm overflow-hidden bg-gradient-to-br from-violet-500/5 via-violet-500/10 to-purple-500/15 dark:from-violet-500/10 dark:via-violet-500/5 dark:to-purple-500/10">
+                      <div className="bg-card dark:bg-slate-800/50 rounded-xl sm:rounded-2xl p-3 sm:p-4 lg:p-6 shadow-lg hover:shadow-2xl transition-all duration-500 transform hover:-translate-y-2 border border-border/50 dark:border-slate-700/20 backdrop-blur-sm overflow-hidden bg-gradient-to-br from-violet-500/5 via-violet-500/10 to-purple-500/15 dark:from-violet-500/10 dark:via-violet-500/5 dark:to-purple-500/10">
                         <div className="flex items-center justify-center w-10 h-10 sm:w-12 sm:h-12 lg:w-14 lg:h-14 rounded-xl sm:rounded-2xl mb-2 sm:mb-3 lg:mb-4 shadow-lg group-hover:scale-110 transition-transform duration-300 bg-gradient-to-br from-violet-500 to-violet-600 text-white">
                           <DollarSign size={20} className="sm:w-6 sm:h-6 lg:w-7 lg:h-7" />
                         </div>
@@ -750,7 +750,7 @@ const Admin = React.memo(() => {
 
                   {/* Card Estado Google Calendar */}
                   <div className="mb-6">
-                    <div className="bg-card dark:bg-slate-800/50 rounded-xl sm:rounded-2xl p-4 sm:p-6 shadow-lg hover:shadow-xl transition-all duration-300 border border-border/50 dark:border-slate-700/50 backdrop-blur-sm">
+                    <div className="bg-card dark:bg-slate-800/50 rounded-xl sm:rounded-2xl p-4 sm:p-6 shadow-lg hover:shadow-xl transition-all duration-300 border border-border/50 dark:border-slate-700/20 backdrop-blur-sm">
                       <div className="flex items-center justify-between">
                         <div className="flex items-center space-x-3">
                           <div className={`flex items-center justify-center w-10 h-10 sm:w-12 sm:h-12 rounded-xl shadow-lg transition-transform duration-300 ${
@@ -806,7 +806,7 @@ const Admin = React.memo(() => {
                   <div className="grid grid-cols-1 xl:grid-cols-2 gap-6 lg:gap-8">
                 
                 {/* Card Estadísticas Rápidas */}
-                <div className="bg-card dark:bg-slate-800/50 rounded-2xl p-8 shadow-lg hover:shadow-xl transition-all duration-300 border border-border/50 dark:border-slate-700/50">
+                <div className="bg-card dark:bg-slate-800/50 rounded-2xl p-8 shadow-lg hover:shadow-xl transition-all duration-300 border border-border/50 dark:border-slate-700/20">
                   <div className="text-2xl font-bold text-card-foreground mb-2 flex items-center space-x-3">
                     <BarChart3 size={24} className="text-blue-600" />
                     <span>Estadísticas Rápidas</span>
@@ -891,7 +891,7 @@ const Admin = React.memo(() => {
                 </div>
 
                 {/* Card Acciones Rápidas */}
-                <div className="bg-card dark:bg-slate-800/50 rounded-2xl p-8 shadow-lg hover:shadow-xl transition-all duration-300 border border-border/50 dark:border-slate-700/50">
+                <div className="bg-card dark:bg-slate-800/50 rounded-2xl p-8 shadow-lg hover:shadow-xl transition-all duration-300 border border-border/50 dark:border-slate-700/20">
                   <div className="text-2xl font-bold text-card-foreground mb-2 flex items-center space-x-3">
                     <BarChart3 size={24} className="text-amber-600" />
                     <span>Acciones Rápidas</span>
@@ -902,7 +902,7 @@ const Admin = React.memo(() => {
                   <div className="space-y-10">
                                          <Button 
                        variant="outline" 
-                       className="w-full justify-start p-6 rounded-2xl hover:bg-gradient-to-r hover:from-slate-50 hover:to-slate-100 dark:hover:from-slate-700 dark:hover:to-slate-600 transition-all duration-300 cursor-pointer group border border-transparent hover:border-border/50 dark:hover:border-slate-600 hover:shadow-lg"
+                       className="w-full justify-start p-6 rounded-2xl hover:bg-gradient-to-r hover:from-slate-50 hover:to-slate-100 dark:hover:from-slate-700 dark:hover:to-slate-600 transition-all duration-300 cursor-pointer group border border-transparent hover:border-border/50 dark:hover:border-slate-600/30 hover:shadow-lg"
                        onClick={() => {
                          setActiveSection('usuarios');
                          window.location.hash = 'usuarios';
@@ -920,7 +920,7 @@ const Admin = React.memo(() => {
                      </Button>
                                            <Button 
                         variant="outline" 
-                        className="w-full justify-start p-6 rounded-2xl hover:bg-gradient-to-r hover:from-slate-50 hover:to-slate-100 dark:hover:from-slate-700 dark:hover:to-slate-600 transition-all duration-300 cursor-pointer group border border-transparent hover:border-border/50 dark:hover:border-slate-600 hover:shadow-lg"
+                        className="w-full justify-start p-6 rounded-2xl hover:bg-gradient-to-r hover:from-slate-50 hover:to-slate-100 dark:hover:from-slate-700 dark:hover:to-slate-600 transition-all duration-300 cursor-pointer group border border-transparent hover:border-border/50 dark:hover:border-slate-600/30 hover:shadow-lg"
                         onClick={() => {
                           setActiveSection('proyectos');
                           window.location.hash = 'proyectos';
@@ -938,7 +938,7 @@ const Admin = React.memo(() => {
                      </Button>
                      <Button 
                        variant="outline" 
-                       className="w-full justify-start p-6 rounded-2xl hover:bg-gradient-to-r hover:from-slate-50 hover:to-slate-100 dark:hover:from-slate-700 dark:hover:to-slate-600 transition-all duration-300 cursor-pointer group border border-transparent hover:border-border/50 dark:hover:border-slate-600 hover:shadow-lg"
+                       className="w-full justify-start p-6 rounded-2xl hover:bg-gradient-to-r hover:from-slate-50 hover:to-slate-100 dark:hover:from-slate-700 dark:hover:to-slate-600 transition-all duration-300 cursor-pointer group border border-transparent hover:border-border/50 dark:hover:border-slate-600/30 hover:shadow-lg"
                        onClick={() => {
                          setActiveSection('tickets');
                          window.location.hash = 'tickets';
@@ -956,7 +956,7 @@ const Admin = React.memo(() => {
                      </Button>
                      <Button 
                        variant="outline" 
-                       className="w-full justify-start p-6 rounded-2xl hover:bg-gradient-to-r hover:from-slate-50 hover:to-slate-100 dark:hover:from-slate-700 dark:hover:to-slate-600 transition-all duration-300 cursor-pointer group border border-transparent hover:border-border/50 dark:hover:border-slate-600 hover:shadow-lg"
+                       className="w-full justify-start p-6 rounded-2xl hover:bg-gradient-to-r hover:from-slate-50 hover:to-slate-100 dark:hover:from-slate-700 dark:hover:to-slate-600 transition-all duration-300 cursor-pointer group border border-transparent hover:border-border/50 dark:hover:border-slate-600/30 hover:shadow-lg"
                        onClick={() => {
                          setActiveSection('pagos');
                          window.location.hash = 'pagos';
@@ -974,7 +974,7 @@ const Admin = React.memo(() => {
                      </Button>
                      <Button 
                        variant="outline" 
-                       className="w-full justify-start p-6 rounded-2xl hover:bg-gradient-to-r hover:from-slate-50 hover:to-slate-100 dark:hover:from-slate-700 dark:hover:to-slate-600 transition-all duration-300 cursor-pointer group border border-transparent hover:border-border/50 dark:hover:border-slate-600 hover:shadow-lg"
+                       className="w-full justify-start p-6 rounded-2xl hover:bg-gradient-to-r hover:from-slate-50 hover:to-slate-100 dark:hover:from-slate-700 dark:hover:to-slate-600 transition-all duration-300 cursor-pointer group border border-transparent hover:border-border/50 dark:hover:border-slate-600/30 hover:shadow-lg"
                        onClick={() => {
                          setActiveSection('advanced-analytics');
                          window.location.hash = 'advanced-analytics';
@@ -999,7 +999,7 @@ const Admin = React.memo(() => {
 
                      <Button 
                        variant="outline" 
-                       className="w-full justify-start p-6 rounded-2xl hover:bg-gradient-to-r hover:from-slate-50 hover:to-slate-100 dark:hover:from-slate-700 dark:hover:to-slate-600 transition-all duration-300 cursor-pointer group border border-transparent hover:border-border/50 dark:hover:border-slate-600 hover:shadow-lg"
+                       className="w-full justify-start p-6 rounded-2xl hover:bg-gradient-to-r hover:from-slate-50 hover:to-slate-100 dark:hover:from-slate-700 dark:hover:to-slate-600 transition-all duration-300 cursor-pointer group border border-transparent hover:border-border/50 dark:hover:border-slate-600/30 hover:shadow-lg"
                        onClick={() => {
                          setActiveSection('advanced-charts');
                          window.location.hash = 'advanced-charts';
@@ -1026,7 +1026,7 @@ const Admin = React.memo(() => {
             {/* Resto de las secciones mantienen su funcionalidad pero con diseño moderno */}
             {activeSection === 'usuarios' && (
                 <div className="h-full flex flex-col">
-                  <Card className="bg-card dark:bg-slate-800/50 rounded-2xl shadow-lg hover:shadow-xl transition-all duration-300 border border-border/50 dark:border-slate-700/50 flex-1">
+                  <Card className="bg-card dark:bg-slate-800/50 rounded-2xl shadow-lg hover:shadow-xl transition-all duration-300 border border-border/50 dark:border-slate-700/20 flex-1">
                     <CardContent className="p-4 sm:p-6 flex-1">
                       {/* Header de Gestión de Usuarios */}
                       <div className="mb-6">
