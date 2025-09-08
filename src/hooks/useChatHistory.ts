@@ -222,9 +222,14 @@ export const useChatHistory = () => {
 
     try {
       let currentConvId = conversationId || currentConversationId;
+      
+      console.log('saveMessage - conversationId:', conversationId);
+      console.log('saveMessage - currentConversationId:', currentConversationId);
+      console.log('saveMessage - currentConvId:', currentConvId);
 
       // Si no hay conversación, crear una nueva
       if (!currentConvId) {
+        console.log('No hay conversación actual, creando nueva...');
         const title = message.length > 50 ? message.substring(0, 50) + '...' : message;
         currentConvId = await createConversation(title);
         if (!currentConvId) return null;
@@ -232,6 +237,8 @@ export const useChatHistory = () => {
         setCurrentConversationId(currentConvId);
         // NO cargar mensajes de la nueva conversación para evitar sobrescribir el mensaje actual
         // await loadMessages(currentConvId);
+      } else {
+        console.log('Usando conversación existente:', currentConvId);
       }
 
       // Agregar mensaje del usuario al estado local INMEDIATAMENTE

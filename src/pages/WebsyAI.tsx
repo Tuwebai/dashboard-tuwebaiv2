@@ -572,7 +572,7 @@ const WebsyAI: React.FC = () => {
       setIsStreaming(false);
       setStreamingText('');
     }
-  }, [currentConversationId, loadMessages]);
+  }, [currentConversationId]); // Remover loadMessages de las dependencias
 
   // Verificar si es admin
   if (user?.role !== 'admin') {
