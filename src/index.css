@@ -1028,10 +1028,201 @@ h1, h2, h3, h4, h5, h6 {
   padding-bottom: 0.75rem;
 }
 
+/* Estilos de burbujas de mensajes estilo ChatGPT */
+.chatgpt-message-bubble {
+  background-color: rgba(50, 50, 50, 0.85) !important;
+  border-radius: 18px !important;
+  padding: 12px 16px !important;
+  color: rgb(255, 255, 255) !important;
+  font-family: ui-sans-serif, -apple-system, system-ui, "Segoe UI", Helvetica, "Apple Color Emoji", Arial, sans-serif, "Segoe UI Emoji", "Segoe UI Symbol" !important;
+  font-size: 16px !important;
+  line-height: 24px !important;
+  font-weight: 400 !important;
+  max-width: 70% !important;
+  width: max-content !important;
+  min-width: fit-content !important;
+  position: relative !important;
+  display: block !important;
+  box-sizing: border-box !important;
+  word-wrap: break-word !important;
+  overflow-wrap: break-word !important;
+  white-space: pre-wrap !important;
+  border: 0px solid rgba(255, 255, 255, 0.05) !important;
+  box-shadow: none !important;
+  margin: 0 !important;
+  vertical-align: baseline !important;
+  text-align: start !important;
+  text-decoration: none !important;
+  text-transform: none !important;
+  letter-spacing: normal !important;
+  word-spacing: 0px !important;
+  text-indent: 0px !important;
+  text-shadow: none !important;
+  outline: none !important;
+  transition: all 0s ease !important;
+  animation: none !important;
+  transform: none !important;
+  filter: none !important;
+  backdrop-filter: none !important;
+  opacity: 1 !important;
+  visibility: visible !important;
+  z-index: auto !important;
+  cursor: auto !important;
+  user-select: auto !important;
+  pointer-events: auto !important;
+  resize: none !important;
+  overflow: visible !important;
+  clip: auto !important;
+  clip-path: none !important;
+  mask: none !important;
+  isolation: auto !important;
+  mix-blend-mode: normal !important;
+  object-fit: fill !important;
+  object-position: 50% 50% !important;
+  float: none !important;
+  clear: none !important;
+  flex: none !important;
+  flex-basis: auto !important;
+  flex-direction: row !important;
+  flex-grow: 0 !important;
+  flex-shrink: 1 !important;
+  flex-wrap: nowrap !important;
+  align-content: normal !important;
+  align-items: normal !important;
+  align-self: auto !important;
+  justify-content: normal !important;
+  justify-items: normal !important;
+  justify-self: auto !important;
+  order: 0 !important;
+  grid-area: auto !important;
+  grid-auto-columns: auto !important;
+  grid-auto-flow: row !important;
+  grid-auto-rows: auto !important;
+  grid-column: auto !important;
+  grid-row: auto !important;
+  grid-template-areas: none !important;
+  grid-template-columns: none !important;
+  grid-template-rows: none !important;
+  gap: normal !important;
+  row-gap: normal !important;
+  column-gap: normal !important;
+  place-content: normal !important;
+  place-items: normal !important;
+  place-self: auto !important;
+  writing-mode: horizontal-tb !important;
+  direction: ltr !important;
+  unicode-bidi: isolate !important;
+  text-orientation: mixed !important;
+  text-combine-upright: none !important;
+  text-underline-position: auto !important;
+  text-emphasis: none !important;
+  text-emphasis-color: rgb(255, 255, 255) !important;
+  text-emphasis-position: over !important;
+  text-emphasis-style: none !important;
+  text-justify: auto !important;
+  text-align-last: auto !important;
+  text-overflow: clip !important;
+  text-rendering: auto !important;
+  text-size-adjust: 100% !important;
+  text-spacing-trim: normal !important;
+  text-wrap-mode: wrap !important;
+  text-wrap-style: auto !important;
+  hyphens: manual !important;
+  hyphenate-character: auto !important;
+  hyphenate-limit-chars: auto !important;
+  line-break: auto !important;
+  word-break: normal !important;
+  overflow-wrap: break-word !important;
+  tab-size: 4 !important;
+  white-space-collapse: collapse !important;
+  text-box-edge: auto !important;
+  text-box-trim: none !important;
+  hanging-punctuation: none !important;
+  punctuation-trim: none !important;
+  text-indent: 0px !important;
+  text-justify: auto !important;
+  text-align: start !important;
+  text-align-last: auto !important;
+  text-combine-upright: none !important;
+  text-decoration: none solid rgb(255, 255, 255) !important;
+  text-decoration-color: rgb(255, 255, 255) !important;
+  text-decoration-line: none !important;
+  text-decoration-skip-ink: auto !important;
+  text-decoration-style: solid !important;
+  text-decoration-thickness: auto !important;
+  text-underline-offset: auto !important;
+  text-underline-position: auto !important;
+  text-emphasis: none !important;
+  text-emphasis-color: rgb(255, 255, 255) !important;
+  text-emphasis-position: over !important;
+  text-emphasis-style: none !important;
+  text-shadow: none !important;
+  text-stroke: none !important;
+  text-stroke-color: rgb(255, 255, 255) !important;
+  text-stroke-width: 0px !important;
+  text-fill-color: rgb(255, 255, 255) !important;
+  -webkit-text-combine: none !important;
+  -webkit-text-decorations-in-effect: none !important;
+  -webkit-text-fill-color: rgb(255, 255, 255) !important;
+  -webkit-text-orientation: vertical-right !important;
+  -webkit-text-security: none !important;
+  -webkit-text-stroke-color: rgb(255, 255, 255) !important;
+  -webkit-text-stroke-width: 0px !important;
+  -webkit-border-horizontal-spacing: 0px !important;
+  -webkit-border-vertical-spacing: 0px !important;
+  -webkit-box-align: stretch !important;
+  -webkit-box-decoration-break: slice !important;
+  -webkit-box-direction: normal !important;
+  -webkit-box-flex: 0 !important;
+  -webkit-box-ordinal-group: 1 !important;
+  -webkit-box-orient: horizontal !important;
+  -webkit-box-pack: start !important;
+  -webkit-box-reflect: none !important;
+  -webkit-font-smoothing: auto !important;
+  -webkit-line-break: auto !important;
+  -webkit-line-clamp: none !important;
+  -webkit-locale: "es-ES" !important;
+  -webkit-mask-box-image: none !important;
+  -webkit-mask-box-image-outset: 0 !important;
+  -webkit-mask-box-image-repeat: stretch !important;
+  -webkit-mask-box-image-slice: 0 fill !important;
+  -webkit-mask-box-image-source: none !important;
+  -webkit-mask-box-image-width: auto !important;
+  -webkit-rtl-ordering: logical !important;
+  -webkit-tap-highlight-color: rgba(0, 0, 0, 0) !important;
+  -webkit-user-drag: auto !important;
+  -webkit-user-modify: read-only !important;
+  -webkit-writing-mode: horizontal-tb !important;
+}
+
+/* Burbuja de usuario (derecha) - igual que IA en ChatGPT */
+.chatgpt-user-bubble {
+  background-color: rgba(50, 50, 50, 0.85) !important;
+  margin-left: auto !important;
+  color: rgb(255, 255, 255) !important;
+}
+
+/* Forzar color blanco en todas las burbujas de usuario */
+.chatgpt-user-bubble * {
+  color: rgb(255, 255, 255) !important;
+}
+
+.chatgpt-user-bubble .text-primary-foreground {
+  color: rgb(255, 255, 255) !important;
+}
+
+/* Burbuja de IA (izquierda) */
+.chatgpt-ai-bubble {
+  background-color: rgba(50, 50, 50, 0.85) !important;
+  margin-right: auto !important;
+  color: rgb(255, 255, 255) !important;
+}
+
 /* Ajuste para mensajes cortos - evitar break innecesario */
 .user-message-bubble {
-  max-width: min(70%, fit-content) !important;
-  width: fit-content !important;
+  max-width: 70% !important;
+  width: max-content !important;
+  min-width: fit-content !important;
 }
 
 /* Variables CSS de ChatGPT para modo oscuro */

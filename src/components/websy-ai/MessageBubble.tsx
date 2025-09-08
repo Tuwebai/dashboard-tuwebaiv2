@@ -161,10 +161,10 @@ export const MessageBubble: React.FC<MessageBubbleProps> = ({
         {renderAttachments()}
         
         {/* Burbuja de mensaje estilo ChatGPT */}
-        <div className={`relative rounded-[18px] px-4 py-1.5 data-[multiline]:py-3 ${
+        <div className={`relative chatgpt-message-bubble ${
           isAI 
-            ? 'bg-muted/50' 
-            : 'bg-primary text-primary-foreground dark:bg-[#323232D9] dark:text-white user-message-bubble'
+            ? 'chatgpt-ai-bubble' 
+            : 'chatgpt-user-bubble'
         }`} data-multiline={message.message.includes('\n')}>
           <div className="whitespace-pre-wrap">
             {!isAI && isAdmin && isEditing ? (
