@@ -1105,75 +1105,7 @@ const Dashboard = React.memo(() => {
                   </div>
                 </div>
               </div>
-            ) : (
-              <div className="bg-white rounded-2xl p-8 shadow-xl border border-slate-200/50 text-center">
-                <div className="space-y-6">
-                  <div className="w-20 h-20 mx-auto bg-gradient-to-br from-blue-500 to-indigo-600 rounded-full flex items-center justify-center shadow-lg">
-                    <FileText className="h-10 w-10 text-white" />
-                  </div>
-                  
-                  <div>
-                    <h3 className="text-2xl font-bold text-slate-800 dark:text-white mb-2">
-                      Tienes {userProjects.length} proyecto{userProjects.length !== 1 ? 's' : ''}
-                    </h3>
-                    <p className="text-slate-600 dark:text-slate-300 mb-6">
-                      Gestiona y monitorea todos tus proyectos desde la página dedicada
-                    </p>
-                  </div>
-                  
-                  <div className="flex flex-col sm:flex-row gap-4 justify-center">
-                    <Button
-                      onClick={() => navigate('/proyectos')}
-                      className="bg-gradient-to-r from-blue-600 to-indigo-600 hover:from-blue-700 hover:to-indigo-700 text-white font-semibold px-8 py-3 rounded-xl shadow-lg hover:shadow-xl transition-all duration-300"
-                    >
-                      <FileText className="h-5 w-5 mr-2" />
-                      Ver Mis Proyectos
-                    </Button>
-                    
-                    <Button
-                      onClick={() => navigate('/proyectos/nuevo')}
-                      variant="outline"
-                      className="border-blue-300 text-blue-700 hover:bg-blue-50 dark:border-blue-500 dark:text-blue-300 dark:hover:bg-blue-500/10 font-semibold px-8 py-3 rounded-xl transition-all duration-300"
-                    >
-                      <Plus className="h-5 w-5 mr-2" />
-                      Nuevo Proyecto
-                    </Button>
-                        </div>
-                  
-                  {userProjects.length > 0 && (
-                    <div className="mt-8 p-4 bg-slate-50 dark:bg-slate-800/50 rounded-xl">
-                      <h4 className="font-semibold text-slate-800 dark:text-white mb-3">Resumen Rápido</h4>
-                      <div className="grid grid-cols-2 sm:grid-cols-4 gap-4 text-center">
-                        <div>
-                          <div className="text-2xl font-bold text-blue-600 dark:text-blue-400">
-                            {dashboardStats.totalProjects}
-                          </div>
-                          <div className="text-sm text-slate-600 dark:text-slate-300">Total</div>
-                        </div>
-                        <div>
-                          <div className="text-2xl font-bold text-green-600 dark:text-green-400">
-                            {dashboardStats.completedProjects}
-                          </div>
-                          <div className="text-sm text-slate-600 dark:text-slate-300">Completados</div>
-                        </div>
-                        <div>
-                          <div className="text-2xl font-bold text-orange-600 dark:text-orange-400">
-                            {dashboardStats.inProgressProjects}
-                          </div>
-                          <div className="text-sm text-slate-600 dark:text-slate-300">En Progreso</div>
-                        </div>
-                        <div>
-                          <div className="text-2xl font-bold text-purple-600 dark:text-purple-400">
-                            {dashboardStats.averageProgress}%
-                          </div>
-                          <div className="text-sm text-slate-600 dark:text-slate-300">Progreso</div>
-                        </div>
-                      </div>
-                  </div>
-                )}
-                </div>
-              </div>
-            )}
+            ) : null}
 
       {/* Actividad Reciente */}
       {hasValidProjects && dashboardStats.recentActivity.length > 0 && (
