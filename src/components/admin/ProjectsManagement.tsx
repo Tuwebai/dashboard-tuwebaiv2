@@ -10,7 +10,7 @@ import { useTheme } from '@/contexts/ThemeContext';
 import { Project, CreateProjectData, UpdateProjectData } from '@/types/project.types';
 import { ProjectForm } from './ProjectForm';
 import { ProjectFiltersComponent } from './ProjectFilters';
-import { ProjectCard } from './ProjectCard';
+import ProjectCard from '@/components/ProjectCard';
 import { ProjectDetails } from './ProjectDetails';
 import { ProjectPagination } from './ProjectPagination';
 
