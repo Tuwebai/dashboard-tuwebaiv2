@@ -53,6 +53,7 @@ import { useTranslation } from 'react-i18next';
 import { formatDateSafe } from '@/utils/formatDateSafe';
 import VerDetallesProyecto from '@/components/VerDetallesProyecto';
 import ProjectCollaborationModal from '@/components/ProjectCollaborationModal';
+import ProjectCard from '@/components/ProjectCard';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { userService } from '@/lib/supabaseService';
@@ -481,9 +482,11 @@ const Dashboard = React.memo(() => {
   };
 
   // Función para ver detalles del proyecto
-  const handleViewProject = (project: Project) => {
-    if (project && project.id) {
-      setSelectedProject(project);
+  const handleViewProject = (projectCard: any) => {
+    // Buscar el proyecto completo en la lista
+    const fullProject = realTimeProjects.find(p => p.id === projectCard.id);
+    if (fullProject && fullProject.id) {
+      setSelectedProject(fullProject);
       setIsModalOpen(true);
       setModalInitialized(true);
     } else {
@@ -637,19 +640,19 @@ const Dashboard = React.memo(() => {
     }
   }, [selectedProjects]);
 
-  const handleDuplicateProject = useCallback((project: Project) => {
+  const handleDuplicateProject = useCallback((projectCard: any) => {
     // Aquí implementarías la lógica de duplicación
-    toast({ title: 'Duplicado', description: `Proyecto "${project.name}" duplicado correctamente.` });
+    toast({ title: 'Duplicado', description: `Proyecto "${projectCard.name}" duplicado correctamente.` });
   }, []);
 
-  const handleToggleFavorite = useCallback((project: Project) => {
+  const handleToggleFavorite = useCallback((projectId: string) => {
     // Aquí implementarías la lógica de favoritos
-    toast({ title: 'Favorito', description: `Proyecto "${project.name}" marcado como favorito.` });
+    toast({ title: 'Favorito', description: `Proyecto marcado como favorito.` });
   }, []);
 
-  const handleArchiveProject = useCallback((project: Project) => {
+  const handleArchiveProject = useCallback((projectId: string) => {
     // Aquí implementarías la lógica de archivado
-    toast({ title: 'Archivado', description: `Proyecto "${project.name}" archivado correctamente.` });
+    toast({ title: 'Archivado', description: `Proyecto archivado correctamente.` });
   }, []);
 
   // Funciones para drag & drop
@@ -1283,75 +1286,64 @@ const Dashboard = React.memo(() => {
                 </div>
               </div>
             ) : (
-              <div className="text-center py-12">
-                <div className="w-24 h-24 bg-gradient-to-br from-blue-500 to-indigo-600 rounded-full flex items-center justify-center mx-auto mb-6 shadow-lg">
-                  <FileText className="h-12 w-12 text-white" />
-                </div>
-                <h3 className="text-2xl font-bold text-slate-800 dark:text-white mb-4">
-                  No tienes proyectos aún
-                </h3>
-                <p className="text-slate-600 dark:text-slate-300 mb-8 max-w-md mx-auto">
-                  Comienza creando tu primer proyecto web y verás el progreso en tiempo real.
-                </p>
-                <Button 
-                  className="px-8 py-4 bg-gradient-to-r from-blue-600 via-indigo-600 to-purple-700 hover:from-blue-700 hover:via-indigo-700 hover:to-purple-800 text-white rounded-xl font-bold text-lg transition-all duration-300 shadow-lg hover:shadow-xl transform hover:-translate-y-1 hover:scale-105"
-                  onClick={() => navigate('/proyectos/nuevo')}
-                >
-                  <Plus className="h-5 w-5 mr-3" />
-                  Crear mi primer proyecto
-                </Button>
-              </div>
-            )}
-            )}
+              <div className="bg-white rounded-2xl p-8 shadow-xl border border-slate-200/50">
+                {dragMode ? (
+                  <DragDropContext onDragEnd={handleDragEnd}>
+                    <Droppable droppableId="projects" direction="horizontal">
+                      {(provided) => (
+                        <div 
+                          {...provided.droppableProps} 
+                          ref={provided.innerRef}
+                          className="projects-section flex flex-wrap gap-6"
                         >
                           {filteredAndSortedProjects.filter(project => project && project.id).map((project, index) => (
                             <ProjectCard
                               key={project.id}
                               project={{
-                          id: project.id,
-                          name: project.name,
-                          category: project.type || 'Web',
-                          description: project.description || 'Sin descripción disponible',
-                          status: (() => {
-                            const progress = project.fases ? Math.round((project.fases.filter((f: any) => f.estado === 'Terminado').length / project.fases.length) * 100) : 0;
-                            return progress === 100 ? 'completed' as const : 'in-progress' as const;
-                          })(),
-                          progress: project.fases ? Math.round((project.fases.filter((f: any) => f.estado === 'Terminado').length / project.fases.length) * 100) : 0,
-                          screenshotUrl: undefined,
-                          results: (() => {
-                            const progress = project.fases ? Math.round((project.fases.filter((f: any) => f.estado === 'Terminado').length / project.fases.length) * 100) : 0;
-                            if (progress < 100) return undefined;
-                            
-                            const projectType = project.type || 'Web';
-                            const baseResults = {
-                              satisfaction: Math.floor(Math.random() * 20) + 80,
-                              originality: Math.floor(Math.random() * 15) + 85,
-                              extras: []
-                            };
-                            
-                            switch (projectType.toLowerCase()) {
-                              case 'ecommerce':
-                              case 'tienda online':
-                                baseResults.extras = ['Sistema de pagos integrado', 'Gestión de inventario', 'Panel de administración', 'Optimización SEO', 'Diseño responsive'];
-                                break;
-                              case 'landing page':
-                              case 'landing':
-                                baseResults.extras = ['Diseño conversión optimizado', 'Formularios de contacto', 'Integración analytics', 'Optimización móvil', 'Carga rápida'];
-                                break;
-                              default:
-                                baseResults.extras = ['Diseño moderno', 'Código optimizado', 'Documentación completa', 'Testing exhaustivo', 'Deploy automatizado'];
-                            }
-                            
-                            return baseResults;
-                          })(),
-                          phases: project.fases ? project.fases.map((fase: any) => ({
-                            name: fase.key.charAt(0).toUpperCase() + fase.key.slice(1).replace(/([A-Z])/g, ' $1'),
-                            status: fase.estado === 'Terminado' ? 'Completado' as const :
-                                    fase.estado === 'En Progreso' ? 'En curso' as const :
-                                    'Pendiente' as const,
-                            description: fase.descripcion
-                          })) : []
-                        }}
+                                id: project.id,
+                                name: project.name,
+                                category: project.type || 'Web',
+                                description: project.description || 'Sin descripción disponible',
+                                status: (() => {
+                                  const progress = project.fases ? Math.round((project.fases.filter((f: any) => f.estado === 'Terminado').length / project.fases.length) * 100) : 0;
+                                  return progress === 100 ? 'completed' as const : 'in-progress' as const;
+                                })(),
+                                progress: project.fases ? Math.round((project.fases.filter((f: any) => f.estado === 'Terminado').length / project.fases.length) * 100) : 0,
+                                screenshotUrl: undefined,
+                                results: (() => {
+                                  const progress = project.fases ? Math.round((project.fases.filter((f: any) => f.estado === 'Terminado').length / project.fases.length) * 100) : 0;
+                                  if (progress < 100) return undefined;
+                                  
+                                  const projectType = project.type || 'Web';
+                                  const baseResults = {
+                                    satisfaction: Math.floor(Math.random() * 20) + 80,
+                                    originality: Math.floor(Math.random() * 15) + 85,
+                                    extras: []
+                                  };
+                                  
+                                  switch (projectType.toLowerCase()) {
+                                    case 'ecommerce':
+                                    case 'tienda online':
+                                      baseResults.extras = ['Sistema de pagos integrado', 'Gestión de inventario', 'Panel de administración', 'Optimización SEO', 'Diseño responsive'];
+                                      break;
+                                    case 'landing page':
+                                    case 'landing':
+                                      baseResults.extras = ['Diseño conversión optimizado', 'Formularios de contacto', 'Integración analytics', 'Optimización móvil', 'Carga rápida'];
+                                      break;
+                                    default:
+                                      baseResults.extras = ['Diseño moderno', 'Código optimizado', 'Documentación completa', 'Testing exhaustivo', 'Deploy automatizado'];
+                                  }
+                                  
+                                  return baseResults;
+                                })(),
+                                phases: project.fases ? project.fases.map((fase: any) => ({
+                                  name: fase.key.charAt(0).toUpperCase() + fase.key.slice(1).replace(/([A-Z])/g, ' $1'),
+                                  status: fase.estado === 'Terminado' ? 'Completado' as const :
+                                          fase.estado === 'En Progreso' ? 'En curso' as const :
+                                          'Pendiente' as const,
+                                  description: fase.descripcion
+                                })) : []
+                              }}
                               user={user}
                               projectCreators={projectCreators}
                               onViewProject={handleViewProject}
@@ -1368,8 +1360,8 @@ const Dashboard = React.memo(() => {
                                   });
                                 }
                               }}
-                              onNavigateToEdit={(project) => {
-                                const url = `/proyectos/${project.id}/editar`;
+                              onNavigateToEdit={(projectId) => {
+                                const url = `/proyectos/${projectId}/editar`;
                                 try {
                                   navigate(url);
                                 } catch (error) {
@@ -1380,9 +1372,9 @@ const Dashboard = React.memo(() => {
                                   });
                                 }
                               }}
-                              onDuplicateProject={handleDuplicateProject}
-                              onToggleFavorite={handleToggleFavorite}
-                              onArchiveProject={handleArchiveProject}
+                              onDuplicateProject={(project) => handleDuplicateProject(project)}
+                              onToggleFavorite={(projectId) => handleToggleFavorite(projectId)}
+                              onArchiveProject={(projectId) => handleArchiveProject(projectId)}
                               index={index}
                               dragMode={true}
                               isDragDisabled={false}
@@ -1459,8 +1451,8 @@ const Dashboard = React.memo(() => {
                             });
                           }
                         }}
-                        onNavigateToEdit={(project) => {
-                          const url = `/proyectos/${project.id}/editar`;
+                        onNavigateToEdit={(projectId) => {
+                          const url = `/proyectos/${projectId}/editar`;
                           try {
                             navigate(url);
                           } catch (error) {
@@ -1471,9 +1463,9 @@ const Dashboard = React.memo(() => {
                             });
                           }
                         }}
-                        onDuplicateProject={handleDuplicateProject}
-                        onToggleFavorite={handleToggleFavorite}
-                        onArchiveProject={handleArchiveProject}
+                        onDuplicateProject={(project) => handleDuplicateProject(project)}
+                        onToggleFavorite={(projectId) => handleToggleFavorite(projectId)}
+                        onArchiveProject={(projectId) => handleArchiveProject(projectId)}
                         showAdminActions={user?.role === 'admin'}
                         index={index}
                         dragMode={false}
@@ -1619,39 +1611,38 @@ const Dashboard = React.memo(() => {
 
 
 
-      {/* Modal de detalle del proyecto */}
-      {isModalOpen && modalInitialized && selectedProject && selectedProject.id && hasValidProjects && (
-        <VerDetallesProyecto
-          proyecto={selectedProject}
-          onClose={() => {
-            setIsModalOpen(false);
-            setSelectedProject(null);
-            setModalInitialized(false);
-          }}
-          onUpdate={(updatedProject) => {
-            // Actualizar el proyecto en el estado local
-            setRealTimeProjects(prev => 
-              prev.map(p => p.id === updatedProject.id ? updatedProject : p)
-            );
-            updateProject(updatedProject.id, updatedProject);
-          }}
-        />
-      )}
-                                           </div>
+          {/* Modal de detalle del proyecto */}
+          {isModalOpen && modalInitialized && selectedProject && selectedProject.id && hasValidProjects && (
+            <VerDetallesProyecto
+              proyecto={selectedProject}
+              onClose={() => {
+                setIsModalOpen(false);
+                setSelectedProject(null);
+                setModalInitialized(false);
+              }}
+              onUpdate={(updatedProject) => {
+                // Actualizar el proyecto en el estado local
+                setRealTimeProjects(prev => 
+                  prev.map(p => p.id === updatedProject.id ? updatedProject : p)
+                );
+                updateProject(updatedProject.id, updatedProject);
+              }}
+            />
+          )}
+
+          {/* Modal de Colaboración */}
+          <ProjectCollaborationModal
+            isOpen={showCollaborationModal}
+            onClose={() => setShowCollaborationModal(false)}
+            projects={userProjects.map(project => ({
+              ...project,
+              progress: calculateProjectProgress(project)
+            }))}
+          />
+            </div>
           </div>
         </div>
       </div>
-
-      {/* Modal de Colaboración */}
-      <ProjectCollaborationModal
-        isOpen={showCollaborationModal}
-        onClose={() => setShowCollaborationModal(false)}
-        projects={userProjects.map(project => ({
-          ...project,
-          progress: calculateProjectProgress(project)
-        }))}
-      />
-
     </>
   );
 });

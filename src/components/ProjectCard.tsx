@@ -24,7 +24,7 @@ interface ProjectResults {
   extras: string[];
 }
 
-interface Project {
+interface ProjectCardProject {
   id: string;
   name: string;
   category: string;
@@ -41,14 +41,14 @@ interface Project {
 }
 
 interface ProjectCardProps {
-  project: Project;
+  project: ProjectCardProject;
   user?: any;
   projectCreators?: Record<string, { full_name: string; email: string }>;
-  onViewProject?: (project: Project) => void;
+  onViewProject?: (project: ProjectCardProject) => void;
   onNavigateToCollaboration?: (projectId: string) => void;
   onNavigateToEdit?: (projectId: string) => void;
   onDeleteProject?: (projectId: string) => void;
-  onDuplicateProject?: (project: Project) => void;
+  onDuplicateProject?: (project: ProjectCardProject) => void;
   onArchiveProject?: (projectId: string) => void;
   onToggleFavorite?: (projectId: string) => void;
   showAdminActions?: boolean;
@@ -199,9 +199,9 @@ const ProjectCard = memo(({
                       <div className="w-2 h-2 bg-white rounded-full animate-bounce shadow-sm" style={{ animationDelay: '0s', animationDuration: '1.5s' }} />
                       <div className="w-2 h-2 bg-white rounded-full animate-bounce shadow-sm" style={{ animationDelay: '0.2s', animationDuration: '1.5s' }} />
                       <div className="w-2 h-2 bg-white rounded-full animate-bounce shadow-sm" style={{ animationDelay: '0.4s', animationDuration: '1.5s' }} />
-                    </div>
-                  </div>
-                </div>
+            </div>
+          </div>
+        </div>
               </div>
             </div>
           )}
