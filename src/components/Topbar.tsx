@@ -87,11 +87,19 @@ export default function Topbar({
           {isAdminPage ? (
             <div className="flex-1">
               <h1 className="text-3xl font-bold text-foreground">
-                Panel de Administración
+                <span className="bg-gradient-to-r from-blue-600 to-indigo-600 dark:from-blue-400 dark:to-indigo-400 bg-clip-text text-transparent">
+                  ¡Hola {user?.full_name?.split(' ')[0] || 'Administrador'}!
+                </span>
+                <span className="block text-lg sm:text-xl font-semibold text-slate-600 dark:text-slate-300 mt-1">
+                  {(() => {
+                    const hour = new Date().getHours();
+                    if (hour >= 5 && hour < 12) return '¡Buenos días! Websy AI está listo para ayudarte a gestionar el sistema';
+                    if (hour >= 12 && hour < 18) return '¡Buenas tardes! Todo funcionando perfectamente, ¿en qué puedo asistirte?';
+                    if (hour >= 18 && hour < 22) return '¡Buenas tardes! El sistema está optimizado y listo para tus tareas';
+                    return '¡Buenas noches! Websy AI monitorea todo mientras descansas, todo bajo control';
+                  })()}
+                </span>
               </h1>
-              <p className="text-muted-foreground text-base font-medium mt-1">
-                Gestiona usuarios, proyectos, tickets y pagos
-              </p>
               {lastUpdate && (
                 <div className="text-muted-foreground text-sm flex items-center space-x-2 mt-2">
                   <Clock size={16} />
