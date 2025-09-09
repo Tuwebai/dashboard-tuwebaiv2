@@ -705,8 +705,12 @@ const Dashboard = React.memo(() => {
                           <div className="w-2 h-2 sm:w-3 sm:h-3 bg-green-500 rounded-full"></div>
                         </div>
                         <div className="min-w-0">
-                          <p className="text-sm sm:text-base font-medium text-slate-800 dark:text-white">Equipo Activo</p>
-                          <p className="text-xs sm:text-sm text-slate-500 dark:text-slate-400">Trabajando en tus proyectos</p>
+                          <p className="text-sm sm:text-base font-medium text-slate-800 dark:text-white">
+                            {userProjects.length > 0 ? 'Equipo Activo' : 'Sin Proyectos'}
+                          </p>
+                          <p className="text-xs sm:text-sm text-slate-500 dark:text-slate-400">
+                            {userProjects.length > 0 ? 'Trabajando en tus proyectos' : 'Crea tu primer proyecto'}
+                          </p>
                         </div>
                       </div>
                       <div className="flex items-center gap-2 sm:gap-3">
@@ -715,7 +719,9 @@ const Dashboard = React.memo(() => {
                         </div>
                         <div className="min-w-0">
                           <p className="text-sm sm:text-base font-medium text-slate-800 dark:text-white">Comunicación</p>
-                          <p className="text-xs sm:text-sm text-slate-500 dark:text-slate-400">Respuesta en 2-4 horas</p>
+                          <p className="text-xs sm:text-sm text-slate-500 dark:text-slate-400">
+                            {dashboardStats.totalComments > 0 ? `${dashboardStats.totalComments} mensajes` : 'Sin mensajes recientes'}
+                          </p>
                         </div>
                       </div>
                     </CardContent>
@@ -916,20 +922,53 @@ const Dashboard = React.memo(() => {
                       </CardTitle>
                     </CardHeader>
                     <CardContent className="space-y-3">
-                      <div className="space-y-2">
-                        <div className="flex items-center gap-3 p-2 rounded-lg hover:bg-slate-50 dark:hover:bg-slate-700/50 transition-colors duration-200">
-                          <CheckCircle className="h-4 w-4 text-green-500" />
-                          <span className="text-sm text-slate-700 dark:text-slate-300">Revisar propuesta de diseño</span>
-                  </div>
-                        <div className="flex items-center gap-3 p-2 rounded-lg hover:bg-slate-50 dark:hover:bg-slate-700/50 transition-colors duration-200">
-                          <Clock className="h-4 w-4 text-orange-500" />
-                          <span className="text-sm text-slate-700 dark:text-slate-300">Aprobar contenido final</span>
+                      {userProjects.length > 0 ? (
+                        <div className="space-y-2">
+                          {(() => {
+                            const allPendingPhases = userProjects.flatMap(project => 
+                              (project.fases?.filter(f => f.estado === 'Pendiente' || f.estado === 'En Progreso') || [])
+                                .map(phase => ({ ...phase, projectName: project.name }))
+                            );
+                            
+                            if (allPendingPhases.length === 0) {
+                              return (
+                                <div className="text-center py-6">
+                                  <div className="w-12 h-12 bg-green-100 dark:bg-green-500/20 rounded-full flex items-center justify-center mx-auto mb-3">
+                                    <CheckCircle className="h-6 w-6 text-green-500" />
+                                  </div>
+                                  <p className="text-sm text-slate-500 dark:text-slate-400 font-medium">
+                                    ¡Excelente! No tienes tareas pendientes
+                                  </p>
+                                  <p className="text-xs text-slate-400 dark:text-slate-500 mt-1">
+                                    Todas tus tareas están completadas
+                                  </p>
+                                </div>
+                              );
+                            }
+                            
+                            return allPendingPhases.slice(0, 3).map((phase, phaseIndex) => (
+                              <div key={`${phase.projectName}-${phaseIndex}`} className="flex items-center gap-3 p-2 rounded-lg hover:bg-slate-50 dark:hover:bg-slate-700/50 transition-colors duration-200">
+                                <Clock className="h-4 w-4 text-orange-500" />
+                                <span className="text-sm text-slate-700 dark:text-slate-300">
+                                  {phase.key.charAt(0).toUpperCase() + phase.key.slice(1).replace(/([A-Z])/g, ' $1')} - {phase.projectName}
+                                </span>
+                              </div>
+                            ));
+                          })()}
                         </div>
-                        <div className="flex items-center gap-3 p-2 rounded-lg hover:bg-slate-50 dark:hover:bg-slate-700/50 transition-colors duration-200">
-                          <MessageSquare className="h-4 w-4 text-blue-500" />
-                          <span className="text-sm text-slate-700 dark:text-slate-300">Responder feedback del equipo</span>
+                      ) : (
+                        <div className="text-center py-6">
+                          <div className="w-12 h-12 bg-blue-100 dark:bg-blue-500/20 rounded-full flex items-center justify-center mx-auto mb-3">
+                            <Plus className="h-6 w-6 text-blue-500" />
+                          </div>
+                          <p className="text-sm text-slate-500 dark:text-slate-400 font-medium">
+                            Crea tu primer proyecto
+                          </p>
+                          <p className="text-xs text-slate-400 dark:text-slate-500 mt-1">
+                            Para ver tus tareas aquí
+                          </p>
                         </div>
-                      </div>
+                      )}
                     </CardContent>
                   </Card>
                 </motion.div>
@@ -951,24 +990,36 @@ const Dashboard = React.memo(() => {
                       </CardTitle>
                     </CardHeader>
                     <CardContent className="space-y-3">
-                      <div className="space-y-2">
-                        <div className="p-3 bg-blue-50 dark:bg-blue-500/10 rounded-lg border border-blue-200 dark:border-blue-500/20">
-                          <p className="text-sm font-medium text-blue-800 dark:text-blue-300">
-                            Nuevo mensaje del equipo
-                          </p>
-                          <p className="text-xs text-blue-600 dark:text-blue-400 mt-1">
-                            Hace 2 horas
-                          </p>
-                    </div>
-                        <div className="p-3 bg-green-50 dark:bg-green-500/10 rounded-lg border border-green-200 dark:border-green-500/20">
-                          <p className="text-sm font-medium text-green-800 dark:text-green-300">
-                            Proyecto actualizado
-                          </p>
-                          <p className="text-xs text-green-600 dark:text-green-400 mt-1">
-                            Hace 4 horas
-                          </p>
-                  </div>
-                      </div>
+                      {userProjects.length > 0 ? (
+                        <div className="space-y-2">
+                          {userProjects.slice(0, 2).map((project, index) => {
+                            const recentComments = project.fases
+                              ?.flatMap(f => f.comentarios || [])
+                              .sort((a, b) => new Date(b.fecha).getTime() - new Date(a.fecha).getTime())
+                              .slice(0, 1) || [];
+                            
+                            return recentComments.map((comment, commentIndex) => (
+                              <div key={`${project.id}-${commentIndex}`} className="p-3 bg-blue-50 dark:bg-blue-500/10 rounded-lg border border-blue-200 dark:border-blue-500/20">
+                                <p className="text-sm font-medium text-blue-800 dark:text-blue-300">
+                                  {comment.autor} en {project.name}
+                                </p>
+                                <p className="text-xs text-blue-600 dark:text-blue-400 mt-1">
+                                  {formatDateSafe(comment.fecha)}
+                                </p>
+                              </div>
+                            ));
+                          })}
+                          {userProjects.every(p => !p.fases?.some(f => f.comentarios?.length > 0)) && (
+                            <div className="text-center py-4">
+                              <p className="text-sm text-slate-500 dark:text-slate-400">No hay notificaciones recientes</p>
+                            </div>
+                          )}
+                        </div>
+                      ) : (
+                        <div className="text-center py-4">
+                          <p className="text-sm text-slate-500 dark:text-slate-400">No hay proyectos para mostrar notificaciones</p>
+                        </div>
+                      )}
                     </CardContent>
                   </Card>
                 </motion.div>
