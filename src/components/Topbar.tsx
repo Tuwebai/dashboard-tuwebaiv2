@@ -21,6 +21,8 @@ import { useTranslation } from 'react-i18next';
 import NotificationBell from '@/components/admin/NotificationBell';
 import HelpButton from './tutorial/HelpButton';
 import ThemeToggle from './ThemeToggle';
+import { useMultiAI } from '@/hooks/useMultiAI';
+import { useState, useEffect } from 'react';
 
 interface TopbarProps {
   onMenuClick?: () => void;
@@ -60,6 +62,120 @@ export default function Topbar({
   const isAdminPage = location.pathname === '/admin';
   const isClientDashboardPage = location.pathname === '/dashboard';
 
+  // Hook de Websy AI para generar saludos reales
+  const { sendMessage, isLoading: aiLoading } = useMultiAI();
+  const [aiGreeting, setAiGreeting] = useState<string>('');
+  const [greetingGenerated, setGreetingGenerated] = useState(false);
+
+  // Generar saludo con Websy AI real para Admin
+  const generateAdminAIGreeting = async () => {
+    if (!isAdminPage || greetingGenerated || aiLoading) return;
+
+    try {
+      const hour = new Date().getHours();
+      const dayOfWeek = new Date().getDay();
+      const userName = user?.full_name?.split(' ')[0] || 'Administrador';
+      
+      const prompt = `Genera un saludo personalizado y humano para el administrador ${userName}. 
+      
+      Contexto:
+      - Hora actual: ${hour}:00
+      - Día de la semana: ${dayOfWeek === 0 ? 'Domingo' : dayOfWeek === 1 ? 'Lunes' : dayOfWeek === 2 ? 'Martes' : dayOfWeek === 3 ? 'Miércoles' : dayOfWeek === 4 ? 'Jueves' : dayOfWeek === 5 ? 'Viernes' : 'Sábado'}
+      - Eres Websy AI, el asistente de IA del sistema
+      
+      Instrucciones:
+      - Saluda de manera natural y humana
+      - Menciona que eres Websy AI
+      - Adapta el tono según la hora del día
+      - Usa emojis apropiados
+      - Máximo 2 líneas
+      - Sé creativo y personalizado
+      
+      Responde SOLO con el saludo, sin explicaciones adicionales.`;
+
+      const response = await sendMessage(prompt, [], 'general');
+      setAiGreeting(response);
+      setGreetingGenerated(true);
+    } catch (error) {
+      console.error('Error generando saludo con IA:', error);
+      // Fallback a saludo estático si falla la IA
+      setAiGreeting('¡Hola! Websy AI aquí, listo para ayudarte 🤖');
+      setGreetingGenerated(true);
+    }
+  };
+
+  // Generar saludo con Websy AI real para Cliente
+  const generateClientAIGreeting = async () => {
+    if (!isClientDashboardPage || greetingGenerated || aiLoading) return;
+
+    try {
+      const hour = new Date().getHours();
+      const dayOfWeek = new Date().getDay();
+      const userName = user?.full_name?.split(' ')[0] || 'Usuario';
+      const userEmail = user?.email || 'usuario@ejemplo.com';
+      const userProjects = getUserProjects();
+      const projectCount = userProjects.length;
+      
+      const prompt = `Genera un saludo personalizado y profesional para el cliente ${userName}. 
+      
+      Contexto del Cliente:
+      - Nombre: ${userName}
+      - Email: ${userEmail}
+      - Hora actual: ${hour}:00
+      - Día de la semana: ${dayOfWeek === 0 ? 'Domingo' : dayOfWeek === 1 ? 'Lunes' : dayOfWeek === 2 ? 'Martes' : dayOfWeek === 3 ? 'Miércoles' : dayOfWeek === 4 ? 'Jueves' : dayOfWeek === 5 ? 'Viernes' : 'Sábado'}
+      - Proyectos activos: ${projectCount}
+      - Eres Websy AI, el asistente de IA especializado en desarrollo web
+      
+      Instrucciones:
+      - Saluda de manera profesional pero cálida
+      - Menciona que eres Websy AI
+      - Adapta el tono según la hora del día
+      - Menciona brevemente sus proyectos si los tiene
+      - Usa emojis apropiados
+      - Máximo 2 líneas
+      - Haz que se sienta que el dashboard está vivo y personalizado
+      - Sé creativo y profesional
+      
+      Responde SOLO con el saludo, sin explicaciones adicionales.`;
+
+      const response = await sendMessage(prompt, [], 'general');
+      setAiGreeting(response);
+      setGreetingGenerated(true);
+    } catch (error) {
+      console.error('Error generando saludo con IA:', error);
+      // Fallback a saludo estático si falla la IA
+      setAiGreeting('¡Hola! Websy AI aquí, listo para ayudarte con tus proyectos 🤖');
+      setGreetingGenerated(true);
+    }
+  };
+
+  // Generar saludo cuando se carga la página
+  useEffect(() => {
+    if (user && !greetingGenerated) {
+      if (isAdminPage) {
+        generateAdminAIGreeting();
+      } else if (isClientDashboardPage) {
+        generateClientAIGreeting();
+      }
+    }
+  }, [isAdminPage, isClientDashboardPage, user, greetingGenerated]);
+
+  // Resetear saludo cada 5 minutos para mantenerlo fresco
+  useEffect(() => {
+    if (isAdminPage || isClientDashboardPage) {
+      const interval = setInterval(() => {
+        setGreetingGenerated(false);
+        if (isAdminPage) {
+          generateAdminAIGreeting();
+        } else if (isClientDashboardPage) {
+          generateClientAIGreeting();
+        }
+      }, 5 * 60 * 1000); // 5 minutos
+
+      return () => clearInterval(interval);
+    }
+  }, [isAdminPage, isClientDashboardPage]);
+
   return (
     <header className={`${isAdminPage || isClientDashboardPage ? 'h-auto' : 'h-16'} bg-background border-b border-border shadow-sm`}>
       <div className={`flex items-center justify-between px-6 ${isAdminPage || isClientDashboardPage ? 'py-6' : 'h-full'}`}>
@@ -91,13 +207,14 @@ export default function Topbar({
                   ¡Hola {user?.full_name?.split(' ')[0] || 'Administrador'}!
                 </span>
                 <span className="block text-lg sm:text-xl font-semibold text-slate-600 dark:text-slate-300 mt-1">
-                  {(() => {
-                    const hour = new Date().getHours();
-                    if (hour >= 5 && hour < 12) return '¡Buenos días! Websy AI está listo para ayudarte a gestionar el sistema';
-                    if (hour >= 12 && hour < 18) return '¡Buenas tardes! Todo funcionando perfectamente, ¿en qué puedo asistirte?';
-                    if (hour >= 18 && hour < 22) return '¡Buenas tardes! El sistema está optimizado y listo para tus tareas';
-                    return '¡Buenas noches! Websy AI monitorea todo mientras descansas, todo bajo control';
-                  })()}
+                  {aiGreeting || (aiLoading ? (
+                    <span className="flex items-center">
+                      <div className="animate-spin rounded-full h-4 w-4 border-b-2 border-blue-600 mr-2"></div>
+                      Websy AI pensando en tu saludo...
+                    </span>
+                  ) : (
+                    '¡Hola! Websy AI aquí, listo para ayudarte 🤖'
+                  ))}
                 </span>
               </h1>
               {lastUpdate && (
@@ -111,7 +228,21 @@ export default function Topbar({
             /* Client Dashboard Header */
             <div className="flex-1">
               <div>
-                <DynamicGreeting userName={user?.full_name?.split(' ')[0] || 'Usuario'} />
+                <h1 className="text-3xl font-bold text-foreground">
+                  <span className="bg-gradient-to-r from-blue-600 to-indigo-600 dark:from-blue-400 dark:to-indigo-400 bg-clip-text text-transparent">
+                    ¡Hola {user?.full_name?.split(' ')[0] || 'Usuario'}!
+                  </span>
+                  <span className="block text-lg sm:text-xl font-semibold text-slate-600 dark:text-slate-300 mt-1">
+                    {aiGreeting || (aiLoading ? (
+                      <span className="flex items-center">
+                        <div className="animate-spin rounded-full h-4 w-4 border-b-2 border-blue-600 mr-2"></div>
+                        Websy AI pensando en tu saludo...
+                      </span>
+                    ) : (
+                      '¡Hola! Websy AI aquí, listo para ayudarte con tus proyectos 🤖'
+                    ))}
+                  </span>
+                </h1>
                 {lastUpdate && (
                   <div className="text-muted-foreground text-sm flex items-center space-x-2 mt-2">
                     <Clock size={16} />
