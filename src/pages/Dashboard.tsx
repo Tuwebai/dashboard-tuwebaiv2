@@ -1,7 +1,6 @@
 import React, { useState, useEffect, useMemo, useCallback, useRef } from 'react';
 import { useNavigate, Navigate } from 'react-router-dom';
 import { useApp } from '@/contexts/AppContext';
-import { DragDropContext, Droppable, DropResult } from '@hello-pangea/dnd';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Input } from '@/components/ui/input';
@@ -40,10 +39,6 @@ import {
   User,
   Play,
   Pause,
-  Archive,
-  Trash2,
-  Copy,
-  GripVertical,
   Keyboard,
   HelpCircle
 } from 'lucide-react';
@@ -53,7 +48,6 @@ import { useTranslation } from 'react-i18next';
 import { formatDateSafe } from '@/utils/formatDateSafe';
 import VerDetallesProyecto from '@/components/VerDetallesProyecto';
 import ProjectCollaborationModal from '@/components/ProjectCollaborationModal';
-import ProjectCard from '@/components/ProjectCard';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { userService } from '@/lib/supabaseService';
@@ -197,10 +191,6 @@ const Dashboard = React.memo(() => {
   const [sortBy, setSortBy] = useState<string>('recent');
   const [sortOrder, setSortOrder] = useState<'asc' | 'desc'>('desc');
   const [activeTab, setActiveTab] = useState('overview');
-  const [selectedProjects, setSelectedProjects] = useState<Set<string>>(new Set());
-  const [bulkActionMode, setBulkActionMode] = useState(false);
-  const [dragMode, setDragMode] = useState(false);
-  const [projectOrder, setProjectOrder] = useState<string[]>([]);
   const searchInputRef = useRef<HTMLInputElement>(null);
   const { t } = useTranslation();
 
@@ -333,16 +323,6 @@ const Dashboard = React.memo(() => {
       filtered = filtered.filter(project => getProjectStatus(project) === statusFilter);
     }
 
-    // Si hay orden personalizado (drag & drop), aplicarlo
-    if (dragMode && projectOrder.length > 0) {
-      const orderedProjects = projectOrder
-        .map(id => filtered.find(p => p.id === id))
-        .filter(Boolean) as Project[];
-      
-      // Agregar proyectos que no están en el orden personalizado
-      const remainingProjects = filtered.filter(p => !projectOrder.includes(p.id));
-      return [...orderedProjects, ...remainingProjects];
-    }
 
     // Ordenamiento normal
     filtered.sort((a, b) => {
@@ -371,7 +351,7 @@ const Dashboard = React.memo(() => {
     });
 
     return filtered;
-  }, [userProjects, searchTerm, statusFilter, sortBy, sortOrder, dragMode, projectOrder]);
+  }, [userProjects, searchTerm, statusFilter, sortBy, sortOrder]);
 
   // Estadísticas calculadas
   const dashboardStats = useMemo(() => {
@@ -481,23 +461,6 @@ const Dashboard = React.memo(() => {
     navigate('/proyectos/nuevo');
   };
 
-  // Función para ver detalles del proyecto
-  const handleViewProject = (projectCard: any) => {
-    // Buscar el proyecto completo en la lista
-    const fullProject = realTimeProjects.find(p => p.id === projectCard.id);
-    if (fullProject && fullProject.id) {
-      setSelectedProject(fullProject);
-      setIsModalOpen(true);
-      setModalInitialized(true);
-    } else {
-      // Proyecto inválido
-      toast({ 
-        title: 'Error', 
-        description: 'No se pudo cargar la información del proyecto.', 
-        variant: 'destructive' 
-      });
-    }
-  };
 
   // Función para eliminar proyecto
   const handleDeleteProject = async (projectId: string) => {
@@ -591,96 +554,8 @@ const Dashboard = React.memo(() => {
     toast({ title: 'Exportado', description: 'Datos del dashboard exportados correctamente.' });
   }, [dashboardStats, filteredAndSortedProjects, user]);
 
-  // Funciones para bulk actions
-  const handleSelectProject = useCallback((projectId: string) => {
-    setSelectedProjects(prev => {
-      const newSet = new Set(prev);
-      if (newSet.has(projectId)) {
-        newSet.delete(projectId);
-      } else {
-        newSet.add(projectId);
-      }
-      return newSet;
-    });
-  }, []);
 
-  const handleSelectAll = useCallback(() => {
-    if (selectedProjects.size === filteredAndSortedProjects.length) {
-      setSelectedProjects(new Set());
-    } else {
-      setSelectedProjects(new Set(filteredAndSortedProjects.map(p => p.id)));
-    }
-  }, [selectedProjects.size, filteredAndSortedProjects]);
 
-  const handleBulkDelete = useCallback(async () => {
-    if (selectedProjects.size === 0) return;
-    
-    if (confirm(`¿Estás seguro de que quieres eliminar ${selectedProjects.size} proyecto(s)? Esta acción no se puede deshacer.`)) {
-      try {
-        // Aquí implementarías la lógica de eliminación en lote
-        toast({ title: 'Eliminados', description: `${selectedProjects.size} proyecto(s) eliminados correctamente.` });
-        setSelectedProjects(new Set());
-        setBulkActionMode(false);
-      } catch (error) {
-        toast({ title: 'Error', description: 'No se pudieron eliminar los proyectos.', variant: 'destructive' });
-      }
-    }
-  }, [selectedProjects]);
-
-  const handleBulkArchive = useCallback(async () => {
-    if (selectedProjects.size === 0) return;
-    
-    try {
-      // Aquí implementarías la lógica de archivado en lote
-      toast({ title: 'Archivados', description: `${selectedProjects.size} proyecto(s) archivados correctamente.` });
-      setSelectedProjects(new Set());
-      setBulkActionMode(false);
-    } catch (error) {
-      toast({ title: 'Error', description: 'No se pudieron archivar los proyectos.', variant: 'destructive' });
-    }
-  }, [selectedProjects]);
-
-  const handleDuplicateProject = useCallback((projectCard: any) => {
-    // Aquí implementarías la lógica de duplicación
-    toast({ title: 'Duplicado', description: `Proyecto "${projectCard.name}" duplicado correctamente.` });
-  }, []);
-
-  const handleToggleFavorite = useCallback((projectId: string) => {
-    // Aquí implementarías la lógica de favoritos
-    toast({ title: 'Favorito', description: `Proyecto marcado como favorito.` });
-  }, []);
-
-  const handleArchiveProject = useCallback((projectId: string) => {
-    // Aquí implementarías la lógica de archivado
-    toast({ title: 'Archivado', description: `Proyecto archivado correctamente.` });
-  }, []);
-
-  // Funciones para drag & drop
-  const handleToggleDragMode = useCallback(() => {
-    setDragMode(prev => !prev);
-    if (!dragMode) {
-      // Inicializar orden con el orden actual
-      setProjectOrder(filteredAndSortedProjects.map(p => p.id));
-    } else {
-      // Limpiar orden personalizado
-      setProjectOrder([]);
-    }
-  }, [dragMode, filteredAndSortedProjects]);
-
-  const handleDragEnd = useCallback((result: DropResult) => {
-    if (!result.destination) return;
-
-    const newOrder = Array.from(projectOrder);
-    const [reorderedItem] = newOrder.splice(result.source.index, 1);
-    newOrder.splice(result.destination.index, 0, reorderedItem);
-
-    setProjectOrder(newOrder);
-    
-    toast({
-      title: 'Orden actualizado',
-      description: 'Los proyectos han sido reordenados por prioridad',
-    });
-  }, [projectOrder]);
 
   // Funciones para keyboard shortcuts
   const handleSearchFocus = useCallback(() => {
@@ -691,16 +566,11 @@ const Dashboard = React.memo(() => {
 
   // Configurar keyboard shortcuts
   const keyboardShortcuts = useKeyboardShortcuts({
-    onToggleDragMode: handleToggleDragMode,
     onClearFilters: clearFilters,
     onExportData: exportDashboardData,
     onCreateProject: handleCreateProject,
     onRefreshData: refreshData,
-    onToggleBulkMode: () => setBulkActionMode(!bulkActionMode),
-    onSelectAll: handleSelectAll,
     onSearchFocus: handleSearchFocus,
-    isDragMode: dragMode,
-    isBulkMode: bulkActionMode,
     hasProjects: hasValidProjects
   });
 
@@ -1153,56 +1023,6 @@ const Dashboard = React.memo(() => {
           <div className="px-4 sm:px-6 lg:px-8 py-4 sm:py-6 space-y-4 sm:space-y-6">
             
 
-            {/* Barra de Bulk Actions */}
-            {bulkActionMode && selectedProjects.size > 0 && (
-              <motion.div 
-                className="bg-blue-50 dark:bg-blue-500/20 border border-blue-200 dark:border-blue-500/30 rounded-2xl p-4 shadow-lg"
-                initial={{ opacity: 0, y: -20 }}
-                animate={{ opacity: 1, y: 0 }}
-                transition={{ duration: 0.3 }}
-              >
-                <div className="flex items-center justify-between">
-                  <div className="flex items-center gap-4">
-                    <div className="flex items-center gap-2">
-                      <div className="w-8 h-8 bg-blue-500 rounded-full flex items-center justify-center">
-                        <span className="text-white font-bold text-sm">{selectedProjects.size}</span>
-                      </div>
-                      <span className="font-semibold text-blue-800 dark:text-blue-200">
-                        {selectedProjects.size} proyecto{selectedProjects.size > 1 ? 's' : ''} seleccionado{selectedProjects.size > 1 ? 's' : ''}
-                      </span>
-                    </div>
-                    <Button
-                      variant="outline"
-                      size="sm"
-                      onClick={handleSelectAll}
-                      className="border-blue-300 dark:border-blue-500/40 text-blue-700 dark:text-blue-300 hover:bg-blue-100 dark:hover:bg-blue-500/20"
-                    >
-                      {selectedProjects.size === filteredAndSortedProjects.length ? 'Deseleccionar Todo' : 'Seleccionar Todo'}
-                    </Button>
-                  </div>
-                  <div className="flex items-center gap-2">
-                    <Button
-                      variant="outline"
-                      size="sm"
-                      onClick={handleBulkArchive}
-                      className="border-orange-300 dark:border-orange-500/40 text-orange-700 dark:text-orange-400 hover:bg-orange-100 dark:hover:bg-orange-500/20"
-                    >
-                      <Archive className="h-4 w-4 mr-2" />
-                      Archivar
-                    </Button>
-                    <Button
-                      variant="outline"
-                      size="sm"
-                      onClick={handleBulkDelete}
-                      className="border-red-300 dark:border-red-500/40 text-red-700 dark:text-red-400 hover:bg-red-100 dark:hover:bg-red-500/20"
-                    >
-                      <Trash2 className="h-4 w-4 mr-2" />
-                      Eliminar
-                    </Button>
-                  </div>
-                </div>
-              </motion.div>
-            )}
 
             {/* Vista de proyectos */}
             {!hasValidProjects ? (
@@ -1286,193 +1106,72 @@ const Dashboard = React.memo(() => {
                 </div>
               </div>
             ) : (
-              <div className="bg-white rounded-2xl p-8 shadow-xl border border-slate-200/50">
-                {dragMode ? (
-                  <DragDropContext onDragEnd={handleDragEnd}>
-                    <Droppable droppableId="projects" direction="horizontal">
-                      {(provided) => (
-                        <div 
-                          {...provided.droppableProps} 
-                          ref={provided.innerRef}
-                          className="projects-section flex flex-wrap gap-6"
-                        >
-                          {filteredAndSortedProjects.filter(project => project && project.id).map((project, index) => (
-                            <ProjectCard
-                              key={project.id}
-                              project={{
-                                id: project.id,
-                                name: project.name,
-                                category: project.type || 'Web',
-                                description: project.description || 'Sin descripción disponible',
-                                status: (() => {
-                                  const progress = project.fases ? Math.round((project.fases.filter((f: any) => f.estado === 'Terminado').length / project.fases.length) * 100) : 0;
-                                  return progress === 100 ? 'completed' as const : 'in-progress' as const;
-                                })(),
-                                progress: project.fases ? Math.round((project.fases.filter((f: any) => f.estado === 'Terminado').length / project.fases.length) * 100) : 0,
-                                screenshotUrl: undefined,
-                                results: (() => {
-                                  const progress = project.fases ? Math.round((project.fases.filter((f: any) => f.estado === 'Terminado').length / project.fases.length) * 100) : 0;
-                                  if (progress < 100) return undefined;
-                                  
-                                  const projectType = project.type || 'Web';
-                                  const baseResults = {
-                                    satisfaction: Math.floor(Math.random() * 20) + 80,
-                                    originality: Math.floor(Math.random() * 15) + 85,
-                                    extras: []
-                                  };
-                                  
-                                  switch (projectType.toLowerCase()) {
-                                    case 'ecommerce':
-                                    case 'tienda online':
-                                      baseResults.extras = ['Sistema de pagos integrado', 'Gestión de inventario', 'Panel de administración', 'Optimización SEO', 'Diseño responsive'];
-                                      break;
-                                    case 'landing page':
-                                    case 'landing':
-                                      baseResults.extras = ['Diseño conversión optimizado', 'Formularios de contacto', 'Integración analytics', 'Optimización móvil', 'Carga rápida'];
-                                      break;
-                                    default:
-                                      baseResults.extras = ['Diseño moderno', 'Código optimizado', 'Documentación completa', 'Testing exhaustivo', 'Deploy automatizado'];
-                                  }
-                                  
-                                  return baseResults;
-                                })(),
-                                phases: project.fases ? project.fases.map((fase: any) => ({
-                                  name: fase.key.charAt(0).toUpperCase() + fase.key.slice(1).replace(/([A-Z])/g, ' $1'),
-                                  status: fase.estado === 'Terminado' ? 'Completado' as const :
-                                          fase.estado === 'En Progreso' ? 'En curso' as const :
-                                          'Pendiente' as const,
-                                  description: fase.descripcion
-                                })) : []
-                              }}
-                              user={user}
-                              projectCreators={projectCreators}
-                              onViewProject={handleViewProject}
-                              onDeleteProject={handleDeleteProject}
-                              onNavigateToCollaboration={(projectId) => {
-                                const url = `/proyectos/${projectId}/colaboracion-cliente`;
-                                try {
-                                  navigate(url);
-                                } catch (error) {
-                                  toast({ 
-                                    title: 'Error de navegación', 
-                                    description: 'No se pudo navegar a la página de colaboración', 
-                                    variant: 'destructive' 
-                                  });
-                                }
-                              }}
-                              onNavigateToEdit={(projectId) => {
-                                const url = `/proyectos/${projectId}/editar`;
-                                try {
-                                  navigate(url);
-                                } catch (error) {
-                                  toast({ 
-                                    title: 'Error de navegación', 
-                                    description: 'No se pudo navegar a la página de edición.',
-                                    variant: 'destructive' 
-                                  });
-                                }
-                              }}
-                              onDuplicateProject={(project) => handleDuplicateProject(project)}
-                              onToggleFavorite={(projectId) => handleToggleFavorite(projectId)}
-                              onArchiveProject={(projectId) => handleArchiveProject(projectId)}
-                              index={index}
-                              dragMode={true}
-                              isDragDisabled={false}
-                            />
-                          ))}
-                          {provided.placeholder}
+              <div className="bg-white rounded-2xl p-8 shadow-xl border border-slate-200/50 text-center">
+                <div className="space-y-6">
+                  <div className="w-20 h-20 mx-auto bg-gradient-to-br from-blue-500 to-indigo-600 rounded-full flex items-center justify-center shadow-lg">
+                    <FileText className="h-10 w-10 text-white" />
+                  </div>
+                  
+                  <div>
+                    <h3 className="text-2xl font-bold text-slate-800 dark:text-white mb-2">
+                      Tienes {userProjects.length} proyecto{userProjects.length !== 1 ? 's' : ''}
+                    </h3>
+                    <p className="text-slate-600 dark:text-slate-300 mb-6">
+                      Gestiona y monitorea todos tus proyectos desde la página dedicada
+                    </p>
+                  </div>
+                  
+                  <div className="flex flex-col sm:flex-row gap-4 justify-center">
+                    <Button
+                      onClick={() => navigate('/proyectos')}
+                      className="bg-gradient-to-r from-blue-600 to-indigo-600 hover:from-blue-700 hover:to-indigo-700 text-white font-semibold px-8 py-3 rounded-xl shadow-lg hover:shadow-xl transition-all duration-300"
+                    >
+                      <FileText className="h-5 w-5 mr-2" />
+                      Ver Mis Proyectos
+                    </Button>
+                    
+                    <Button
+                      onClick={() => navigate('/proyectos/nuevo')}
+                      variant="outline"
+                      className="border-blue-300 text-blue-700 hover:bg-blue-50 dark:border-blue-500 dark:text-blue-300 dark:hover:bg-blue-500/10 font-semibold px-8 py-3 rounded-xl transition-all duration-300"
+                    >
+                      <Plus className="h-5 w-5 mr-2" />
+                      Nuevo Proyecto
+                    </Button>
                         </div>
-                      )}
-                    </Droppable>
-                  </DragDropContext>
-                ) : (
-                  <div className="projects-section flex flex-wrap gap-6">
-                    {filteredAndSortedProjects.filter(project => project && project.id).map((project, index) => (
-                      <ProjectCard
-                        key={project.id}
-                        project={{
-                          id: project.id,
-                          name: project.name,
-                          category: project.type || 'Web',
-                          description: project.description || 'Sin descripción disponible',
-                          status: (() => {
-                            const progress = project.fases ? Math.round((project.fases.filter((f: any) => f.estado === 'Terminado').length / project.fases.length) * 100) : 0;
-                            return progress === 100 ? 'completed' as const : 'in-progress' as const;
-                          })(),
-                          progress: project.fases ? Math.round((project.fases.filter((f: any) => f.estado === 'Terminado').length / project.fases.length) * 100) : 0,
-                          screenshotUrl: undefined,
-                          results: (() => {
-                            const progress = project.fases ? Math.round((project.fases.filter((f: any) => f.estado === 'Terminado').length / project.fases.length) * 100) : 0;
-                            if (progress < 100) return undefined;
-                            
-                            const projectType = project.type || 'Web';
-                            const baseResults = {
-                              satisfaction: Math.floor(Math.random() * 20) + 80,
-                              originality: Math.floor(Math.random() * 15) + 85,
-                              extras: []
-                            };
-                            
-                            switch (projectType.toLowerCase()) {
-                              case 'ecommerce':
-                              case 'tienda online':
-                                baseResults.extras = ['Sistema de pagos integrado', 'Gestión de inventario', 'Panel de administración', 'Optimización SEO', 'Diseño responsive'];
-                                break;
-                              case 'landing page':
-                              case 'landing':
-                                baseResults.extras = ['Diseño conversión optimizado', 'Formularios de contacto', 'Integración analytics', 'Optimización móvil', 'Carga rápida'];
-                                break;
-                              default:
-                                baseResults.extras = ['Diseño moderno', 'Código optimizado', 'Documentación completa', 'Testing exhaustivo', 'Deploy automatizado'];
-                            }
-                            
-                            return baseResults;
-                          })(),
-                          phases: project.fases ? project.fases.map((fase: any) => ({
-                            name: fase.key.charAt(0).toUpperCase() + fase.key.slice(1).replace(/([A-Z])/g, ' $1'),
-                            status: fase.estado === 'Terminado' ? 'Completado' as const :
-                                    fase.estado === 'En Progreso' ? 'En curso' as const :
-                                    'Pendiente' as const,
-                            description: fase.descripcion
-                          })) : []
-                        }}
-                        user={user}
-                        projectCreators={projectCreators}
-                        onViewProject={handleViewProject}
-                        onDeleteProject={handleDeleteProject}
-                        onNavigateToCollaboration={(projectId) => {
-                          const url = `/proyectos/${projectId}/colaboracion-cliente`;
-                          try {
-                            navigate(url);
-                          } catch (error) {
-                            toast({ 
-                              title: 'Error de navegación', 
-                              description: 'No se pudo navegar a la página de colaboración', 
-                              variant: 'destructive' 
-                            });
-                          }
-                        }}
-                        onNavigateToEdit={(projectId) => {
-                          const url = `/proyectos/${projectId}/editar`;
-                          try {
-                            navigate(url);
-                          } catch (error) {
-                            toast({ 
-                              title: 'Error de navegación', 
-                              description: 'No se pudo navegar a la página de edición.',
-                              variant: 'destructive' 
-                            });
-                          }
-                        }}
-                        onDuplicateProject={(project) => handleDuplicateProject(project)}
-                        onToggleFavorite={(projectId) => handleToggleFavorite(projectId)}
-                        onArchiveProject={(projectId) => handleArchiveProject(projectId)}
-                        showAdminActions={user?.role === 'admin'}
-                        index={index}
-                        dragMode={false}
-                      />
-                    ))}
+                  
+                  {userProjects.length > 0 && (
+                    <div className="mt-8 p-4 bg-slate-50 dark:bg-slate-800/50 rounded-xl">
+                      <h4 className="font-semibold text-slate-800 dark:text-white mb-3">Resumen Rápido</h4>
+                      <div className="grid grid-cols-2 sm:grid-cols-4 gap-4 text-center">
+                        <div>
+                          <div className="text-2xl font-bold text-blue-600 dark:text-blue-400">
+                            {dashboardStats.totalProjects}
+                          </div>
+                          <div className="text-sm text-slate-600 dark:text-slate-300">Total</div>
+                        </div>
+                        <div>
+                          <div className="text-2xl font-bold text-green-600 dark:text-green-400">
+                            {dashboardStats.completedProjects}
+                          </div>
+                          <div className="text-sm text-slate-600 dark:text-slate-300">Completados</div>
+                        </div>
+                        <div>
+                          <div className="text-2xl font-bold text-orange-600 dark:text-orange-400">
+                            {dashboardStats.inProgressProjects}
+                          </div>
+                          <div className="text-sm text-slate-600 dark:text-slate-300">En Progreso</div>
+                        </div>
+                        <div>
+                          <div className="text-2xl font-bold text-purple-600 dark:text-purple-400">
+                            {dashboardStats.averageProgress}%
+                          </div>
+                          <div className="text-sm text-slate-600 dark:text-slate-300">Progreso</div>
+                        </div>
+                      </div>
                   </div>
                 )}
+                </div>
               </div>
             )}
 
