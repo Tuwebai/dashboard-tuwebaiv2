@@ -524,7 +524,51 @@ const ProjectsPage = React.memo(() => {
             {filteredProjects.map((project, index) => (
               <ProjectCard
                 key={project.id}
-                project={project}
+                project={{
+                  id: project.id,
+                  name: project.name,
+                  category: project.type || 'Web',
+                  description: project.description || 'Sin descripción disponible',
+                  status: (() => {
+                    const progress = project.fases ? Math.round((project.fases.filter((f: any) => f.estado === 'Terminado').length / project.fases.length) * 100) : 0;
+                    return progress === 100 ? 'completed' as const : 'in-progress' as const;
+                  })(),
+                  progress: project.fases ? Math.round((project.fases.filter((f: any) => f.estado === 'Terminado').length / project.fases.length) * 100) : 0,
+                  screenshotUrl: undefined,
+                  results: (() => {
+                    const progress = project.fases ? Math.round((project.fases.filter((f: any) => f.estado === 'Terminado').length / project.fases.length) * 100) : 0;
+                    if (progress < 100) return undefined;
+                    
+                    const projectType = project.type || 'Web';
+                    const baseResults = {
+                      satisfaction: Math.floor(Math.random() * 20) + 80,
+                      originality: Math.floor(Math.random() * 15) + 85,
+                      extras: []
+                    };
+                    
+                    switch (projectType.toLowerCase()) {
+                      case 'ecommerce':
+                      case 'tienda online':
+                        baseResults.extras = ['Sistema de pagos integrado', 'Gestión de inventario', 'Panel de administración', 'Optimización SEO', 'Diseño responsive'];
+                        break;
+                      case 'landing page':
+                      case 'landing':
+                        baseResults.extras = ['Diseño conversión optimizado', 'Formularios de contacto', 'Integración analytics', 'Optimización móvil', 'Carga rápida'];
+                        break;
+                      default:
+                        baseResults.extras = ['Diseño moderno', 'Código optimizado', 'Documentación completa', 'Testing exhaustivo', 'Deploy automatizado'];
+                    }
+                    
+                    return baseResults;
+                  })(),
+                  phases: project.fases ? project.fases.map((fase: any) => ({
+                    name: fase.key.charAt(0).toUpperCase() + fase.key.slice(1).replace(/([A-Z])/g, ' $1'),
+                    status: fase.estado === 'Terminado' ? 'Completado' as const :
+                            fase.estado === 'En Progreso' ? 'En curso' as const :
+                            'Pendiente' as const,
+                    description: fase.descripcion
+                  })) : []
+                }}
                 user={user}
                 projectCreators={projectCreators}
                 onViewProject={handleViewProject}

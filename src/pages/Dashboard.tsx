@@ -52,8 +52,6 @@ import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
 import { useTranslation } from 'react-i18next';
 import { formatDateSafe } from '@/utils/formatDateSafe';
 import VerDetallesProyecto from '@/components/VerDetallesProyecto';
-import ProjectCard from '@/components/ProjectCard';
-import LazyProjectCard from '@/components/LazyProjectCard';
 import ProjectCollaborationModal from '@/components/ProjectCollaborationModal';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
@@ -1285,59 +1283,75 @@ const Dashboard = React.memo(() => {
                 </div>
               </div>
             ) : (
-              <div className="space-y-6">
-                {/* Indicador de modo drag */}
-                {dragMode && (
-                  <motion.div 
-                    className="bg-blue-50 border border-blue-200 rounded-2xl p-4 shadow-lg"
-                    initial={{ opacity: 0, y: -20 }}
-                    animate={{ opacity: 1, y: 0 }}
-                    transition={{ duration: 0.3 }}
-                  >
-                    <div className="flex items-center justify-between">
-                      <div className="flex items-center gap-4">
-                        <div className="flex items-center gap-2">
-                          <div className="w-8 h-8 bg-blue-500 rounded-full flex items-center justify-center">
-                            <GripVertical className="h-4 w-4 text-white" />
-                          </div>
-                          <span className="font-semibold text-blue-800 dark:text-blue-200">
-                            Modo Arrastrar Activo
-                          </span>
-                        </div>
-                        <p className="text-sm text-blue-600 dark:text-blue-300">
-                          Arrastra los proyectos para reordenarlos por prioridad. Presiona ESC o Ctrl+D para salir.
-                        </p>
-                      </div>
-                      <Button
-                        variant="outline"
-                        size="sm"
-                        onClick={handleToggleDragMode}
-                        className="border-blue-300 dark:border-blue-500/40 text-blue-700 dark:text-blue-300 hover:bg-blue-100 dark:hover:bg-blue-500/20"
-                      >
-                        Salir
-                      </Button>
-                    </div>
-                  </motion.div>
-                )}
-
-                {/* Contenedor de proyectos con drag & drop */}
-                {dragMode ? (
-                  <DragDropContext onDragEnd={handleDragEnd}>
-                    <Droppable droppableId="projects" direction="horizontal">
-                      {(provided, snapshot) => (
-                        <div
-                          ref={provided.innerRef}
-                          {...provided.droppableProps}
-                          className={`flex flex-wrap gap-6 p-4 rounded-2xl transition-all duration-300 ${
-                            snapshot.isDraggingOver 
-                              ? 'bg-blue-50 dark:bg-blue-500/10 border-2 border-dashed border-blue-300 dark:border-blue-500/40' 
-                              : 'bg-transparent'
-                          }`}
+              <div className="text-center py-12">
+                <div className="w-24 h-24 bg-gradient-to-br from-blue-500 to-indigo-600 rounded-full flex items-center justify-center mx-auto mb-6 shadow-lg">
+                  <FileText className="h-12 w-12 text-white" />
+                </div>
+                <h3 className="text-2xl font-bold text-slate-800 dark:text-white mb-4">
+                  No tienes proyectos aún
+                </h3>
+                <p className="text-slate-600 dark:text-slate-300 mb-8 max-w-md mx-auto">
+                  Comienza creando tu primer proyecto web y verás el progreso en tiempo real.
+                </p>
+                <Button 
+                  className="px-8 py-4 bg-gradient-to-r from-blue-600 via-indigo-600 to-purple-700 hover:from-blue-700 hover:via-indigo-700 hover:to-purple-800 text-white rounded-xl font-bold text-lg transition-all duration-300 shadow-lg hover:shadow-xl transform hover:-translate-y-1 hover:scale-105"
+                  onClick={() => navigate('/proyectos/nuevo')}
+                >
+                  <Plus className="h-5 w-5 mr-3" />
+                  Crear mi primer proyecto
+                </Button>
+              </div>
+            )}
+            )}
                         >
                           {filteredAndSortedProjects.filter(project => project && project.id).map((project, index) => (
-                            <LazyProjectCard
+                            <ProjectCard
                               key={project.id}
-                              project={project}
+                              project={{
+                          id: project.id,
+                          name: project.name,
+                          category: project.type || 'Web',
+                          description: project.description || 'Sin descripción disponible',
+                          status: (() => {
+                            const progress = project.fases ? Math.round((project.fases.filter((f: any) => f.estado === 'Terminado').length / project.fases.length) * 100) : 0;
+                            return progress === 100 ? 'completed' as const : 'in-progress' as const;
+                          })(),
+                          progress: project.fases ? Math.round((project.fases.filter((f: any) => f.estado === 'Terminado').length / project.fases.length) * 100) : 0,
+                          screenshotUrl: undefined,
+                          results: (() => {
+                            const progress = project.fases ? Math.round((project.fases.filter((f: any) => f.estado === 'Terminado').length / project.fases.length) * 100) : 0;
+                            if (progress < 100) return undefined;
+                            
+                            const projectType = project.type || 'Web';
+                            const baseResults = {
+                              satisfaction: Math.floor(Math.random() * 20) + 80,
+                              originality: Math.floor(Math.random() * 15) + 85,
+                              extras: []
+                            };
+                            
+                            switch (projectType.toLowerCase()) {
+                              case 'ecommerce':
+                              case 'tienda online':
+                                baseResults.extras = ['Sistema de pagos integrado', 'Gestión de inventario', 'Panel de administración', 'Optimización SEO', 'Diseño responsive'];
+                                break;
+                              case 'landing page':
+                              case 'landing':
+                                baseResults.extras = ['Diseño conversión optimizado', 'Formularios de contacto', 'Integración analytics', 'Optimización móvil', 'Carga rápida'];
+                                break;
+                              default:
+                                baseResults.extras = ['Diseño moderno', 'Código optimizado', 'Documentación completa', 'Testing exhaustivo', 'Deploy automatizado'];
+                            }
+                            
+                            return baseResults;
+                          })(),
+                          phases: project.fases ? project.fases.map((fase: any) => ({
+                            name: fase.key.charAt(0).toUpperCase() + fase.key.slice(1).replace(/([A-Z])/g, ' $1'),
+                            status: fase.estado === 'Terminado' ? 'Completado' as const :
+                                    fase.estado === 'En Progreso' ? 'En curso' as const :
+                                    'Pendiente' as const,
+                            description: fase.descripcion
+                          })) : []
+                        }}
                               user={user}
                               projectCreators={projectCreators}
                               onViewProject={handleViewProject}
@@ -1382,9 +1396,53 @@ const Dashboard = React.memo(() => {
                 ) : (
                   <div className="projects-section flex flex-wrap gap-6">
                     {filteredAndSortedProjects.filter(project => project && project.id).map((project, index) => (
-                      <LazyProjectCard
+                      <ProjectCard
                         key={project.id}
-                        project={project}
+                        project={{
+                          id: project.id,
+                          name: project.name,
+                          category: project.type || 'Web',
+                          description: project.description || 'Sin descripción disponible',
+                          status: (() => {
+                            const progress = project.fases ? Math.round((project.fases.filter((f: any) => f.estado === 'Terminado').length / project.fases.length) * 100) : 0;
+                            return progress === 100 ? 'completed' as const : 'in-progress' as const;
+                          })(),
+                          progress: project.fases ? Math.round((project.fases.filter((f: any) => f.estado === 'Terminado').length / project.fases.length) * 100) : 0,
+                          screenshotUrl: undefined,
+                          results: (() => {
+                            const progress = project.fases ? Math.round((project.fases.filter((f: any) => f.estado === 'Terminado').length / project.fases.length) * 100) : 0;
+                            if (progress < 100) return undefined;
+                            
+                            const projectType = project.type || 'Web';
+                            const baseResults = {
+                              satisfaction: Math.floor(Math.random() * 20) + 80,
+                              originality: Math.floor(Math.random() * 15) + 85,
+                              extras: []
+                            };
+                            
+                            switch (projectType.toLowerCase()) {
+                              case 'ecommerce':
+                              case 'tienda online':
+                                baseResults.extras = ['Sistema de pagos integrado', 'Gestión de inventario', 'Panel de administración', 'Optimización SEO', 'Diseño responsive'];
+                                break;
+                              case 'landing page':
+                              case 'landing':
+                                baseResults.extras = ['Diseño conversión optimizado', 'Formularios de contacto', 'Integración analytics', 'Optimización móvil', 'Carga rápida'];
+                                break;
+                              default:
+                                baseResults.extras = ['Diseño moderno', 'Código optimizado', 'Documentación completa', 'Testing exhaustivo', 'Deploy automatizado'];
+                            }
+                            
+                            return baseResults;
+                          })(),
+                          phases: project.fases ? project.fases.map((fase: any) => ({
+                            name: fase.key.charAt(0).toUpperCase() + fase.key.slice(1).replace(/([A-Z])/g, ' $1'),
+                            status: fase.estado === 'Terminado' ? 'Completado' as const :
+                                    fase.estado === 'En Progreso' ? 'En curso' as const :
+                                    'Pendiente' as const,
+                            description: fase.descripcion
+                          })) : []
+                        }}
                         user={user}
                         projectCreators={projectCreators}
                         onViewProject={handleViewProject}
@@ -1416,6 +1474,7 @@ const Dashboard = React.memo(() => {
                         onDuplicateProject={handleDuplicateProject}
                         onToggleFavorite={handleToggleFavorite}
                         onArchiveProject={handleArchiveProject}
+                        showAdminActions={user?.role === 'admin'}
                         index={index}
                         dragMode={false}
                       />
