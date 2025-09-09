@@ -1118,16 +1118,20 @@ export const TutorialProvider: React.FC<{ children: React.ReactNode }> = ({ chil
     setAvailableFlows(flows);
   }, [user, getAvailableFlows]);
 
-  // Auto-iniciar tutorial para nuevos usuarios
+  // Auto-iniciar tutorial para nuevos usuarios (solo una vez)
   useEffect(() => {
     if (isAuthenticated && user && autoStart) {
       // Determinar qué tutorial iniciar según el rol
       const tutorialId = user.role === 'admin' ? 'welcome-tour' : 'client-welcome-tour';
       const storageKey = `tutorial-${tutorialId}-completed`;
+      const sessionKey = `tutorial-${tutorialId}-session-${user.id}`;
       
       const hasCompletedWelcome = localStorage.getItem(storageKey);
+      const hasStartedThisSession = sessionStorage.getItem(sessionKey);
       
-      if (!hasCompletedWelcome) {
+      // Solo iniciar si no se ha completado Y no se ha iniciado en esta sesión
+      if (!hasCompletedWelcome && !hasStartedThisSession) {
+        sessionStorage.setItem(sessionKey, 'started');
         setTimeout(() => {
           startTutorial(tutorialId);
         }, 2000); // Esperar 2 segundos después del login

@@ -80,6 +80,7 @@ export const useMultiAI = ({
     lastReset: new Date()
   });
 
+
   const resetTimeoutRef = useRef<NodeJS.Timeout | null>(null);
   const { getDatabaseContext } = useSupabaseContext();
   const [user, setUser] = useState<any>(null);
@@ -191,6 +192,7 @@ export const useMultiAI = ({
   // Inicializar nuevo estado
   const initializeNewState = useCallback(() => {
     const apiKeys = getApiKeys();
+    
     if (apiKeys.length === 0) {
       setState(prev => ({
         ...prev,
@@ -753,7 +755,15 @@ No pude crear la fase.
     setState(prev => ({ ...prev, isLoading: true, error: null }));
 
     try {
-      const currentApiKey = state.apiKeys[state.currentApiIndex];
+      // Obtener las API keys directamente en lugar de usar el estado
+      const apiKeys = getApiKeys();
+      
+      if (apiKeys.length === 0) {
+        throw new Error('No hay API keys disponibles');
+      }
+
+      const currentApiKey = apiKeys[0]; // Usar la primera API key disponible
+      
       
       if (!currentApiKey) {
         throw new Error('No hay API keys disponibles');
@@ -1140,7 +1150,7 @@ Responde de manera útil y contextualizada.`;
       logMessage(`❌ Error en API key ${state.currentApiIndex + 1}: ${errorMessage}`);
       throw error;
     }
-  }, [state.currentApiIndex, state.apiKeys, temperature, maxTokens, getDatabaseContext, isRateLimitError, switchToNextApi, logMessage, processCalendarCommands, processReportCommands, processTaskCommands, userProfile, getRelevantContext, saveConversationMemory, updateUserProfile]);
+  }, [getApiKeys, temperature, maxTokens, getDatabaseContext, isRateLimitError, switchToNextApi, logMessage, processCalendarCommands, processReportCommands, processTaskCommands, userProfile, getRelevantContext, saveConversationMemory, updateUserProfile]);
 
   // Obtener usuario actual
   useEffect(() => {

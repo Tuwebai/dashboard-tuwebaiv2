@@ -2,7 +2,7 @@
  * Script simple para verificar tablas de Supabase
  */
 
-const { createClient } = require('@supabase/supabase-js');
+import { createClient } from '@supabase/supabase-js';
 
 const supabaseUrl = 'https://xebnhwjzchrsbhzbtlsg.supabase.co';
 const supabaseAnonKey = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InhlYm5od2p6Y2hyc2JoemJ0bHMiLCJyb2xlIjoiYW5vbiIsImlhdCI6MTczNjM0NzQ5MywiZXhwIjoyMDUxOTIzNDkzfQ.8QZQZQZQZQZQZQZQZQZQZQZQZQZQZQZQZQZQZQZQZQ';

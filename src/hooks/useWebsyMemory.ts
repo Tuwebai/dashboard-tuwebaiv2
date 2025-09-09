@@ -57,6 +57,12 @@ export const useWebsyMemory = () => {
         .limit(50);
 
       if (error) {
+        // Si la tabla no existe o hay error 406, usar array vacío
+        if (error.code === 'PGRST116' || error.message.includes('406')) {
+          console.warn('Tabla websy_conversation_memories no disponible, usando array vacío');
+          setConversationMemories([]);
+          return;
+        }
         console.warn('Error consultando websy_conversation_memories:', error.message);
         setConversationMemories([]);
         return;
@@ -64,7 +70,8 @@ export const useWebsyMemory = () => {
       setConversationMemories(data || []);
     } catch (err) {
       console.error('Error loading conversation memories:', err);
-      setError('Error al cargar memorias de conversación');
+      // Usar array vacío en caso de error
+      setConversationMemories([]);
     } finally {
       setIsLoading(false);
     }
@@ -82,11 +89,34 @@ export const useWebsyMemory = () => {
         .eq('user_id', user.id)
         .single();
 
-      if (error && error.code !== 'PGRST116') throw error;
+      if (error) {
+        // Si la tabla no existe o hay error 406, crear perfil por defecto
+        if (error.code === 'PGRST116' || error.message.includes('406')) {
+          console.warn('Tabla websy_user_profiles no disponible, usando perfil por defecto');
+          setUserProfile({
+            id: user.id,
+            user_id: user.id,
+            work_patterns: [],
+            preferences: {},
+            created_at: new Date().toISOString(),
+            updated_at: new Date().toISOString()
+          });
+          return;
+        }
+        throw error;
+      }
       setUserProfile(data);
     } catch (err) {
       console.error('Error loading user profile:', err);
-      setError('Error al cargar perfil de usuario');
+      // Crear perfil por defecto en caso de error
+      setUserProfile({
+        id: user.id,
+        user_id: user.id,
+        work_patterns: [],
+        preferences: {},
+        created_at: new Date().toISOString(),
+        updated_at: new Date().toISOString()
+      });
     } finally {
       setIsLoading(false);
     }
@@ -105,13 +135,20 @@ export const useWebsyMemory = () => {
         .order('updated_at', { ascending: false });
 
       if (error) {
+        // Si la tabla no existe o hay error 406, usar array vacío
+        if (error.code === 'PGRST116' || error.message.includes('406')) {
+          console.warn('Tabla websy_knowledge_base no disponible, usando array vacío');
+          setKnowledgeBase([]);
+          return;
+        }
         console.warn('Error consultando websy:', error.message);
         return;
       }
       setKnowledgeBase(data || []);
     } catch (err) {
       console.error('Error loading knowledge base:', err);
-      setError('Error al cargar base de conocimiento');
+      // Usar array vacío en caso de error
+      setKnowledgeBase([]);
     } finally {
       setIsLoading(false);
     }
@@ -128,12 +165,18 @@ export const useWebsyMemory = () => {
 
     try {
       // Verificar si ya existe una memoria para esta conversación
-      const { data: existingMemory } = await supabase
+      const { data: existingMemory, error: checkError } = await supabase
         .from('websy_conversation_memories')
         .select('*')
         .eq('user_id', user.id)
         .eq('conversation_id', conversationId)
         .single();
+
+      // Si la tabla no existe o hay error 406, no hacer nada
+      if (checkError && (checkError.code === 'PGRST116' || checkError.message.includes('406'))) {
+        console.warn('Tabla websy_conversation_memories no disponible, saltando guardado');
+        return;
+      }
 
       let data;
       if (existingMemory) {
@@ -201,11 +244,17 @@ export const useWebsyMemory = () => {
 
     try {
       // Primero intentar actualizar el perfil existente
-      const { data: existingProfile } = await supabase
+      const { data: existingProfile, error: checkError } = await supabase
         .from('websy_user_profiles')
         .select('*')
         .eq('user_id', user.id)
         .single();
+
+      // Si la tabla no existe o hay error 406, no hacer nada
+      if (checkError && (checkError.code === 'PGRST116' || checkError.message.includes('406'))) {
+        console.warn('Tabla websy_user_profiles no disponible, saltando actualización');
+        return;
+      }
 
       if (existingProfile) {
         // Actualizar perfil existente

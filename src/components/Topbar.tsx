@@ -1,5 +1,4 @@
 import { Bell, Search, Menu, Clock, RefreshCw, Lightbulb, TrendingUp, Activity, Zap, Plus } from 'lucide-react';
-import DynamicGreeting from '@/components/DynamicGreeting';
 import { useApp } from '@/contexts/AppContext';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
@@ -67,6 +66,39 @@ export default function Topbar({
   const [aiGreeting, setAiGreeting] = useState<string>('');
   const [greetingGenerated, setGreetingGenerated] = useState(false);
 
+  // Verificar si el saludo actual es válido (menos de 10 horas)
+  const isGreetingValid = () => {
+    const storedGreeting = localStorage.getItem('websy_ai_greeting');
+    const storedTime = localStorage.getItem('websy_ai_greeting_time');
+    
+    if (!storedGreeting || !storedTime) return false;
+    
+    const greetingTime = new Date(storedTime).getTime();
+    const currentTime = new Date().getTime();
+    const tenHoursInMs = 10 * 60 * 60 * 1000;
+    
+    return (currentTime - greetingTime) < tenHoursInMs;
+  };
+
+  // Cargar saludo desde localStorage si es válido
+  const loadStoredGreeting = () => {
+    if (isGreetingValid()) {
+      const storedGreeting = localStorage.getItem('websy_ai_greeting');
+      if (storedGreeting) {
+        setAiGreeting(storedGreeting);
+        setGreetingGenerated(true);
+        return true;
+      }
+    }
+    return false;
+  };
+
+  // Guardar saludo en localStorage
+  const saveGreeting = (greeting: string) => {
+    localStorage.setItem('websy_ai_greeting', greeting);
+    localStorage.setItem('websy_ai_greeting_time', new Date().toISOString());
+  };
+
   // Generar saludo con Websy AI real para Admin
   const generateAdminAIGreeting = async () => {
     if (!isAdminPage || greetingGenerated || aiLoading) return;
@@ -76,31 +108,33 @@ export default function Topbar({
       const dayOfWeek = new Date().getDay();
       const userName = user?.full_name?.split(' ')[0] || 'Administrador';
       
-      const prompt = `Genera un saludo personalizado y humano para el administrador ${userName}. 
+      const prompt = `Genera un saludo corto y motivacional para el administrador ${userName}. 
       
       Contexto:
-      - Hora actual: ${hour}:00
-      - Día de la semana: ${dayOfWeek === 0 ? 'Domingo' : dayOfWeek === 1 ? 'Lunes' : dayOfWeek === 2 ? 'Martes' : dayOfWeek === 3 ? 'Miércoles' : dayOfWeek === 4 ? 'Jueves' : dayOfWeek === 5 ? 'Viernes' : 'Sábado'}
-      - Eres Websy AI, el asistente de IA del sistema
+      - Hora: ${hour}:00
+      - Día: ${dayOfWeek === 0 ? 'Domingo' : dayOfWeek === 1 ? 'Lunes' : dayOfWeek === 2 ? 'Martes' : dayOfWeek === 3 ? 'Miércoles' : dayOfWeek === 4 ? 'Jueves' : dayOfWeek === 5 ? 'Viernes' : 'Sábado'}
+      - Eres Websy AI
       
       Instrucciones:
-      - Saluda de manera natural y humana
-      - Menciona que eres Websy AI
-      - Adapta el tono según la hora del día
-      - Usa emojis apropiados
-      - Máximo 2 líneas
-      - Sé creativo y personalizado
+      - Saludo corto (máximo 8 palabras)
+      - Incluye el nombre ${userName}
+      - Usa 1 emoji simple
+      - Tono motivacional
+      - Varía cada vez
       
-      Responde SOLO con el saludo, sin explicaciones adicionales.`;
+      Responde SOLO con el saludo, sin explicaciones.`;
 
       const response = await sendMessage(prompt, [], 'general');
       setAiGreeting(response);
       setGreetingGenerated(true);
+      saveGreeting(response);
     } catch (error) {
       console.error('Error generando saludo con IA:', error);
       // Fallback a saludo estático si falla la IA
-      setAiGreeting('¡Hola! Websy AI aquí, listo para ayudarte 🤖');
+      const fallbackGreeting = '¡Hola! Websy AI aquí 🤖';
+      setAiGreeting(fallbackGreeting);
       setGreetingGenerated(true);
+      saveGreeting(fallbackGreeting);
     }
   };
 
@@ -112,46 +146,51 @@ export default function Topbar({
       const hour = new Date().getHours();
       const dayOfWeek = new Date().getDay();
       const userName = user?.full_name?.split(' ')[0] || 'Usuario';
-      const userEmail = user?.email || 'usuario@ejemplo.com';
       const userProjects = getUserProjects();
       const projectCount = userProjects.length;
       
-      const prompt = `Genera un saludo personalizado y profesional para el cliente ${userName}. 
+      const prompt = `Genera un saludo corto y motivacional para el cliente ${userName}. 
       
-      Contexto del Cliente:
+      Contexto:
       - Nombre: ${userName}
-      - Email: ${userEmail}
-      - Hora actual: ${hour}:00
-      - Día de la semana: ${dayOfWeek === 0 ? 'Domingo' : dayOfWeek === 1 ? 'Lunes' : dayOfWeek === 2 ? 'Martes' : dayOfWeek === 3 ? 'Miércoles' : dayOfWeek === 4 ? 'Jueves' : dayOfWeek === 5 ? 'Viernes' : 'Sábado'}
-      - Proyectos activos: ${projectCount}
-      - Eres Websy AI, el asistente de IA especializado en desarrollo web
+      - Hora: ${hour}:00
+      - Día: ${dayOfWeek === 0 ? 'Domingo' : dayOfWeek === 1 ? 'Lunes' : dayOfWeek === 2 ? 'Martes' : dayOfWeek === 3 ? 'Miércoles' : dayOfWeek === 4 ? 'Jueves' : dayOfWeek === 5 ? 'Viernes' : 'Sábado'}
+      - Proyectos: ${projectCount}
+      - Eres Websy AI
       
       Instrucciones:
-      - Saluda de manera profesional pero cálida
-      - Menciona que eres Websy AI
-      - Adapta el tono según la hora del día
-      - Menciona brevemente sus proyectos si los tiene
-      - Usa emojis apropiados
-      - Máximo 2 líneas
-      - Haz que se sienta que el dashboard está vivo y personalizado
-      - Sé creativo y profesional
+      - Saludo corto (máximo 8 palabras)
+      - Incluye el nombre ${userName}
+      - Usa 1 emoji simple
+      - Tono motivacional
+      - Menciona brevemente sus proyectos
+      - Varía cada vez
       
-      Responde SOLO con el saludo, sin explicaciones adicionales.`;
+      Responde SOLO con el saludo, sin explicaciones.`;
 
       const response = await sendMessage(prompt, [], 'general');
       setAiGreeting(response);
       setGreetingGenerated(true);
+      saveGreeting(response);
     } catch (error) {
       console.error('Error generando saludo con IA:', error);
       // Fallback a saludo estático si falla la IA
-      setAiGreeting('¡Hola! Websy AI aquí, listo para ayudarte con tus proyectos 🤖');
+      const fallbackGreeting = '¡Hola! Websy AI aquí 🤖';
+      setAiGreeting(fallbackGreeting);
       setGreetingGenerated(true);
+      saveGreeting(fallbackGreeting);
     }
   };
 
   // Generar saludo cuando se carga la página
   useEffect(() => {
     if (user && !greetingGenerated) {
+      // Primero intentar cargar saludo desde localStorage
+      if (loadStoredGreeting()) {
+        return; // Saludo cargado desde localStorage
+      }
+      
+      // Si no hay saludo válido, generar uno nuevo
       if (isAdminPage) {
         generateAdminAIGreeting();
       } else if (isClientDashboardPage) {
@@ -160,21 +199,25 @@ export default function Topbar({
     }
   }, [isAdminPage, isClientDashboardPage, user, greetingGenerated]);
 
-  // Resetear saludo cada 5 minutos para mantenerlo fresco
+  // Verificar cada minuto si el saludo necesita renovarse (cada 10 horas)
   useEffect(() => {
     if (isAdminPage || isClientDashboardPage) {
       const interval = setInterval(() => {
-        setGreetingGenerated(false);
-        if (isAdminPage) {
-          generateAdminAIGreeting();
-        } else if (isClientDashboardPage) {
-          generateClientAIGreeting();
+        // Solo generar nuevo saludo si el actual no es válido
+        if (!isGreetingValid()) {
+          setGreetingGenerated(false);
+          if (isAdminPage) {
+            generateAdminAIGreeting();
+          } else if (isClientDashboardPage) {
+            generateClientAIGreeting();
+          }
         }
-      }, 5 * 60 * 1000); // 5 minutos
+      }, 60 * 1000); // Verificar cada minuto
 
       return () => clearInterval(interval);
     }
   }, [isAdminPage, isClientDashboardPage]);
+
 
   return (
     <header className={`${isAdminPage || isClientDashboardPage ? 'h-auto' : 'h-16'} bg-background border-b border-border shadow-sm`}>
@@ -202,18 +245,15 @@ export default function Topbar({
           {/* Admin Panel Header */}
           {isAdminPage ? (
             <div className="flex-1">
-              <h1 className="text-3xl font-bold text-foreground">
+              <h1 className="text-2xl font-bold text-foreground">
                 <span className="bg-gradient-to-r from-blue-600 to-indigo-600 dark:from-blue-400 dark:to-indigo-400 bg-clip-text text-transparent">
-                  ¡Hola {user?.full_name?.split(' ')[0] || 'Administrador'}!
-                </span>
-                <span className="block text-lg sm:text-xl font-semibold text-slate-600 dark:text-slate-300 mt-1">
                   {aiGreeting || (aiLoading ? (
                     <span className="flex items-center">
                       <div className="animate-spin rounded-full h-4 w-4 border-b-2 border-blue-600 mr-2"></div>
-                      Websy AI pensando en tu saludo...
+                      Websy AI pensando...
                     </span>
                   ) : (
-                    '¡Hola! Websy AI aquí, listo para ayudarte 🤖'
+                    '¡Hola! Websy AI aquí 🤖'
                   ))}
                 </span>
               </h1>
@@ -228,18 +268,15 @@ export default function Topbar({
             /* Client Dashboard Header */
             <div className="flex-1">
               <div>
-                <h1 className="text-3xl font-bold text-foreground">
+                <h1 className="text-2xl font-bold text-foreground">
                   <span className="bg-gradient-to-r from-blue-600 to-indigo-600 dark:from-blue-400 dark:to-indigo-400 bg-clip-text text-transparent">
-                    ¡Hola {user?.full_name?.split(' ')[0] || 'Usuario'}!
-                  </span>
-                  <span className="block text-lg sm:text-xl font-semibold text-slate-600 dark:text-slate-300 mt-1">
                     {aiGreeting || (aiLoading ? (
                       <span className="flex items-center">
                         <div className="animate-spin rounded-full h-4 w-4 border-b-2 border-blue-600 mr-2"></div>
-                        Websy AI pensando en tu saludo...
+                        Websy AI pensando...
                       </span>
                     ) : (
-                      '¡Hola! Websy AI aquí, listo para ayudarte con tus proyectos 🤖'
+                      '¡Hola! Websy AI aquí 🤖'
                     ))}
                   </span>
                 </h1>
