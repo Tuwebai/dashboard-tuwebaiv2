@@ -1,4 +1,5 @@
 import { getGitHubOAuthCredentials } from '@/config/github-oauth';
+import { tokenStorage } from './tokenStorage';
 
 interface OAuthConfig {
   clientId: string;
@@ -83,6 +84,19 @@ class OAuthService {
    */
   async handleGitHubCallback(code: string, state: string): Promise<OAuthResult> {
     try {
+      // Verificar si ya hay un token válido
+      const existingToken = tokenStorage.getGitHubToken();
+      if (existingToken) {
+        console.log('Token already exists, skipping token exchange');
+        return {
+          success: true,
+          accessToken: existingToken,
+          refreshToken: null,
+          expiresIn: null,
+          scope: [],
+        };
+      }
+
       // Verificar state con sistema robusto de recuperación
       const stateValidation = this.validateGitHubState(state);
       console.log('State validation:', {
@@ -318,10 +332,21 @@ class OAuthService {
    */
   private validateGitHubState(receivedState: string): { 
     isValid: boolean; 
-    source: 'session' | 'local' | 'none';
+    source: 'session' | 'local' | 'none' | 'existing_token';
     timestamp?: number;
   } {
     try {
+      // Verificar si ya hay un token válido (significa que el proceso ya fue exitoso)
+      const existingToken = tokenStorage.getGitHubToken();
+      if (existingToken) {
+        console.log('Token already exists, allowing state validation to pass');
+        return {
+          isValid: true,
+          source: 'existing_token',
+          timestamp: Date.now()
+        };
+      }
+
       // Intentar validar desde sessionStorage primero
       const sessionState = sessionStorage.getItem('github_oauth_state');
       const sessionTimestamp = sessionStorage.getItem('github_oauth_timestamp');
