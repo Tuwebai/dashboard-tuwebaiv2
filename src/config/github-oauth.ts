@@ -15,12 +15,13 @@ export const getGitHubOAuthCredentials = () => {
   // Intentar obtener de variables de entorno primero
   const envClientId = import.meta.env.VITE_GITHUB_CLIENT_ID;
   const envClientSecret = import.meta.env.VITE_GITHUB_CLIENT_SECRET;
+  const envRedirectUri = import.meta.env.VITE_GITHUB_REDIRECT_URI;
   
   if (envClientId && envClientSecret) {
     return {
       clientId: envClientId,
       clientSecret: envClientSecret,
-      redirectUri: import.meta.env.VITE_GITHUB_REDIRECT_URI || GITHUB_OAUTH_CONFIG.REDIRECT_URI,
+      redirectUri: envRedirectUri || `${window.location.origin}/auth/github/callback`,
     };
   }
   

@@ -21,7 +21,7 @@ class OAuthService {
     const credentials = getGitHubOAuthCredentials();
     return {
       clientId: credentials.clientId,
-      redirectUri: credentials.redirectUri,
+      redirectUri: credentials.redirectUri || `${window.location.origin}/auth/github/callback`,
       scope: ['user:email', 'read:user', 'repo', 'read:org'],
     };
   }
@@ -37,17 +37,29 @@ class OAuthService {
    */
   initiateGitHubAuth(): void {
     const state = this.generateState();
+    const config = this.GITHUB_CONFIG;
+    
+    console.log('Initiating GitHub OAuth with config:', {
+      clientId: config.clientId ? '***' + config.clientId.slice(-4) : 'MISSING',
+      redirectUri: config.redirectUri,
+      scope: config.scope,
+      state: state.slice(0, 8) + '...'
+    });
+    
     const params = new URLSearchParams({
-      client_id: this.GITHUB_CONFIG.clientId,
-      redirect_uri: this.GITHUB_CONFIG.redirectUri,
-      scope: this.GITHUB_CONFIG.scope.join(' '),
+      client_id: config.clientId,
+      redirect_uri: config.redirectUri,
+      scope: config.scope.join(' '),
       state,
     });
 
     // Guardar state para verificación posterior
     sessionStorage.setItem('github_oauth_state', state);
     
-    window.location.href = `https://github.com/login/oauth/authorize?${params.toString()}`;
+    const authUrl = `https://github.com/login/oauth/authorize?${params.toString()}`;
+    console.log('Redirecting to GitHub OAuth:', authUrl);
+    
+    window.location.href = authUrl;
   }
 
   /**
