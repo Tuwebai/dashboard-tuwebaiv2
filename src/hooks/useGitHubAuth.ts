@@ -10,6 +10,7 @@ interface UseGitHubAuthReturn {
   connect: () => void;
   disconnect: () => void;
   validateConnection: () => Promise<boolean>;
+  handleCallback: (code: string, state?: string) => Promise<void>;
 }
 
 export const useGitHubAuth = (): UseGitHubAuthReturn => {
@@ -105,6 +106,31 @@ export const useGitHubAuth = (): UseGitHubAuthReturn => {
     }
   }, []);
 
+  const handleCallback = useCallback(async (code: string, state?: string): Promise<void> => {
+    try {
+      setError(null);
+      setIsLoading(true);
+
+      // Procesar el callback de OAuth
+      const tokenData = await oauthService.handleGitHubCallback(code, state);
+      
+      if (tokenData) {
+        // Guardar el token
+        tokenStorage.setToken('github', tokenData);
+        setIsConnected(true);
+        setError(null);
+      } else {
+        throw new Error('No se pudo obtener el token de acceso');
+      }
+    } catch (error: any) {
+      console.error('Error handling GitHub callback:', error);
+      setError(error.message || 'Error procesando la autorización');
+      setIsConnected(false);
+    } finally {
+      setIsLoading(false);
+    }
+  }, []);
+
   return {
     isConnected,
     isLoading,
@@ -112,5 +138,6 @@ export const useGitHubAuth = (): UseGitHubAuthReturn => {
     connect,
     disconnect,
     validateConnection,
+    handleCallback,
   };
 };
