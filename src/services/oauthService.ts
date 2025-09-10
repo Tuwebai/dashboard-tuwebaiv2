@@ -65,7 +65,7 @@ class OAuthService {
   }
 
   /**
-   * Procesa el callback de GitHub
+   * Procesa el callback de GitHub usando Supabase Edge Function
    */
   async handleGitHubCallback(code: string, state: string): Promise<OAuthResult> {
     try {
@@ -75,29 +75,32 @@ class OAuthService {
         throw new Error('Invalid state parameter');
       }
 
-      // Intercambiar código por token directamente con GitHub
-      const response = await fetch('https://github.com/login/oauth/access_token', {
+      // Usar Supabase Edge Function para intercambiar código por token
+      const supabaseUrl = import.meta.env.VITE_SUPABASE_URL;
+      if (!supabaseUrl) {
+        throw new Error('VITE_SUPABASE_URL no está configurado');
+      }
+
+      const response = await fetch(`${supabaseUrl}/functions/v1/github-token-exchange`, {
         method: 'POST',
         headers: {
-          'Accept': 'application/json',
-          'Content-Type': 'application/x-www-form-urlencoded',
+          'Content-Type': 'application/json',
         },
-        body: new URLSearchParams({
-          client_id: this.GITHUB_CONFIG.clientId,
-          client_secret: import.meta.env.VITE_GITHUB_CLIENT_SECRET || '',
-          code: code,
-          redirect_uri: this.GITHUB_CONFIG.redirectUri,
+        body: JSON.stringify({
+          code,
+          state,
         }),
       });
 
       if (!response.ok) {
-        throw new Error('Failed to exchange code for token');
+        const errorData = await response.json();
+        throw new Error(errorData.details || errorData.error || 'Failed to exchange code for token');
       }
 
       const data = await response.json();
       
       if (data.error) {
-        throw new Error(data.error_description || data.error);
+        throw new Error(data.details || data.error);
       }
       
       // Limpiar state
