@@ -257,12 +257,6 @@ export default function Topbar({
                   ))}
                 </span>
               </h1>
-              {lastUpdate && (
-                <div className="text-muted-foreground text-sm flex items-center space-x-2 mt-2">
-                  <Clock size={16} />
-                  <span>Última actualización: {lastUpdate.toLocaleTimeString()}</span>
-                </div>
-              )}
             </div>
           ) : isClientDashboardPage ? (
             /* Client Dashboard Header */
@@ -280,12 +274,6 @@ export default function Topbar({
                     ))}
                   </span>
                 </h1>
-                {lastUpdate && (
-                  <div className="text-muted-foreground text-sm flex items-center space-x-2 mt-2">
-                    <Clock size={16} />
-                    <span>Última actualización: {lastUpdate.toLocaleTimeString()}</span>
-                  </div>
-                )}
               </div>
             </div>
           ) : (

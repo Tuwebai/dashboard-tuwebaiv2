@@ -41,6 +41,9 @@ import TwoFactorAuth from '@/components/security/TwoFactorAuth';
 import PasswordValidator from '@/components/security/PasswordValidator';
 import SecurityIndicators from '@/components/security/SecurityIndicators';
 
+// Importar integraciones sociales (solo para admins)
+import { SocialIntegrations } from '@/components/admin/profile/SocialIntegrations';
+
 const Perfil = React.memo(() => {
   const { user, getUserProjects, updateUserSettings } = useApp();
   const [isEditing, setIsEditing] = useState(false);
@@ -869,6 +872,14 @@ const Perfil = React.memo(() => {
             </Card>
           </div>
         </div>
+
+        {/* Integraciones Sociales - Solo para Administradores */}
+        {user?.role === 'admin' && (
+          <div className="space-y-6">
+            <Separator />
+            <SocialIntegrations />
+          </div>
+        )}
       </div>
     </div>
   );

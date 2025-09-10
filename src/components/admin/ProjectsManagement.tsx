@@ -85,8 +85,8 @@ export const ProjectsManagement: React.FC = () => {
   const handleDeleteProject = async (projectId: string) => {
     const project = projects.find(p => p.id === projectId);
     if (project) {
-      setProjectToDelete(project);
-      setShowConfirmDelete(true);
+    setProjectToDelete(project);
+    setShowConfirmDelete(true);
     }
   };
 
@@ -273,35 +273,35 @@ export const ProjectsManagement: React.FC = () => {
     <div className="space-y-6">
       {/* Header con estilo moderno */}
       <div className="bg-card dark:bg-slate-800/50 rounded-2xl p-6 shadow-lg hover:shadow-xl transition-all duration-300 border border-border/50 dark:border-slate-700/20 backdrop-blur-sm">
-        <div className="flex items-center justify-between">
+      <div className="flex items-center justify-between">
           <div className="flex items-center space-x-4">
             <div className="w-12 h-12 bg-gradient-to-br from-blue-500 to-indigo-600 rounded-2xl flex items-center justify-center shadow-lg">
               <FolderOpen className="h-6 w-6 text-white" />
             </div>
-            <div>
+        <div>
               <h1 className="text-2xl sm:text-3xl font-bold text-card-foreground dark:text-slate-100">Gestión de Proyectos</h1>
               <p className="text-slate-600 dark:text-slate-400 text-sm sm:text-base">Administra los proyectos del sistema</p>
             </div>
-          </div>
-          <Button
-            onClick={() => setShowForm(true)}
+        </div>
+        <Button
+          onClick={() => setShowForm(true)}
             className="bg-gradient-to-r from-blue-600 to-indigo-600 hover:from-blue-700 hover:to-indigo-700 text-white font-semibold py-3 px-6 rounded-xl transition-all duration-300 hover:shadow-xl hover:shadow-blue-500/25 active:scale-95"
-          >
-            <Plus className="h-4 w-4 mr-2" />
-            Nuevo Proyecto
-          </Button>
+        >
+          <Plus className="h-4 w-4 mr-2" />
+          Nuevo Proyecto
+        </Button>
         </div>
       </div>
 
       {/* Filtros con estilo moderno */}
       <div className="bg-card dark:bg-slate-800/50 rounded-2xl p-6 shadow-lg hover:shadow-xl transition-all duration-300 border border-border/50 dark:border-slate-700/20 backdrop-blur-sm">
-        <ProjectFiltersComponent
-          filters={filters}
-          sort={sort}
-          onFiltersChange={applyFilters}
-          onSortChange={applySort}
-          onClearFilters={clearFilters}
-        />
+      <ProjectFiltersComponent
+        filters={filters}
+        sort={sort}
+        onFiltersChange={applyFilters}
+        onSortChange={applySort}
+        onClearFilters={clearFilters}
+      />
       </div>
 
       {/* Error con estilo moderno */}
@@ -380,14 +380,14 @@ export const ProjectsManagement: React.FC = () => {
 
           {/* Paginación con estilo moderno */}
           <div className="bg-card dark:bg-slate-800/50 rounded-2xl p-6 shadow-lg hover:shadow-xl transition-all duration-300 border border-border/50 dark:border-slate-700/20 backdrop-blur-sm">
-            <ProjectPagination
-              currentPage={pagination.page}
-              totalPages={pagination.totalPages}
-              totalItems={pagination.total}
-              itemsPerPage={pagination.limit}
-              onPageChange={changePage}
-              onItemsPerPageChange={changeLimit}
-            />
+          <ProjectPagination
+            currentPage={pagination.page}
+            totalPages={pagination.totalPages}
+            totalItems={pagination.total}
+            itemsPerPage={pagination.limit}
+            onPageChange={changePage}
+            onItemsPerPageChange={changeLimit}
+          />
           </div>
         </>
       )}
@@ -424,7 +424,7 @@ export const ProjectsManagement: React.FC = () => {
         description={`¿Estás seguro de que quieres eliminar el proyecto "${projectToDelete?.name}"? Esta acción no se puede deshacer.`}
         confirmText="Eliminar"
         cancelText="Cancelar"
-        variant="destructive"
+                variant="destructive"
         loading={false}
       />
     </div>

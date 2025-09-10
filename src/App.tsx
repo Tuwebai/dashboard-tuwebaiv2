@@ -77,6 +77,7 @@ const CustomizableDashboard = createLazyComponent(() => import('./components/Cus
 const AdvancedUserManagement = createLazyComponent(() => import('./components/AdvancedUserManagement'));
 const InvitationPage = createLazyComponent(() => import('./pages/InvitationPage'));
 const AuthCallback = createLazyComponent(() => import('./pages/AuthCallback'));
+const GitHubCallback = createLazyComponent(() => import('./pages/GitHubCallback'));
 const EnvironmentVariables = createLazyComponent(() => import('./pages/EnvironmentVariables'));
 
 // Componente de carga optimizado con retry
@@ -158,6 +159,7 @@ function AppRoutes() {
         <Route path="/terminos-condiciones" element={<TerminosCondiciones />} />
       <Route path="/invite" element={<InvitationPage />} />
       <Route path="/auth/callback" element={<AuthCallback />} />
+      <Route path="/auth/github/callback" element={<GitHubCallback />} />
       
       {/* Rutas protegidas */}
       <Route path="/dashboard" element={
