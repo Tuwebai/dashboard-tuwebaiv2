@@ -56,17 +56,45 @@ interface GitHubStats {
 class GitHubService {
   private readonly API_BASE = 'https://api.github.com';
   private readonly GITHUB_TOKEN = import.meta.env.VITE_GITHUB_TOKEN;
+  private readonly RATE_LIMIT_RETRY_DELAY = 60000; // 1 minuto
+  private readonly MAX_RETRIES = 3;
+
+  /**
+   * Realiza una petición a la API de GitHub con manejo de rate limiting
+   */
+  private async makeGitHubRequest(url: string, accessToken: string, retryCount = 0): Promise<Response> {
+    const response = await fetch(url, {
+      headers: {
+        'Authorization': `Bearer ${accessToken}`,
+        'Accept': 'application/vnd.github.v3+json',
+        'User-Agent': 'TuWebAI-Dashboard/1.0',
+      },
+    });
+
+    // Manejar rate limiting
+    if (response.status === 403) {
+      const rateLimitRemaining = response.headers.get('X-RateLimit-Remaining');
+      const rateLimitReset = response.headers.get('X-RateLimit-Reset');
+      
+      if (rateLimitRemaining === '0' && retryCount < this.MAX_RETRIES) {
+        const resetTime = rateLimitReset ? parseInt(rateLimitReset) * 1000 : Date.now() + this.RATE_LIMIT_RETRY_DELAY;
+        const waitTime = Math.max(resetTime - Date.now(), this.RATE_LIMIT_RETRY_DELAY);
+        
+        console.warn(`GitHub API rate limit exceeded. Waiting ${Math.ceil(waitTime / 1000)} seconds before retry ${retryCount + 1}/${this.MAX_RETRIES}`);
+        
+        await new Promise(resolve => setTimeout(resolve, waitTime));
+        return this.makeGitHubRequest(url, accessToken, retryCount + 1);
+      }
+    }
+
+    return response;
+  }
 
   /**
    * Obtiene información del usuario autenticado
    */
   async getUserProfile(accessToken: string): Promise<GitHubUser> {
-    const response = await fetch(`${this.API_BASE}/user`, {
-      headers: {
-        'Authorization': `Bearer ${accessToken}`,
-        'Accept': 'application/vnd.github.v3+json',
-      },
-    });
+    const response = await this.makeGitHubRequest(`${this.API_BASE}/user`, accessToken);
 
     if (!response.ok) {
       const errorData = await response.json().catch(() => ({}));
@@ -80,18 +108,14 @@ class GitHubService {
    * Obtiene repositorios del usuario
    */
   async getUserRepos(accessToken: string, page = 1, perPage = 30): Promise<GitHubRepo[]> {
-    const response = await fetch(
+    const response = await this.makeGitHubRequest(
       `${this.API_BASE}/user/repos?sort=updated&page=${page}&per_page=${perPage}`,
-      {
-        headers: {
-          'Authorization': `Bearer ${accessToken}`,
-          'Accept': 'application/vnd.github.v3+json',
-        },
-      }
+      accessToken
     );
 
     if (!response.ok) {
-      throw new Error(`GitHub API error: ${response.status}`);
+      const errorData = await response.json().catch(() => ({}));
+      throw new Error(`GitHub API error: ${response.status} - ${errorData.message || response.statusText}`);
     }
 
     return response.json();
@@ -112,18 +136,14 @@ class GitHubService {
    * Obtiene commits recientes de un repositorio
    */
   async getRecentCommits(accessToken: string, owner: string, repo: string, limit = 10): Promise<GitHubCommit[]> {
-    const response = await fetch(
+    const response = await this.makeGitHubRequest(
       `${this.API_BASE}/repos/${owner}/${repo}/commits?per_page=${limit}`,
-      {
-        headers: {
-          'Authorization': `Bearer ${accessToken}`,
-          'Accept': 'application/vnd.github.v3+json',
-        },
-      }
+      accessToken
     );
 
     if (!response.ok) {
-      throw new Error(`GitHub API error: ${response.status}`);
+      const errorData = await response.json().catch(() => ({}));
+      throw new Error(`GitHub API error: ${response.status} - ${errorData.message || response.statusText}`);
     }
 
     return response.json();
@@ -141,14 +161,9 @@ class GitHubService {
       .filter(repo => !repo.fork && !repo.private)
       .map(async (repo) => {
         try {
-          const response = await fetch(
+          const response = await this.makeGitHubRequest(
             `${this.API_BASE}/repos/${repo.full_name}/languages`,
-            {
-              headers: {
-                'Authorization': `Bearer ${accessToken}`,
-                'Accept': 'application/vnd.github.v3+json',
-              },
-            }
+            accessToken
           );
 
           if (response.ok) {
@@ -233,18 +248,28 @@ class GitHubService {
    */
   async validateToken(accessToken: string): Promise<boolean> {
     try {
-      const response = await fetch(`${this.API_BASE}/user`, {
-        headers: {
-          'Authorization': `Bearer ${accessToken}`,
-          'Accept': 'application/vnd.github.v3+json',
-        },
-      });
+      const response = await this.makeGitHubRequest(`${this.API_BASE}/user`, accessToken);
       
       if (!response.ok) {
-        console.warn('GitHub token validation failed:', response.status, response.statusText);
+        const errorData = await response.json().catch(() => ({}));
+        console.warn('GitHub token validation failed:', {
+          status: response.status,
+          statusText: response.statusText,
+          error: errorData.message || 'Unknown error',
+          rateLimitRemaining: response.headers.get('X-RateLimit-Remaining'),
+          rateLimitReset: response.headers.get('X-RateLimit-Reset')
+        });
         return false;
       }
       
+      // Verificar que la respuesta contiene datos válidos de usuario
+      const userData = await response.json();
+      if (!userData.login || !userData.id) {
+        console.warn('GitHub token validation: Invalid user data received');
+        return false;
+      }
+      
+      console.log('GitHub token validation successful for user:', userData.login);
       return true;
     } catch (error) {
       console.warn('GitHub token validation error:', error);

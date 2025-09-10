@@ -20,6 +20,7 @@ import {
 } from 'lucide-react';
 import { formatDateSafe } from '@/utils/formatDateSafe';
 import { supabase } from '@/lib/supabase';
+import { GitHubProfileCard } from '@/components/admin/profile/GitHubProfileCard';
 
 interface UserProfile {
   id: string;
@@ -248,6 +249,11 @@ export default function UserProfileView() {
             </div>
           </div>
         </div>
+
+        {/* Card de GitHub - Solo para admins */}
+        {userProfile.role === 'admin' && (
+          <GitHubProfileCard userId={userProfile.id} />
+        )}
 
         {/* Acciones */}
         <div className="bg-white rounded-2xl p-6 shadow-lg border border-slate-200/50">

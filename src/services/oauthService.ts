@@ -21,7 +21,7 @@ class OAuthService {
     const credentials = getGitHubOAuthCredentials();
     return {
       clientId: credentials.clientId,
-      redirectUri: credentials.redirectUri || `${window.location.origin}/auth/github/callback`,
+      redirectUri: 'http://localhost:8083/auth/github/callback', // URL fija para desarrollo
       scope: ['user:email', 'read:user', 'repo', 'read:org'],
     };
   }
@@ -38,13 +38,11 @@ class OAuthService {
   initiateGitHubAuth(): void {
     const state = this.generateState();
     const config = this.GITHUB_CONFIG;
+    const timestamp = Date.now();
     
-    console.log('Initiating GitHub OAuth with config:', {
-      clientId: config.clientId ? '***' + config.clientId.slice(-4) : 'MISSING',
-      redirectUri: config.redirectUri,
-      scope: config.scope,
-      state: state.slice(0, 8) + '...'
-    });
+    
+    // Limpiar cualquier state anterior
+    this.clearGitHubState();
     
     const params = new URLSearchParams({
       client_id: config.clientId,
@@ -53,11 +51,10 @@ class OAuthService {
       state,
     });
 
-    // Guardar state para verificación posterior
-    sessionStorage.setItem('github_oauth_state', state);
+    // Guardar state en múltiples ubicaciones para mayor robustez
+    this.saveGitHubState(state, timestamp);
     
     const authUrl = `https://github.com/login/oauth/authorize?${params.toString()}`;
-    console.log('Redirecting to GitHub OAuth:', authUrl);
     
     window.location.href = authUrl;
   }
@@ -82,20 +79,45 @@ class OAuthService {
   }
 
   /**
-   * Procesa el callback de GitHub usando Supabase Edge Function o fallback directo
+   * Procesa el callback de GitHub usando Supabase Edge Function
    */
   async handleGitHubCallback(code: string, state: string): Promise<OAuthResult> {
     try {
-      // Verificar state
-      const savedState = sessionStorage.getItem('github_oauth_state');
-      if (savedState !== state) {
-        throw new Error('Invalid state parameter');
+      // Verificar state con sistema robusto de recuperación
+      const stateValidation = this.validateGitHubState(state);
+      console.log('State validation:', {
+        receivedState: state,
+        isValid: stateValidation.isValid,
+        source: stateValidation.source,
+        timestamp: stateValidation.timestamp,
+        age: stateValidation.timestamp ? Date.now() - stateValidation.timestamp : 'unknown'
+      });
+      
+      if (!stateValidation.isValid) {
+        console.error('State validation failed:', {
+          received: state,
+          validation: stateValidation,
+          allSessionStorage: Object.keys(sessionStorage).filter(key => key.includes('oauth')),
+          allLocalStorage: Object.keys(localStorage).filter(key => key.includes('github'))
+        });
+        throw new Error('Invalid state parameter - possible CSRF attack or expired session');
       }
 
-      // Intentar usar Supabase Edge Function primero
+      // Usar Supabase Edge Function para intercambiar código por token con retry logic
       const supabaseUrl = import.meta.env.VITE_SUPABASE_URL;
-      if (supabaseUrl) {
+      if (!supabaseUrl) {
+        throw new Error('VITE_SUPABASE_URL no está configurado');
+      }
+
+
+      // Implementar retry logic para el token exchange
+      let data;
+      let lastError: Error | null = null;
+      
+      for (let attempt = 1; attempt <= 3; attempt++) {
         try {
+          console.log(`Token exchange attempt ${attempt}/3`);
+          
           const response = await fetch(`${supabaseUrl}/functions/v1/github-token-exchange`, {
             method: 'POST',
             headers: {
@@ -107,77 +129,103 @@ class OAuthService {
             }),
           });
 
-          if (response.ok) {
-            const data = await response.json();
-            
-            if (data.error) {
-              throw new Error(data.details || data.error);
+          if (!response.ok) {
+            let errorData;
+            try {
+              errorData = await response.json();
+            } catch {
+              errorData = { error: 'Invalid response from server' };
             }
             
-            // Limpiar state
-            sessionStorage.removeItem('github_oauth_state');
-
-            return {
-              success: true,
-              accessToken: data.access_token,
-              refreshToken: data.refresh_token,
-              expiresIn: data.expires_in,
-              scope: data.scope?.split(' ') || [],
-            };
-          } else {
-            console.warn('Supabase Edge Function failed, trying direct approach...');
+            const errorMessage = errorData.details || errorData.error || `Failed to exchange code for token (${response.status})`;
+            console.warn(`Token exchange attempt ${attempt} failed:`, {
+              status: response.status,
+              error: errorMessage,
+              errorData
+            });
+            
+            if (attempt < 3) {
+              // Esperar antes del siguiente intento (backoff exponencial)
+              const delay = Math.pow(2, attempt - 1) * 1000;
+              console.log(`Waiting ${delay}ms before retry...`);
+              await new Promise(resolve => setTimeout(resolve, delay));
+              continue;
+            } else {
+              throw new Error(errorMessage);
+            }
           }
-        } catch (edgeFunctionError) {
-          console.warn('Supabase Edge Function error, trying direct approach:', edgeFunctionError);
+
+          data = await response.json();
+          
+          if (data.error) {
+            const errorMessage = data.details || data.error;
+            console.warn(`Token exchange attempt ${attempt} returned error:`, errorMessage);
+            
+            if (attempt < 3) {
+              const delay = Math.pow(2, attempt - 1) * 1000;
+              console.log(`Waiting ${delay}ms before retry...`);
+              await new Promise(resolve => setTimeout(resolve, delay));
+              continue;
+            } else {
+              throw new Error(errorMessage);
+            }
+          }
+          
+          // Si llegamos aquí, el intercambio fue exitoso
+          console.log('Token exchange successful on attempt', attempt);
+          break;
+          
+        } catch (error: any) {
+          lastError = error;
+          console.warn(`Token exchange attempt ${attempt} failed:`, error.message);
+          
+          if (attempt < 3) {
+            const delay = Math.pow(2, attempt - 1) * 1000;
+            console.log(`Waiting ${delay}ms before retry...`);
+            await new Promise(resolve => setTimeout(resolve, delay));
+          }
         }
       }
-
-      // Fallback: Intercambio directo con GitHub (solo para desarrollo)
-      console.warn('Using direct GitHub token exchange (development only)');
       
-      const credentials = getGitHubOAuthCredentials();
-      
-      if (!credentials.clientId || !credentials.clientSecret || 
-          credentials.clientId === 'your_github_client_id_here' || 
-          credentials.clientSecret === 'your_github_client_secret_here') {
-        throw new Error('GitHub OAuth credentials not configured. Please set VITE_GITHUB_CLIENT_ID and VITE_GITHUB_CLIENT_SECRET in your .env file or update the configuration in src/config/github-oauth.ts');
-      }
-
-      const response = await fetch('https://github.com/login/oauth/access_token', {
-        method: 'POST',
-        headers: {
-          'Accept': 'application/json',
-          'Content-Type': 'application/x-www-form-urlencoded',
-        },
-        body: new URLSearchParams({
-          client_id: credentials.clientId,
-          client_secret: credentials.clientSecret,
-          code: code,
-          redirect_uri: credentials.redirectUri,
-          state: state || '',
-        }),
-      });
-
-      if (!response.ok) {
-        const errorData = await response.text();
-        throw new Error(`GitHub token exchange failed: ${response.status} - ${errorData}`);
-      }
-
-      const tokenData = await response.json();
-      
-      if (tokenData.error) {
-        throw new Error(tokenData.error_description || tokenData.error);
+      if (!data) {
+        throw lastError || new Error('Token exchange failed after all attempts');
       }
       
-      // Limpiar state
-      sessionStorage.removeItem('github_oauth_state');
+      // Validar que el token recibido es válido
+      if (!data.access_token) {
+        throw new Error('No se recibió un token de acceso válido de GitHub');
+      }
+
+      // Verificar que el token funciona haciendo una llamada de prueba
+      try {
+        const validationResponse = await fetch('https://api.github.com/user', {
+          headers: {
+            'Authorization': `Bearer ${data.access_token}`,
+            'Accept': 'application/vnd.github.v3+json',
+          },
+        });
+
+        if (!validationResponse.ok) {
+          console.warn('Token validation failed:', validationResponse.status, validationResponse.statusText);
+          throw new Error('El token recibido no es válido o no tiene los permisos necesarios');
+        }
+
+        const userData = await validationResponse.json();
+        console.log('Token validation successful for user:', userData.login);
+      } catch (validationError: any) {
+        console.error('Token validation error:', validationError);
+        throw new Error('No se pudo validar el token de GitHub: ' + validationError.message);
+      }
+
+      // Limpiar state después de éxito
+      this.clearGitHubState();
 
       return {
         success: true,
-        accessToken: tokenData.access_token,
-        refreshToken: tokenData.refresh_token,
-        expiresIn: tokenData.expires_in,
-        scope: tokenData.scope?.split(' ') || [],
+        accessToken: data.access_token,
+        refreshToken: data.refresh_token,
+        expiresIn: data.expires_in,
+        scope: data.scope?.split(' ') || [],
       };
     } catch (error: any) {
       console.error('GitHub OAuth callback error:', error);
@@ -239,6 +287,95 @@ class OAuthService {
   private generateState(): string {
     return Math.random().toString(36).substring(2, 15) + 
            Math.random().toString(36).substring(2, 15);
+  }
+
+  /**
+   * Guarda el state de GitHub en múltiples ubicaciones para mayor robustez
+   */
+  private saveGitHubState(state: string, timestamp: number): void {
+    const stateData = {
+      state,
+      timestamp,
+      expiresAt: timestamp + (10 * 60 * 1000) // 10 minutos de expiración
+    };
+
+    try {
+      // Guardar en sessionStorage (principal)
+      sessionStorage.setItem('github_oauth_state', state);
+      sessionStorage.setItem('github_oauth_timestamp', timestamp.toString());
+      
+      // Guardar en localStorage como backup
+      localStorage.setItem('github_oauth_backup', JSON.stringify(stateData));
+      
+    } catch (error) {
+      console.error('Error saving GitHub state:', error);
+      throw new Error('No se pudo guardar el state de OAuth');
+    }
+  }
+
+  /**
+   * Valida el state de GitHub con sistema de recuperación
+   */
+  private validateGitHubState(receivedState: string): { 
+    isValid: boolean; 
+    source: 'session' | 'local' | 'none';
+    timestamp?: number;
+  } {
+    try {
+      // Intentar validar desde sessionStorage primero
+      const sessionState = sessionStorage.getItem('github_oauth_state');
+      const sessionTimestamp = sessionStorage.getItem('github_oauth_timestamp');
+      
+      if (sessionState === receivedState) {
+        const timestamp = sessionTimestamp ? parseInt(sessionTimestamp) : Date.now();
+        const age = Date.now() - timestamp;
+        
+        // Verificar que no haya expirado (10 minutos)
+        if (age < 10 * 60 * 1000) {
+          return { isValid: true, source: 'session', timestamp };
+        } else {
+          console.warn('Session state expired:', { age, timestamp });
+        }
+      }
+
+      // Intentar recuperar desde localStorage como backup
+      const backupData = localStorage.getItem('github_oauth_backup');
+      if (backupData) {
+        try {
+          const parsed = JSON.parse(backupData);
+          const { state, timestamp, expiresAt } = parsed;
+          
+          if (state === receivedState && Date.now() < expiresAt) {
+            console.log('State recovered from localStorage backup');
+            return { isValid: true, source: 'local', timestamp };
+          } else if (Date.now() >= expiresAt) {
+            console.warn('Backup state expired:', { expiresAt, now: Date.now() });
+            localStorage.removeItem('github_oauth_backup');
+          }
+        } catch (parseError) {
+          console.warn('Error parsing backup state:', parseError);
+          localStorage.removeItem('github_oauth_backup');
+        }
+      }
+
+      return { isValid: false, source: 'none' };
+    } catch (error) {
+      console.error('Error validating GitHub state:', error);
+      return { isValid: false, source: 'none' };
+    }
+  }
+
+  /**
+   * Limpia todos los datos de state de GitHub
+   */
+  private clearGitHubState(): void {
+    try {
+      sessionStorage.removeItem('github_oauth_state');
+      sessionStorage.removeItem('github_oauth_timestamp');
+      localStorage.removeItem('github_oauth_backup');
+    } catch (error) {
+      console.error('Error clearing GitHub state:', error);
+    }
   }
 
   /**

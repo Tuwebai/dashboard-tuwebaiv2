@@ -78,6 +78,9 @@ const AdvancedUserManagement = createLazyComponent(() => import('./components/Ad
 const InvitationPage = createLazyComponent(() => import('./pages/InvitationPage'));
 const AuthCallback = createLazyComponent(() => import('./pages/AuthCallback'));
 const GitHubCallback = createLazyComponent(() => import('./pages/GitHubCallback'));
+// const GitHubDashboard = createLazyComponent(() => import('./pages/GitHubDashboard'));
+import { GitHubDashboard } from './pages/GitHubDashboard';
+const AdminGitHubProfile = createLazyComponent(() => import('./pages/AdminGitHubProfile'));
 const EnvironmentVariables = createLazyComponent(() => import('./pages/EnvironmentVariables'));
 
 // Componente de carga optimizado con retry
@@ -230,6 +233,20 @@ function AppRoutes() {
           <DashboardLayout key="user-profile">
             <UserProfileView key="user-profile-content" />
           </DashboardLayout>
+        </ProtectedRoute>
+      } />
+      
+      <Route path="/github-dashboard" element={
+        <ProtectedRoute>
+          <DashboardLayout key="github-dashboard">
+            <GitHubDashboard />
+          </DashboardLayout>
+        </ProtectedRoute>
+      } />
+      
+      <Route path="/profile/:userId/github" element={
+        <ProtectedRoute>
+          <AdminGitHubProfile />
         </ProtectedRoute>
       } />
       

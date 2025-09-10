@@ -3,7 +3,11 @@
 // En producción, usar variables de entorno de Supabase
 
 export const GITHUB_OAUTH_CONFIG = {
-  // Reemplaza estos valores con tus credenciales reales de GitHub OAuth
+  // INSTRUCCIONES: 
+  // 1. Ve a https://github.com/settings/developers
+  // 2. Crea una nueva OAuth App
+  // 3. Usa esta URL de callback: http://localhost:8083/auth/github/callback
+  // 4. Reemplaza estos valores con tus credenciales reales:
   CLIENT_ID: 'your_github_client_id_here',
   CLIENT_SECRET: 'your_github_client_secret_here',
   REDIRECT_URI: 'http://localhost:8083/auth/github/callback',
@@ -21,7 +25,7 @@ export const getGitHubOAuthCredentials = () => {
     return {
       clientId: envClientId,
       clientSecret: envClientSecret,
-      redirectUri: envRedirectUri || `${window.location.origin}/auth/github/callback`,
+      redirectUri: envRedirectUri || 'http://localhost:8083/auth/github/callback',
     };
   }
   

@@ -1,0 +1,17 @@
+{
+  "compilerOptions": {
+    "allowJs": true,
+    "lib": ["deno.window", "deno.ns"],
+    "strict": true,
+    "noImplicitAny": false,
+    "noImplicitReturns": false,
+    "noImplicitThis": false,
+    "noUnusedLocals": false,
+    "noUnusedParameters": false,
+    "types": ["./types.d.ts"]
+  },
+  "imports": {
+    "https://deno.land/std@0.177.0/": "https://deno.land/std@0.177.0/",
+    "https://deno.land/x/supabase@1.0.0/": "https://deno.land/x/supabase@1.0.0/"
+  }
+}

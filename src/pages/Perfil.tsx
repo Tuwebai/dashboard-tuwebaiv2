@@ -880,6 +880,7 @@ const Perfil = React.memo(() => {
             <SocialIntegrations />
           </div>
         )}
+        
       </div>
     </div>
   );

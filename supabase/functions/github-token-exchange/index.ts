@@ -1,8 +1,16 @@
+// @ts-ignore - Deno module resolution
 import { serve } from 'https://deno.land/std@0.177.0/http/server.ts';
 
 serve(async (req) => {
+  console.log('Edge Function called:', {
+    method: req.method,
+    url: req.url,
+    headers: Object.fromEntries(req.headers.entries())
+  });
+
   // Manejar CORS preflight
   if (req.method === 'OPTIONS') {
+    console.log('Handling CORS preflight');
     return new Response(null, {
       status: 200,
       headers: {
@@ -24,9 +32,19 @@ serve(async (req) => {
   }
 
   try {
-    const { code, state } = await req.json();
+    console.log('Parsing request body...');
+    const body = await req.json();
+    console.log('Request body parsed:', {
+      code: body.code ? '***' + body.code.slice(-4) : 'MISSING',
+      state: body.state || 'MISSING',
+      hasCode: !!body.code,
+      hasState: !!body.state
+    });
+
+    const { code, state } = body;
 
     if (!code) {
+      console.error('Missing code parameter');
       return new Response(JSON.stringify({ error: 'Missing code parameter' }), {
         status: 400,
         headers: { 
@@ -36,21 +54,16 @@ serve(async (req) => {
       });
     }
 
-    // Obtener variables de entorno - probar diferentes nombres
-    const GITHUB_CLIENT_ID = Deno.env.get('VITE_GITHUB_CLIENT_ID') || 
-                            Deno.env.get('GITHUB_CLIENT_ID') || 
-                            Deno.env.get('GITHUB_CLIENT_ID');
-    const GITHUB_CLIENT_SECRET = Deno.env.get('VITE_GITHUB_CLIENT_SECRET') || 
-                                Deno.env.get('GITHUB_CLIENT_SECRET') || 
-                                Deno.env.get('GITHUB_CLIENT_SECRET');
-    const GITHUB_REDIRECT_URI = Deno.env.get('VITE_GITHUB_REDIRECT_URI') || 
-                               Deno.env.get('GITHUB_REDIRECT_URI') || 
-                               'http://localhost:8083/auth/github/callback';
+    // Obtener variables de entorno - SIN prefijo VITE_ para Edge Functions
+    const GITHUB_CLIENT_ID = Deno.env.get('GITHUB_CLIENT_ID');
+    const GITHUB_CLIENT_SECRET = Deno.env.get('GITHUB_CLIENT_SECRET');
+    const GITHUB_REDIRECT_URI = Deno.env.get('GITHUB_REDIRECT_URI') || 'http://localhost:8083/auth/github/callback';
 
     console.log('GitHub OAuth Config:', {
       clientId: GITHUB_CLIENT_ID ? '***' + GITHUB_CLIENT_ID.slice(-4) : 'MISSING',
       clientSecret: GITHUB_CLIENT_SECRET ? '***' + GITHUB_CLIENT_SECRET.slice(-4) : 'MISSING',
-      redirectUri: GITHUB_REDIRECT_URI
+      redirectUri: GITHUB_REDIRECT_URI,
+      allEnvVars: Object.keys(Deno.env.toObject()).filter(key => key.includes('GITHUB'))
     });
 
     if (!GITHUB_CLIENT_ID || !GITHUB_CLIENT_SECRET) {
@@ -62,7 +75,7 @@ serve(async (req) => {
       
       return new Response(JSON.stringify({ 
         error: 'Server configuration error: Missing GitHub OAuth credentials',
-        details: 'Please configure VITE_GITHUB_CLIENT_ID and VITE_GITHUB_CLIENT_SECRET in Supabase Edge Functions environment variables'
+        details: 'Please configure GITHUB_CLIENT_ID and GITHUB_CLIENT_SECRET in Supabase Edge Functions environment variables (without VITE_ prefix)'
       }), {
         status: 500,
         headers: { 
@@ -139,9 +152,15 @@ serve(async (req) => {
     });
   } catch (error) {
     console.error('Error in GitHub token exchange Edge Function:', error);
+    console.error('Error details:', {
+      message: error.message,
+      stack: error.stack,
+      name: error.name
+    });
     return new Response(JSON.stringify({ 
       error: 'Internal Server Error',
-      details: error.message 
+      details: error.message,
+      stack: error.stack
     }), {
       status: 500,
       headers: { 

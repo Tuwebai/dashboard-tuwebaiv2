@@ -33,7 +33,7 @@ export default defineConfig({
       'Cross-Origin-Opener-Policy': 'same-origin-allow-popups',
       'Cross-Origin-Embedder-Policy': 'unsafe-none',
       'Cross-Origin-Resource-Policy': 'cross-origin'
-    }
+    },
   },
   envPrefix: ['VITE_', 'REACT_APP_'],
   build: {
