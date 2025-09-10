@@ -26,6 +26,7 @@ import { useGitHubAuth } from '@/hooks/useGitHubAuth';
 import { useGitHubData } from '@/hooks/useGitHubData';
 
 const GitHubDashboard: React.FC = () => {
+  // Hooks personalizados primero
   const { isConnected, isLoading: authLoading, error: authError, connect, disconnect } = useGitHubAuth();
   const { 
     user, 
@@ -39,6 +40,7 @@ const GitHubDashboard: React.FC = () => {
     refreshData 
   } = useGitHubData();
   
+  // Hooks de estado locales después
   const [isRefreshing, setIsRefreshing] = useState(false);
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
   const [expandedSections, setExpandedSections] = useState({
@@ -51,6 +53,8 @@ const GitHubDashboard: React.FC = () => {
   const [viewMode, setViewMode] = useState<'mobile' | 'tablet' | 'desktop'>('desktop');
   const [touchStart, setTouchStart] = useState<number | null>(null);
   const [touchEnd, setTouchEnd] = useState<number | null>(null);
+  
+  // Hook de navegación
   const navigate = useNavigate();
 
   // Detectar tamaño de pantalla y modo de vista

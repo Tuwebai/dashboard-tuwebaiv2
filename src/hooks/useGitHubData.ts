@@ -131,7 +131,7 @@ export const useGitHubData = (): UseGitHubDataReturn => {
     if (token) {
       fetchData();
     }
-  }, [fetchData]);
+  }, []); // Solo ejecutar una vez al montar
 
   return {
     user,

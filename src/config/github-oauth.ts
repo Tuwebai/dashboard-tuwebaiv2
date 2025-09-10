@@ -1,13 +1,13 @@
-// Configuración temporal de GitHub OAuth para desarrollo
-// IMPORTANTE: Estas credenciales son solo para desarrollo local
-// En producción, usar variables de entorno de Supabase
+// Configuración de GitHub OAuth para desarrollo y producción
+// IMPORTANTE: En producción, usar variables de entorno
 
 export const GITHUB_OAUTH_CONFIG = {
   // INSTRUCCIONES: 
   // 1. Ve a https://github.com/settings/developers
   // 2. Crea una nueva OAuth App
-  // 3. Usa esta URL de callback: http://localhost:8083/auth/github/callback
-  // 4. Reemplaza estos valores con tus credenciales reales:
+  // 3. Para desarrollo: http://localhost:8083/auth/github/callback
+  // 4. Para producción: https://dashboard.tuweb-ai.com/auth/github/callback
+  // 5. Reemplaza estos valores con tus credenciales reales:
   CLIENT_ID: 'your_github_client_id_here',
   CLIENT_SECRET: 'your_github_client_secret_here',
   REDIRECT_URI: 'http://localhost:8083/auth/github/callback',
@@ -25,7 +25,9 @@ export const getGitHubOAuthCredentials = () => {
     return {
       clientId: envClientId,
       clientSecret: envClientSecret,
-      redirectUri: envRedirectUri || 'http://localhost:8083/auth/github/callback',
+      redirectUri: envRedirectUri || (import.meta.env.PROD 
+        ? 'https://dashboard.tuweb-ai.com/auth/github/callback'
+        : 'http://localhost:8083/auth/github/callback'),
     };
   }
   
