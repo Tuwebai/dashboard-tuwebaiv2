@@ -1,3 +1,5 @@
+import { getGitHubOAuthCredentials } from '@/config/github-oauth';
+
 interface OAuthConfig {
   clientId: string;
   redirectUri: string;
@@ -15,11 +17,14 @@ interface OAuthResult {
 }
 
 class OAuthService {
-  private readonly GITHUB_CONFIG = {
-    clientId: import.meta.env.VITE_GITHUB_CLIENT_ID || '',
-    redirectUri: `${window.location.origin}/auth/github/callback`,
-    scope: ['user:email', 'read:user', 'repo', 'read:org'],
-  };
+  private get GITHUB_CONFIG() {
+    const credentials = getGitHubOAuthCredentials();
+    return {
+      clientId: credentials.clientId,
+      redirectUri: credentials.redirectUri,
+      scope: ['user:email', 'read:user', 'repo', 'read:org'],
+    };
+  }
 
   private readonly LINKEDIN_CONFIG = {
     clientId: import.meta.env.VITE_LINKEDIN_CLIENT_ID || '',
@@ -65,7 +70,7 @@ class OAuthService {
   }
 
   /**
-   * Procesa el callback de GitHub usando Supabase Edge Function
+   * Procesa el callback de GitHub usando Supabase Edge Function o fallback directo
    */
   async handleGitHubCallback(code: string, state: string): Promise<OAuthResult> {
     try {
@@ -75,32 +80,81 @@ class OAuthService {
         throw new Error('Invalid state parameter');
       }
 
-      // Usar Supabase Edge Function para intercambiar código por token
+      // Intentar usar Supabase Edge Function primero
       const supabaseUrl = import.meta.env.VITE_SUPABASE_URL;
-      if (!supabaseUrl) {
-        throw new Error('VITE_SUPABASE_URL no está configurado');
+      if (supabaseUrl) {
+        try {
+          const response = await fetch(`${supabaseUrl}/functions/v1/github-token-exchange`, {
+            method: 'POST',
+            headers: {
+              'Content-Type': 'application/json',
+            },
+            body: JSON.stringify({
+              code,
+              state,
+            }),
+          });
+
+          if (response.ok) {
+            const data = await response.json();
+            
+            if (data.error) {
+              throw new Error(data.details || data.error);
+            }
+            
+            // Limpiar state
+            sessionStorage.removeItem('github_oauth_state');
+
+            return {
+              success: true,
+              accessToken: data.access_token,
+              refreshToken: data.refresh_token,
+              expiresIn: data.expires_in,
+              scope: data.scope?.split(' ') || [],
+            };
+          } else {
+            console.warn('Supabase Edge Function failed, trying direct approach...');
+          }
+        } catch (edgeFunctionError) {
+          console.warn('Supabase Edge Function error, trying direct approach:', edgeFunctionError);
+        }
       }
 
-      const response = await fetch(`${supabaseUrl}/functions/v1/github-token-exchange`, {
+      // Fallback: Intercambio directo con GitHub (solo para desarrollo)
+      console.warn('Using direct GitHub token exchange (development only)');
+      
+      const credentials = getGitHubOAuthCredentials();
+      
+      if (!credentials.clientId || !credentials.clientSecret || 
+          credentials.clientId === 'your_github_client_id_here' || 
+          credentials.clientSecret === 'your_github_client_secret_here') {
+        throw new Error('GitHub OAuth credentials not configured. Please set VITE_GITHUB_CLIENT_ID and VITE_GITHUB_CLIENT_SECRET in your .env file or update the configuration in src/config/github-oauth.ts');
+      }
+
+      const response = await fetch('https://github.com/login/oauth/access_token', {
         method: 'POST',
         headers: {
-          'Content-Type': 'application/json',
+          'Accept': 'application/json',
+          'Content-Type': 'application/x-www-form-urlencoded',
         },
-        body: JSON.stringify({
-          code,
-          state,
+        body: new URLSearchParams({
+          client_id: credentials.clientId,
+          client_secret: credentials.clientSecret,
+          code: code,
+          redirect_uri: credentials.redirectUri,
+          state: state || '',
         }),
       });
 
       if (!response.ok) {
-        const errorData = await response.json();
-        throw new Error(errorData.details || errorData.error || 'Failed to exchange code for token');
+        const errorData = await response.text();
+        throw new Error(`GitHub token exchange failed: ${response.status} - ${errorData}`);
       }
 
-      const data = await response.json();
+      const tokenData = await response.json();
       
-      if (data.error) {
-        throw new Error(data.details || data.error);
+      if (tokenData.error) {
+        throw new Error(tokenData.error_description || tokenData.error);
       }
       
       // Limpiar state
@@ -108,10 +162,10 @@ class OAuthService {
 
       return {
         success: true,
-        accessToken: data.access_token,
-        refreshToken: data.refresh_token,
-        expiresIn: data.expires_in,
-        scope: data.scope?.split(' ') || [],
+        accessToken: tokenData.access_token,
+        refreshToken: tokenData.refresh_token,
+        expiresIn: tokenData.expires_in,
+        scope: tokenData.scope?.split(' ') || [],
       };
     } catch (error: any) {
       console.error('GitHub OAuth callback error:', error);
@@ -179,9 +233,16 @@ class OAuthService {
    * Verifica si las configuraciones están completas
    */
   validateConfig(): { github: boolean; linkedin: boolean } {
+    const githubValid = !!this.GITHUB_CONFIG.clientId && this.GITHUB_CONFIG.clientId.length > 0;
+    const linkedinValid = !!this.LINKEDIN_CONFIG.clientId && this.LINKEDIN_CONFIG.clientId.length > 0;
+    
+    if (!githubValid) {
+      console.warn('GitHub OAuth not configured: VITE_GITHUB_CLIENT_ID is missing or empty');
+    }
+    
     return {
-      github: !!this.GITHUB_CONFIG.clientId,
-      linkedin: !!this.LINKEDIN_CONFIG.clientId,
+      github: githubValid,
+      linkedin: linkedinValid,
     };
   }
 }

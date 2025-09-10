@@ -18,39 +18,45 @@ const GitHubCallback: React.FC = () => {
         const code = searchParams.get('code');
         const state = searchParams.get('state');
         const error = searchParams.get('error');
+        const errorDescription = searchParams.get('error_description');
 
         if (error) {
           setStatus('error');
-          setMessage(`Error de autorización: ${error}`);
+          setMessage(`Error de autorización: ${error}${errorDescription ? ` - ${errorDescription}` : ''}`);
           return;
         }
 
         if (!code) {
           setStatus('error');
-          setMessage('No se recibió el código de autorización');
+          setMessage('No se recibió el código de autorización de GitHub');
           return;
         }
 
         // Procesar el callback
-        await handleCallback(code, state);
+        await handleCallback(code, state || '');
         
-        setStatus('success');
-        setMessage('¡Conexión con GitHub exitosa!');
-        
-        // Redirigir al perfil después de 2 segundos
-        setTimeout(() => {
-          navigate('/perfil');
-        }, 2000);
+        if (isConnected) {
+          setStatus('success');
+          setMessage('¡Conexión con GitHub exitosa!');
+          
+          // Redirigir al perfil después de 2 segundos
+          setTimeout(() => {
+            navigate('/perfil');
+          }, 2000);
+        } else {
+          setStatus('error');
+          setMessage('No se pudo establecer la conexión con GitHub');
+        }
 
-      } catch (err) {
+      } catch (err: any) {
         console.error('Error procesando callback:', err);
         setStatus('error');
-        setMessage('Error procesando la autorización');
+        setMessage(err.message || 'Error procesando la autorización');
       }
     };
 
     processCallback();
-  }, [searchParams, handleCallback, navigate]);
+  }, [searchParams, handleCallback, navigate, isConnected]);
 
   const handleRetry = () => {
     navigate('/perfil');

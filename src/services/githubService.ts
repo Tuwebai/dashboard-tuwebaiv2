@@ -69,7 +69,8 @@ class GitHubService {
     });
 
     if (!response.ok) {
-      throw new Error(`GitHub API error: ${response.status}`);
+      const errorData = await response.json().catch(() => ({}));
+      throw new Error(`GitHub API error: ${response.status} - ${errorData.message || response.statusText}`);
     }
 
     return response.json();
@@ -238,8 +239,15 @@ class GitHubService {
           'Accept': 'application/vnd.github.v3+json',
         },
       });
-      return response.ok;
+      
+      if (!response.ok) {
+        console.warn('GitHub token validation failed:', response.status, response.statusText);
+        return false;
+      }
+      
+      return true;
     } catch (error) {
+      console.warn('GitHub token validation error:', error);
       return false;
     }
   }

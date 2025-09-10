@@ -25,6 +25,9 @@ export const useGitHubAuth = (): UseGitHubAuthReturn => {
 
   const checkConnection = useCallback(async () => {
     try {
+      setIsLoading(true);
+      setError(null);
+      
       const tokenInfo = tokenStorage.getTokenInfo('github');
       if (tokenInfo.isConnected) {
         // Verificar si el token sigue siendo válido
@@ -38,19 +41,26 @@ export const useGitHubAuth = (): UseGitHubAuthReturn => {
             // Token expirado, desconectar
             tokenStorage.removeToken('github');
             setIsConnected(false);
+            setError('Token de GitHub expirado');
           }
+        } else {
+          setIsConnected(false);
+          setError('No se encontró token de GitHub');
         }
       } else {
         setIsConnected(false);
+        setError(null);
       }
     } catch (error: any) {
       console.error('Error checking GitHub connection:', error);
-      setError('Error verificando la conexión');
+      setError('Error verificando la conexión: ' + error.message);
       setIsConnected(false);
+    } finally {
+      setIsLoading(false);
     }
   }, []);
 
-  const connect = useCallback(() => {
+  const connect = useCallback(async () => {
     try {
       setError(null);
       setIsLoading(true);
@@ -58,7 +68,7 @@ export const useGitHubAuth = (): UseGitHubAuthReturn => {
       // Verificar configuración
       const config = oauthService.validateConfig();
       if (!config.github) {
-        throw new Error('GitHub OAuth no está configurado correctamente');
+        throw new Error('GitHub OAuth no está configurado correctamente. Verifica las variables de entorno VITE_GITHUB_CLIENT_ID y VITE_GITHUB_CLIENT_SECRET');
       }
 
       // Iniciar flujo de OAuth
@@ -122,8 +132,15 @@ export const useGitHubAuth = (): UseGitHubAuthReturn => {
           expiresAt: Date.now() + (tokenData.expiresIn || 3600) * 1000,
           scope: tokenData.scope || [],
         });
-        setIsConnected(true);
-        setError(null);
+        
+        // Verificar que el token funciona
+        const isValid = await githubService.validateToken(tokenData.accessToken);
+        if (isValid) {
+          setIsConnected(true);
+          setError(null);
+        } else {
+          throw new Error('El token obtenido no es válido');
+        }
       } else {
         throw new Error(tokenData.error || 'No se pudo obtener el token de acceso');
       }
@@ -131,6 +148,8 @@ export const useGitHubAuth = (): UseGitHubAuthReturn => {
       console.error('Error handling GitHub callback:', error);
       setError(error.message || 'Error procesando la autorización');
       setIsConnected(false);
+      // Limpiar token si hay error
+      tokenStorage.removeToken('github');
     } finally {
       setIsLoading(false);
     }

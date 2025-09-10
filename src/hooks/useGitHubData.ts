@@ -76,21 +76,22 @@ export const useGitHubData = (): UseGitHubDataReturn => {
       setIsLoading(true);
       setError(null);
 
-      // Obtener datos en paralelo
+      // Primero obtener el perfil del usuario
+      const userData = await githubService.getUserProfile(token.accessToken);
+      
+      // Luego obtener el resto de datos en paralelo
       const [
-        userData,
         reposData,
         featuredReposData,
         statsData,
         languagesData,
         contributionData,
       ] = await Promise.all([
-        githubService.getUserProfile(token.accessToken),
         githubService.getUserRepos(token.accessToken),
         githubService.getFeaturedRepos(token.accessToken),
-        githubService.getContributionStats(token.accessToken, userData?.login || ''),
+        githubService.getContributionStats(token.accessToken, userData.login),
         githubService.getLanguageStats(token.accessToken),
-        githubService.getContributionGraph(token.accessToken, userData?.login || ''),
+        githubService.getContributionGraph(token.accessToken, userData.login),
       ]);
 
       setUser(userData);
