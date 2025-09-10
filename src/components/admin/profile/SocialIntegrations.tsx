@@ -2,7 +2,7 @@ import React from 'react';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { GitHubIntegration } from './GitHubIntegration';
 // import { LinkedInIntegration } from './LinkedInIntegration'; // Comentado temporalmente
-import { Users, Settings, Shield } from 'lucide-react';
+import { Users } from 'lucide-react';
 
 export const SocialIntegrations: React.FC = () => {
   return (
@@ -19,57 +19,6 @@ export const SocialIntegrations: React.FC = () => {
         </p>
       </div>
 
-      {/* Información de privacidad */}
-      <Card className="border-amber-200 bg-amber-50 dark:border-amber-800 dark:bg-amber-900/20">
-        <CardHeader>
-          <CardTitle className="flex items-center space-x-2 text-amber-800 dark:text-amber-200">
-            <Shield className="w-5 h-5" />
-            <span>Privacidad y Seguridad</span>
-          </CardTitle>
-        </CardHeader>
-        <CardContent>
-          <div className="space-y-2 text-sm text-amber-700 dark:text-amber-300">
-            <p>• Tus tokens de acceso se almacenan de forma encriptada en tu navegador</p>
-            <p>• Solo tienes acceso a tus propios datos</p>
-            <p>• Puedes desconectar las integraciones en cualquier momento</p>
-            <p>• Los datos se actualizan automáticamente cada 30 minutos</p>
-          </div>
-        </CardContent>
-      </Card>
-
-      {/* Configuración requerida */}
-      <Card className="border-blue-200 bg-blue-50 dark:border-blue-800 dark:bg-blue-900/20">
-        <CardHeader>
-          <CardTitle className="flex items-center space-x-2 text-blue-800 dark:text-blue-200">
-            <Settings className="w-5 h-5" />
-            <span>Configuración Requerida</span>
-          </CardTitle>
-        </CardHeader>
-        <CardContent>
-            <div className="space-y-3 text-sm text-blue-700 dark:text-blue-300">
-              <div>
-                <p className="font-medium">Para usar la integración de GitHub, necesitas configurar:</p>
-              </div>
-              <div className="space-y-2">
-                <div className="space-y-1">
-                  <p className="font-medium">GitHub OAuth App:</p>
-                  <ul className="list-disc list-inside space-y-1 ml-2">
-                    <li>VITE_GITHUB_CLIENT_ID</li>
-                    <li>VITE_GITHUB_CLIENT_SECRET</li>
-                    <li>VITE_ENCRYPTION_KEY (opcional, se genera automáticamente)</li>
-                  </ul>
-                </div>
-                <div className="p-3 bg-blue-100 dark:bg-blue-900/20 rounded-lg">
-                  <p className="text-xs font-medium mb-1">LinkedIn:</p>
-                  <p className="text-xs">La integración de LinkedIn estará disponible próximamente.</p>
-                </div>
-              </div>
-              <p className="text-xs mt-2">
-                Consulta la documentación para obtener más información sobre cómo configurar la aplicación OAuth de GitHub.
-              </p>
-            </div>
-        </CardContent>
-      </Card>
 
       {/* Integraciones */}
       <div className="grid lg:grid-cols-2 gap-6">
