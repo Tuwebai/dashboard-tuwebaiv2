@@ -21,6 +21,7 @@ import {
   Eye,
   BarChart3,
   TrendingUp,
+  TrendingDown,
   Users,
   FileText,
   Send,
@@ -40,7 +41,14 @@ import {
   Play,
   Pause,
   Keyboard,
-  HelpCircle
+  HelpCircle,
+  Heart,
+  Shield,
+  Sparkles,
+  ArrowUp,
+  ArrowDown,
+  Minus,
+  Circle
 } from 'lucide-react';
 import { motion, AnimatePresence } from '@/components/OptimizedMotion';
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
@@ -58,6 +66,53 @@ import { useLazyLoading } from '@/hooks/useLazyLoading';
 import { useIntelligentCache } from '@/hooks/useIntelligentCache';
 import VirtualScrollList from '@/components/VirtualScrollList';
 import OptimizedImage from '@/components/OptimizedImage';
+
+// Componente Sparkline para mini-gráficos
+const Sparkline = ({ data, color = "blue", size = "sm" }: { data: number[], color?: string, size?: "sm" | "md" | "lg" }) => {
+  if (!data || data.length === 0) return null;
+  
+  const max = Math.max(...data);
+  const min = Math.min(...data);
+  const range = max - min || 1;
+  
+  const width = size === "sm" ? 60 : size === "md" ? 80 : 100;
+  const height = size === "sm" ? 20 : size === "md" ? 24 : 30;
+  
+  const points = data.map((value, index) => {
+    const x = (index / (data.length - 1)) * width;
+    const y = height - ((value - min) / range) * height;
+    return `${x},${y}`;
+  }).join(' ');
+  
+  const colorClasses = {
+    blue: "stroke-blue-500",
+    green: "stroke-green-500", 
+    orange: "stroke-orange-500",
+    purple: "stroke-purple-500",
+    red: "stroke-red-500"
+  };
+  
+  return (
+    <div className="flex items-center justify-center">
+      <svg width={width} height={height} className="overflow-visible">
+        <polyline
+          points={points}
+          fill="none"
+          stroke="currentColor"
+          strokeWidth="2"
+          className={`${colorClasses[color as keyof typeof colorClasses] || colorClasses.blue} opacity-80`}
+        />
+        <circle
+          cx={width - 2}
+          cy={height - ((data[data.length - 1] - min) / range) * height}
+          r="2"
+          fill="currentColor"
+          className={`${colorClasses[color as keyof typeof colorClasses] || colorClasses.blue}`}
+        />
+      </svg>
+    </div>
+  );
+};
 
 // Estilos CSS personalizados para animaciones
 const customStyles = `
@@ -79,6 +134,21 @@ const customStyles = `
   @keyframes shimmer {
     0% { background-position: -200% 0; }
     100% { background-position: 200% 0; }
+  }
+  
+  @keyframes countUp {
+    from { opacity: 0; transform: translateY(20px); }
+    to { opacity: 1; transform: translateY(0); }
+  }
+  
+  @keyframes slideInLeft {
+    from { opacity: 0; transform: translateX(-30px); }
+    to { opacity: 1; transform: translateX(0); }
+  }
+  
+  @keyframes slideInRight {
+    from { opacity: 0; transform: translateX(30px); }
+    to { opacity: 1; transform: translateX(0); }
   }
   
   .animate-gradient-x {
@@ -115,12 +185,14 @@ const customStyles = `
   
   .metric-value-animation {
     transition: all 0.3s ease;
+    animation: countUp 0.6s ease-out;
   }
   
   .metric-value-animation:hover {
     transform: scale(1.1);
     text-shadow: 0 0 20px currentColor;
   }
+  
 `;
 
 interface ProjectPhase {
@@ -353,7 +425,7 @@ const Dashboard = React.memo(() => {
     return filtered;
   }, [userProjects, searchTerm, statusFilter, sortBy, sortOrder]);
 
-  // Estadísticas calculadas
+  // Estadísticas calculadas con datos para sparklines
   const dashboardStats = useMemo(() => {
     const totalProjects = userProjects.length;
     const inProgressProjects = userProjects.filter(p => getProjectStatus(p) === 'En progreso' || getProjectStatus(p) === 'En progreso avanzado').length;
@@ -373,6 +445,40 @@ const Dashboard = React.memo(() => {
       .filter(p => p.fases?.some(f => f.comentarios?.length > 0))
       .slice(0, 5);
 
+    // Calcular indicador de salud general
+    const healthScore = totalProjects > 0 ? Math.round(
+      (completedProjects * 100 + inProgressProjects * 60 + pendingProjects * 20) / totalProjects
+    ) : 0;
+
+    // Generar datos para sparklines (simulando tendencias de los últimos 7 días)
+    const generateSparklineData = (baseValue: number, variance: number = 0.2) => {
+      return Array.from({ length: 7 }, (_, i) => {
+        const randomFactor = (Math.random() - 0.5) * variance;
+        return Math.max(0, Math.round(baseValue * (1 + randomFactor)));
+      });
+    };
+
+    // Quick stats adicionales
+    const thisMonthProjects = userProjects.filter(p => {
+      const projectDate = new Date(p.created_at || p.createdAt || '');
+      const now = new Date();
+      return projectDate.getMonth() === now.getMonth() && projectDate.getFullYear() === now.getFullYear();
+    }).length;
+
+    const averageTimeToComplete = completedProjects > 0 
+      ? Math.round(userProjects
+          .filter(p => getProjectStatus(p) === 'Completado')
+          .reduce((acc, p) => {
+            const created = new Date(p.created_at || p.createdAt || '');
+            const updated = new Date(p.updated_at || '');
+            return acc + (updated.getTime() - created.getTime()) / (1000 * 60 * 60 * 24); // días
+          }, 0) / completedProjects)
+      : 0;
+
+    const activeCollaborations = userProjects.filter(p => 
+      p.fases?.some(f => f.comentarios?.some(c => c.tipo === 'admin'))
+    ).length;
+
     return {
       totalProjects,
       inProgressProjects,
@@ -380,7 +486,17 @@ const Dashboard = React.memo(() => {
       pendingProjects,
       totalComments,
       averageProgress,
-      recentActivity
+      recentActivity,
+      healthScore,
+      thisMonthProjects,
+      averageTimeToComplete,
+      activeCollaborations,
+      sparklines: {
+        projects: generateSparklineData(totalProjects, 0.3),
+        progress: generateSparklineData(averageProgress, 0.4),
+        comments: generateSparklineData(totalComments, 0.5),
+        health: generateSparklineData(healthScore, 0.2)
+      }
     };
   }, [userProjects]);
 
@@ -596,266 +712,458 @@ const Dashboard = React.memo(() => {
   return (
     <>
       <style>{customStyles}</style>
-      <div className="min-h-screen w-full bg-gradient-to-br from-background via-background/95 to-background/90 dark:from-slate-900 dark:via-slate-800 dark:to-slate-900 transition-all duration-300">
-        <div className="flex-1 overflow-hidden w-full">
-          <div className="h-full overflow-y-auto w-full">
+      <div className="w-full bg-slate-50 dark:bg-slate-900 transition-all duration-300">
+        <div className="w-full">
+          <div className="w-full">
           
 
 
-          {/* ZONA 2: MÉTRICAS CLAVE (1 fila horizontal) */}
-          <div className="px-3 sm:px-4 lg:px-8 py-3 sm:py-4">
+          {/* ZONA 2: MÉTRICAS CLAVE REDISEÑADAS */}
+          <div className="px-4 sm:px-4 lg:px-8 py-6 sm:py-4 lg:py-6">
             <motion.div 
               initial={{ opacity: 0, y: 20 }}
               animate={{ opacity: 1, y: 0 }}
               transition={{ duration: 0.5, delay: 0.1 }}
-              className="bg-white/80 dark:bg-slate-800/50 backdrop-blur-sm border-2 border-dashed border-slate-300 dark:border-slate-600 rounded-xl p-4 sm:p-6 shadow-lg"
+              className="space-y-6 sm:space-y-6"
             >
-              <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
-                {/* Proyectos */}
-                <div className="flex flex-col items-center p-4 border-r border-slate-200 dark:border-slate-600 last:border-r-0">
-                  <div className="w-10 h-10 bg-blue-500 rounded-lg flex items-center justify-center mb-3">
-                    <FileText className="h-5 w-5 text-white" />
-                  </div>
-                  <h3 className="text-sm font-semibold text-slate-800 dark:text-white mb-1">Proyectos</h3>
-                  <p className="text-lg font-bold text-blue-600 dark:text-blue-400 mb-2">
-                    Activos: {dashboardStats.totalProjects}
-                  </p>
-                  <button 
+              {/* Métricas Principales */}
+              <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 sm:gap-5">
+                {/* Proyectos Totales */}
+                <motion.div 
+                  initial={{ opacity: 0, y: 20 }}
+                  animate={{ opacity: 1, y: 0 }}
+                  transition={{ duration: 0.5, delay: 0.2 }}
+                  className="group cursor-pointer"
+                >
+                  <div 
                     onClick={() => navigate('/proyectos')}
-                    className="text-xs text-blue-600 dark:text-blue-400 hover:underline"
+                    className="bg-white dark:bg-slate-800 rounded-xl sm:rounded-2xl p-4 sm:p-6 shadow-sm hover:shadow-lg border border-slate-200 dark:border-slate-700 transition-all duration-300 hover:-translate-y-1"
                   >
-                    [Ver todos]
-                  </button>
-                </div>
-
-                {/* Progreso */}
-                <div className="flex flex-col items-center p-4 border-r border-slate-200 dark:border-slate-600 last:border-r-0">
-                  <div className="w-10 h-10 bg-green-500 rounded-lg flex items-center justify-center mb-3">
-                    <BarChart3 className="h-5 w-5 text-white" />
+                    <div className="flex items-center justify-between mb-3 sm:mb-4">
+                      <div className="w-10 h-10 sm:w-12 sm:h-12 bg-blue-100 dark:bg-blue-900/30 rounded-lg sm:rounded-xl flex items-center justify-center group-hover:scale-110 transition-transform duration-300">
+                        <FileText className="h-5 w-5 sm:h-6 sm:w-6 text-blue-600 dark:text-blue-400" />
+                      </div>
+                      <div className="text-right">
+                        <div className="text-xl sm:text-2xl lg:text-3xl font-bold text-slate-900 dark:text-white">
+                          {dashboardStats.totalProjects}
+                        </div>
+                        <div className="text-xs sm:text-sm font-medium text-slate-600 dark:text-slate-400">Proyectos</div>
+                      </div>
+                    </div>
+                    <div className="space-y-2 sm:space-y-3">
+                      <div className="flex items-center justify-between text-xs sm:text-sm">
+                        <span className="text-slate-500 dark:text-slate-500">Este mes:</span>
+                        <span className="font-semibold text-slate-700 dark:text-slate-300">{dashboardStats.thisMonthProjects}</span>
+                      </div>
+                      <div className="flex items-center justify-center">
+                        <Sparkline data={dashboardStats.sparklines.projects} color="blue" size="sm" />
+                      </div>
+                    </div>
                   </div>
-                  <h3 className="text-sm font-semibold text-slate-800 dark:text-white mb-1">Progreso</h3>
-                  <p className="text-lg font-bold text-green-600 dark:text-green-400 mb-2">
-                    General: {dashboardStats.averageProgress}%
-                  </p>
-                  <button 
+                </motion.div>
+
+                {/* Progreso Promedio */}
+                <motion.div 
+                  initial={{ opacity: 0, y: 20 }}
+                  animate={{ opacity: 1, y: 0 }}
+                  transition={{ duration: 0.5, delay: 0.3 }}
+                  className="group cursor-pointer"
+                >
+                  <div 
                     onClick={() => navigateToProjects('view', 'progress')}
-                    className="text-xs text-green-600 dark:text-green-400 hover:underline"
+                    className="bg-white dark:bg-slate-800 rounded-xl sm:rounded-2xl p-4 sm:p-6 shadow-sm hover:shadow-lg border border-slate-200 dark:border-slate-700 transition-all duration-300 hover:-translate-y-1"
                   >
-                    [Ver detalle]
-                  </button>
-                </div>
-
-                {/* Tareas */}
-                <div className="flex flex-col items-center p-4 border-r border-slate-200 dark:border-slate-600 last:border-r-0">
-                  <div className="w-10 h-10 bg-orange-500 rounded-lg flex items-center justify-center mb-3">
-                    <CheckCircle className="h-5 w-5 text-white" />
+                    <div className="flex items-center justify-between mb-3 sm:mb-4">
+                      <div className="w-10 h-10 sm:w-12 sm:h-12 bg-green-100 dark:bg-green-900/30 rounded-lg sm:rounded-xl flex items-center justify-center group-hover:scale-110 transition-transform duration-300">
+                        <BarChart3 className="h-5 w-5 sm:h-6 sm:w-6 text-green-600 dark:text-green-400" />
+                      </div>
+                      <div className="text-right">
+                        <div className="text-xl sm:text-2xl lg:text-3xl font-bold text-slate-900 dark:text-white">
+                          {dashboardStats.averageProgress}%
+                        </div>
+                        <div className="text-xs sm:text-sm font-medium text-slate-600 dark:text-slate-400">Progreso</div>
+                      </div>
+                    </div>
+                    <div className="space-y-2 sm:space-y-3">
+                      <div className="flex items-center justify-between text-xs sm:text-sm">
+                        <span className="text-slate-500 dark:text-slate-500">Completados:</span>
+                        <span className="font-semibold text-slate-700 dark:text-slate-300">{dashboardStats.completedProjects}</span>
+                      </div>
+                      <div className="flex items-center justify-center">
+                        <Sparkline data={dashboardStats.sparklines.progress} color="green" size="sm" />
+                      </div>
+                    </div>
                   </div>
-                  <h3 className="text-sm font-semibold text-slate-800 dark:text-white mb-1">Tareas</h3>
-                  <p className="text-lg font-bold text-orange-600 dark:text-orange-400 mb-2">
-                    Pendientes: {userProjects.reduce((acc, p) => acc + (p.fases?.filter(f => f.estado === 'Pendiente' || f.estado === 'En Progreso').length || 0), 0)}
-                  </p>
-                  <button 
+                </motion.div>
+
+                {/* Tareas Activas */}
+                <motion.div 
+                  initial={{ opacity: 0, y: 20 }}
+                  animate={{ opacity: 1, y: 0 }}
+                  transition={{ duration: 0.5, delay: 0.4 }}
+                  className="group cursor-pointer"
+                >
+                  <div 
                     onClick={() => navigate('/fases-tareas')}
-                    className="text-xs text-orange-600 dark:text-orange-400 hover:underline"
+                    className="bg-white dark:bg-slate-800 rounded-xl sm:rounded-2xl p-4 sm:p-6 shadow-sm hover:shadow-lg border border-slate-200 dark:border-slate-700 transition-all duration-300 hover:-translate-y-1"
                   >
-                    [Crear]
-                  </button>
-                </div>
-
-                {/* Equipo */}
-                <div className="flex flex-col items-center p-4">
-                  <div className="w-10 h-10 bg-purple-500 rounded-lg flex items-center justify-center mb-3">
-                    <Users className="h-5 w-5 text-white" />
+                    <div className="flex items-center justify-between mb-3 sm:mb-4">
+                      <div className="w-10 h-10 sm:w-12 sm:h-12 bg-orange-100 dark:bg-orange-900/30 rounded-lg sm:rounded-xl flex items-center justify-center group-hover:scale-110 transition-transform duration-300">
+                        <CheckCircle className="h-5 w-5 sm:h-6 sm:w-6 text-orange-600 dark:text-orange-400" />
+                      </div>
+                      <div className="text-right">
+                        <div className="text-xl sm:text-2xl lg:text-3xl font-bold text-slate-900 dark:text-white">
+                          {userProjects.reduce((acc, p) => acc + (p.fases?.filter(f => f.estado === 'Pendiente' || f.estado === 'En Progreso').length || 0), 0)}
+                        </div>
+                        <div className="text-xs sm:text-sm font-medium text-slate-600 dark:text-slate-400">Tareas</div>
+                      </div>
+                    </div>
+                    <div className="space-y-2 sm:space-y-3">
+                      <div className="flex items-center justify-between text-xs sm:text-sm">
+                        <span className="text-slate-500 dark:text-slate-500">En progreso:</span>
+                        <span className="font-semibold text-slate-700 dark:text-slate-300">{dashboardStats.inProgressProjects}</span>
+                      </div>
+                      <div className="flex items-center justify-center">
+                        <Sparkline data={dashboardStats.sparklines.comments} color="orange" size="sm" />
+                      </div>
+                    </div>
                   </div>
-                  <h3 className="text-sm font-semibold text-slate-800 dark:text-white mb-1">Equipo</h3>
-                  <p className="text-lg font-bold text-purple-600 dark:text-purple-400 mb-2 flex items-center gap-1">
-                    Activo: <CheckCircle className="h-4 w-4 text-green-500" />
-                  </p>
-                  <button 
+                </motion.div>
+
+                {/* Colaboración */}
+                <motion.div 
+                  initial={{ opacity: 0, y: 20 }}
+                  animate={{ opacity: 1, y: 0 }}
+                  transition={{ duration: 0.5, delay: 0.5 }}
+                  className="group cursor-pointer"
+                >
+                  <div 
                     onClick={() => setShowCollaborationModal(true)}
-                    className="text-xs text-purple-600 dark:text-purple-400 hover:underline"
+                    className="bg-white dark:bg-slate-800 rounded-xl sm:rounded-2xl p-4 sm:p-6 shadow-sm hover:shadow-lg border border-slate-200 dark:border-slate-700 transition-all duration-300 hover:-translate-y-1"
                   >
-                    [Chat]
-                  </button>
-                </div>
+                    <div className="flex items-center justify-between mb-3 sm:mb-4">
+                      <div className="w-10 h-10 sm:w-12 sm:h-12 bg-purple-100 dark:bg-purple-900/30 rounded-lg sm:rounded-xl flex items-center justify-center group-hover:scale-110 transition-transform duration-300">
+                        <Users className="h-5 w-5 sm:h-6 sm:w-6 text-purple-600 dark:text-purple-400" />
+                      </div>
+                      <div className="text-right">
+                        <div className="text-xl sm:text-2xl lg:text-3xl font-bold text-slate-900 dark:text-white">
+                          {dashboardStats.activeCollaborations}
+                        </div>
+                        <div className="text-xs sm:text-sm font-medium text-slate-600 dark:text-slate-400">Activas</div>
+                      </div>
+                    </div>
+                    <div className="space-y-2 sm:space-y-3">
+                      <div className="flex items-center justify-between text-xs sm:text-sm">
+                        <span className="text-slate-500 dark:text-slate-500">Comentarios:</span>
+                        <span className="font-semibold text-slate-700 dark:text-slate-300">{dashboardStats.totalComments}</span>
+                      </div>
+                      <div className="flex items-center justify-center">
+                        <div className="flex items-center gap-1">
+                          <Circle className="h-2 w-2 fill-green-500 text-green-500" />
+                          <span className="text-xs text-slate-500 dark:text-slate-500">En línea</span>
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+                </motion.div>
               </div>
+
             </motion.div>
           </div>
 
-          {/* ZONA 3: ACCIONES Y CONTENIDO (2 columnas) */}
-          <div className="px-3 sm:px-4 lg:px-8 pb-4 sm:pb-6">
-            <div className="grid grid-cols-1 lg:grid-cols-2 gap-4 sm:gap-6">
-              {/* Columna Izquierda */}
-              <div className="space-y-4 sm:space-y-6">
-                {/* ACCIONES PRINCIPALES */}
-                <motion.div 
-                  initial={{ opacity: 0, x: -20 }}
-                  animate={{ opacity: 1, x: 0 }}
-                  transition={{ duration: 0.5, delay: 0.1 }}
-                >
-                  <Card className="bg-white/80 dark:bg-slate-800/50 backdrop-blur-sm border-2 border-dashed border-slate-300 dark:border-slate-600 rounded-xl shadow-lg">
-                    <CardHeader className="pb-3">
-                      <CardTitle className="text-lg font-semibold text-slate-800 dark:text-white flex items-center gap-2">
-                        <Zap className="h-5 w-5 text-blue-500" />
-                        ACCIONES PRINCIPALES
-                      </CardTitle>
-                    </CardHeader>
-                    <CardContent className="space-y-3">
-                      <Button
-                        variant="ghost"
-                        className="w-full justify-start text-left h-auto p-4 hover:bg-blue-50 dark:hover:bg-blue-500/10"
-                        onClick={() => navigate('/proyectos/nuevo')}
-                      >
-                        <div className="flex items-center gap-3">
-                          <Plus className="h-5 w-5 text-blue-600 dark:text-blue-400" />
-                          <span className="font-medium">[+ Crear Proyecto]</span>
+          {/* ZONA 3A: ACCIONES PRINCIPALES E INFORMACIÓN RELEVANTE REDISEÑADAS */}
+          <div className="px-4 sm:px-0 lg:px-8 py-12 sm:py-8 lg:py-10" style={{ 
+            paddingLeft: window.innerWidth < 1024 ? '1rem' : '2rem', 
+            paddingRight: window.innerWidth < 1024 ? '1rem' : '2rem' 
+          }}>
+            <div className="grid grid-cols-1 lg:grid-cols-2 gap-6 sm:gap-5 lg:gap-6">
+              {/* ACCIONES PRINCIPALES */}
+              <motion.div 
+                initial={{ opacity: 0, x: -20 }}
+                animate={{ opacity: 1, x: 0 }}
+                transition={{ duration: 0.5, delay: 0.7 }}
+              >
+                <div className="bg-white dark:bg-slate-800 rounded-xl sm:rounded-2xl p-4 sm:p-6 shadow-sm border border-slate-200 dark:border-slate-700">
+                  <div className="flex items-center gap-3 mb-4 sm:mb-6">
+                    <div className="w-8 h-8 sm:w-10 sm:h-10 bg-blue-100 dark:bg-blue-900/30 rounded-lg sm:rounded-xl flex items-center justify-center">
+                      <Zap className="h-4 w-4 sm:h-5 sm:w-5 text-blue-600 dark:text-blue-400" />
+                    </div>
+                    <div>
+                      <h3 className="text-base sm:text-lg font-bold text-slate-900 dark:text-white">Acciones Principales</h3>
+                      <p className="text-xs sm:text-sm text-slate-600 dark:text-slate-400">Gestiona tus proyectos</p>
+                    </div>
+                  </div>
+                  <div className="space-y-2 sm:space-y-3">
+                    <button
+                      className="w-full group p-3 sm:p-4 rounded-lg sm:rounded-xl bg-slate-50 dark:bg-slate-700/50 border border-slate-200 dark:border-slate-600 hover:bg-blue-50 dark:hover:bg-blue-900/20 hover:border-blue-200 dark:hover:border-blue-700 transition-all duration-300 hover:scale-[1.02] active:scale-[0.98]"
+                      onClick={() => navigate('/proyectos/nuevo')}
+                    >
+                      <div className="flex items-center gap-3 sm:gap-4">
+                        <div className="w-8 h-8 sm:w-10 sm:h-10 bg-blue-100 dark:bg-blue-900/30 rounded-lg sm:rounded-xl flex items-center justify-center group-hover:scale-110 transition-transform duration-300">
+                          <Plus className="h-4 w-4 sm:h-5 sm:w-5 text-blue-600 dark:text-blue-400" />
                         </div>
-                      </Button>
-                      <Button
-                        variant="ghost"
-                        className="w-full justify-start text-left h-auto p-4 hover:bg-green-50 dark:hover:bg-green-500/10"
-                        onClick={() => navigate('/proyectos')}
-                      >
-                        <div className="flex items-center gap-3">
-                          <FileText className="h-5 w-5 text-green-600 dark:text-green-400" />
-                          <span className="font-medium">[ Ver Proyectos]</span>
+                        <div className="text-left flex-1">
+                          <div className="text-sm sm:text-base font-semibold text-slate-900 dark:text-white">Crear Proyecto</div>
+                          <div className="text-xs sm:text-sm text-slate-600 dark:text-slate-400">Inicia un nuevo proyecto web</div>
                         </div>
-                      </Button>
-                      <Button
-                        variant="ghost"
-                        className="w-full justify-start text-left h-auto p-4 hover:bg-purple-50 dark:hover:bg-purple-500/10"
-                        onClick={() => navigate('/perfil')}
-                      >
-                        <div className="flex items-center gap-3">
-                          <User className="h-5 w-5 text-purple-600 dark:text-purple-400" />
-                          <span className="font-medium">[ Mi Perfil]</span>
+                        <ArrowUp className="h-3 w-3 sm:h-4 sm:w-4 text-slate-400 group-hover:text-blue-600 dark:group-hover:text-blue-400 transition-colors" />
+                      </div>
+                    </button>
+                    
+                    <button
+                      className="w-full group p-3 sm:p-4 rounded-lg sm:rounded-xl bg-slate-50 dark:bg-slate-700/50 border border-slate-200 dark:border-slate-600 hover:bg-green-50 dark:hover:bg-green-900/20 hover:border-green-200 dark:hover:border-green-700 transition-all duration-300 hover:scale-[1.02] active:scale-[0.98]"
+                      onClick={() => navigate('/proyectos')}
+                    >
+                      <div className="flex items-center gap-3 sm:gap-4">
+                        <div className="w-8 h-8 sm:w-10 sm:h-10 bg-green-100 dark:bg-green-900/30 rounded-lg sm:rounded-xl flex items-center justify-center group-hover:scale-110 transition-transform duration-300">
+                          <FileText className="h-4 w-4 sm:h-5 sm:w-5 text-green-600 dark:text-green-400" />
                         </div>
-                      </Button>
-                    </CardContent>
-                  </Card>
-                </motion.div>
+                        <div className="text-left flex-1">
+                          <div className="text-sm sm:text-base font-semibold text-slate-900 dark:text-white">Ver Proyectos</div>
+                          <div className="text-xs sm:text-sm text-slate-600 dark:text-slate-400">Gestiona tus proyectos existentes</div>
+                        </div>
+                        <ArrowUp className="h-3 w-3 sm:h-4 sm:w-4 text-slate-400 group-hover:text-green-600 dark:group-hover:text-green-400 transition-colors" />
+                      </div>
+                    </button>
+                    
+                    <button
+                      className="w-full group p-3 sm:p-4 rounded-lg sm:rounded-xl bg-slate-50 dark:bg-slate-700/50 border border-slate-200 dark:border-slate-600 hover:bg-purple-50 dark:hover:bg-purple-900/20 hover:border-purple-200 dark:hover:border-purple-700 transition-all duration-300 hover:scale-[1.02] active:scale-[0.98]"
+                      onClick={() => navigate('/perfil')}
+                    >
+                      <div className="flex items-center gap-3 sm:gap-4">
+                        <div className="w-8 h-8 sm:w-10 sm:h-10 bg-purple-100 dark:bg-purple-900/30 rounded-lg sm:rounded-xl flex items-center justify-center group-hover:scale-110 transition-transform duration-300">
+                          <User className="h-4 w-4 sm:h-5 sm:w-5 text-purple-600 dark:text-purple-400" />
+                        </div>
+                        <div className="text-left flex-1">
+                          <div className="text-sm sm:text-base font-semibold text-slate-900 dark:text-white">Mi Perfil</div>
+                          <div className="text-xs sm:text-sm text-slate-600 dark:text-slate-400">Configura tu cuenta</div>
+                        </div>
+                        <ArrowUp className="h-3 w-3 sm:h-4 sm:w-4 text-slate-400 group-hover:text-purple-600 dark:group-hover:text-purple-400 transition-colors" />
+                      </div>
+                    </button>
+                  </div>
+                </div>
+              </motion.div>
 
-                {/* ACTIVIDAD RECIENTE */}
-                <motion.div 
-                  initial={{ opacity: 0, x: -20 }}
-                  animate={{ opacity: 1, x: 0 }}
-                  transition={{ duration: 0.5, delay: 0.2 }}
-                >
-                  <Card className="bg-white/80 dark:bg-slate-800/50 backdrop-blur-sm border-2 border-dashed border-slate-300 dark:border-slate-600 rounded-xl shadow-lg">
-                    <CardHeader className="pb-3">
-                      <CardTitle className="text-lg font-semibold text-slate-800 dark:text-white flex items-center gap-2">
-                        <Activity className="h-5 w-5 text-orange-500" />
-                        ACTIVIDAD RECIENTE
-                      </CardTitle>
-                    </CardHeader>
-                    <CardContent className="space-y-3">
-                      {userProjects.length > 0 ? (
-                        <>
-                          <div className="p-3 bg-slate-50 dark:bg-slate-700/50 rounded-lg">
-                            <p className="font-medium text-slate-800 dark:text-white">
-                              {userProjects[0]?.name || 'Landing Page'}
-                            </p>
-                            <p className="text-sm text-slate-500 dark:text-slate-400">
-                              Última: {formatDate(userProjects[0]?.updated_at || userProjects[0]?.created_at || '')}
-                            </p>
-                          </div>
-                          <button 
-                            onClick={() => navigateToProjects('filter', 'recent_activity')}
-                            className="text-sm text-blue-600 dark:text-blue-400 hover:underline"
-                          >
-                            [Ver detalles]
-                          </button>
-                        </>
-                      ) : (
-                        <div className="text-center py-4">
-                          <p className="text-sm text-slate-500 dark:text-slate-400">No hay actividad reciente</p>
-                        </div>
-                      )}
-                    </CardContent>
-                  </Card>
-                </motion.div>
-              </div>
-
-              {/* Columna Derecha */}
-              <div className="space-y-4 sm:space-y-6">
-                {/* INFORMACIÓN RELEVANTE */}
-                <motion.div 
-                  initial={{ opacity: 0, x: 20 }}
-                  animate={{ opacity: 1, x: 0 }}
-                  transition={{ duration: 0.5, delay: 0.1 }}
-                >
-                  <Card className="bg-white/80 dark:bg-slate-800/50 backdrop-blur-sm border-2 border-dashed border-slate-300 dark:border-slate-600 rounded-xl shadow-lg">
-                    <CardHeader className="pb-3">
-                      <CardTitle className="text-lg font-semibold text-slate-800 dark:text-white flex items-center gap-2">
-                        <Calendar className="h-5 w-5 text-green-500" />
-                        INFORMACIÓN RELEVANTE
-                      </CardTitle>
-                    </CardHeader>
-                    <CardContent className="space-y-3">
-                      <div>
-                        <h4 className="font-medium text-slate-800 dark:text-white mb-2">Próximas Entregas</h4>
-                        <div className="space-y-2">
-                          {userProjects.length > 0 ? (
-                            userProjects.slice(0, 2).map((project, index) => (
-                              <div key={project.id} className="flex items-center gap-2">
-                                <span className="text-slate-500">•</span>
-                                <span className="text-sm text-slate-700 dark:text-slate-300">
+              {/* INFORMACIÓN RELEVANTE */}
+              <motion.div 
+                initial={{ opacity: 0, x: 20 }}
+                animate={{ opacity: 1, x: 0 }}
+                transition={{ duration: 0.5, delay: 0.8 }}
+                className=""
+              >
+                <div className="bg-white dark:bg-slate-800 rounded-xl sm:rounded-2xl p-4 sm:p-6 shadow-sm border border-slate-200 dark:border-slate-700 flex flex-col">
+                  <div className="flex items-center gap-3 mb-4 sm:mb-6">
+                    <div className="w-8 h-8 sm:w-10 sm:h-10 bg-green-100 dark:bg-green-900/30 rounded-lg sm:rounded-xl flex items-center justify-center">
+                      <Calendar className="h-4 w-4 sm:h-5 sm:w-5 text-green-600 dark:text-green-400" />
+                    </div>
+                    <div>
+                      <h3 className="text-base sm:text-lg font-bold text-slate-900 dark:text-white">Información Relevante</h3>
+                      <p className="text-xs sm:text-sm text-slate-600 dark:text-slate-400">Estado de tus proyectos</p>
+                    </div>
+                  </div>
+                  <div className="space-y-4 flex-1">
+                    <div className="flex-1">
+                      <h4 className="font-semibold text-slate-900 dark:text-white mb-4 flex items-center gap-2">
+                        <Clock className="h-4 w-4 text-orange-600 dark:text-orange-400" />
+                        Próximas Entregas
+                      </h4>
+                      <div className="space-y-3">
+                        {userProjects.length > 0 ? (
+                          userProjects.slice(0, 2).map((project, index) => (
+                            <motion.div 
+                              key={project.id} 
+                              initial={{ opacity: 0, x: 20 }}
+                              animate={{ opacity: 1, x: 0 }}
+                              transition={{ duration: 0.3, delay: index * 0.1 }}
+                              className="flex items-center gap-3 p-3 bg-slate-50 dark:bg-slate-700/50 rounded-xl border border-slate-200 dark:border-slate-600"
+                            >
+                              <div className="w-2 h-2 bg-orange-500 rounded-full"></div>
+                              <div className="flex-1">
+                                <div className="font-medium text-slate-900 dark:text-white text-sm">
                                   {project.name}
-                                </span>
-                                <span className="text-xs text-slate-500 dark:text-slate-400">
-                                  ({getProjectStatus(project)})
-                                </span>
+                                </div>
+                                <div className="text-xs text-slate-600 dark:text-slate-400">
+                                  {getProjectStatus(project)} • {calculateProjectProgress(project)}%
+                                </div>
                               </div>
-                            ))
-                          ) : (
-                            <div className="flex items-center gap-2">
-                              <span className="text-slate-500">•</span>
-                              <span className="text-sm text-slate-700 dark:text-slate-300">
+                              <div className="text-xs text-slate-500 dark:text-slate-500">
+                                {formatDate(project.created_at || project.createdAt || '')}
+                              </div>
+                            </motion.div>
+                          ))
+                        ) : (
+                          <div className="flex items-center gap-3 p-3 bg-slate-50 dark:bg-slate-700/50 rounded-xl border border-slate-200 dark:border-slate-600">
+                            <div className="w-2 h-2 bg-slate-400 rounded-full"></div>
+                            <div className="flex-1">
+                              <div className="font-medium text-slate-900 dark:text-white text-sm">
                                 Landing Page
-                              </span>
-                              <span className="text-xs text-slate-500 dark:text-slate-400">
-                                (Sin iniciar)
-                              </span>
+                              </div>
+                              <div className="text-xs text-slate-600 dark:text-slate-400">
+                                Sin iniciar • 0%
+                              </div>
                             </div>
-                          )}
-                        </div>
+                          </div>
+                        )}
                       </div>
-                    </CardContent>
-                  </Card>
-                </motion.div>
+                    </div>
+                  </div>
+                </div>
+              </motion.div>
+            </div>
+          </div>
 
-                {/* Notificaciones */}
-                <motion.div 
-                  initial={{ opacity: 0, x: 20 }}
-                  animate={{ opacity: 1, x: 0 }}
-                  transition={{ duration: 0.5, delay: 0.2 }}
-                >
-                  <Card className="bg-white/80 dark:bg-slate-800/50 backdrop-blur-sm border-2 border-dashed border-slate-300 dark:border-slate-600 rounded-xl shadow-lg">
-                    <CardHeader className="pb-3">
-                      <CardTitle className="text-lg font-semibold text-slate-800 dark:text-white flex items-center gap-2">
-                        <Bell className="h-5 w-5 text-blue-500" />
-                        Notificaciones
-                      </CardTitle>
-                    </CardHeader>
-                    <CardContent className="space-y-3">
-                      <div className="space-y-2">
-                        <div className="flex items-center gap-2">
-                          <span className="text-slate-500">•</span>
-                          <span className="text-sm text-slate-700 dark:text-slate-300">
-                            Sin mensajes
-                          </span>
+          {/* ZONA 3B: ACTIVIDAD RECIENTE Y NOTIFICACIONES REDISEÑADAS */}
+          <div className="px-4 sm:px-0 lg:px-8 pb-12 sm:pb-8 lg:pb-10" style={{ 
+            paddingLeft: window.innerWidth < 1024 ? '1rem' : '2rem', 
+            paddingRight: window.innerWidth < 1024 ? '1rem' : '2rem' 
+          }}>
+            <div className="grid grid-cols-1 lg:grid-cols-2 gap-6 sm:gap-5 lg:gap-6">
+              {/* ACTIVIDAD RECIENTE */}
+              <motion.div 
+                initial={{ opacity: 0, x: -20 }}
+                animate={{ opacity: 1, x: 0 }}
+                transition={{ duration: 0.5, delay: 0.9 }}
+              >
+                <div className="bg-white dark:bg-slate-800 rounded-xl sm:rounded-2xl p-4 sm:p-6 shadow-sm border border-slate-200 dark:border-slate-700">
+                  <div className="flex items-center gap-3 mb-4 sm:mb-6">
+                    <div className="w-8 h-8 sm:w-10 sm:h-10 bg-orange-100 dark:bg-orange-900/30 rounded-lg sm:rounded-xl flex items-center justify-center">
+                      <Activity className="h-4 w-4 sm:h-5 sm:w-5 text-orange-600 dark:text-orange-400" />
+                    </div>
+                    <div>
+                      <h3 className="text-base sm:text-lg font-bold text-slate-900 dark:text-white">Actividad Reciente</h3>
+                      <p className="text-xs sm:text-sm text-slate-600 dark:text-slate-400">Últimas actualizaciones</p>
+                    </div>
+                  </div>
+                  <div className="space-y-4">
+                    {userProjects.length > 0 ? (
+                      <>
+                        <motion.div 
+                          initial={{ opacity: 0, y: 20 }}
+                          animate={{ opacity: 1, y: 0 }}
+                          transition={{ duration: 0.4, delay: 1.0 }}
+                          className="p-4 bg-orange-50 dark:bg-orange-900/20 rounded-xl border border-orange-200 dark:border-orange-700"
+                        >
+                          <div className="flex items-start gap-3">
+                            <div className="w-8 h-8 bg-orange-100 dark:bg-orange-900/30 rounded-lg flex items-center justify-center flex-shrink-0">
+                              <FileText className="h-4 w-4 text-orange-600 dark:text-orange-400" />
+                            </div>
+                            <div className="flex-1">
+                              <p className="font-semibold text-slate-900 dark:text-white text-sm">
+                                {userProjects[0]?.name || 'Landing Page'}
+                              </p>
+                              <p className="text-xs text-slate-600 dark:text-slate-400 mt-1">
+                                Última actualización: {formatDate(userProjects[0]?.updated_at || userProjects[0]?.created_at || '')}
+                              </p>
+                              <div className="flex items-center gap-2 mt-2">
+                                <div className="text-xs px-2 py-1 bg-orange-100 dark:bg-orange-500/20 text-orange-700 dark:text-orange-300 rounded-full">
+                                  {getProjectStatus(userProjects[0])}
+                                </div>
+                                <div className="text-xs px-2 py-1 bg-blue-100 dark:bg-blue-500/20 text-blue-700 dark:text-blue-300 rounded-full">
+                                  {calculateProjectProgress(userProjects[0])}%
+                                </div>
+                              </div>
+                            </div>
+                          </div>
+                        </motion.div>
+                        <button 
+                          onClick={() => navigateToProjects('filter', 'recent_activity')}
+                          className="w-full text-sm text-orange-600 dark:text-orange-400 hover:text-orange-700 dark:hover:text-orange-300 font-medium flex items-center justify-center gap-2 p-3 rounded-lg hover:bg-orange-50 dark:hover:bg-orange-900/20 transition-all duration-300 hover:scale-[1.02] active:scale-[0.98]"
+                        >
+                          <Eye className="h-4 w-4" />
+                          Ver detalles de actividad
+                        </button>
+                      </>
+                    ) : (
+                      <motion.div 
+                        initial={{ opacity: 0, y: 20 }}
+                        animate={{ opacity: 1, y: 0 }}
+                        transition={{ duration: 0.4, delay: 1.0 }}
+                        className="text-center py-8"
+                      >
+                        <div className="w-16 h-16 bg-slate-100 dark:bg-slate-700 rounded-2xl flex items-center justify-center mx-auto mb-4">
+                          <Activity className="h-8 w-8 text-slate-400" />
                         </div>
-                        <div className="flex items-center gap-2">
-                          <span className="text-slate-500">•</span>
-                          <span className="text-sm text-slate-700 dark:text-slate-300">
-                            {dashboardStats.totalComments} alertas
+                        <p className="text-sm text-slate-600 dark:text-slate-400">No hay actividad reciente</p>
+                        <p className="text-xs text-slate-500 dark:text-slate-500 mt-1">Crea tu primer proyecto para ver actividad</p>
+                      </motion.div>
+                    )}
+                  </div>
+                </div>
+              </motion.div>
+
+              {/* Notificaciones */}
+              <motion.div 
+                initial={{ opacity: 0, x: 20 }}
+                animate={{ opacity: 1, x: 0 }}
+                transition={{ duration: 0.5, delay: 1.0 }}
+                className="-mt-1"
+              >
+                <div className="bg-white dark:bg-slate-800 rounded-xl sm:rounded-2xl p-4 sm:p-6 shadow-sm border border-slate-200 dark:border-slate-700 flex flex-col">
+                  <div className="flex items-center gap-3 mb-4 sm:mb-6">
+                    <div className="w-8 h-8 sm:w-10 sm:h-10 bg-blue-100 dark:bg-blue-900/30 rounded-lg sm:rounded-xl flex items-center justify-center">
+                      <Bell className="h-4 w-4 sm:h-5 sm:w-5 text-blue-600 dark:text-blue-400" />
+                    </div>
+                    <div>
+                      <h3 className="text-base sm:text-lg font-bold text-slate-900 dark:text-white">Notificaciones</h3>
+                      <p className="text-xs sm:text-sm text-slate-600 dark:text-slate-400">Alertas y mensajes</p>
+                    </div>
+                  </div>
+                  <div className="space-y-3 sm:space-y-4 flex-1">
+                    <motion.div 
+                      initial={{ opacity: 0, y: 20 }}
+                      animate={{ opacity: 1, y: 0 }}
+                      transition={{ duration: 0.4, delay: 1.1 }}
+                      className="space-y-2 sm:space-y-3 flex-1"
+                    >
+                      <div className="flex items-center gap-2 sm:gap-3 p-2 sm:p-3 bg-slate-50 dark:bg-slate-700/50 rounded-lg sm:rounded-xl border border-slate-200 dark:border-slate-600">
+                        <div className="w-2 h-2 bg-green-500 rounded-full"></div>
+                        <div className="flex-1">
+                          <span className="text-xs sm:text-sm font-medium text-slate-900 dark:text-white">
+                            Sistema operativo
                           </span>
+                          <p className="text-xs text-slate-600 dark:text-slate-400">
+                            Todos los servicios funcionando correctamente
+                          </p>
+                        </div>
+                        <div className="text-xs text-slate-500 dark:text-slate-500">
+                          Ahora
                         </div>
                       </div>
-                    </CardContent>
-                  </Card>
-                </motion.div>
-              </div>
+                      
+                      <div className="flex items-center gap-2 sm:gap-3 p-2 sm:p-3 bg-slate-50 dark:bg-slate-700/50 rounded-lg sm:rounded-xl border border-slate-200 dark:border-slate-600">
+                        <div className="w-2 h-2 bg-blue-500 rounded-full"></div>
+                        <div className="flex-1">
+                          <span className="text-xs sm:text-sm font-medium text-slate-900 dark:text-white">
+                            {dashboardStats.totalComments} comentarios
+                          </span>
+                          <p className="text-xs text-slate-600 dark:text-slate-400">
+                            Nuevos mensajes en tus proyectos
+                          </p>
+                        </div>
+                        <div className="text-xs text-slate-500 dark:text-slate-500">
+                          Reciente
+                        </div>
+                      </div>
+                      
+                      <div className="flex items-center gap-2 sm:gap-3 p-2 sm:p-3 bg-slate-50 dark:bg-slate-700/50 rounded-lg sm:rounded-xl border border-slate-200 dark:border-slate-600">
+                        <div className="w-2 h-2 bg-orange-500 rounded-full"></div>
+                        <div className="flex-1">
+                          <span className="text-xs sm:text-sm font-medium text-slate-900 dark:text-white">
+                            {dashboardStats.pendingProjects} proyectos pendientes
+                          </span>
+                          <p className="text-xs text-slate-600 dark:text-slate-400">
+                            Requieren tu atención
+                          </p>
+                        </div>
+                        <div className="text-xs text-slate-500 dark:text-slate-500">
+                          Pendiente
+                        </div>
+                      </div>
+                    </motion.div>
+                  </div>
+                </div>
+              </motion.div>
             </div>
           </div>
 
