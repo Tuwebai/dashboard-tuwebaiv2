@@ -600,389 +600,237 @@ const Dashboard = React.memo(() => {
         <div className="flex-1 overflow-hidden w-full">
           <div className="h-full overflow-y-auto w-full">
           
-          {/* Botón Crear Proyecto */}
+
+
+          {/* ZONA 2: MÉTRICAS CLAVE (1 fila horizontal) */}
           <div className="px-3 sm:px-4 lg:px-8 py-3 sm:py-4">
-            <div className="flex justify-start">
-              <Button
-                onClick={() => navigate('/proyectos/nuevo')}
-                className="bg-gradient-to-r from-blue-500 via-purple-600 to-indigo-600 hover:from-blue-600 hover:to-indigo-700 text-white font-semibold px-4 sm:px-6 lg:px-8 py-3 sm:py-4 shadow-lg hover:shadow-xl transition-all duration-300 text-sm sm:text-base lg:text-lg"
-              >
-                <Plus className="h-4 w-4 sm:h-5 sm:w-5 lg:h-6 lg:w-6 mr-2 sm:mr-3" />
-                <span className="hidden sm:inline">Crear Proyecto</span>
-                <span className="sm:hidden">Crear</span>
-              </Button>
-            </div>
+            <motion.div 
+              initial={{ opacity: 0, y: 20 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ duration: 0.5, delay: 0.1 }}
+              className="bg-white/80 dark:bg-slate-800/50 backdrop-blur-sm border-2 border-dashed border-slate-300 dark:border-slate-600 rounded-xl p-4 sm:p-6 shadow-lg"
+            >
+              <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
+                {/* Proyectos */}
+                <div className="flex flex-col items-center p-4 border-r border-slate-200 dark:border-slate-600 last:border-r-0">
+                  <div className="w-10 h-10 bg-blue-500 rounded-lg flex items-center justify-center mb-3">
+                    <FileText className="h-5 w-5 text-white" />
+                  </div>
+                  <h3 className="text-sm font-semibold text-slate-800 dark:text-white mb-1">Proyectos</h3>
+                  <p className="text-lg font-bold text-blue-600 dark:text-blue-400 mb-2">
+                    Activos: {dashboardStats.totalProjects}
+                  </p>
+                  <button 
+                    onClick={() => navigate('/proyectos')}
+                    className="text-xs text-blue-600 dark:text-blue-400 hover:underline"
+                  >
+                    [Ver todos]
+                  </button>
+                </div>
+
+                {/* Progreso */}
+                <div className="flex flex-col items-center p-4 border-r border-slate-200 dark:border-slate-600 last:border-r-0">
+                  <div className="w-10 h-10 bg-green-500 rounded-lg flex items-center justify-center mb-3">
+                    <BarChart3 className="h-5 w-5 text-white" />
+                  </div>
+                  <h3 className="text-sm font-semibold text-slate-800 dark:text-white mb-1">Progreso</h3>
+                  <p className="text-lg font-bold text-green-600 dark:text-green-400 mb-2">
+                    General: {dashboardStats.averageProgress}%
+                  </p>
+                  <button 
+                    onClick={() => navigateToProjects('view', 'progress')}
+                    className="text-xs text-green-600 dark:text-green-400 hover:underline"
+                  >
+                    [Ver detalle]
+                  </button>
+                </div>
+
+                {/* Tareas */}
+                <div className="flex flex-col items-center p-4 border-r border-slate-200 dark:border-slate-600 last:border-r-0">
+                  <div className="w-10 h-10 bg-orange-500 rounded-lg flex items-center justify-center mb-3">
+                    <CheckCircle className="h-5 w-5 text-white" />
+                  </div>
+                  <h3 className="text-sm font-semibold text-slate-800 dark:text-white mb-1">Tareas</h3>
+                  <p className="text-lg font-bold text-orange-600 dark:text-orange-400 mb-2">
+                    Pendientes: {userProjects.reduce((acc, p) => acc + (p.fases?.filter(f => f.estado === 'Pendiente' || f.estado === 'En Progreso').length || 0), 0)}
+                  </p>
+                  <button 
+                    onClick={() => navigate('/fases-tareas')}
+                    className="text-xs text-orange-600 dark:text-orange-400 hover:underline"
+                  >
+                    [Crear]
+                  </button>
+                </div>
+
+                {/* Equipo */}
+                <div className="flex flex-col items-center p-4">
+                  <div className="w-10 h-10 bg-purple-500 rounded-lg flex items-center justify-center mb-3">
+                    <Users className="h-5 w-5 text-white" />
+                  </div>
+                  <h3 className="text-sm font-semibold text-slate-800 dark:text-white mb-1">Equipo</h3>
+                  <p className="text-lg font-bold text-purple-600 dark:text-purple-400 mb-2 flex items-center gap-1">
+                    Activo: <CheckCircle className="h-4 w-4 text-green-500" />
+                  </p>
+                  <button 
+                    onClick={() => setShowCollaborationModal(true)}
+                    className="text-xs text-purple-600 dark:text-purple-400 hover:underline"
+                  >
+                    [Chat]
+                  </button>
+                </div>
+              </div>
+            </motion.div>
           </div>
 
-
-          {/* Layout en 3 Columnas - Nuevo Dashboard del Cliente */}
+          {/* ZONA 3: ACCIONES Y CONTENIDO (2 columnas) */}
           <div className="px-3 sm:px-4 lg:px-8 pb-4 sm:pb-6">
-            <div className="grid grid-cols-1 lg:grid-cols-12 gap-4 sm:gap-6">
-              
-              {/* Columna Izquierda - Acciones Rápidas (30%) */}
-              <div className="lg:col-span-3 space-y-4 sm:space-y-6">
-                {/* Acciones Rápidas */}
-            <motion.div 
+            <div className="grid grid-cols-1 lg:grid-cols-2 gap-4 sm:gap-6">
+              {/* Columna Izquierda */}
+              <div className="space-y-4 sm:space-y-6">
+                {/* ACCIONES PRINCIPALES */}
+                <motion.div 
                   initial={{ opacity: 0, x: -20 }}
                   animate={{ opacity: 1, x: 0 }}
                   transition={{ duration: 0.5, delay: 0.1 }}
                 >
-                  <Card className="bg-white/80 dark:bg-slate-800/50 backdrop-blur-sm border border-slate-200/50 dark:border-slate-700/50 shadow-lg">
-                    <CardHeader className="pb-2 sm:pb-3">
-                      <CardTitle className="text-base sm:text-lg font-semibold text-slate-800 dark:text-white flex items-center gap-2">
-                        <Zap className="h-4 w-4 sm:h-5 sm:w-5 text-blue-500" />
-                        <span className="hidden sm:inline">Acciones Rápidas</span>
-                        <span className="sm:hidden">Acciones</span>
+                  <Card className="bg-white/80 dark:bg-slate-800/50 backdrop-blur-sm border-2 border-dashed border-slate-300 dark:border-slate-600 rounded-xl shadow-lg">
+                    <CardHeader className="pb-3">
+                      <CardTitle className="text-lg font-semibold text-slate-800 dark:text-white flex items-center gap-2">
+                        <Zap className="h-5 w-5 text-blue-500" />
+                        ACCIONES PRINCIPALES
                       </CardTitle>
                     </CardHeader>
-                    <CardContent className="space-y-2 sm:space-y-3">
+                    <CardContent className="space-y-3">
                       <Button
                         variant="ghost"
-                        className="w-full justify-start text-left h-auto p-3 sm:p-4 hover:bg-blue-50 dark:hover:bg-blue-500/10"
+                        className="w-full justify-start text-left h-auto p-4 hover:bg-blue-50 dark:hover:bg-blue-500/10"
                         onClick={() => navigate('/proyectos/nuevo')}
                       >
-                        <div className="flex items-center gap-2 sm:gap-3">
-                          <div className="w-8 h-8 sm:w-10 sm:h-10 bg-blue-100 dark:bg-blue-500/20 rounded-lg flex items-center justify-center flex-shrink-0">
-                            <Plus className="h-4 w-4 sm:h-5 sm:w-5 text-blue-600 dark:text-blue-400" />
-                          </div>
-                          <div className="min-w-0">
-                            <p className="text-sm sm:text-base font-medium text-slate-800 dark:text-white">Nuevo Proyecto</p>
-                            <p className="text-xs sm:text-sm text-slate-500 dark:text-slate-400">Crear un proyecto web</p>
-                          </div>
+                        <div className="flex items-center gap-3">
+                          <Plus className="h-5 w-5 text-blue-600 dark:text-blue-400" />
+                          <span className="font-medium">[+ Crear Proyecto]</span>
                         </div>
                       </Button>
                       <Button
                         variant="ghost"
-                        className="w-full justify-start text-left h-auto p-3 sm:p-4 hover:bg-green-50 dark:hover:bg-green-500/10"
+                        className="w-full justify-start text-left h-auto p-4 hover:bg-green-50 dark:hover:bg-green-500/10"
                         onClick={() => navigate('/proyectos')}
                       >
-                        <div className="flex items-center gap-2 sm:gap-3">
-                          <div className="w-8 h-8 sm:w-10 sm:h-10 bg-green-100 dark:bg-green-500/20 rounded-lg flex items-center justify-center flex-shrink-0">
-                            <FileText className="h-4 w-4 sm:h-5 sm:w-5 text-green-600 dark:text-green-400" />
-                          </div>
-                          <div className="min-w-0">
-                            <p className="text-sm sm:text-base font-medium text-slate-800 dark:text-white">Ver Proyectos</p>
-                            <p className="text-xs sm:text-sm text-slate-500 dark:text-slate-400">Gestionar existentes</p>
-                          </div>
+                        <div className="flex items-center gap-3">
+                          <FileText className="h-5 w-5 text-green-600 dark:text-green-400" />
+                          <span className="font-medium">[ Ver Proyectos]</span>
                         </div>
                       </Button>
                       <Button
                         variant="ghost"
-                        className="w-full justify-start text-left h-auto p-3 sm:p-4 hover:bg-purple-50 dark:hover:bg-purple-500/10"
+                        className="w-full justify-start text-left h-auto p-4 hover:bg-purple-50 dark:hover:bg-purple-500/10"
                         onClick={() => navigate('/perfil')}
                       >
-                        <div className="flex items-center gap-2 sm:gap-3">
-                          <div className="w-8 h-8 sm:w-10 sm:h-10 bg-purple-100 dark:bg-purple-500/20 rounded-lg flex items-center justify-center flex-shrink-0">
-                            <User className="h-4 w-4 sm:h-5 sm:w-5 text-purple-600 dark:text-purple-400" />
-                          </div>
-                          <div className="min-w-0">
-                            <p className="text-sm sm:text-base font-medium text-slate-800 dark:text-white">Mi Perfil</p>
-                            <p className="text-xs sm:text-sm text-slate-500 dark:text-slate-400">Configurar cuenta</p>
-                          </div>
+                        <div className="flex items-center gap-3">
+                          <User className="h-5 w-5 text-purple-600 dark:text-purple-400" />
+                          <span className="font-medium">[ Mi Perfil]</span>
                         </div>
                       </Button>
                     </CardContent>
                   </Card>
-            </motion.div>
+                </motion.div>
 
-                {/* Estado del Equipo */}
-            <motion.div 
+                {/* ACTIVIDAD RECIENTE */}
+                <motion.div 
                   initial={{ opacity: 0, x: -20 }}
                   animate={{ opacity: 1, x: 0 }}
                   transition={{ duration: 0.5, delay: 0.2 }}
                 >
-                  <Card className="bg-white/80 dark:bg-slate-800/50 backdrop-blur-sm border border-slate-200/50 dark:border-slate-700/50 shadow-lg">
-                    <CardHeader className="pb-2 sm:pb-3">
-                      <CardTitle className="text-base sm:text-lg font-semibold text-slate-800 dark:text-white flex items-center gap-2">
-                        <Users className="h-4 w-4 sm:h-5 sm:w-5 text-green-500" />
-                        <span className="hidden sm:inline">Estado del Equipo</span>
-                        <span className="sm:hidden">Equipo</span>
-                      </CardTitle>
-                    </CardHeader>
-                    <CardContent className="space-y-2 sm:space-y-3">
-                      <div className="flex items-center gap-2 sm:gap-3">
-                        <div className="w-6 h-6 sm:w-8 sm:h-8 bg-green-100 dark:bg-green-500/20 rounded-full flex items-center justify-center flex-shrink-0">
-                          <div className="w-2 h-2 sm:w-3 sm:h-3 bg-green-500 rounded-full"></div>
-                        </div>
-                        <div className="min-w-0">
-                          <p className="text-sm sm:text-base font-medium text-slate-800 dark:text-white">
-                            {userProjects.length > 0 ? 'Equipo Activo' : 'Sin Proyectos'}
-                          </p>
-                          <p className="text-xs sm:text-sm text-slate-500 dark:text-slate-400">
-                            {userProjects.length > 0 ? 'Trabajando en tus proyectos' : 'Crea tu primer proyecto'}
-                          </p>
-                        </div>
-                      </div>
-                      <div className="flex items-center gap-2 sm:gap-3">
-                        <div className="w-6 h-6 sm:w-8 sm:h-8 bg-blue-100 dark:bg-blue-500/20 rounded-full flex items-center justify-center flex-shrink-0">
-                          <MessageSquare className="h-3 w-3 sm:h-4 sm:w-4 text-blue-600 dark:text-blue-400" />
-                        </div>
-                        <div className="min-w-0">
-                          <p className="text-sm sm:text-base font-medium text-slate-800 dark:text-white">Comunicación</p>
-                          <p className="text-xs sm:text-sm text-slate-500 dark:text-slate-400">
-                            {dashboardStats.totalComments > 0 ? `${dashboardStats.totalComments} mensajes` : 'Sin mensajes recientes'}
-                          </p>
-                        </div>
-                      </div>
-                    </CardContent>
-                  </Card>
-            </motion.div>
-              </div>
-
-              {/* Columna Central - Contenido Principal (50%) */}
-              <div className="lg:col-span-6 space-y-4 sm:space-y-6">
-                {/* Métricas Mejoradas para el Cliente */}
-            <motion.div 
-                  initial={{ opacity: 0, y: 20 }}
-                  animate={{ opacity: 1, y: 0 }}
-                  transition={{ duration: 0.6, delay: 0.1 }}
-                  className="grid grid-cols-1 sm:grid-cols-2 gap-3 sm:gap-4"
-                >
-                  {/* Progreso de Mis Proyectos */}
-                  <Card 
-                    className="bg-gradient-to-br from-blue-500/10 via-blue-600/15 to-indigo-500/20 dark:from-blue-500/20 dark:via-blue-600/25 dark:to-indigo-500/30 border border-blue-200/50 dark:border-blue-500/30 shadow-lg hover:shadow-xl transition-all duration-300 cursor-pointer group"
-                    onClick={() => navigateToProjects('view', 'progress')}
-                  >
-                    <CardContent className="p-4 sm:p-6">
-                      <div className="flex items-center justify-between mb-3 sm:mb-4">
-                        <div className="w-10 h-10 sm:w-12 sm:h-12 bg-blue-500 rounded-lg sm:rounded-xl flex items-center justify-center shadow-lg group-hover:scale-110 transition-transform duration-300">
-                          <BarChart3 className="h-5 w-5 sm:h-6 sm:w-6 text-white" />
-                        </div>
-                        <Badge className="bg-blue-100 text-blue-700 dark:bg-blue-500/20 dark:text-blue-300 text-xs sm:text-sm">
-                          <span className="hidden sm:inline">{dashboardStats.averageProgress}% Promedio</span>
-                          <span className="sm:hidden">{dashboardStats.averageProgress}%</span>
-                        </Badge>
-                      </div>
-                      <h3 className="text-base sm:text-lg font-semibold text-slate-800 dark:text-white mb-2">
-                        <span className="hidden sm:inline">Progreso de Mis Proyectos</span>
-                        <span className="sm:hidden">Progreso</span>
-                      </h3>
-                      <div className="space-y-2">
-                        <div className="flex justify-between text-xs sm:text-sm text-slate-600 dark:text-slate-300">
-                          <span>Progreso General</span>
-                          <span>{dashboardStats.averageProgress}%</span>
-                        </div>
-                        <Progress value={dashboardStats.averageProgress} className="h-1.5 sm:h-2" />
-                      </div>
-                    </CardContent>
-                  </Card>
-
-                  {/* Próximas Entregas */}
-                  <Card 
-                    className="bg-gradient-to-br from-orange-500/10 via-orange-600/15 to-red-500/20 dark:from-orange-500/20 dark:via-orange-600/25 dark:to-red-500/30 border border-orange-200/50 dark:border-orange-500/30 shadow-lg hover:shadow-xl transition-all duration-300 cursor-pointer group"
-                    onClick={() => navigateToProjects('status', 'in_progress')}
-                  >
-                    <CardContent className="p-4 sm:p-6">
-                      <div className="flex items-center justify-between mb-3 sm:mb-4">
-                        <div className="w-10 h-10 sm:w-12 sm:h-12 bg-orange-500 rounded-lg sm:rounded-xl flex items-center justify-center shadow-lg group-hover:scale-110 transition-transform duration-300">
-                          <Calendar className="h-5 w-5 sm:h-6 sm:w-6 text-white" />
-                        </div>
-                        <Badge className="bg-orange-100 text-orange-700 dark:bg-orange-500/20 dark:text-orange-300 text-xs sm:text-sm">
-                          Próximas
-                        </Badge>
-                      </div>
-                      <h3 className="text-base sm:text-lg font-semibold text-slate-800 dark:text-white mb-2">
-                        <span className="hidden sm:inline">Próximas Entregas</span>
-                        <span className="sm:hidden">Entregas</span>
-                      </h3>
-                      <div className="space-y-2">
-                        <div className="flex justify-between text-xs sm:text-sm text-slate-600 dark:text-slate-300">
-                          <span>En Progreso</span>
-                          <span>{dashboardStats.inProgressProjects} proyectos</span>
-                        </div>
-                        <div className="text-xs text-slate-500 dark:text-slate-400">
-                          Revisa el timeline de cada proyecto
-                        </div>
-                      </div>
-                    </CardContent>
-                  </Card>
-
-                  {/* Comunicación Activa */}
-                  <Card 
-                    className="bg-gradient-to-br from-green-500/10 via-green-600/15 to-emerald-500/20 dark:from-green-500/20 dark:via-green-600/25 dark:to-emerald-500/30 border border-green-200/50 dark:border-green-500/30 shadow-lg hover:shadow-xl transition-all duration-300 cursor-pointer group"
-                    onClick={() => setShowCollaborationModal(true)}
-                  >
-                    <CardContent className="p-4 sm:p-6">
-                      <div className="flex items-center justify-between mb-3 sm:mb-4">
-                        <div className="w-10 h-10 sm:w-12 sm:h-12 bg-green-500 rounded-lg sm:rounded-xl flex items-center justify-center shadow-lg group-hover:scale-110 transition-transform duration-300">
-                          <MessageSquare className="h-5 w-5 sm:h-6 sm:w-6 text-white" />
-                        </div>
-                        <Badge className="bg-green-100 text-green-700 dark:bg-green-500/20 dark:text-green-300 text-xs sm:text-sm">
-                          <span className="hidden sm:inline">{dashboardStats.totalComments} Mensajes</span>
-                          <span className="sm:hidden">{dashboardStats.totalComments}</span>
-                        </Badge>
-                      </div>
-                      <h3 className="text-base sm:text-lg font-semibold text-slate-800 dark:text-white mb-2">
-                        <span className="hidden sm:inline">Comunicación Activa</span>
-                        <span className="sm:hidden">Comunicación</span>
-                      </h3>
-                      <div className="space-y-2">
-                        <div className="flex justify-between text-xs sm:text-sm text-slate-600 dark:text-slate-300">
-                          <span>Comentarios Totales</span>
-                          <span>{dashboardStats.totalComments}</span>
-                        </div>
-                        <div className="text-xs text-slate-500 dark:text-slate-400">
-                          Mantente al día con el equipo
-                        </div>
-                      </div>
-                    </CardContent>
-                  </Card>
-
-                  {/* Estado de Colaboración */}
-                  <Card 
-                    className="bg-gradient-to-br from-purple-500/10 via-purple-600/15 to-violet-500/20 dark:from-purple-500/20 dark:via-purple-600/25 dark:to-violet-500/30 border border-purple-200/50 dark:border-purple-500/30 shadow-lg hover:shadow-xl transition-all duration-300 cursor-pointer group"
-                    onClick={() => navigateToProjects('type', 'collaborative')}
-                  >
-                    <CardContent className="p-4 sm:p-6">
-                      <div className="flex items-center justify-between mb-3 sm:mb-4">
-                        <div className="w-10 h-10 sm:w-12 sm:h-12 bg-purple-500 rounded-lg sm:rounded-xl flex items-center justify-center shadow-lg group-hover:scale-110 transition-transform duration-300">
-                          <Users className="h-5 w-5 sm:h-6 sm:w-6 text-white" />
-                        </div>
-                        <Badge className="bg-purple-100 text-purple-700 dark:bg-purple-500/20 dark:text-purple-300 text-xs sm:text-sm">
-                          Activo
-                        </Badge>
-                      </div>
-                      <h3 className="text-base sm:text-lg font-semibold text-slate-800 dark:text-white mb-2">
-                        <span className="hidden sm:inline">Estado de Colaboración</span>
-                        <span className="sm:hidden">Colaboración</span>
-                      </h3>
-                      <div className="space-y-2">
-                        <div className="flex justify-between text-xs sm:text-sm text-slate-600 dark:text-slate-300">
-                          <span>Proyectos Colaborativos</span>
-                          <span>{dashboardStats.totalProjects}</span>
-                        </div>
-                        <div className="text-xs text-slate-500 dark:text-slate-400">
-                          Trabajo en equipo activo
-                        </div>
-                      </div>
-                    </CardContent>
-                  </Card>
-                </motion.div>
-
-                {/* Timeline de Actividad Reciente */}
-            <motion.div 
-              initial={{ opacity: 0, y: 20 }}
-              animate={{ opacity: 1, y: 0 }}
-                  transition={{ duration: 0.6, delay: 0.3 }}
-                >
-                  <Card 
-                    className="bg-white/80 dark:bg-slate-800/50 backdrop-blur-sm border border-slate-200/50 dark:border-slate-700/50 shadow-lg cursor-pointer hover:shadow-xl transition-all duration-300"
-                    onClick={() => navigateToProjects('filter', 'recent_activity')}
-                  >
-                    <CardHeader>
-                      <CardTitle className="text-lg font-semibold text-slate-800 dark:text-white flex items-center gap-2">
-                        <Activity className="h-5 w-5 text-blue-500" />
-                        Actividad Reciente
-                      </CardTitle>
-                    </CardHeader>
-                    <CardContent>
-                      <div className="space-y-4">
-                        {userProjects.slice(0, 3).map((project, index) => (
-                          <div key={project.id} className="flex items-center gap-4 p-3 rounded-lg hover:bg-slate-50 dark:hover:bg-slate-700/50 transition-colors duration-200">
-                            <div className="w-10 h-10 bg-gradient-to-br from-blue-500 to-indigo-600 rounded-lg flex items-center justify-center shadow-md">
-                              <span className="text-white font-bold text-sm">
-                                {project.name?.charAt(0) || 'P'}
-                              </span>
-                    </div>
-                            <div className="flex-1">
-                              <p className="font-medium text-slate-800 dark:text-white">
-                                {project.name}
-                              </p>
-                              <p className="text-sm text-slate-500 dark:text-slate-400">
-                                Última actualización: {formatDate(project.updated_at)}
-                              </p>
-                  </div>
-                            <Badge variant="outline" className="text-xs">
-                              {getProjectStatus(project)}
-                            </Badge>
-                </div>
-                        ))}
-                  </div>
-                    </CardContent>
-                  </Card>
-                </motion.div>
-                </div>
-                
-              {/* Columna Derecha - Tareas y Notificaciones (20%) */}
-              <div className="lg:col-span-3 space-y-6">
-                {/* Tareas Personales */}
-                <motion.div
-                  initial={{ opacity: 0, x: 20 }}
-                  animate={{ opacity: 1, x: 0 }}
-                  transition={{ duration: 0.5, delay: 0.2 }}
-                >
-                  <Card 
-                    className="bg-white/80 dark:bg-slate-800/50 backdrop-blur-sm border border-slate-200/50 dark:border-slate-700/50 shadow-lg cursor-pointer hover:shadow-xl transition-all duration-300"
-                    onClick={() => navigate('/fases-tareas')}
-                  >
+                  <Card className="bg-white/80 dark:bg-slate-800/50 backdrop-blur-sm border-2 border-dashed border-slate-300 dark:border-slate-600 rounded-xl shadow-lg">
                     <CardHeader className="pb-3">
                       <CardTitle className="text-lg font-semibold text-slate-800 dark:text-white flex items-center gap-2">
-                        <CheckCircle className="h-5 w-5 text-green-500" />
-                        Mis Tareas
+                        <Activity className="h-5 w-5 text-orange-500" />
+                        ACTIVIDAD RECIENTE
                       </CardTitle>
                     </CardHeader>
                     <CardContent className="space-y-3">
                       {userProjects.length > 0 ? (
-                        <div className="space-y-2">
-                          {(() => {
-                            const allPendingPhases = userProjects.flatMap(project => 
-                              (project.fases?.filter(f => f.estado === 'Pendiente' || f.estado === 'En Progreso') || [])
-                                .map(phase => ({ ...phase, projectName: project.name }))
-                            );
-                            
-                            if (allPendingPhases.length === 0) {
-                              return (
-                                <div className="text-center py-6">
-                                  <div className="w-12 h-12 bg-green-100 dark:bg-green-500/20 rounded-full flex items-center justify-center mx-auto mb-3">
-                                    <CheckCircle className="h-6 w-6 text-green-500" />
-                                  </div>
-                                  <p className="text-sm text-slate-500 dark:text-slate-400 font-medium">
-                                    ¡Excelente! No tienes tareas pendientes
-                                  </p>
-                                  <p className="text-xs text-slate-400 dark:text-slate-500 mt-1">
-                                    Todas tus tareas están completadas
-                                  </p>
-                                </div>
-                              );
-                            }
-                            
-                            return allPendingPhases.slice(0, 3).map((phase, phaseIndex) => (
-                              <div key={`${phase.projectName}-${phaseIndex}`} className="flex items-center gap-3 p-2 rounded-lg hover:bg-slate-50 dark:hover:bg-slate-700/50 transition-colors duration-200">
-                                <Clock className="h-4 w-4 text-orange-500" />
-                                <span className="text-sm text-slate-700 dark:text-slate-300">
-                                  {phase.key.charAt(0).toUpperCase() + phase.key.slice(1).replace(/([A-Z])/g, ' $1')} - {phase.projectName}
-                                </span>
-                              </div>
-                            ));
-                          })()}
-                        </div>
-                      ) : (
-                        <div className="text-center py-6">
-                          <div className="w-12 h-12 bg-blue-100 dark:bg-blue-500/20 rounded-full flex items-center justify-center mx-auto mb-3">
-                            <Plus className="h-6 w-6 text-blue-500" />
+                        <>
+                          <div className="p-3 bg-slate-50 dark:bg-slate-700/50 rounded-lg">
+                            <p className="font-medium text-slate-800 dark:text-white">
+                              {userProjects[0]?.name || 'Landing Page'}
+                            </p>
+                            <p className="text-sm text-slate-500 dark:text-slate-400">
+                              Última: {formatDate(userProjects[0]?.updated_at || userProjects[0]?.created_at || '')}
+                            </p>
                           </div>
-                          <p className="text-sm text-slate-500 dark:text-slate-400 font-medium">
-                            Crea tu primer proyecto
-                          </p>
-                          <p className="text-xs text-slate-400 dark:text-slate-500 mt-1">
-                            Para ver tus tareas aquí
-                          </p>
+                          <button 
+                            onClick={() => navigateToProjects('filter', 'recent_activity')}
+                            className="text-sm text-blue-600 dark:text-blue-400 hover:underline"
+                          >
+                            [Ver detalles]
+                          </button>
+                        </>
+                      ) : (
+                        <div className="text-center py-4">
+                          <p className="text-sm text-slate-500 dark:text-slate-400">No hay actividad reciente</p>
                         </div>
                       )}
                     </CardContent>
                   </Card>
                 </motion.div>
+              </div>
 
-                {/* Notificaciones Importantes */}
-                <motion.div
+              {/* Columna Derecha */}
+              <div className="space-y-4 sm:space-y-6">
+                {/* INFORMACIÓN RELEVANTE */}
+                <motion.div 
                   initial={{ opacity: 0, x: 20 }}
                   animate={{ opacity: 1, x: 0 }}
-                  transition={{ duration: 0.5, delay: 0.3 }}
+                  transition={{ duration: 0.5, delay: 0.1 }}
                 >
-                  <Card 
-                    className="bg-white/80 dark:bg-slate-800/50 backdrop-blur-sm border border-slate-200/50 dark:border-slate-700/50 shadow-lg cursor-pointer hover:shadow-xl transition-all duration-300"
-                    onClick={() => navigateToProjects('filter', 'notifications')}
-                  >
+                  <Card className="bg-white/80 dark:bg-slate-800/50 backdrop-blur-sm border-2 border-dashed border-slate-300 dark:border-slate-600 rounded-xl shadow-lg">
+                    <CardHeader className="pb-3">
+                      <CardTitle className="text-lg font-semibold text-slate-800 dark:text-white flex items-center gap-2">
+                        <Calendar className="h-5 w-5 text-green-500" />
+                        INFORMACIÓN RELEVANTE
+                      </CardTitle>
+                    </CardHeader>
+                    <CardContent className="space-y-3">
+                      <div>
+                        <h4 className="font-medium text-slate-800 dark:text-white mb-2">Próximas Entregas</h4>
+                        <div className="space-y-2">
+                          {userProjects.length > 0 ? (
+                            userProjects.slice(0, 2).map((project, index) => (
+                              <div key={project.id} className="flex items-center gap-2">
+                                <span className="text-slate-500">•</span>
+                                <span className="text-sm text-slate-700 dark:text-slate-300">
+                                  {project.name}
+                                </span>
+                                <span className="text-xs text-slate-500 dark:text-slate-400">
+                                  ({getProjectStatus(project)})
+                                </span>
+                              </div>
+                            ))
+                          ) : (
+                            <div className="flex items-center gap-2">
+                              <span className="text-slate-500">•</span>
+                              <span className="text-sm text-slate-700 dark:text-slate-300">
+                                Landing Page
+                              </span>
+                              <span className="text-xs text-slate-500 dark:text-slate-400">
+                                (Sin iniciar)
+                              </span>
+                            </div>
+                          )}
+                        </div>
+                      </div>
+                    </CardContent>
+                  </Card>
+                </motion.div>
+
+                {/* Notificaciones */}
+                <motion.div 
+                  initial={{ opacity: 0, x: 20 }}
+                  animate={{ opacity: 1, x: 0 }}
+                  transition={{ duration: 0.5, delay: 0.2 }}
+                >
+                  <Card className="bg-white/80 dark:bg-slate-800/50 backdrop-blur-sm border-2 border-dashed border-slate-300 dark:border-slate-600 rounded-xl shadow-lg">
                     <CardHeader className="pb-3">
                       <CardTitle className="text-lg font-semibold text-slate-800 dark:text-white flex items-center gap-2">
                         <Bell className="h-5 w-5 text-blue-500" />
@@ -990,93 +838,30 @@ const Dashboard = React.memo(() => {
                       </CardTitle>
                     </CardHeader>
                     <CardContent className="space-y-3">
-                      {userProjects.length > 0 ? (
-                        <div className="space-y-2">
-                          {userProjects.slice(0, 2).map((project, index) => {
-                            const recentComments = project.fases
-                              ?.flatMap(f => f.comentarios || [])
-                              .sort((a, b) => new Date(b.fecha).getTime() - new Date(a.fecha).getTime())
-                              .slice(0, 1) || [];
-                            
-                            return recentComments.map((comment, commentIndex) => (
-                              <div key={`${project.id}-${commentIndex}`} className="p-3 bg-blue-50 dark:bg-blue-500/10 rounded-lg border border-blue-200 dark:border-blue-500/20">
-                                <p className="text-sm font-medium text-blue-800 dark:text-blue-300">
-                                  {comment.autor} en {project.name}
-                                </p>
-                                <p className="text-xs text-blue-600 dark:text-blue-400 mt-1">
-                                  {formatDateSafe(comment.fecha)}
-                                </p>
-                              </div>
-                            ));
-                          })}
-                          {userProjects.every(p => !p.fases?.some(f => f.comentarios?.length > 0)) && (
-                            <div className="text-center py-4">
-                              <p className="text-sm text-slate-500 dark:text-slate-400">No hay notificaciones recientes</p>
-                            </div>
-                          )}
-                        </div>
-                      ) : (
-                        <div className="text-center py-4">
-                          <p className="text-sm text-slate-500 dark:text-slate-400">No hay proyectos para mostrar notificaciones</p>
-                        </div>
-                      )}
-                    </CardContent>
-                  </Card>
-                </motion.div>
-
-                {/* Resumen Semanal */}
-                <motion.div
-                  initial={{ opacity: 0, x: 20 }}
-                  animate={{ opacity: 1, x: 0 }}
-                  transition={{ duration: 0.5, delay: 0.4 }}
-                >
-                  <Card 
-                    className="bg-gradient-to-br from-indigo-500/10 via-purple-500/15 to-pink-500/20 dark:from-indigo-500/20 dark:via-purple-500/25 dark:to-pink-500/30 border border-indigo-200/50 dark:border-indigo-500/30 shadow-lg cursor-pointer hover:shadow-xl transition-all duration-300"
-                    onClick={() => navigateToProjects('view', 'summary')}
-                  >
-                    <CardHeader className="pb-3">
-                      <CardTitle className="text-lg font-semibold text-slate-800 dark:text-white flex items-center gap-2">
-                        <TrendingUp className="h-5 w-5 text-indigo-500" />
-                        Resumen Semanal
-                      </CardTitle>
-                    </CardHeader>
-                    <CardContent className="space-y-4">
-                      <div className="text-center">
-                        <div className="text-3xl font-bold text-indigo-600 dark:text-indigo-400 mb-2">
-                          {dashboardStats.averageProgress}%
-                </div>
-                        <p className="text-sm text-slate-600 dark:text-slate-300">
-                          Progreso General
-                        </p>
-              </div>
                       <div className="space-y-2">
-                        <div className="flex justify-between text-sm">
-                          <span className="text-slate-600 dark:text-slate-300">Proyectos Activos</span>
-                          <span className="font-medium text-slate-800 dark:text-white">{dashboardStats.totalProjects}</span>
-                </div>
-                        <div className="flex justify-between text-sm">
-                          <span className="text-slate-600 dark:text-slate-300">Comentarios</span>
-                          <span className="font-medium text-slate-800 dark:text-white">{dashboardStats.totalComments}</span>
-                </div>
-                        <div className="flex justify-between text-sm">
-                          <span className="text-slate-600 dark:text-slate-300">Completados</span>
-                          <span className="font-medium text-slate-800 dark:text-white">{dashboardStats.completedProjects}</span>
-              </div>
+                        <div className="flex items-center gap-2">
+                          <span className="text-slate-500">•</span>
+                          <span className="text-sm text-slate-700 dark:text-slate-300">
+                            Sin mensajes
+                          </span>
+                        </div>
+                        <div className="flex items-center gap-2">
+                          <span className="text-slate-500">•</span>
+                          <span className="text-sm text-slate-700 dark:text-slate-300">
+                            {dashboardStats.totalComments} alertas
+                          </span>
+                        </div>
                       </div>
                     </CardContent>
                   </Card>
-            </motion.div>
+                </motion.div>
               </div>
             </div>
           </div>
 
-          {/* Contenido Principal */}
-          <div className="px-4 sm:px-6 lg:px-8 py-4 sm:py-6 space-y-4 sm:space-y-6">
-            
-
-
-            {/* Vista de proyectos */}
-            {!hasValidProjects ? (
+          {/* Vista de proyectos cuando no hay proyectos */}
+          {!hasValidProjects ? (
+            <div className="px-4 sm:px-6 lg:px-8 py-4 sm:py-6">
               <div className="bg-white rounded-2xl p-12 text-center shadow-xl border border-slate-200/50 relative overflow-hidden">
                 {/* Fondo con gradiente sutil */}
                 <div className="absolute inset-0 bg-gradient-to-br from-slate-50 via-blue-50/30 to-indigo-50/30"></div>
@@ -1156,142 +941,8 @@ const Dashboard = React.memo(() => {
                   </div>
                 </div>
               </div>
-            ) : null}
-
-      {/* Actividad Reciente */}
-      {hasValidProjects && dashboardStats.recentActivity.length > 0 && (
-        <motion.div 
-          className="bg-white rounded-2xl p-6 sm:p-8 shadow-xl border border-slate-200/50 relative overflow-hidden"
-          initial={{ opacity: 0, y: 20 }}
-          animate={{ opacity: 1, y: 0 }}
-          transition={{ duration: 0.6 }}
-        >
-          {/* Fondo con gradiente sutil */}
-          <div className="absolute inset-0 bg-gradient-to-br from-slate-50 via-amber-50/20 to-orange-50/20"></div>
-          
-          <div className="relative z-10">
-            {/* Header mejorado */}
-            <div className="flex items-center justify-between mb-8">
-              <div className="flex items-center gap-4">
-                <div className="w-12 h-12 bg-gradient-to-br from-amber-500 to-orange-600 rounded-xl flex items-center justify-center shadow-lg">
-                  <Activity className="h-6 w-6 text-white" />
-                </div>
-                <div>
-                  <h2 className="text-2xl font-bold text-slate-800 bg-gradient-to-r from-amber-600 to-orange-700 bg-clip-text text-transparent">
-                    Actividad Reciente
-                  </h2>
-                  <p className="text-slate-600 text-sm">Últimos comentarios y actualizaciones</p>
-                </div>
-              </div>
-              <Button 
-                variant="outline" 
-                size="sm" 
-                className="border-amber-300 text-amber-700 hover:bg-amber-50 hover:border-amber-400 hover:text-amber-800 transition-all duration-300 shadow-sm hover:shadow-md hover:scale-105"
-              >
-                <Activity className="h-4 w-4 mr-2" />
-                Ver Todo
-              </Button>
             </div>
-            
-            {/* Lista de actividad */}
-            <div className="space-y-6">
-              {dashboardStats.recentActivity.map((project, index) => {
-                const recentComments = project.fases
-                  ?.flatMap(f => f.comentarios || [])
-                  .sort((a, b) => new Date(b.fecha).getTime() - new Date(a.fecha).getTime())
-                  .slice(0, 3) || [];
-
-                return (
-                  <motion.div 
-                    key={project.id} 
-                    className="group cursor-pointer"
-                    initial={{ opacity: 0, x: -20 }}
-                    animate={{ opacity: 1, x: 0 }}
-                    transition={{ duration: 0.5, delay: index * 0.1 }}
-                    whileHover={{ x: 5 }}
-                  >
-                    <div className="p-6 border border-slate-200/50 rounded-xl bg-white/80 backdrop-blur-sm hover:bg-white hover:shadow-lg hover:border-amber-200 transition-all duration-300 group-hover:scale-[1.02]">
-                      {/* Header del proyecto */}
-                      <div className="flex items-center justify-between mb-4">
-                        <div className="flex items-center gap-3">
-                          <div className="w-10 h-10 bg-gradient-to-br from-blue-500 to-indigo-600 rounded-lg flex items-center justify-center shadow-md">
-                            <span className="text-white font-bold text-sm">
-                              {project.name?.charAt(0) || 'P'}
-                            </span>
-                          </div>
-                          <div>
-                            <h3 className="font-semibold text-slate-800 text-lg group-hover:text-amber-700 transition-colors duration-300">
-                              {project.name}
-                            </h3>
-                            <p className="text-sm text-slate-500">Proyecto activo</p>
-                          </div>
-                        </div>
-                        <Badge className={`${getStatusColor(getProjectStatus(project))} shadow-sm group-hover:scale-105 transition-transform duration-300`}>
-                          {getProjectStatus(project)}
-                        </Badge>
-                      </div>
-                      
-                      {/* Comentarios recientes */}
-                      {recentComments.length > 0 ? (
-                        <div className="space-y-3">
-                          {recentComments.map((comment, commentIndex) => (
-                            <motion.div 
-                              key={commentIndex} 
-                              className="flex items-start gap-4 p-4 bg-gradient-to-r from-slate-50 to-amber-50/30 rounded-lg border border-slate-200/50 hover:border-amber-200 transition-all duration-300 hover:shadow-md"
-                              initial={{ opacity: 0, y: 10 }}
-                              animate={{ opacity: 1, y: 0 }}
-                              transition={{ duration: 0.3, delay: commentIndex * 0.1 }}
-                            >
-                              <Avatar className="h-8 w-8 shadow-sm">
-                                <AvatarFallback className="text-xs bg-gradient-to-br from-amber-500 to-orange-600 text-white font-semibold">
-                                  {comment.autor?.charAt(0) || 'U'}
-                                </AvatarFallback>
-                              </Avatar>
-                              <div className="flex-1 min-w-0">
-                                <div className="flex items-center gap-3 mb-2">
-                                  <span className="font-semibold text-slate-800 text-sm">
-                                    {comment.autor}
-                                  </span>
-                                  <Badge 
-                                    variant="outline" 
-                                    className={`text-xs ${
-                                      comment.tipo === 'admin' 
-                                        ? 'bg-blue-50 text-blue-700 border-blue-200 dark:bg-blue-500/20 dark:text-blue-300 dark:border-blue-500/40 dark:shadow-blue-500/10' 
-                                        : 'bg-slate-50 text-card-foreground border-slate-200 dark:bg-slate-500/20 dark:text-slate-300 dark:border-slate-500/40 dark:shadow-slate-500/10'
-                                    }`}
-                                  >
-                                    {comment.tipo === 'admin' ? 'Admin' : 'Cliente'}
-                                  </Badge>
-                                  <div className="flex items-center gap-1 text-xs text-slate-500">
-                                    <Clock className="h-3 w-3" />
-                                    {formatDateSafe(comment.fecha)}
-                                  </div>
-                                </div>
-                                <p className="text-card-foreground text-sm leading-relaxed group-hover:text-slate-800 transition-colors duration-300">
-                                  {comment.texto}
-                                </p>
-                              </div>
-                            </motion.div>
-                          ))}
-                        </div>
-                      ) : (
-                        <div className="text-center py-8">
-                          <div className="w-16 h-16 bg-slate-100 rounded-full flex items-center justify-center mx-auto mb-3">
-                            <MessageSquare className="h-8 w-8 text-slate-400" />
-                          </div>
-                          <p className="text-slate-500 italic">No hay comentarios recientes en este proyecto</p>
-                        </div>
-                      )}
-                    </div>
-                  </motion.div>
-                );
-              })}
-            </div>
-          </div>
-        </motion.div>
-      )}
-
-
+          ) : null}
 
           {/* Modal de detalle del proyecto */}
           {isModalOpen && modalInitialized && selectedProject && selectedProject.id && hasValidProjects && (
@@ -1321,7 +972,6 @@ const Dashboard = React.memo(() => {
               progress: calculateProjectProgress(project)
             }))}
           />
-            </div>
           </div>
         </div>
       </div>
