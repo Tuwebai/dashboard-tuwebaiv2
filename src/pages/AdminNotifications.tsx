@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { motion } from '@/components/OptimizedMotion';
 import { useTheme } from '@/contexts/ThemeContext';
+import { ConfirmationDialog } from '@/components/ui/confirmation-dialog';
 import { 
   Bell, 
   Calendar, 
@@ -124,6 +125,8 @@ export default function AdminNotifications() {
   });
   const [scheduleLoading, setScheduleLoading] = useState(false);
   const [workerStatus, setWorkerStatus] = useState(notificationWorker.getStatus());
+  const [showDeleteConfirm, setShowDeleteConfirm] = useState(false);
+  const [notificationToDelete, setNotificationToDelete] = useState<string | null>(null);
 
   // =====================================================
   // EFECTOS Y CARGA DE DATOS
@@ -303,16 +306,19 @@ export default function AdminNotifications() {
     }
   };
 
-  const deleteScheduledNotification = async (id: string) => {
-    if (!confirm('¿Estás seguro de que quieres eliminar esta notificación? Esta acción no se puede deshacer.')) {
-      return;
-    }
+  const deleteScheduledNotification = (id: string) => {
+    setNotificationToDelete(id);
+    setShowDeleteConfirm(true);
+  };
+
+  const confirmDeleteNotification = async () => {
+    if (!notificationToDelete) return;
 
     try {
       const { error } = await supabase
         .from('scheduled_notifications')
         .delete()
-        .eq('id', id);
+        .eq('id', notificationToDelete);
 
       if (error) {
         console.error('Error deleting notification:', error);
@@ -325,7 +331,15 @@ export default function AdminNotifications() {
     } catch (error) {
       console.error('Error deleting notification:', error);
       alert('Error al eliminar la notificación');
+    } finally {
+      setShowDeleteConfirm(false);
+      setNotificationToDelete(null);
     }
+  };
+
+  const cancelDeleteNotification = () => {
+    setShowDeleteConfirm(false);
+    setNotificationToDelete(null);
   };
 
   const editScheduledNotification = (notification: ScheduledNotification) => {
@@ -1314,6 +1328,19 @@ export default function AdminNotifications() {
           </div>
         </TabsContent>
       </Tabs>
+
+      {/* Modal de confirmación para eliminar notificación */}
+      <ConfirmationDialog
+        isOpen={showDeleteConfirm}
+        onClose={cancelDeleteNotification}
+        onConfirm={confirmDeleteNotification}
+        title="Confirmar eliminación"
+        description="¿Estás seguro de que quieres eliminar esta notificación? Esta acción no se puede deshacer."
+        confirmText="Eliminar"
+        cancelText="Cancelar"
+        variant="destructive"
+        loading={false}
+      />
     </div>
   );
 }

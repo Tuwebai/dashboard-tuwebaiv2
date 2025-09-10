@@ -7,6 +7,7 @@ import { Textarea } from '@/components/ui/textarea';
 import { Badge } from '@/components/ui/badge';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { Dialog, DialogContent, DialogHeader, DialogTitle } from '@/components/ui/dialog';
+import { ConfirmationDialog } from '@/components/ui/confirmation-dialog';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import { Switch } from '@/components/ui/switch';
 import { 
@@ -46,6 +47,8 @@ export default function TicketWorkflowManager() {
   const [activeTab, setActiveTab] = useState('workflows');
   const [showCreateModal, setShowCreateModal] = useState(false);
   const [showEditModal, setShowEditModal] = useState(false);
+  const [showDeleteConfirm, setShowDeleteConfirm] = useState(false);
+  const [workflowToDelete, setWorkflowToDelete] = useState<string | null>(null);
   const [editingWorkflow, setEditingWorkflow] = useState<TicketWorkflow | null>(null);
 
   // Estados para formularios
@@ -145,11 +148,16 @@ export default function TicketWorkflowManager() {
     }
   };
 
-  const handleDeleteWorkflow = async (workflowId: string) => {
-    if (!window.confirm('¿Estás seguro de que quieres eliminar este workflow?')) return;
+  const handleDeleteWorkflow = (workflowId: string) => {
+    setWorkflowToDelete(workflowId);
+    setShowDeleteConfirm(true);
+  };
+
+  const confirmDeleteWorkflow = async () => {
+    if (!workflowToDelete) return;
 
     try {
-      await ticketWorkflowService.deleteWorkflow(workflowId);
+      await ticketWorkflowService.deleteWorkflow(workflowToDelete);
       toast({
         title: 'Workflow eliminado',
         description: 'Se ha eliminado el workflow'
@@ -162,7 +170,15 @@ export default function TicketWorkflowManager() {
         description: 'No se pudo eliminar el workflow',
         variant: 'destructive'
       });
+    } finally {
+      setShowDeleteConfirm(false);
+      setWorkflowToDelete(null);
     }
+  };
+
+  const cancelDeleteWorkflow = () => {
+    setShowDeleteConfirm(false);
+    setWorkflowToDelete(null);
   };
 
   const handleEditWorkflow = (workflow: TicketWorkflow) => {
@@ -619,6 +635,19 @@ export default function TicketWorkflowManager() {
           </div>
         </DialogContent>
       </Dialog>
+
+      {/* Modal de confirmación para eliminar workflow */}
+      <ConfirmationDialog
+        isOpen={showDeleteConfirm}
+        onClose={cancelDeleteWorkflow}
+        onConfirm={confirmDeleteWorkflow}
+        title="Confirmar eliminación"
+        description="¿Estás seguro de que quieres eliminar este workflow? Esta acción no se puede deshacer."
+        confirmText="Eliminar"
+        cancelText="Cancelar"
+        variant="destructive"
+        loading={false}
+      />
     </div>
   );
 } 

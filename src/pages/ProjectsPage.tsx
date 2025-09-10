@@ -3,6 +3,7 @@ import { useApp } from '@/contexts/AppContext';
 import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
 import { Progress } from '@/components/ui/progress';
+import { ConfirmationDialog } from '@/components/ui/confirmation-dialog';
 
 
 import { supabase } from '@/lib/supabase';
@@ -56,6 +57,8 @@ const ProjectsPage = React.memo(() => {
   const [sortBy, setSortBy] = useState<string>('updatedAt');
   const [sortOrder, setSortOrder] = useState<'asc' | 'desc'>('desc');
   const [showNuevoModal, setShowNuevoModal] = useState(false);
+  const [showDeleteConfirm, setShowDeleteConfirm] = useState(false);
+  const [projectToDelete, setProjectToDelete] = useState<string | null>(null);
   const [urlFilters, setUrlFilters] = useState<Record<string, string>>({});
   const [selectedProject, setSelectedProject] = useState<any>(null);
   const [showProjectModal, setShowProjectModal] = useState(false);
@@ -337,7 +340,7 @@ const ProjectsPage = React.memo(() => {
 
 
     // Función para eliminar proyecto
-  const handleDeleteProject = useCallback(async (projectId: string) => {
+  const handleDeleteProject = useCallback((projectId: string) => {
     const project = projects.find(p => p.id === projectId);
     if (!project) return;
     if (user.role !== 'admin' && project.created_by !== user.id) {
@@ -348,29 +351,42 @@ const ProjectsPage = React.memo(() => {
       });
       return;
     }
-    if (confirm('¿Estás seguro de que quieres eliminar este proyecto? Esta acción no se puede deshacer.')) {
-      try {
-        const { error } = await supabase
-          .from('projects')
-          .delete()
-          .eq('id', projectId);
-        
-        if (error) throw error;
-        
-        toast({
-          title: 'Proyecto eliminado',
-          description: 'El proyecto ha sido eliminado correctamente.'
-        });
-        await refreshData();
-      } catch (error) {
-        toast({
-          title: 'Error',
-          description: 'No se pudo eliminar el proyecto.',
-          variant: 'destructive'
+    setProjectToDelete(projectId);
+    setShowDeleteConfirm(true);
+  }, [projects, user.role, user.id]);
+
+  const confirmDeleteProject = useCallback(async () => {
+    if (!projectToDelete) return;
+
+    try {
+      const { error } = await supabase
+        .from('projects')
+        .delete()
+        .eq('id', projectToDelete);
+      
+      if (error) throw error;
+      
+      toast({
+        title: 'Proyecto eliminado',
+        description: 'El proyecto ha sido eliminado correctamente.'
       });
-      }
+      await refreshData();
+    } catch (error) {
+      toast({
+        title: 'Error',
+        description: 'No se pudo eliminar el proyecto.',
+        variant: 'destructive'
+      });
+    } finally {
+      setShowDeleteConfirm(false);
+      setProjectToDelete(null);
     }
-  }, [projects, user.role, user.email, refreshData]);
+  }, [projectToDelete, refreshData]);
+
+  const cancelDeleteProject = useCallback(() => {
+    setShowDeleteConfirm(false);
+    setProjectToDelete(null);
+  }, []);
 
   // Funciones para quick actions
   const handleDuplicateProject = useCallback((project: any) => {
@@ -607,6 +623,19 @@ const ProjectsPage = React.memo(() => {
             }}
           />
         )}
+
+        {/* Modal de confirmación para eliminar proyecto */}
+        <ConfirmationDialog
+          isOpen={showDeleteConfirm}
+          onClose={cancelDeleteProject}
+          onConfirm={confirmDeleteProject}
+          title="Confirmar eliminación"
+          description={`¿Estás seguro de que quieres eliminar el proyecto "${projects.find(p => p.id === projectToDelete)?.name || 'este proyecto'}"? Esta acción no se puede deshacer.`}
+          confirmText="Eliminar"
+          cancelText="Cancelar"
+          variant="destructive"
+          loading={false}
+        />
       </div>
     </div>
   );

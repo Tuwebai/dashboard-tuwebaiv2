@@ -7,6 +7,7 @@ import { Textarea } from '@/components/ui/textarea';
 import { Badge } from '@/components/ui/badge';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from '@/components/ui/dialog';
+import { ConfirmationDialog } from '@/components/ui/confirmation-dialog';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import { Switch } from '@/components/ui/switch';
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
@@ -60,6 +61,8 @@ export default function AdvancedUserManagement() {
   const [showInviteModal, setShowInviteModal] = useState(false);
   const [showRoleModal, setShowRoleModal] = useState(false);
   const [showUserModal, setShowUserModal] = useState(false);
+  const [showDeleteConfirm, setShowDeleteConfirm] = useState(false);
+  const [userToDelete, setUserToDelete] = useState<string | null>(null);
   const [editingUser, setEditingUser] = useState<UserProfile | null>(null);
   const [editingRole, setEditingRole] = useState<UserRole | null>(null);
 
@@ -218,11 +221,16 @@ export default function AdvancedUserManagement() {
     }
   };
 
-  const handleDeleteUser = async (userId: string) => {
-    if (!window.confirm('¿Estás seguro de que quieres eliminar este usuario?')) return;
+  const handleDeleteUser = (userId: string) => {
+    setUserToDelete(userId);
+    setShowDeleteConfirm(true);
+  };
+
+  const confirmDeleteUser = async () => {
+    if (!userToDelete) return;
 
     try {
-      await userManagementService.deleteUser(userId);
+      await userManagementService.deleteUser(userToDelete);
       toast({
         title: 'Usuario eliminado',
         description: 'Se ha eliminado el usuario'
@@ -235,7 +243,15 @@ export default function AdvancedUserManagement() {
         description: 'No se pudo eliminar el usuario',
         variant: 'destructive'
       });
+    } finally {
+      setShowDeleteConfirm(false);
+      setUserToDelete(null);
     }
+  };
+
+  const cancelDeleteUser = () => {
+    setShowDeleteConfirm(false);
+    setUserToDelete(null);
   };
 
   const handleCancelInvitation = async (invitationId: string) => {
@@ -816,6 +832,19 @@ export default function AdvancedUserManagement() {
           </div>
         </DialogContent>
       </Dialog>
+
+      {/* Modal de confirmación para eliminar usuario */}
+      <ConfirmationDialog
+        isOpen={showDeleteConfirm}
+        onClose={cancelDeleteUser}
+        onConfirm={confirmDeleteUser}
+        title="Confirmar eliminación"
+        description="¿Estás seguro de que quieres eliminar este usuario? Esta acción no se puede deshacer."
+        confirmText="Eliminar"
+        cancelText="Cancelar"
+        variant="destructive"
+        loading={false}
+      />
     </div>
   );
 } 

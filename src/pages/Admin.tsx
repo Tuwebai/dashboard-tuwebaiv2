@@ -12,6 +12,7 @@ import { Textarea } from '@/components/ui/textarea';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import { Label } from '@/components/ui/label';
 import { Dialog, DialogContent, DialogDescription, DialogHeader, DialogTitle } from '@/components/ui/dialog';
+import { ConfirmationDialog } from '@/components/ui/confirmation-dialog';
 import { ThemeToggle } from '@/components/ThemeToggle';
 
 
@@ -84,6 +85,8 @@ const Admin = React.memo(() => {
   const [showAddUserModal, setShowAddUserModal] = useState(false);
   const [showEditUserModal, setShowEditUserModal] = useState(false);
   const [editingUser, setEditingUser] = useState<any>(null);
+  const [showDeleteUserModal, setShowDeleteUserModal] = useState(false);
+  const [userToDelete, setUserToDelete] = useState<any>(null);
   const [newUserData, setNewUserData] = useState({
     email: '',
     full_name: '',
@@ -150,7 +153,7 @@ const Admin = React.memo(() => {
       if (userIds.length > 0) {
         const { data: usersData } = await supabase
           .from('users')
-          .select('id, name, email, tier')
+          .select('id, full_name, email, role')
           .in('id', userIds);
         
         if (usersData) {
@@ -170,13 +173,13 @@ const Admin = React.memo(() => {
           status: ticket.status || 'open',
           createdAt: ticket.created_at,
           customer: user ? {
-            name: user.name || 'Usuario desconocido',
+            name: user.full_name || 'Usuario desconocido',
             email: user.email || '',
-            tier: user.tier || 'standard'
+            tier: user.role || 'cliente'
           } : {
             name: 'Usuario desconocido',
             email: '',
-            tier: 'standard'
+            tier: 'cliente'
           },
           category: ticket.category || 'general',
           tags: ticket.tags || [],
@@ -495,23 +498,32 @@ const Admin = React.memo(() => {
   };
 
   // Función para eliminar un usuario
-  const handleDeleteUser = async (userId: string) => {
-    if (window.confirm('¿Estás seguro de que quieres eliminar este usuario?')) {
+  const handleDeleteUser = (user: any) => {
+    setUserToDelete(user);
+    setShowDeleteUserModal(true);
+  };
+
+  const confirmDeleteUser = async () => {
+    if (!userToDelete) return;
+    
       try {
         const { error } = await supabase
           .from('users')
           .delete()
-          .eq('id', userId);
+        .eq('id', userToDelete.id);
 
         if (error) throw error;
 
         // Actualizar el estado local
-        setUsuarios(prev => prev.filter(user => user.id !== userId));
+      setUsuarios(prev => prev.filter(user => user.id !== userToDelete.id));
 
         toast({ 
           title: 'Usuario eliminado', 
           description: 'El usuario ha sido eliminado correctamente.' 
         });
+      
+      setShowDeleteUserModal(false);
+      setUserToDelete(null);
       } catch (error) {
         console.error('Error deleting user:', error);
         toast({ 
@@ -519,8 +531,12 @@ const Admin = React.memo(() => {
           description: 'No se pudo eliminar el usuario.', 
           variant: 'destructive' 
         });
-      }
     }
+  };
+
+  const cancelDeleteUser = () => {
+    setShowDeleteUserModal(false);
+    setUserToDelete(null);
   };
 
   // Función para crear un nuevo usuario
@@ -1191,7 +1207,7 @@ const Admin = React.memo(() => {
                                   <Button 
                                     variant="outline" 
                                     size="sm" 
-                                    onClick={() => handleDeleteUser(usuario.id)}
+                                    onClick={() => handleDeleteUser(usuario)}
                                     className="bg-gradient-to-r from-red-50 to-pink-50 dark:from-red-900/30 dark:to-pink-900/30 border-red-200 dark:border-red-700 hover:from-red-100 hover:to-pink-100 dark:hover:from-red-800/40 dark:hover:to-pink-800/40 text-red-700 dark:text-red-400 hover:text-red-800 dark:hover:text-red-300 transition-all duration-200 px-3 py-2 h-9"
                                   >
                                     <Trash2 size={14} className="mr-1" />
@@ -1579,6 +1595,19 @@ const Admin = React.memo(() => {
            </div>
          </DialogContent>
        </Dialog>
+
+      {/* Modal de confirmación para eliminar usuario */}
+      <ConfirmationDialog
+        isOpen={showDeleteUserModal}
+        onClose={cancelDeleteUser}
+        onConfirm={confirmDeleteUser}
+        title="Confirmar eliminación"
+        description={`¿Estás seguro de que quieres eliminar al usuario "${userToDelete?.full_name || userToDelete?.email}"? Esta acción no se puede deshacer.`}
+        confirmText="Eliminar"
+        cancelText="Cancelar"
+        variant="destructive"
+        loading={false}
+      />
     </>
   );
 });

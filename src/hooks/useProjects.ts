@@ -163,7 +163,7 @@ export const useProjects = () => {
       setLoading(true);
       setError(null);
 
-      await projectService.deleteProject(id);
+      await projectService.deleteProject(id, user?.id || '', user?.role || 'cliente');
       
       // Actualizar lista
       setProjects(prev => prev.filter(p => p.id !== id));

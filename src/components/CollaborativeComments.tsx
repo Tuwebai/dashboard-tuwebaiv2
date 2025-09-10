@@ -6,6 +6,7 @@ import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
 import { Badge } from '@/components/ui/badge';
 import { ScrollArea } from '@/components/ui/scroll-area';
 import { Separator } from '@/components/ui/separator';
+import { ConfirmationDialog } from '@/components/ui/confirmation-dialog';
 import { 
   MessageSquare, 
   Reply, 
@@ -48,6 +49,8 @@ export default function CollaborativeComments({
   const [editingComment, setEditingComment] = useState<string | null>(null);
   const [editText, setEditText] = useState('');
   const [isLoading, setIsLoading] = useState(true);
+  const [showDeleteConfirm, setShowDeleteConfirm] = useState(false);
+  const [commentToDelete, setCommentToDelete] = useState<string | null>(null);
   const textareaRef = useRef<HTMLTextAreaElement>(null);
 
   // Load comments
@@ -187,11 +190,16 @@ export default function CollaborativeComments({
   };
 
   // Delete comment
-  const handleDeleteComment = async (commentId: string) => {
-    if (!confirm('¿Estás seguro de que quieres eliminar este comentario?')) return;
+  const handleDeleteComment = (commentId: string) => {
+    setCommentToDelete(commentId);
+    setShowDeleteConfirm(true);
+  };
+
+  const confirmDeleteComment = async () => {
+    if (!commentToDelete) return;
 
     try {
-      await supabaseService.deleteComment(commentId);
+      await supabaseService.deleteComment(commentToDelete);
       
       toast({
         title: 'Comentario eliminado',
@@ -204,7 +212,15 @@ export default function CollaborativeComments({
         description: 'No se pudo eliminar el comentario.',
         variant: 'destructive'
       });
+    } finally {
+      setShowDeleteConfirm(false);
+      setCommentToDelete(null);
     }
+  };
+
+  const cancelDeleteComment = () => {
+    setShowDeleteConfirm(false);
+    setCommentToDelete(null);
   };
 
   // Add reaction
@@ -590,6 +606,19 @@ function CommentItem({
           </div>
         )}
       </CardContent>
+
+      {/* Modal de confirmación para eliminar comentario */}
+      <ConfirmationDialog
+        isOpen={showDeleteConfirm}
+        onClose={cancelDeleteComment}
+        onConfirm={confirmDeleteComment}
+        title="Confirmar eliminación"
+        description="¿Estás seguro de que quieres eliminar este comentario? Esta acción no se puede deshacer."
+        confirmText="Eliminar"
+        cancelText="Cancelar"
+        variant="destructive"
+        loading={false}
+      />
     </Card>
   );
 } 

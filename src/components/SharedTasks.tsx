@@ -10,6 +10,7 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@
 import { Calendar } from '@/components/ui/calendar';
 import { Popover, PopoverContent, PopoverTrigger } from '@/components/ui/popover';
 import { Dialog, DialogContent, DialogDescription, DialogHeader, DialogTitle } from '@/components/ui/dialog';
+import { ConfirmationDialog } from '@/components/ui/confirmation-dialog';
 import { 
   Plus, 
   CheckCircle, 
@@ -95,6 +96,8 @@ export default function SharedTasks({
   const [sortOrder, setSortOrder] = useState<'asc' | 'desc'>('asc');
   const [searchTerm, setSearchTerm] = useState('');
   const [isLoading, setIsLoading] = useState(true);
+  const [showDeleteConfirm, setShowDeleteConfirm] = useState(false);
+  const [taskToDelete, setTaskToDelete] = useState<string | null>(null);
 
   // New task form
   const [newTask, setNewTask] = useState({
@@ -313,13 +316,18 @@ export default function SharedTasks({
       });
       return;
     }
-    if (!confirm('¿Estás seguro de que quieres eliminar esta tarea?')) return;
+    setTaskToDelete(taskId);
+    setShowDeleteConfirm(true);
+  };
+
+  const confirmDeleteTask = async () => {
+    if (!taskToDelete) return;
 
     try {
       const { error: deleteError } = await supabase
         .from('tasks')
         .delete()
-        .eq('id', taskId);
+        .eq('id', taskToDelete);
       
       if (deleteError) throw deleteError;
       toast({
@@ -334,7 +342,15 @@ export default function SharedTasks({
         description: 'No se pudo eliminar la tarea.',
         variant: 'destructive'
       });
+    } finally {
+      setShowDeleteConfirm(false);
+      setTaskToDelete(null);
     }
+  };
+
+  const cancelDeleteTask = () => {
+    setShowDeleteConfirm(false);
+    setTaskToDelete(null);
   };
 
   // Get priority color
@@ -834,6 +850,19 @@ export default function SharedTasks({
           </DialogContent>
         </Dialog>
       )}
+
+      {/* Modal de confirmación para eliminar tarea */}
+      <ConfirmationDialog
+        isOpen={showDeleteConfirm}
+        onClose={cancelDeleteTask}
+        onConfirm={confirmDeleteTask}
+        title="Confirmar eliminación"
+        description="¿Estás seguro de que quieres eliminar esta tarea? Esta acción no se puede deshacer."
+        confirmText="Eliminar"
+        cancelText="Cancelar"
+        variant="destructive"
+        loading={false}
+      />
     </div>
   );
 } 

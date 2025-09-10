@@ -1,4 +1,4 @@
-import React, { memo } from 'react';
+import React, { memo, useRef, useState } from 'react';
 import { motion } from '@/components/OptimizedMotion';
 import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
@@ -14,7 +14,11 @@ import {
   Menu,
   CheckCircle2,
   Circle,
-  AlertCircle
+  AlertCircle,
+  Edit,
+  Trash2,
+  Settings,
+  Copy
 } from 'lucide-react';
 
 // Interfaces para el nuevo componente
@@ -51,6 +55,8 @@ interface ProjectCardProps {
   onDuplicateProject?: (project: ProjectCardProject) => void;
   onArchiveProject?: (projectId: string) => void;
   onToggleFavorite?: (projectId: string) => void;
+  onUpdateDevelopmentImage?: (projectId: string, imageFile: File) => void;
+  onRenameProject?: (projectId: string, newName: string) => void;
   showAdminActions?: boolean;
   index?: number;
   isDragDisabled?: boolean;
@@ -97,11 +103,14 @@ const ProjectCard = memo(({
   onDuplicateProject,
   onArchiveProject,
   onToggleFavorite,
+  onUpdateDevelopmentImage,
+  onRenameProject,
   showAdminActions = false,
   index = 0,
   isDragDisabled = false,
   dragMode = false
 }: ProjectCardProps) => {
+  const fileInputRef = useRef<HTMLInputElement>(null);
   
   const handleViewProject = () => {
     if (onViewProject) {
@@ -113,6 +122,25 @@ const ProjectCard = memo(({
     // Aquí podrías abrir el proyecto en una nueva pestaña
     // window.open(project.liveUrl, '_blank');
     console.log('Ver proyecto en vivo:', project.name);
+  };
+
+
+  const handleFileSelect = (event: React.ChangeEvent<HTMLInputElement>) => {
+    const file = event.target.files?.[0];
+    if (file && onUpdateDevelopmentImage) {
+      onUpdateDevelopmentImage(project.id, file);
+    }
+    // Limpiar el input para permitir seleccionar el mismo archivo otra vez
+    if (event.target) {
+      event.target.value = '';
+    }
+  };
+
+  const handleDeleteClick = (e: React.MouseEvent) => {
+    e.stopPropagation();
+    if (onDeleteProject) {
+      onDeleteProject(project.id);
+    }
   };
 
   return (
@@ -172,21 +200,83 @@ const ProjectCard = memo(({
                   </Badge>
               </div>
           
+            {/* Menú de acciones administrativas */}
+            {showAdminActions && (
+              <div className="flex items-center space-x-2 ml-4">
+                <Button
+                  size="sm"
+                  variant="outline"
+                  className="bg-white/90 dark:bg-slate-800/90 border-white/20 dark:border-slate-600/20 text-slate-700 dark:text-slate-200 hover:bg-white dark:hover:bg-slate-800 shadow-lg"
+                  onClick={(e) => {
+                    e.stopPropagation();
+                    if (onRenameProject) {
+                      const newName = prompt('Nuevo nombre del proyecto:', project.name);
+                      if (newName && newName.trim() && newName !== project.name) {
+                        onRenameProject(project.id, newName.trim());
+                      }
+                    }
+                  }}
+                  title="Renombrar proyecto"
+                >
+                  <Settings className="h-4 w-4" />
+                </Button>
+                
+                <Button
+                  size="sm"
+                  variant="outline"
+                  className="bg-white/90 dark:bg-slate-800/90 border-white/20 dark:border-slate-600/20 text-slate-700 dark:text-slate-200 hover:bg-white dark:hover:bg-slate-800 shadow-lg"
+                  onClick={(e) => {
+                    e.stopPropagation();
+                    if (onNavigateToEdit) {
+                      onNavigateToEdit(project.id);
+                    }
+                  }}
+                  title="Editar proyecto"
+                >
+                  <Edit className="h-4 w-4" />
+                </Button>
+                
+                <Button
+                  size="sm"
+                  variant="outline"
+                  className="bg-white/90 dark:bg-slate-800/90 border-white/20 dark:border-slate-600/20 text-slate-700 dark:text-slate-200 hover:bg-white dark:hover:bg-slate-800 shadow-lg"
+                  onClick={(e) => {
+                    e.stopPropagation();
+                    if (onDuplicateProject) {
+                      onDuplicateProject(project);
+                    }
+                  }}
+                  title="Duplicar proyecto"
+                >
+                  <Copy className="h-4 w-4" />
+                </Button>
+                
+                <Button
+                  size="sm"
+                  variant="outline"
+                  className="bg-red-500/90 hover:bg-red-600 border-red-500/20 text-white shadow-lg"
+                  onClick={handleDeleteClick}
+                  title="Eliminar proyecto"
+                >
+                  <Trash2 className="h-4 w-4" />
+                </Button>
+              </div>
+            )}
             </div>
             
         <div className="p-6 sm:p-8 flex-1 flex flex-col space-y-4">
           {/* Imagen de fondo - Para proyectos en desarrollo */}
           {project.status === 'in-progress' && (
-            <div className="mb-4 rounded-lg overflow-hidden border border-border/50 dark:border-slate-600/50 relative">
+            <div className="mb-4 rounded-lg overflow-hidden border border-border/50 dark:border-slate-600/50 relative group">
               <div className="w-full h-48 bg-gradient-to-br from-slate-50 via-blue-50/30 to-indigo-50/30 dark:from-slate-800 dark:via-blue-900/20 dark:to-indigo-900/20 flex items-center justify-center relative overflow-hidden">
                 {/* Imagen SVG de fondo */}
                 <img 
-                  src="/assets/images/development-bg.svg" 
+                  src={project.screenshotUrl || "/assets/images/development-bg.svg"} 
                   alt="En Desarrollo"
                   className="w-full h-full object-cover opacity-80"
                   onError={(e) => {
                     // Fallback si la imagen no carga
-                    e.currentTarget.style.display = 'none';
+                    e.currentTarget.src = "/assets/images/development-bg.svg";
                   }}
                 />
                 {/* Overlay con texto animado */}
@@ -199,9 +289,30 @@ const ProjectCard = memo(({
                       <div className="w-2 h-2 bg-white rounded-full animate-bounce shadow-sm" style={{ animationDelay: '0s', animationDuration: '1.5s' }} />
                       <div className="w-2 h-2 bg-white rounded-full animate-bounce shadow-sm" style={{ animationDelay: '0.2s', animationDuration: '1.5s' }} />
                       <div className="w-2 h-2 bg-white rounded-full animate-bounce shadow-sm" style={{ animationDelay: '0.4s', animationDuration: '1.5s' }} />
-            </div>
-          </div>
-        </div>
+                    </div>
+                  </div>
+                </div>
+                
+                {/* Botón para cambiar imagen (solo para admin) */}
+                {showAdminActions && onUpdateDevelopmentImage && (
+                  <div 
+                    className="absolute top-2 right-2 opacity-0 group-hover:opacity-100 transition-opacity duration-300"
+                    onClick={(e) => {
+                      e.preventDefault();
+                      e.stopPropagation();
+                      if (fileInputRef.current) {
+                        fileInputRef.current.click();
+                      }
+                    }}
+                    onMouseDown={(e) => e.stopPropagation()}
+                    onMouseUp={(e) => e.stopPropagation()}
+                  >
+                    <div className="inline-flex items-center justify-center rounded-md text-sm font-medium ring-offset-background transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:pointer-events-none disabled:opacity-50 border border-input bg-background hover:bg-accent hover:text-accent-foreground h-9 px-3 py-1 bg-white/90 dark:bg-slate-800/90 border-white/20 dark:border-slate-600/20 text-slate-700 dark:text-slate-200 hover:bg-white dark:hover:bg-slate-800 shadow-lg cursor-pointer">
+                      <Edit className="h-4 w-4 mr-1" />
+                      Cambiar Imagen
+                    </div>
+                  </div>
+                )}
               </div>
             </div>
           )}
@@ -386,7 +497,19 @@ const ProjectCard = memo(({
               </Button>
           </motion.div>
         </div>
+        
+        {/* Input de archivo oculto para cambiar imagen */}
+        {showAdminActions && onUpdateDevelopmentImage && (
+          <input
+            ref={fileInputRef}
+            type="file"
+            accept="image/*"
+            onChange={handleFileSelect}
+            style={{ display: 'none' }}
+          />
+        )}
       </div>
+      
     </motion.div>
   );
 });
