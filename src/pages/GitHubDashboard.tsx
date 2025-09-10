@@ -343,6 +343,12 @@ const GitHubDashboard: React.FC = () => {
                 </div>
                 {isConnected && (
                   <div className="flex items-center space-x-2">
+                    <div className="flex items-center space-x-2 px-3 py-1.5 bg-blue-50 rounded-full">
+                      <div className="w-2 h-2 bg-blue-500 rounded-full animate-pulse"></div>
+                      <span className="text-xs font-medium text-blue-700">
+                        {isRefreshing ? 'Actualizando...' : 'Datos en vivo'}
+                      </span>
+                    </div>
                     <Button
                       variant="outline"
                       size="sm"
@@ -522,10 +528,16 @@ const GitHubDashboard: React.FC = () => {
                   <div className={`${viewMode === 'mobile' ? 'col-span-1' : 'col-span-1 md:col-span-2 lg:col-span-3 xl:col-span-4'}`}>
                     <div className="group relative overflow-hidden bg-gradient-to-r from-slate-50 to-green-50/50 rounded-2xl transition-all duration-300 hover:shadow-lg hover:scale-[1.02]">
                       <div className="flex items-center justify-between p-4 border-b border-slate-200/50">
-                        <h3 className="text-lg font-bold text-slate-800 flex items-center space-x-2">
-                          <TrendingUp className="w-5 h-5 text-green-600" />
-                          <span>Estadísticas de Contribuciones</span>
-                        </h3>
+                        <div className="flex items-center space-x-3">
+                          <h3 className="text-lg font-bold text-slate-800 flex items-center space-x-2">
+                            <TrendingUp className="w-5 h-5 text-green-600" />
+                            <span>Estadísticas de Contribuciones</span>
+                          </h3>
+                          <div className="flex items-center space-x-1 px-2 py-1 bg-green-100 text-green-700 rounded-full text-xs font-medium">
+                            <div className="w-2 h-2 bg-green-500 rounded-full animate-pulse"></div>
+                            <span>Datos reales</span>
+                          </div>
+                        </div>
                         <Button
                           variant="ghost"
                           size="sm"
@@ -662,10 +674,16 @@ const GitHubDashboard: React.FC = () => {
                   <div className={`${viewMode === 'mobile' ? 'col-span-1' : 'col-span-1 md:col-span-2 lg:col-span-3 xl:col-span-4'}`}>
                     <div className="group relative overflow-hidden bg-gradient-to-r from-slate-50 to-yellow-50/50 rounded-2xl transition-all duration-300 hover:shadow-lg hover:scale-[1.02]">
                       <div className="flex items-center justify-between p-4 border-b border-slate-200/50">
-                        <h3 className="text-lg font-bold text-slate-800 flex items-center space-x-2">
-                          <Star className="w-5 h-5 text-yellow-500" />
-                          <span>Repositorios destacados</span>
-                        </h3>
+                        <div className="flex items-center space-x-3">
+                          <h3 className="text-lg font-bold text-slate-800 flex items-center space-x-2">
+                            <Star className="w-5 h-5 text-yellow-500" />
+                            <span>Repositorios destacados</span>
+                          </h3>
+                          <div className="flex items-center space-x-1 px-2 py-1 bg-green-100 text-green-700 rounded-full text-xs font-medium">
+                            <div className="w-2 h-2 bg-green-500 rounded-full animate-pulse"></div>
+                            <span>Datos reales</span>
+                          </div>
+                        </div>
                         <Button
                           variant="ghost"
                           size="sm"
@@ -682,8 +700,18 @@ const GitHubDashboard: React.FC = () => {
                             {featuredRepos.slice(0, viewMode === 'mobile' ? 4 : 6).map((repo, index) => (
                               <div 
                                 key={repo.id} 
-                                className="group relative overflow-hidden bg-white/60 backdrop-blur-sm border border-slate-200/50 rounded-2xl p-4 transition-all duration-300 hover:shadow-xl hover:scale-[1.02] hover:-translate-y-1"
+                                className="group relative overflow-hidden bg-white/60 backdrop-blur-sm border border-slate-200/50 rounded-2xl p-4 transition-all duration-300 hover:shadow-xl hover:scale-[1.02] hover:-translate-y-1 cursor-pointer"
                                 style={{ animationDelay: `${index * 100}ms` }}
+                                onClick={() => window.open(repo.html_url, '_blank', 'noopener,noreferrer')}
+                                onKeyDown={(e) => {
+                                  if (e.key === 'Enter' || e.key === ' ') {
+                                    e.preventDefault();
+                                    window.open(repo.html_url, '_blank', 'noopener,noreferrer');
+                                  }
+                                }}
+                                tabIndex={0}
+                                role="button"
+                                aria-label={`Abrir repositorio ${repo.name} en GitHub`}
                               >
                                 <div className="absolute inset-0 bg-gradient-to-br from-blue-500/5 to-purple-500/5 opacity-0 group-hover:opacity-100 transition-opacity duration-300"></div>
                                 <div className="relative">
@@ -717,6 +745,10 @@ const GitHubDashboard: React.FC = () => {
                                     <div className="text-xs text-slate-500 font-medium">
                                       {formatDate(repo.updated_at)}
                                     </div>
+                                  </div>
+                                  {/* Indicador de que es clickeable */}
+                                  <div className="absolute top-2 right-2 opacity-0 group-hover:opacity-100 transition-opacity duration-200">
+                                    <div className="w-2 h-2 bg-blue-500 rounded-full animate-pulse"></div>
                                   </div>
                                 </div>
                               </div>

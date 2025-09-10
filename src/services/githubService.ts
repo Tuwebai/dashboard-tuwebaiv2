@@ -25,6 +25,9 @@ interface GitHubRepo {
   created_at: string;
   private: boolean;
   fork: boolean;
+  owner: {
+    login: string;
+  };
 }
 
 interface GitHubCommit {
@@ -189,58 +192,190 @@ class GitHubService {
   }
 
   /**
-   * Obtiene estadísticas de contribuciones (simuladas)
+   * Obtiene estadísticas de contribuciones reales
    */
   async getContributionStats(accessToken: string, username: string): Promise<GitHubStats> {
-    // Nota: La API de GitHub no proporciona estadísticas de contribuciones directamente
-    // Esto es una simulación basada en commits recientes
-    const repos = await this.getUserRepos(accessToken, 1, 50);
-    
-    // Simular estadísticas basadas en actividad de repos
-    const now = new Date();
-    const thisYear = new Date(now.getFullYear(), 0, 1);
-    const thisMonth = new Date(now.getFullYear(), now.getMonth(), 1);
-    const thisWeek = new Date(now.getTime() - 7 * 24 * 60 * 60 * 1000);
+    try {
+      // Obtener commits reales de los repositorios del usuario
+      const repos = await this.getUserRepos(accessToken, 1, 100);
+      const now = new Date();
+      const thisYear = new Date(now.getFullYear(), 0, 1);
+      const thisMonth = new Date(now.getFullYear(), now.getMonth(), 1);
+      const thisWeek = new Date(now.getTime() - 7 * 24 * 60 * 60 * 1000);
 
-    let commitsThisYear = 0;
-    let commitsThisMonth = 0;
-    let commitsThisWeek = 0;
+      let totalCommits = 0;
+      let commitsThisYear = 0;
+      let commitsThisMonth = 0;
+      let commitsThisWeek = 0;
+      let commitDates: Date[] = [];
 
-    repos.forEach(repo => {
-      const updatedAt = new Date(repo.updated_at);
-      
-      if (updatedAt >= thisYear) commitsThisYear += Math.floor(Math.random() * 50);
-      if (updatedAt >= thisMonth) commitsThisMonth += Math.floor(Math.random() * 20);
-      if (updatedAt >= thisWeek) commitsThisWeek += Math.floor(Math.random() * 5);
-    });
+      // Obtener commits de cada repositorio
+      for (const repo of repos.filter(r => !r.fork && !r.private)) {
+        try {
+          const commits = await this.getRecentCommits(accessToken, repo.owner?.login || username, repo.name, 100);
+          
+          commits.forEach(commit => {
+            const commitDate = new Date(commit.commit.author.date);
+            commitDates.push(commitDate);
+            totalCommits++;
 
-    return {
-      totalCommits: commitsThisYear + Math.floor(Math.random() * 200),
-      commitsThisYear,
-      commitsThisMonth,
-      commitsThisWeek,
-      streak: Math.floor(Math.random() * 30),
-      longestStreak: Math.floor(Math.random() * 100),
-    };
+            if (commitDate >= thisYear) commitsThisYear++;
+            if (commitDate >= thisMonth) commitsThisMonth++;
+            if (commitDate >= thisWeek) commitsThisWeek++;
+          });
+        } catch (error) {
+          console.warn(`Error getting commits for ${repo.name}:`, error);
+        }
+      }
+
+      // Calcular racha actual
+      const streak = this.calculateStreak(commitDates);
+      const longestStreak = this.calculateLongestStreak(commitDates);
+
+      return {
+        totalCommits,
+        commitsThisYear,
+        commitsThisMonth,
+        commitsThisWeek,
+        streak,
+        longestStreak,
+      };
+    } catch (error) {
+      console.error('Error getting contribution stats:', error);
+      // Fallback a datos básicos si hay error
+      return {
+        totalCommits: 0,
+        commitsThisYear: 0,
+        commitsThisMonth: 0,
+        commitsThisWeek: 0,
+        streak: 0,
+        longestStreak: 0,
+      };
+    }
   }
 
   /**
-   * Obtiene el gráfico de contribuciones (simulado)
+   * Calcula la racha actual de commits
    */
-  async getContributionGraph(accessToken: string, username: string): Promise<{ date: string; count: number }[]> {
-    // Simular datos de contribuciones para los últimos 365 días
-    const contributions = [];
+  private calculateStreak(commitDates: Date[]): number {
+    if (commitDates.length === 0) return 0;
+
+    const sortedDates = commitDates
+      .map(date => new Date(date.getFullYear(), date.getMonth(), date.getDate()))
+      .sort((a, b) => b.getTime() - a.getTime());
+
     const today = new Date();
+    today.setHours(0, 0, 0, 0);
     
-    for (let i = 364; i >= 0; i--) {
-      const date = new Date(today.getTime() - i * 24 * 60 * 60 * 1000);
-      contributions.push({
-        date: date.toISOString().split('T')[0],
-        count: Math.floor(Math.random() * 10),
-      });
+    let streak = 0;
+    let currentDate = new Date(today);
+
+    for (const commitDate of sortedDates) {
+      const diffTime = currentDate.getTime() - commitDate.getTime();
+      const diffDays = Math.floor(diffTime / (1000 * 60 * 60 * 24));
+
+      if (diffDays === 0 || diffDays === 1) {
+        streak++;
+        currentDate = new Date(commitDate);
+      } else if (diffDays > 1) {
+        break;
+      }
     }
 
-    return contributions;
+    return streak;
+  }
+
+  /**
+   * Calcula la racha más larga de commits
+   */
+  private calculateLongestStreak(commitDates: Date[]): number {
+    if (commitDates.length === 0) return 0;
+
+    const sortedDates = commitDates
+      .map(date => new Date(date.getFullYear(), date.getMonth(), date.getDate()))
+      .sort((a, b) => a.getTime() - b.getTime());
+
+    let longestStreak = 0;
+    let currentStreak = 1;
+
+    for (let i = 1; i < sortedDates.length; i++) {
+      const prevDate = sortedDates[i - 1];
+      const currentDate = sortedDates[i];
+      const diffTime = currentDate.getTime() - prevDate.getTime();
+      const diffDays = Math.floor(diffTime / (1000 * 60 * 60 * 24));
+
+      if (diffDays === 1) {
+        currentStreak++;
+      } else {
+        longestStreak = Math.max(longestStreak, currentStreak);
+        currentStreak = 1;
+      }
+    }
+
+    return Math.max(longestStreak, currentStreak);
+  }
+
+  /**
+   * Obtiene el gráfico de contribuciones real
+   */
+  async getContributionGraph(accessToken: string, username: string): Promise<{ date: string; count: number }[]> {
+    try {
+      // Obtener commits reales de los repositorios del usuario
+      const repos = await this.getUserRepos(accessToken, 1, 100);
+      const commitDates: Date[] = [];
+
+      // Obtener commits de cada repositorio
+      for (const repo of repos.filter(r => !r.fork && !r.private)) {
+        try {
+          const commits = await this.getRecentCommits(accessToken, repo.owner?.login || username, repo.name, 100);
+          
+          commits.forEach(commit => {
+            const commitDate = new Date(commit.commit.author.date);
+            commitDates.push(commitDate);
+          });
+        } catch (error) {
+          console.warn(`Error getting commits for ${repo.name}:`, error);
+        }
+      }
+
+      // Crear mapa de contribuciones por fecha
+      const contributionsMap = new Map<string, number>();
+      
+      commitDates.forEach(date => {
+        const dateStr = date.toISOString().split('T')[0];
+        contributionsMap.set(dateStr, (contributionsMap.get(dateStr) || 0) + 1);
+      });
+
+      // Generar datos para los últimos 365 días
+      const contributions = [];
+      const today = new Date();
+      
+      for (let i = 364; i >= 0; i--) {
+        const date = new Date(today.getTime() - i * 24 * 60 * 60 * 1000);
+        const dateStr = date.toISOString().split('T')[0];
+        contributions.push({
+          date: dateStr,
+          count: contributionsMap.get(dateStr) || 0,
+        });
+      }
+
+      return contributions;
+    } catch (error) {
+      console.error('Error getting contribution graph:', error);
+      // Fallback a datos vacíos si hay error
+      const contributions = [];
+      const today = new Date();
+      
+      for (let i = 364; i >= 0; i--) {
+        const date = new Date(today.getTime() - i * 24 * 60 * 60 * 1000);
+        contributions.push({
+          date: date.toISOString().split('T')[0],
+          count: 0,
+        });
+      }
+
+      return contributions;
+    }
   }
 
   /**

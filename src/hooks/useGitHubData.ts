@@ -65,12 +65,23 @@ export const useGitHubData = (): UseGitHubDataReturn => {
   const [contributionGraph, setContributionGraph] = useState<{ date: string; count: number }[]>([]);
   const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
+  const [lastFetch, setLastFetch] = useState<number>(0);
+  const [isInitialized, setIsInitialized] = useState(false);
 
-  const fetchData = useCallback(async () => {
+  const fetchData = useCallback(async (forceRefresh = false) => {
     try {
       const token = tokenStorage.getToken('github');
       if (!token) {
         throw new Error('No hay token de GitHub disponible');
+      }
+
+      // Verificar si necesitamos hacer fetch (evitar recargas innecesarias)
+      const now = Date.now();
+      const CACHE_DURATION = 5 * 60 * 1000; // 5 minutos
+      
+      if (!forceRefresh && isInitialized && (now - lastFetch) < CACHE_DURATION) {
+        console.log('Usando datos en caché de GitHub');
+        return;
       }
 
       setIsLoading(true);
@@ -100,16 +111,18 @@ export const useGitHubData = (): UseGitHubDataReturn => {
       setStats(statsData);
       setLanguages(languagesData);
       setContributionGraph(contributionData);
+      setLastFetch(now);
+      setIsInitialized(true);
     } catch (error: any) {
       console.error('Error fetching GitHub data:', error);
       setError(error.message || 'Error obteniendo datos de GitHub');
     } finally {
       setIsLoading(false);
     }
-  }, []);
+  }, [isInitialized, lastFetch]);
 
   const refreshData = useCallback(async () => {
-    await fetchData();
+    await fetchData(true); // Forzar refresh
   }, [fetchData]);
 
   // Cargar datos al montar el hook
