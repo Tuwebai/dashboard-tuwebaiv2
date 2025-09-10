@@ -10,7 +10,7 @@ interface UseGitHubAuthReturn {
   connect: () => void;
   disconnect: () => void;
   validateConnection: () => Promise<boolean>;
-  handleCallback: (code: string, state?: string) => Promise<void>;
+  handleCallback: (code: string, state?: string) => Promise<{ success: boolean; error?: string }>;
 }
 
 export const useGitHubAuth = (): UseGitHubAuthReturn => {
@@ -116,7 +116,7 @@ export const useGitHubAuth = (): UseGitHubAuthReturn => {
     }
   }, []);
 
-  const handleCallback = useCallback(async (code: string, state?: string): Promise<void> => {
+  const handleCallback = useCallback(async (code: string, state?: string): Promise<{ success: boolean; error?: string }> => {
     try {
       setError(null);
       setIsLoading(true);
@@ -138,6 +138,7 @@ export const useGitHubAuth = (): UseGitHubAuthReturn => {
         if (isValid) {
           setIsConnected(true);
           setError(null);
+          return { success: true };
         } else {
           throw new Error('El token obtenido no es válido');
         }
@@ -146,10 +147,12 @@ export const useGitHubAuth = (): UseGitHubAuthReturn => {
       }
     } catch (error: any) {
       console.error('Error handling GitHub callback:', error);
-      setError(error.message || 'Error procesando la autorización');
+      const errorMessage = error.message || 'Error procesando la autorización';
+      setError(errorMessage);
       setIsConnected(false);
       // Limpiar token si hay error
       tokenStorage.removeToken('github');
+      return { success: false, error: errorMessage };
     } finally {
       setIsLoading(false);
     }

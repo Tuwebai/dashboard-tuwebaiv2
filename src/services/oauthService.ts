@@ -85,15 +85,15 @@ class OAuthService {
   async handleGitHubCallback(code: string, state: string): Promise<OAuthResult> {
     try {
       // Verificar si ya hay un token válido
-      const existingToken = tokenStorage.getGitHubToken();
+      const existingToken = tokenStorage.getToken('github');
       if (existingToken) {
         console.log('Token already exists, skipping token exchange');
         return {
           success: true,
-          accessToken: existingToken,
-          refreshToken: null,
+          accessToken: existingToken.accessToken,
+          refreshToken: existingToken.refreshToken || null,
           expiresIn: null,
-          scope: [],
+          scope: existingToken.scope || [],
         };
       }
 
@@ -337,7 +337,7 @@ class OAuthService {
   } {
     try {
       // Verificar si ya hay un token válido (significa que el proceso ya fue exitoso)
-      const existingToken = tokenStorage.getGitHubToken();
+      const existingToken = tokenStorage.getToken('github');
       if (existingToken) {
         console.log('Token already exists, allowing state validation to pass');
         return {

@@ -49,52 +49,29 @@ const GitHubCallback: React.FC = () => {
           return;
         }
 
-        // Procesar el callback con retry logic
-        let success = false;
-        let lastError: string | null = null;
-        
-        for (let attempt = 1; attempt <= 3; attempt++) {
-          try {
-            console.log(`Processing callback attempt ${attempt}/3`);
-            await handleCallback(code, state || '');
-            
-            // Verificar si la conexión fue exitosa
-            if (isConnected) {
-              success = true;
-              break;
-            }
-            
-            // Esperar un poco para que se actualice el estado
-            await new Promise(resolve => setTimeout(resolve, 1000));
-            
-            if (isConnected) {
-              success = true;
-              break;
-            }
-            
-          } catch (err: any) {
-            lastError = err.message;
-            console.warn(`Callback attempt ${attempt} failed:`, err);
-            
-            if (attempt < 3) {
-              // Esperar antes del siguiente intento
-              await new Promise(resolve => setTimeout(resolve, 2000));
-            }
-          }
-        }
-
-        if (success) {
-          setStatus('success');
-          setMessage('¡Conexión con GitHub exitosa!');
-          hasProcessed.current = true;
+        // Procesar el callback una sola vez
+        try {
+          console.log('Processing callback...');
+          const result = await handleCallback(code, state || '');
           
-          // Redirigir al perfil después de 1 segundo
-          setTimeout(() => {
-            navigate('/perfil');
-          }, 1000);
-        } else {
+          if (result.success) {
+            setStatus('success');
+            setMessage('¡Conexión con GitHub exitosa!');
+            hasProcessed.current = true;
+            
+            // Redirigir al perfil después de 1 segundo
+            setTimeout(() => {
+              navigate('/perfil');
+            }, 1000);
+          } else {
+            setStatus('error');
+            setMessage(result.error || 'Error en la conexión con GitHub');
+            hasProcessed.current = true;
+          }
+        } catch (err: any) {
+          console.error('Callback error:', err);
           setStatus('error');
-          setMessage(lastError || 'No se pudo establecer la conexión con GitHub después de varios intentos');
+          setMessage(err.message || 'Error procesando la autorización');
           hasProcessed.current = true;
         }
 
@@ -109,7 +86,7 @@ const GitHubCallback: React.FC = () => {
     };
 
     processCallback();
-  }, [searchParams, handleCallback, navigate, isConnected]);
+  }, [searchParams, handleCallback, navigate]); // Removido isConnected del array de dependencias
 
   const handleRetry = () => {
     // Resetear flags y reintentar
