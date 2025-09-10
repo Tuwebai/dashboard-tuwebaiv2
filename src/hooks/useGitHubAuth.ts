@@ -114,13 +114,18 @@ export const useGitHubAuth = (): UseGitHubAuthReturn => {
       // Procesar el callback de OAuth
       const tokenData = await oauthService.handleGitHubCallback(code, state);
       
-      if (tokenData) {
+      if (tokenData.success && tokenData.accessToken) {
         // Guardar el token
-        tokenStorage.setToken('github', tokenData);
+        tokenStorage.saveToken('github', {
+          accessToken: tokenData.accessToken,
+          refreshToken: tokenData.refreshToken,
+          expiresAt: Date.now() + (tokenData.expiresIn || 3600) * 1000,
+          scope: tokenData.scope || [],
+        });
         setIsConnected(true);
         setError(null);
       } else {
-        throw new Error('No se pudo obtener el token de acceso');
+        throw new Error(tokenData.error || 'No se pudo obtener el token de acceso');
       }
     } catch (error: any) {
       console.error('Error handling GitHub callback:', error);

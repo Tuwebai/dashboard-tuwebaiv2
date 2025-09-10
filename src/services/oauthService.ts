@@ -75,13 +75,19 @@ class OAuthService {
         throw new Error('Invalid state parameter');
       }
 
-      // Intercambiar código por token
-      const response = await fetch('/api/auth/github/token', {
+      // Intercambiar código por token directamente con GitHub
+      const response = await fetch('https://github.com/login/oauth/access_token', {
         method: 'POST',
         headers: {
-          'Content-Type': 'application/json',
+          'Accept': 'application/json',
+          'Content-Type': 'application/x-www-form-urlencoded',
         },
-        body: JSON.stringify({ code, state }),
+        body: new URLSearchParams({
+          client_id: this.GITHUB_CONFIG.clientId,
+          client_secret: import.meta.env.VITE_GITHUB_CLIENT_SECRET || '',
+          code: code,
+          redirect_uri: this.GITHUB_CONFIG.redirectUri,
+        }),
       });
 
       if (!response.ok) {
@@ -89,6 +95,10 @@ class OAuthService {
       }
 
       const data = await response.json();
+      
+      if (data.error) {
+        throw new Error(data.error_description || data.error);
+      }
       
       // Limpiar state
       sessionStorage.removeItem('github_oauth_state');
